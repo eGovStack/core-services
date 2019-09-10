@@ -21,7 +21,6 @@ import org.egov.dataupload.property.PropertyFileReader;
 import org.egov.dataupload.property.models.AuditDetails;
 import org.egov.dataupload.property.models.Property;
 import org.egov.dataupload.repository.UploadRegistryRepository;
-import org.egov.dataupload.utils.Constants.PTTemplateDetail;
 import org.egov.dataupload.utils.DataUploadUtils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +66,6 @@ public class PropertyCustomUploader {
 	@Value("${uploadjob.update.progress.size}")
 	private int updateProgressSize;
 
-	@Autowired
-	private DataUploadUtils dataUploadUtils;
-
 	private String responseString = "Response";
 	
 	public static final String SUCCESSSTRING = "SUCCESS";
@@ -82,7 +78,7 @@ public class PropertyCustomUploader {
 		requestInfo.setTs(null);
 		UploadJob job = uploaderRequest.getUploadJobs().get(0);
 		String loc = job.getLocalFilePath();
-		Map<String, Map<String, Object>> map = null;
+		Map<String, Property> map = null;
 
 		AuditDetails auditDetails = job.getAuditDetails();
 		auditDetails.setLastModifiedTime(new Date().getTime());
@@ -102,60 +98,49 @@ public class PropertyCustomUploader {
 			map = propFileReader.parseExcel(loc);
 		} catch (Exception e) {
 
-			log.error("exception occurred while parsing the excel : ", e);
+			log.error(" exception occured while parsing the excel : ", e);
 
 			job.setEndTime(System.currentTimeMillis());
 			job.setStatus(StatusEnum.FAILED);
 			job.setReasonForFailure("Parsing of the excel failed:");
 
 			dataUploadService.updateJobsWithPersister(auditDetails,job,false);
+//			uploadRegistryRepository.updateJob(job);
 			uploadUtils.clearInternalDirectory();
-			CustomException exception = new CustomException("Exception Occurred while parsing the excel", e.getMessage());
-			exception.initCause(e);
-			throw exception;
+			throw new CustomException("Exception Occured while parsing the excel", e.getMessage());
 		}
 
-		List<Map<String, String>> responses = new ArrayList<>();
+		List<String> responses = new ArrayList<>();
 		int failCnt = 0;
 		int sucCnt = 0;
-		int recordCount = 1;
-
-		for (Entry<String, Map<String, Object>> entry : map.entrySet()) {
-			String failureMessage;
-			Map<String, String> resp = new HashMap<>();
-
+		int recordCount=1;
+		for (Entry<String, Property> entry : map.entrySet()) {
+			String failureMessage = null;
 			if(entry.getKey().contains("duplicate"))
 			{
 				failCnt++;
-				resp.put("Status", FAILEDSTRING);
-				resp.put("Message", "Duplicate property found");
+				failureMessage = FAILEDSTRING + "--" +"Duplicate property found";
 			}
 			else{
-				Object response = dataUploadService.hitApi(getRequestForPost((Property) entry.getValue().get("Property"), requestInfo),
+				Object response = dataUploadService.hitApi(getRequestForPost(entry.getValue(), requestInfo),
 						getUrlForPost());
 
 				if (null == response) {
-					resp.put("Status", FAILEDSTRING);
-					resp.put("Message", "Module API failed with empty body in response");
+					failureMessage = FAILEDSTRING + "--" + "Module API failed with empty body in response";
 					failCnt++;
 				} else {
 					if (response instanceof String) {
-						resp.put("Status", FAILEDSTRING);
-						resp.put("Message", response.toString());
+						failureMessage = FAILEDSTRING + "--" +response.toString();
 						failCnt++;
 					} else {
 						sucCnt++;
-						resp.put("Status", SUCCESSSTRING);
-						resp.put("Message", "");
-						resp.put("Property ID", getPropertyId(response));
-						resp.put("Assessment Number", getPropertyAssessmentNumber(response));
+						failureMessage = SUCCESSSTRING + "--" + getPropertyId(response);
 					}
 				}
-				resp.put("_rowindex", entry.getValue().get("_rowindex").toString());
 			}
-			responses.add(resp);
+			responses.add(failureMessage);
 
-			if((recordCount % updateProgressSize)==0)
+			if((recordCount%updateProgressSize)==0)
 			{   // update progress after every 'updateProgressSize' records
 				job.setSuccessfulRows(sucCnt);
 				job.setFailedRows(failCnt);
@@ -204,33 +189,30 @@ public class PropertyCustomUploader {
 	}
 
 	private String getPropertyId(Object response) {
-		DocumentContext propRes = JsonPath.parse(response);
-		return propRes.read("$.Properties[0].propertyId");
-	}
 
-	private String getPropertyAssessmentNumber(Object response) {
 		DocumentContext propRes = JsonPath.parse(response);
-		return propRes.read("$.Properties[0].propertyDetails[0].assessmentNumber");
+		String propertyId = propRes.read("$.Properties[0].propertyId");
+		String assMentNum = propRes.read("$.Properties[0].propertyDetails[0].assessmentNumber");
+		return "propertyId : " + propertyId + " AND " + "assessmentNumber : " + assMentNum;
 	}
-
 
 	/**
 	 * method to write the responses from the API in to the excel sheet
-	 *
+	 * 
 	 * 1. read the file from local storage
-	 *
+	 * 
 	 * 2. convert the i/p stream to workbook
-	 *
+	 * 
 	 * 3. get the property sheet from the book
-	 *
+	 * 
 	 * 4. read the rows and write the responses in to them
-	 *
+	 * 
 	 * 5. save the response excel and close the resources
-	 *
-	 * @param job
-	 * @param responses
+	 * 
+	 * @param fileLoc
+	 * @param resopnses
 	 */
-	private void writeToExcel(UploadJob job, List<Map<String, String>> responses) {
+	private void writeToExcel(UploadJob job, List<String> resopnses) {
 
 		FileInputStream myxls = null;
 		XSSFWorkbook propertyExcel = null;
@@ -246,36 +228,30 @@ public class PropertyCustomUploader {
 			Row firstRow = propertySheet.getRow(0);
 
 			int fixedResNum = firstRow.getLastCellNum();
+			Cell lastCell = firstRow.getCell(fixedResNum);
 
-			Map<String, Integer> columnToIndex = dataUploadUtils.getColumnIndexMap(firstRow);
+			if (null != lastCell)
+				lastCell.setCellValue(responseString);
+			else
+				firstRow.createCell(fixedResNum).setCellValue("Status");
 
-			String[] responseColumns =  {"Status", "Message", "Property ID", "Assessment Number"};
+			firstRow.createCell(fixedResNum + 1).setCellValue("Message");
+			
 
-			for (String respCol : responseColumns) {
-				if (!columnToIndex.containsKey(dataUploadUtils.getCleanedName(respCol))) {
-					firstRow.createCell(fixedResNum).setCellValue(respCol);
-					columnToIndex.put(dataUploadUtils.getCleanedName(respCol), fixedResNum++);
+			for (int i = 0; i < resopnses.size(); i++) {
+
+				Row currRow = propertySheet.getRow(i + 1);
+				Cell resCell = currRow.createCell(fixedResNum);
+				Cell msgCell = currRow.createCell(fixedResNum+1);
+				String value = resopnses.get(i);
+				if (value.contains("--")) {
+					
+					String[] valueArr = value.split("--");
+					resCell.setCellValue(valueArr[0]);
+					msgCell.setCellValue(valueArr[1]);
+				} else {
+					resCell.setCellValue(value);
 				}
-			}
-
-			for (int i = 0; i < responses.size(); i++) {
-
-				Map<String, String> resp = responses.get(i);
-
-				Row currRow = propertySheet.getRow(Integer.parseInt(resp.get("_rowindex")));
-
-				for (String respCol : responseColumns) {
-					String colName = dataUploadUtils.getCleanedName(respCol);
-					int colIndex = columnToIndex.get(colName);
-					if (resp.containsKey(respCol) == true) {
-						currRow.createCell(colIndex).setCellValue(resp.get(respCol));
-					}
-				}
-
-				if (resp.containsKey("Status"))
-					// In case we processed the row, set the Process column value to blank
-					// this will be later treated as false only for process
-					currRow.getCell(PTTemplateDetail.Process.ordinal()).setCellValue("");
 			}
 
 			myxls.close();
@@ -287,7 +263,7 @@ public class PropertyCustomUploader {
 
 		} catch (Exception e) {
 
-			log.error(" Exception occurred while writing in sheet : ", e);
+			log.error(" Exception occured while writing in sheet : ", e);
 
 			job.setEndTime(System.currentTimeMillis());
 			job.setStatus(StatusEnum.FAILED);
@@ -296,7 +272,7 @@ public class PropertyCustomUploader {
 			dataUploadService.updateJobsWithPersister(job.getAuditDetails(),job,false);
 //			uploadRegistryRepository.updateJob(job);
 			uploadUtils.clearInternalDirectory();
-			throw new CustomException("Exception occurred while writing in sheet", e.getMessage());
+			throw new CustomException("Exception occured while writing in sheet", e.getMessage());
 		} finally {
 
 			if (null != myxls)
@@ -332,8 +308,8 @@ public class PropertyCustomUploader {
 		try {
 			res = mapper.writeValueAsString(reqMap);
 		} catch (JsonProcessingException e) {
-			log.error(" Error occurred while writing request map to string : ", e);
-			throw new CustomException(" Error occurred while writing request map to string : ", e.getMessage());
+			log.error(" Error occured while writing request map to string : ", e);
+			throw new CustomException(" Error occured while writing request map to string : ", e.getMessage());
 		}
 		return res;
 	}

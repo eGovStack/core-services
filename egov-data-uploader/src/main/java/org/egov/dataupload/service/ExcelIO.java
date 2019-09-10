@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,12 +84,14 @@ public class ExcelIO implements FileIO {
                     } else {
                         switch (cell.getCellTypeEnum()) {
                             case NUMERIC:
-                                if (CellType.NUMERIC == cell.getCellTypeEnum()) {
-                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                                        dataList.add(format.format(new Date(cell.getDateCellValue().getTime())));
-                                    } else {
-                                        dataList.add(dataFormatter.formatCellValue(cell));
-                                    }
+                                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                                    dataList.add(format.format(new Date(cell.getDateCellValue().getTime())));
+                                } else {
+                                	if(validateEPoch(String.valueOf(cell.getNumericCellValue()))) {
+                                        dataList.add(getEpoch(String.valueOf(cell.getNumericCellValue())));
+                                	}else {
+                                        dataList.add(cell.getNumericCellValue());
+                                	}
                                 }
                                 break;
                             case STRING:
@@ -171,6 +174,26 @@ public class ExcelIO implements FileIO {
             isValid = true;
 
         return isValid;
+    }
+    
+    
+    private boolean validateEPoch(String value) {
+    	if(value.length() > 10) {
+    		if(value.contains("E") && value.contains(".")) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}
+    	return false;
+    }
+    
+    
+    private Long getEpoch(String value) {
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(0);
+        String ret= df.format(Double.valueOf(value));
+        return Long.valueOf(ret);
     }
 
 
