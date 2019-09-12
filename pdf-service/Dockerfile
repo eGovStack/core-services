@@ -1,13 +1,11 @@
-FROM node:11.15.0-alpine
+FROM egovio/alpine-node-builder-10:yarn
 
-RUN apk add --update  bash
-COPY package.json /opt/package.json
-COPY .babelrc /opt/.babelrc
+ARG WORK_DIR
+WORKDIR /app
 
-COPY src /opt/src
+COPY ${WORK_DIR} .
 
-RUN cd /opt && npm install
-WORKDIR /opt
+RUN npm install
 
 # set your port
 ENV PORT 8080
