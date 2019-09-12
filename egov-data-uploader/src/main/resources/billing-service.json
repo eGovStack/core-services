@@ -83,7 +83,7 @@
           ],
           "url": "http://billing-service:8080/billing-service/demand/_create",
           "additionalResFields": {
-            "$.Demands.*.id[0]": "DemandId"
+            "$.Demands.*.id": "DemandId"
           }
         }
       ]
