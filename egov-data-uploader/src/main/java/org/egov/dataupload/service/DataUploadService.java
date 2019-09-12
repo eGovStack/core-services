@@ -391,10 +391,10 @@ public class DataUploadService {
 				}
 
 				if (!failureMessage.isEmpty()) {
-					failureCount = groupedRows.size() + failureCount;
+					failureCount = entry.getValue().size() + failureCount;
 					writeResultToExcelParentChild(failureMessage, entry.getValue(), responseFields, resultFilePath);
 				} else {
-					successCount = groupedRows.size() + successCount;
+					successCount = entry.getValue().size() + successCount;
 					writeResultToExcelParentChild(failureMessage, entry.getValue(), responseFields, resultFilePath);
 				}
 
