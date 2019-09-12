@@ -326,7 +326,7 @@ public class DataUploadService {
 	public void updateJobsWithPersister(AuditDetails auditDetails, UploadJob uploadJob, boolean save) {
 		uploadJob.setAuditDetails(auditDetails);
 		HashMap<String, Object> hashMap = new HashMap<>();
-		hashMap.put("UploadJob", uploadJob);
+		hashMap.put("UploadJobs", uploadJob);
 		if (save) {
 			dataUploadProducer.push(uploadJobSaveTopic, hashMap);
 		} else {
