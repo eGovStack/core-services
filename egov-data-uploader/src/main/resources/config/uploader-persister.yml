@@ -45,7 +45,7 @@ serviceMaps:
     isTransaction: true
     queryMaps:
     - query: Update EGDU_UPLOADREGISTRY set START_TIME=?, END_TIME=?, TOTAL_ROWS=?, SUCCESS_ROWS=?, FAILED_ROWS=?, RESPONSEFILE_PATH=?, STATUS=?, REASON_FOR_FAILURE = ?, LASTMODIFIEDBY=?, LASTMODIFIEDDATE=? where CODE=? AND TENANTID=?
-      basePath: UploadJobs
+      basePath: UploadJob
       jsonMaps:
 
 

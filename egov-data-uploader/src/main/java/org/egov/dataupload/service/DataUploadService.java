@@ -213,8 +213,7 @@ public class DataUploadService {
 			uploadJob.setTotalRows(document.getRows().size());
 
 			updateJobsWithPersister(auditDetails, uploadJob, false);
-			// uploadRegistryRepository.updateJob(uploadJob);
-
+			
 			if (null != uploadDefinition.getIsParentChild() && uploadDefinition.getIsParentChild()) {
 				uploadParentChildData(document, uploadDefinition, uploaderRequest);
 			} else {
@@ -227,9 +226,8 @@ public class DataUploadService {
 			uploadJob.setSuccessfulRows(0);
 			uploadJob.setStatus(StatusEnum.fromValue("failed"));
 			uploadJob.setReasonForFailure(e.getMessage());
-
 			updateJobsWithPersister(auditDetails, uploadJob, false);
-			// uploadRegistryRepository.updateJob(uploadJob);
+			
 			throw new CustomException(HttpStatus.BAD_REQUEST.toString(), "Unable to open file provided.");
 		} catch (Exception e) {
 			logger.error("Unknown error ", e);
