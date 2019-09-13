@@ -54,7 +54,7 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
           var response=await axios.get(directArr[i].url, {
             responseType: 'arraybuffer'
           })
-          variableTovalueMap[directArr[i].jPath]="data:" + response.headers["content-type"] + ";base64,"+new Buffer(response.data).toString('base64');
+          variableTovalueMap[directArr[i].jPath]="data:" + response.headers["content-type"] + ";base64,"+Buffer.alloc(response.data).toString('base64');
             //  logger.info("loaded image: "+directArr[i].url);
         }
         catch(error)
