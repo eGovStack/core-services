@@ -1,7 +1,7 @@
 FROM egovio/alpine-node-builder-10:yarn
 
 ARG WORK_DIR
-WORKDIR /app
+WORKDIR /opt
 
 COPY ${WORK_DIR} .
 
