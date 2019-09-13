@@ -1,11 +1,11 @@
 FROM egovio/alpine-node-builder-10:yarn
 
-ARG WORK_DIR
-WORKDIR .
+COPY package.json /opt/package.json
 
-COPY ${WORK_DIR} .
+COPY src /opt/src
 
-RUN npm install
+RUN cd /opt && npm install
+WORKDIR /opt
 
 # set your port
 ENV PORT 8080
