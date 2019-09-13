@@ -1,8 +1,10 @@
 FROM egovio/alpine-node-builder-10:yarn
 
+ARG WORK_DIR
+ENV npm_config_cache=/tmp
 WORKDIR /app
 
-COPY . .
+COPY ${WORK_DIR} .
 
 RUN npm install
 
