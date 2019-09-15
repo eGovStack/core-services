@@ -1,6 +1,7 @@
 package org.egov.persistence.repository;
 
 import org.egov.domain.model.OtpRequest;
+import org.egov.persistence.contract.Priority;
 import org.egov.persistence.contract.SMSRequest;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class OtpSMSRepository {
 
 	public void send(OtpRequest otpRequest, String otpNumber) {
 		final String message = getMessage(otpNumber, otpRequest);
-		kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message));
+		kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Priority.HIGH));
 	}
 
 	private String getMessage(String otpNumber, OtpRequest otpRequest) {

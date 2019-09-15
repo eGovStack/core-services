@@ -41,41 +41,45 @@
 package org.egov.web.notification.sms.services;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
-
-
 import org.egov.web.notification.sms.config.SmsProperties;
+import org.egov.web.notification.sms.models.Priority;
 import org.egov.web.notification.sms.models.Sms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
 import org.springframework.http.*;
-
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.net.ssl.SSLContext;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static java.util.Objects.isNull;
+import static org.springframework.util.StringUtils.isEmpty;
 
 
 @Service
+@Slf4j
 @ConditionalOnProperty(value = "sms.enabled", havingValue = "true")
-public class ExternalSMSService implements SMSService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalSMSService.class);
+public class MsdpService implements SMSService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MsdpService.class);
 
     private static final String SMS_RESPONSE_NOT_SUCCESSFUL = "Sms response not successful";
 
@@ -97,12 +101,18 @@ public class ExternalSMSService implements SMSService {
     @Value("${sms.url.dont_encode_url:true}")
     private boolean dontEncodeURL;
 
+    @Value("${sms.sender.secure.key:}")
+    private String secureKey;
+
+    private final String passwordMD5;
+
 
     @Autowired
-    public ExternalSMSService(SmsProperties smsProperties, RestTemplate restTemplate) {
+    public MsdpService(SmsProperties smsProperties, RestTemplate restTemplate) {
 
         this.smsProperties = smsProperties;
         this.restTemplate = restTemplate;
+        this.passwordMD5 = MD5(smsProperties.getPassword());
 
         if (!verifySSL) {
             TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
@@ -148,13 +158,13 @@ public class ExternalSMSService implements SMSService {
             ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.OK);
             if (requestType.equals("POST"))
             {
-                HttpEntity<MultiValueMap<String, String>> request = getRequest(sms);
+                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(getRequestMap(sms), getHttpHeaders());
                 response = restTemplate.postForEntity(url, request, String.class);
                 if (isResponseCodeInKnownErrorCodeList(response)) {
                     throw new RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL);
                 }
             } else {
-               final MultiValueMap<String, String> requestBody = smsProperties.getSmsRequestBody(sms);
+               final MultiValueMap<String, String> requestBody = getRequestMap(sms);
 
 
                String final_url = UriComponentsBuilder.fromHttpUrl(url).queryParams(requestBody).toUriString();
@@ -182,9 +192,30 @@ public class ExternalSMSService implements SMSService {
         return smsProperties.getSmsErrorCodes().stream().anyMatch(errorCode -> errorCode.equals(responseCode));
     }
 
-    private HttpEntity<MultiValueMap<String, String>> getRequest(Sms sms) {
-        final MultiValueMap<String, String> requestBody = smsProperties.getSmsRequestBody(sms);
-        return new HttpEntity<>(requestBody, getHttpHeaders());
+    private MultiValueMap<String, String> getRequestMap(Sms sms){
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add(smsProperties.getUserParameterName(), smsProperties.getUserName());
+        map.add(smsProperties.getSenderIdParameterName(), smsProperties.getSmsSender());
+        map.add(smsProperties.getMobileNumberParameterName(), sms.getMobileNumber());
+        map.add(smsProperties.getMessageParameterName(), sms.getMessage());
+        map.add("smsservicetype", getPriority(sms));
+        map.setAll(smsProperties.getExtraRequestParameters());
+
+        if( ! isEmpty(this.secureKey)){
+            map.add(smsProperties.getPasswordParameterName(), this.passwordMD5);
+            map.add("key", hashGenerator(smsProperties.getUserName(), smsProperties.getSmsSender(), sms.getMessage(),
+                    this.secureKey));
+        } else
+            map.add(smsProperties.getPasswordParameterName(), smsProperties.getPassword());
+
+        return map;
+    }
+
+    private static String getPriority(Sms sms){
+        if( ! isNull(sms.getPriority()) && sms.getPriority().equals(Priority.HIGH))
+            return "otpmsg";
+         else
+            return "unicodemsg";
     }
 
     private HttpHeaders getHttpHeaders() {
@@ -193,4 +224,56 @@ public class ExternalSMSService implements SMSService {
         return headers;
     }
 
+    private static String MD5(String text) {
+        MessageDigest md;
+        byte[] md5 = new byte[64];
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+            md.update(text.getBytes(StandardCharsets.ISO_8859_1), 0, text.length());
+            md5 = md.digest();
+        }catch(Exception e) {
+            log.error("Exception while encrypting the pwd: ",e);
+        }
+        return convertedToHex(md5);
+
+    }
+
+    private static String convertedToHex(byte[] data) {
+        StringBuilder buf = new StringBuilder();
+
+        for (byte aData : data) {
+            int halfOfByte = (aData >>> 4) & 0x0F;
+            int twoHalfBytes = 0;
+
+            do {
+                if (0 <= halfOfByte && halfOfByte <= 9)
+                    buf.append((char) ('0' + halfOfByte));
+                else
+                    buf.append((char) ('a' + (halfOfByte - 10)));
+
+                halfOfByte = aData & 0x0F;
+
+            } while (twoHalfBytes++ < 1);
+        }
+        return buf.toString();
+    }
+
+    private String hashGenerator(String userName, String senderId, String content, String secureKey) {
+        String hashGen = userName.trim() + senderId.trim() + content.trim() + secureKey.trim();
+        StringBuilder sb = new StringBuilder();
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-512");
+            md.update(hashGen.getBytes());
+            byte byteData[] = md.digest();
+            // convert the byte to hex format method 1
+            for (byte aByteData : byteData) {
+                sb.append(Integer.toString((aByteData & 0xff) + 0x100, 16).substring(1));
+            }
+
+        } catch (Exception e) {
+            log.error("Exception while generating the hash: ", e);
+        }
+        return sb.toString();
+    }
 }

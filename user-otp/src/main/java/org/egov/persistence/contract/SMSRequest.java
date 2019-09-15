@@ -8,4 +8,5 @@ import lombok.Getter;
 public class SMSRequest {
     private String mobileNumber;
     private String message;
+    private Priority priority;
 }

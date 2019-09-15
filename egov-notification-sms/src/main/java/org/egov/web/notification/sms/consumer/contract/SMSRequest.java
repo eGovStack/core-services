@@ -13,8 +13,9 @@ import org.egov.web.notification.sms.models.Sms;
 public class SMSRequest {
     private String mobileNumber;
     private String message;
+    private Priority priority;
 
     public Sms toDomain() {
-        return new Sms(mobileNumber, message, Priority.HIGH);
+        return new Sms(mobileNumber, message, priority);
     }
 }
