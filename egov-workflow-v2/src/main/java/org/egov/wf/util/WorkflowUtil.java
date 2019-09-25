@@ -22,8 +22,9 @@ public class WorkflowUtil {
 
 
     @Autowired
-    public WorkflowUtil(ObjectMapper mapper) {
+    public WorkflowUtil(ObjectMapper mapper,WorkflowConfig config) {
         this.mapper = mapper;
+        this.config = config;
     }
 
     /**
