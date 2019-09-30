@@ -182,9 +182,7 @@ public class WorkflowUtil {
 
                     });
                 });
-            }else{
-                break;
-            }          
+            }         
         }
         return actionableStatuses;
     }
