@@ -1,6 +1,7 @@
 package org.egov.search.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,12 +48,12 @@ public class SearchUtils {
 		if (null == whereClause) {
 			return whereClause;
 		}
-		where.append(" where ( ").append(whereClause.toString() + " ) ");
+		where.append(" WHERE ").append(whereClause.toString() + " ");
 		if (null != query.getGroupBy()) {
-			queryString.append(" group by ").append(query.getGroupBy());
+			queryString.append(" GROUP BY ").append(query.getGroupBy() + " ");
 		}
 		if (null != query.getOrderBy()) {
-			where.append(" order by ").append(query.getOrderBy().split(",")[0]).append(" ")
+			where.append(" ORDER BY ").append(query.getOrderBy().split(",")[0]).append(" ")
 					.append(query.getOrderBy().split(",")[1]);
 		}
 		if (null != query.getSort()) {
@@ -73,13 +74,22 @@ public class SearchUtils {
 		for (Params param : searchParam.getParams()) {
 			Object paramValue = null;
 			try {
-				paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), param.getJsonPath());
+				if(null != param.getIsConstant()) {
+					if(param.getIsConstant()) {
+						paramValue = param.getValue();
+					}else {
+						paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), param.getJsonPath());
+					}
+				}else {
+					paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), param.getJsonPath());
+				}
 				if (null == paramValue) {
 					continue;
 				}
 			} catch (Exception e) {
 				continue;
 			}
+			
 			if (paramValue instanceof net.minidev.json.JSONArray) { // TODO: might need to add some more types
 				net.minidev.json.JSONArray array = (net.minidev.json.JSONArray) paramValue;
 				StringBuilder paramBuilder = new StringBuilder();
@@ -88,7 +98,14 @@ public class SearchUtils {
 					if (i < array.size() - 1)
 						paramBuilder.append(",");
 				}
-				whereClause.append(param.getName()).append(" IN ").append("(").append(paramBuilder.toString())
+				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : " IN ";
+				String[] validListOperators = {"NOT IN", "IN"};
+				if(!Arrays.asList(validListOperators).contains(operator)) {
+					operator = " IN ";
+				}else {
+					operator = " " + operator + " ";
+				}
+				whereClause.append(param.getName()).append(operator).append("(").append(paramBuilder.toString())
 						.append(")");
 			} else {
 				logger.debug("param: " + param.getName());
@@ -107,7 +124,7 @@ public class SearchUtils {
 				whereClause.append(param.getName()).append(" " + operator + " ").append("'" + paramValue + "'");
 			}
 			whereClause.append(" " + condition + " ");
-		}
+		}	
 		Integer index = whereClause.toString().lastIndexOf(searchParam.getCondition());
 		String where = whereClause.toString().substring(0, index);
 		return where;
