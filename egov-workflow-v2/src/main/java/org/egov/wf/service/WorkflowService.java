@@ -107,7 +107,7 @@ public class WorkflowService {
             businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
 
         List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
-        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices);
+        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         criteria.setStatus(actionableStatuses);
         List<ProcessInstance> processInstancesForAssignee = workflowRepository.getProcessInstancesForAssignee(criteria);

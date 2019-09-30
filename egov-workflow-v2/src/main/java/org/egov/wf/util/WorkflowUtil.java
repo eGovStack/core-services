@@ -155,7 +155,7 @@ public class WorkflowUtil {
      * @return List of status on which user from requestInfo can take action upon
      */
 
-    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices){
+    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
 
         String tenantId;
         List<String> userRoleCodes;
@@ -165,22 +165,26 @@ public class WorkflowUtil {
         List<String> actionableStatuses = new LinkedList<>();
         
         for(Map.Entry<String,List<String>> entry : tenantIdToUserRolesMap.entrySet()){
-            List<BusinessService> businessServicesByTenantId ;
-            if(config.getIsStateLevel()){
-                businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey().split("\\.")[0]);
-            }else{
-                businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey());
-            }
-            businessServicesByTenantId.forEach(service -> {
-                List<State> states = service.getStates();
-                states.forEach(state -> {
-                    Set<String> stateRoles = stateToRoleMap.get(state.getUuid());
-                    if(!CollectionUtils.isEmpty(stateRoles) && !Collections.disjoint(stateRoles,entry.getValue())){
-                        actionableStatuses.add(state.getUuid());
-                    }
+            if(entry.getKey().equals(criteria.getTenantId())){
+                List<BusinessService> businessServicesByTenantId ;
+                if(config.getIsStateLevel()){
+                    businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey().split("\\.")[0]);
+                }else{
+                    businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey());
+                }
+                businessServicesByTenantId.forEach(service -> {
+                    List<State> states = service.getStates();
+                    states.forEach(state -> {
+                        Set<String> stateRoles = stateToRoleMap.get(state.getUuid());
+                        if(!CollectionUtils.isEmpty(stateRoles) && !Collections.disjoint(stateRoles,entry.getValue())){
+                            actionableStatuses.add(state.getUuid());
+                        }
 
+                    });
                 });
-            });
+            }else{
+                break;
+            }          
         }
         return actionableStatuses;
     }
