@@ -1,6 +1,7 @@
 package org.egov.search.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +36,15 @@ public class SearchUtils {
 
 	@Value("${pagination.default.offset}")
 	private String defaultOffset;
-
+	/**
+	 * Builds the query reqd for search
+	 * 
+	 * @param searchRequest
+	 * @param searchParam
+	 * @param query
+	 * @param preparedStatementValues
+	 * @return
+	 */
 	public String buildQuery(SearchRequest searchRequest, SearchParams searchParam, Query query, Map<String, Object> preparedStatementValues) {
 		StringBuilder queryString = new StringBuilder();
 		StringBuilder where = new StringBuilder();
@@ -64,6 +73,14 @@ public class SearchUtils {
 		return finalQuery;
 	}
 	
+	/**
+	 * Builds the where clause based on configs and request
+	 * 
+	 * @param searchRequest
+	 * @param searchParam
+	 * @param preparedStatementValues
+	 * @return
+	 */
 	public String buildWhereClause(SearchRequest searchRequest, SearchParams searchParam,  Map<String, Object> preparedStatementValues) {
 		StringBuilder whereClause = new StringBuilder();
 		ObjectMapper mapper = new ObjectMapper();
@@ -87,15 +104,17 @@ public class SearchUtils {
 			} catch (Exception e) {
 				continue;
 			}
-			List<String> variablesWithList = new ArrayList<>();
 			if (paramValue instanceof net.minidev.json.JSONArray) {
-				log.info("List PARAM: "+param.getName()+" VALUE: "+paramValue);
+				String[] validListOperators = {"NOT IN", "IN"};
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
+				if(!Arrays.asList(validListOperators).contains(operator))
+					operator = " IN "; 
 				whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
-				variablesWithList.add(param.getName());
 			} else {
-				log.info("Single PARAM: "+param.getName()+" VALUE: "+paramValue);
+				String[] validOperators = {"=", "GE", "LE", "NE", "LIKE"};
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
+				if(!Arrays.asList(validOperators).contains(operator))
+					operator = "="; 
 				if (operator.equals("GE"))
 					operator = ">=";
 				else if (operator.equals("LE"))
@@ -103,18 +122,23 @@ public class SearchUtils {
 				else if (operator.equals("NE"))
 					operator = "!=";
 				else if (operator.equals("LIKE")) {
-					if(!variablesWithList.contains(param.getName())) {
-						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
-					}
+					preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
 				}								
 				whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
 			}
 			whereClause.append(" " + condition + " ");
 		}
-		log.info("preparedStatementValues: "+preparedStatementValues);
 		return whereClause.toString().substring(0, whereClause.toString().lastIndexOf(searchParam.getCondition()));
 	}
 
+	
+	/**
+	 * Pagination clause builder
+	 * 
+	 * @param searchRequest
+	 * @param pagination
+	 * @return
+	 */
 	public String getPaginationClause(SearchRequest searchRequest, Pagination pagination) {
 		StringBuilder paginationClause = new StringBuilder();
 		ObjectMapper mapper = new ObjectMapper();
@@ -138,6 +162,14 @@ public class SearchUtils {
 		return paginationClause.toString();
 	}
 
+	/**
+	 * Fetches Search Definitions, defined in the configuration.
+	 * 
+	 * @param searchDefinitionMap
+	 * @param moduleName
+	 * @param searchName
+	 * @return
+	 */
 	public Definition getSearchDefinition(Map<String, SearchDefinition> searchDefinitionMap, String moduleName,
 			String searchName) {
 		log.debug("Fetching Definitions for module: " + moduleName + " and search feature: " + searchName);
@@ -155,6 +187,12 @@ public class SearchUtils {
 
 	}
 
+	/**
+	 * Formatter util for PG objects.
+	 * 
+	 * @param maps
+	 * @return
+	 */
 	public List<String> convertPGOBjects(List<PGobject> maps){
 		List<String> result = new ArrayList<>();
 		if(null != maps || !maps.isEmpty()) {
