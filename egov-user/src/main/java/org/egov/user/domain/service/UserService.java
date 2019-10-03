@@ -3,6 +3,7 @@ package org.egov.user.domain.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
@@ -25,12 +26,15 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -62,6 +66,12 @@ public class UserService {
 
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
+    
+    @Value("${egov.user.pwd.pattern}")
+    private String pwdRegex;
+    
+    @Value("${egov.user.pwd.pattern.min.length}")
+    private Integer pwdMaxLength;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -161,6 +171,8 @@ public class UserService {
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
+        }else {
+            validatePassword(user.getPassword());
         }
         user.setPassword(encryptPwd(user.getPassword()));
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
@@ -200,7 +212,7 @@ public class UserService {
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
             user.setMobileNumber(user.getUsername());
-
+        validatePassword(user.getPassword());
         user.setRoleToCitizen();
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
     }
@@ -286,9 +298,9 @@ public class UserService {
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         validateUserRoles(user);
         user.validateUserModification();
+        validatePassword(user.getPassword());
         user.setPassword(encryptPwd(user.getPassword()));
         userRepository.update(user, existingUser);
-
 
         // If user is being unlocked via update, reset failed login attempts
         if(user.getAccountLocked()!=null && !user.getAccountLocked() && existingUser.getAccountLocked())
@@ -338,6 +350,7 @@ public class UserService {
         final User existingUser = getUserByUuid(user.getUuid());
         validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
         user.nullifySensitiveFields();
+        validatePassword(user.getPassword());
         userRepository.update(user, existingUser);
         User updatedUser = getUserByUuid(user.getUuid());
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
@@ -539,6 +552,22 @@ public class UserService {
                 }
             }
         }
+    }
+    
+    
+    public void validatePassword(String password) {
+    	Map<String, String> errorMap = new HashMap<>();
+    	if(password.length() > pwdMaxLength)
+			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMaxLength+" characters.");
+		Pattern p = Pattern.compile(pwdRegex);
+		Matcher m = p.matcher(password);
+		if (m.find()) {
+			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character and MUST NOT contain any spaces");
+		}
+		
+		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+			throw new CustomException(errorMap);
+		}
     }
 
 
