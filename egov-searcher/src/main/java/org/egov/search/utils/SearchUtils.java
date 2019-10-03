@@ -85,15 +85,16 @@ public class SearchUtils {
 					preparedStatementValues.put(param.getName(), paramValue);
 				
 			} catch (Exception e) {
-				log.error("Couldn't get value for the param: "+ param.getName());
 				continue;
 			}
 			List<String> variablesWithList = new ArrayList<>();
 			if (paramValue instanceof net.minidev.json.JSONArray) {
+				log.info("List PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
 				whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
 				variablesWithList.add(param.getName());
 			} else {
+				log.info("Single PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
 				if (operator.equals("GE"))
 					operator = ">=";
@@ -109,7 +110,8 @@ public class SearchUtils {
 				whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
 			}
 			whereClause.append(" " + condition + " ");
-		}		
+		}
+		log.info("preparedStatementValues: "+preparedStatementValues);
 		return whereClause.toString().substring(0, whereClause.toString().lastIndexOf(searchParam.getCondition()));
 	}
 

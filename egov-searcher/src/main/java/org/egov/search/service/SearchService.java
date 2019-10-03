@@ -52,6 +52,7 @@ public class SearchService {
 
 	public Object searchData(SearchRequest searchRequest, String moduleName, String searchName) {
 		searchReqValidator.validate(searchRequest, moduleName, searchName);
+		log.info("searchRequest: "+searchRequest);
 		Map<String, SearchDefinition> searchDefinitionMap = runner.getSearchDefinitionMap();
 		Definition searchDefinition = null;
 		searchDefinition = searchUtils.getSearchDefinition(searchDefinitionMap, moduleName, searchName);
