@@ -90,9 +90,11 @@ public class SearchUtils {
 			}
 			
 			if (paramValue instanceof net.minidev.json.JSONArray) {
+				log.info("PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
 				whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
 			} else {
+				log.info("PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
 				if (operator.equals("GE"))
 					operator = ">=";
