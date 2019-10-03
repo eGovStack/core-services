@@ -88,13 +88,12 @@ public class SearchUtils {
 				log.error("Couldn't get value for the param: "+ param.getName());
 				continue;
 			}
-			
+			List<String> variablesWithList = new ArrayList<>();
 			if (paramValue instanceof net.minidev.json.JSONArray) {
-				log.info("PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
 				whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
+				variablesWithList.add(param.getName());
 			} else {
-				log.info("PARAM: "+param.getName()+" VALUE: "+paramValue);
 				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
 				if (operator.equals("GE"))
 					operator = ">=";
@@ -103,7 +102,9 @@ public class SearchUtils {
 				else if (operator.equals("NE"))
 					operator = "!=";
 				else if (operator.equals("LIKE")) {
-					preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+					if(!variablesWithList.contains(param.getName())) {
+						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+					}
 				}								
 				whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
 			}
