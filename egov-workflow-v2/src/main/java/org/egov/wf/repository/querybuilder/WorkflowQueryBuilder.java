@@ -194,7 +194,7 @@ public class WorkflowQueryBuilder {
 //        String query = QUERY +" pi.tenantid = ? " +
 //                "AND pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
         String query = QUERY  +
-                " AND pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+                "pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
         StringBuilder builder = new StringBuilder(query);
 //        preparedStmtList.add(criteria.getTenantId());
         List<String> statuses = criteria.getStatus();
