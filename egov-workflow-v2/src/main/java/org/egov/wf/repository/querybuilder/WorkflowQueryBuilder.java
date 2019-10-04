@@ -21,6 +21,7 @@ public class WorkflowQueryBuilder {
 
     private static final String INNER_JOIN = " INNER JOIN ";
     private static final String LEFT_OUTER_JOIN = " LEFT OUTER JOIN ";
+    private static final String CONCAT = " CONCAT " ; 
 
 
     private static final String QUERY = "SELECT pi.*,doc.*,pi.id as wf_id," +
@@ -28,7 +29,8 @@ public class WorkflowQueryBuilder {
             "pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status," +
             "doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime," +
             "doc.createdBy as doc_createdBy,doc.lastModifiedBy as doc_lastModifiedBy," +
-            "doc.tenantid as doc_tenantid,doc.id as doc_id " +
+            "doc.tenantid as doc_tenantid,doc.id as doc_id," +
+            CONCAT + " (pi.tenantid,':',pi.status) as pi_uniqueStateKey,"  +
             " FROM eg_wf_processinstance_v2 pi " +
             LEFT_OUTER_JOIN+
             " eg_wf_document_v2 doc " +
@@ -189,14 +191,15 @@ public class WorkflowQueryBuilder {
      * @return search query based on assignee
      */
     public String getStatusBasedProcessInstance(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
-        String query = QUERY +" pi.tenantid = ? " +
-                " AND pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
-
+//        String query = QUERY +" pi.tenantid = ? " +
+//                "AND pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+        String query = QUERY  +
+                " AND pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
         StringBuilder builder = new StringBuilder(query);
-        preparedStmtList.add(criteria.getTenantId());
+//        preparedStmtList.add(criteria.getTenantId());
         List<String> statuses = criteria.getStatus();
         if(!CollectionUtils.isEmpty(statuses)) {
-            builder.append(" and status IN (").append(createQuery(statuses)).append(")");
+            builder.append(" and pi_uniqueStateKey IN (").append(createQuery(statuses)).append(")");
             addToPreparedStatement(preparedStmtList,statuses);
         }
         return OUTER_QUERY+builder.toString()+")" + " fp "+STATE_JOIN_QUERY;

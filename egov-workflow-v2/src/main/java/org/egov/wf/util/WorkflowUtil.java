@@ -177,7 +177,7 @@ public class WorkflowUtil {
                     states.forEach(state -> {
                         Set<String> stateRoles = stateToRoleMap.get(state.getUuid());
                         if(!CollectionUtils.isEmpty(stateRoles) && !Collections.disjoint(stateRoles,entry.getValue())){
-                            actionableStatuses.add(state.getUuid());
+                            actionableStatuses.add(entry.getKey() + ':' + state.getUuid());
                         }
 
                     });
