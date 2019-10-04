@@ -30,7 +30,7 @@ public class WorkflowQueryBuilder {
             "doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime," +
             "doc.createdBy as doc_createdBy,doc.lastModifiedBy as doc_lastModifiedBy," +
             "doc.tenantid as doc_tenantid,doc.id as doc_id," +
-            CONCAT + " (pi.tenantid,':',pi.status) as pi_uniqueStateKey,"  +
+            CONCAT + " (pi.tenantid,':',pi.status) as pi_uniqueStateKey"  +
             " FROM eg_wf_processinstance_v2 pi " +
             LEFT_OUTER_JOIN+
             " eg_wf_document_v2 doc " +
