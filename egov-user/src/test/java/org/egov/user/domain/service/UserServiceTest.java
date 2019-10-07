@@ -119,9 +119,8 @@ public class UserServiceTest {
 		when(otpRepository.isOtpValidationComplete(getExpectedRequest())).thenReturn(true);
 		final User expectedUser = User.builder().build();
 		when(domainUser.getTenantId()).thenReturn("default");
-		when(domainUser.getPassword()).thenReturn("demo");
+		when(domainUser.getPassword()).thenReturn("P@assw0rd");
 		when(userRepository.create(domainUser)).thenReturn(expectedUser);
-
 		User returnedUser = userService.createCitizen(domainUser);
 
 		assertEquals(expectedUser, returnedUser);
@@ -166,7 +165,7 @@ public class UserServiceTest {
 	public void test_should_set_pre_defined_expiry_on_creating_citizen() {
 		org.egov.user.domain.model.User domainUser = mock(User.class);
 		when(domainUser.getTenantId()).thenReturn("default");
-		when(domainUser.getPassword()).thenReturn("demo");
+		when(domainUser.getPassword()).thenReturn("P@assw0rd");
 		when((domainUser.getOtpValidationRequest())).thenReturn(getExpectedRequest());
 		when(otpRepository.isOtpValidationComplete(getExpectedRequest())).thenReturn(true);
 		final User expectedUser = User.builder().build();
@@ -181,7 +180,7 @@ public class UserServiceTest {
 	public void test_should_set_role_to_citizen_when_creating_a_citizen() {
 		org.egov.user.domain.model.User domainUser = mock(User.class);
 		when(domainUser.getTenantId()).thenReturn("default");
-		when(domainUser.getPassword()).thenReturn("demo");
+		when(domainUser.getPassword()).thenReturn("P@assw0rd");
 		when(domainUser.getOtpValidationRequest()).thenReturn(getExpectedRequest());
 		when(otpRepository.isOtpValidationComplete(getExpectedRequest())).thenReturn(true);
 		final User expectedEntityUser = User.builder().build();
@@ -466,7 +465,7 @@ public class UserServiceTest {
                 .tenantId("default")
                 .type(UserType.SYSTEM)
                 .otpReference("123456")
-                .newPassword("newPassword")
+                .newPassword("nEwP@ssw0rd")
                 .build();
 		when(otpRepository.validateOtp(any())).thenThrow(Exception.class);
 		final User domainUser = mock(User.class);
@@ -488,7 +487,7 @@ public class UserServiceTest {
                 .userName("xyz")
                 .tenantId("default")
                 .type(UserType.CITIZEN)
-                .newPassword("newPassword")
+                .newPassword("nEwP@ssw0rd")
                 .build();
 		when(otpRepository.validateOtp(any())).thenThrow(Exception.class);
 		final User domainUser = mock(User.class);
@@ -507,7 +506,7 @@ public class UserServiceTest {
                 .userName("xyz")
                 .tenantId("default")
                 .type(UserType.EMPLOYEE)
-                .newPassword("newPassword")
+                .newPassword("nEwP@ssw0rd")
                 .build();
 		when(otpRepository.validateOtp(any())).thenThrow(Exception.class);
 		final User domainUser = mock(User.class);
@@ -546,7 +545,7 @@ public class UserServiceTest {
 		final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
 				.userName("mobileNumber").tenantId("tenant").type(UserType.CITIZEN).otpReference("otpReference")
                 .newPassword
-						("newPassword")
+						("nEwP@ssw0rd")
 				.build();
 		final OtpValidationRequest expectedRequest = OtpValidationRequest.builder().otpReference("otpReference")
 				.mobileNumber("mobileNumber").tenantId("tenant").build();

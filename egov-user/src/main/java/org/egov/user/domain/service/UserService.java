@@ -216,7 +216,8 @@ public class UserService {
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
             user.setMobileNumber(user.getUsername());
-        validatePassword(user.getPassword());
+        if(!isCitizenLoginOtpBased)
+            validatePassword(user.getPassword());
         user.setRoleToCitizen();
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
     }
@@ -564,7 +565,7 @@ public class UserService {
     public void validatePassword(String password) {
     	Map<String, String> errorMap = new HashMap<>();
     	if(!StringUtils.isEmpty(password)) {
-        	if(password.length() > pwdMaxLength)
+        	if(password.length() < pwdMaxLength)
     			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMaxLength+" characters.");
     		Pattern p = Pattern.compile(pwdRegex);
     		Matcher m = p.matcher(password);
