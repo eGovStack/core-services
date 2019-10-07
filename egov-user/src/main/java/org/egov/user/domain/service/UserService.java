@@ -377,6 +377,7 @@ public class UserService {
             throw new InvalidUpdatePasswordRequestException();
 
         validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
+        validatePassword(updatePasswordRequest.getNewPassword());
         user.updatePassword(encryptPwd(updatePasswordRequest.getNewPassword()));
         userRepository.update(user, user);
     }
@@ -400,6 +401,7 @@ public class UserService {
         }
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
+        validatePassword(request.getNewPassword());
         user.updatePassword(encryptPwd(request.getNewPassword()));
         userRepository.update(user, user);
     }
