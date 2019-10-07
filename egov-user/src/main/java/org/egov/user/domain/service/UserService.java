@@ -80,7 +80,9 @@ public class UserService {
                        PasswordEncoder passwordEncoder, TokenStore tokenStore,
                        @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
                        @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased) {
+                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
+                       @Value("${egov.user.pwd.pattern}") String pwdRegex,
+                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMaxLength) {
         this.userRepository = userRepository;
         this.otpRepository = otpRepository;
         this.passwordEncoder = passwordEncoder;
@@ -89,6 +91,8 @@ public class UserService {
         this.isEmployeeLoginOtpBased = isEmployeeLoginOtpBased;
         this.fileRepository = fileRepository;
         this.tokenStore = tokenStore;
+        this.pwdRegex = pwdRegex;
+        this.pwdMaxLength = pwdMaxLength;
     }
 
     /**
@@ -557,6 +561,7 @@ public class UserService {
     
     public void validatePassword(String password) {
     	Map<String, String> errorMap = new HashMap<>();
+    	log.info("pwdMaxLength: "+pwdMaxLength);
     	if(password.length() > pwdMaxLength)
 			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMaxLength+" characters.");
 		Pattern p = Pattern.compile(pwdRegex);

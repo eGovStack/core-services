@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
@@ -55,12 +56,14 @@ public class UserServiceTest {
 	private final String TENANT_ID = "tenantId";
 	private final boolean isCitizenLoginOtpBased = false;
 	private final boolean isEmployeeLoginOtpBased = false;
+    private String pwdRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$)$";
+    private Integer pwdMaxLength = 8;
 
 	@Before
 	public void before() {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder, tokenStore ,
 				DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				isCitizenLoginOtpBased,isEmployeeLoginOtpBased);
+				isCitizenLoginOtpBased,isEmployeeLoginOtpBased,pwdRegex,pwdMaxLength);
 	}
 
 
@@ -128,7 +131,7 @@ public class UserServiceTest {
 	public void test_should_not_create_citizenWithWrongUserName() {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder,
 			tokenStore,	DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				true,false);
+				true,false, pwdRegex,pwdMaxLength);
 		org.egov.user.domain.model.User domainUser = User.builder().username("TestUser").name("Test").active(true)
 				.tenantId("default").mobileNumber("123456789").type(UserType.CITIZEN).build();
 		userService.createCitizen(domainUser);
@@ -333,7 +336,7 @@ public class UserServiceTest {
 	public void test_should_throwexception_incaseofloginotpenabledastrue_forcitizen_update_password_request() {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder,
 			tokenStore,	DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				true,isEmployeeLoginOtpBased);
+				true,isEmployeeLoginOtpBased, pwdRegex,pwdMaxLength);
 		User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
@@ -351,7 +354,7 @@ public class UserServiceTest {
 	public void test_should_throwexception_incaseofloginotpenabledastrue_foremployee_update_password_request() {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder,
 			tokenStore,	DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				false,true);
+				false,true, pwdRegex,pwdMaxLength);
         User user = User.builder().username("xyz").tenantId("default").type(UserType.EMPLOYEE).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
@@ -479,7 +482,7 @@ public class UserServiceTest {
 	public void test_notshould_update_password_whenCitizenotpconfigured_istrue() throws Exception {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder,
 			tokenStore,	DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				true,false);
+				true,false, pwdRegex,pwdMaxLength);
         final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
                 .otpReference("123456")
                 .userName("xyz")
@@ -499,7 +502,7 @@ public class UserServiceTest {
 	public void test_notshould_update_password_whenEmployeeotpconfigured_istrue() throws Exception {
 		userService = new UserService(userRepository, otpRepository,fileRepository, passwordEncoder,
 			tokenStore,	DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-				false,true);
+				false,true, pwdRegex,pwdMaxLength);
         final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
                 .tenantId("default")
