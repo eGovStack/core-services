@@ -29,8 +29,7 @@ public class WorkflowQueryBuilder {
             "pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status," +
             "doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime," +
             "doc.createdBy as doc_createdBy,doc.lastModifiedBy as doc_lastModifiedBy," +
-            "doc.tenantid as doc_tenantid,doc.id as doc_id," +
-            CONCAT + " (pi.tenantid,':',pi.status) as pi_uniqueStateKey"  +
+            "doc.tenantid as doc_tenantid,doc.id as doc_id" +
             " FROM eg_wf_processinstance_v2 pi " +
             LEFT_OUTER_JOIN+
             " eg_wf_document_v2 doc " +
@@ -199,7 +198,7 @@ public class WorkflowQueryBuilder {
 //        preparedStmtList.add(criteria.getTenantId());
         List<String> statuses = criteria.getStatus();
         if(!CollectionUtils.isEmpty(statuses)) {
-            builder.append(" and pi_uniqueStateKey IN (").append(createQuery(statuses)).append(")");
+            builder.append(" and CONCAT  (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append(")");
             addToPreparedStatement(preparedStmtList,statuses);
         }
         return OUTER_QUERY+builder.toString()+")" + " fp "+STATE_JOIN_QUERY;
