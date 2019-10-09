@@ -570,7 +570,6 @@ public class UserService {
     
     public void validatePassword(String password) {
     	Map<String, String> errorMap = new HashMap<>();
-    	log.info("password: "+password);
     	if(!StringUtils.isEmpty(password)) {
         	if(password.length() < pwdMinLength || password.length() > pwdMaxLength)
     			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMinLength+" and maximum: "+pwdMaxLength+" characters.");
