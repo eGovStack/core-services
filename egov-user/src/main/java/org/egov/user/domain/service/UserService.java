@@ -567,7 +567,7 @@ public class UserService {
     	if(!StringUtils.isEmpty(password)) {
         	if(password.length() < pwdMaxLength)
     			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMaxLength+" characters.");
-    		Pattern p = Pattern.compile(pwdRegex);
+    		Pattern p = Pattern.compile(pwdRegex, Pattern.CASE_INSENSITIVE);
     		Matcher m = p.matcher(password);
     		if (m.find()) {
     			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character and MUST NOT contain any spaces");
