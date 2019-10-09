@@ -56,7 +56,7 @@ public class UserServiceTest {
 	private final String TENANT_ID = "tenantId";
 	private final boolean isCitizenLoginOtpBased = false;
 	private final boolean isEmployeeLoginOtpBased = false;
-    private String pwdRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$)$";
+    private String pwdRegex = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%])(?=\\S+$))";
     private Integer pwdMaxLength = 8;
 
 	@Before
@@ -398,7 +398,7 @@ public class UserServiceTest {
                 .userName("xyz")
                 .tenantId("default")
                 .type(UserType.CITIZEN)
-                .newPassword("newPassword")
+                .newPassword("P@ssw0rd")
                 .existingPassword("existingPassword")
                 .build();
         User domainUser = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
@@ -417,7 +417,7 @@ public class UserServiceTest {
                 .userName("xyz")
                 .tenantId("default")
                 .type(UserType.SYSTEM)
-                .newPassword("newPassword")
+                .newPassword("P@ssw0rd")
                 .otpReference("123456")
                 .build();
 		when(otpRepository.isOtpValidationComplete(any())).thenReturn(true);
@@ -444,17 +444,17 @@ public class UserServiceTest {
                 .tenantId("default")
                 .type(UserType.SYSTEM)
                 .otpReference("123456")
-                .newPassword("newPassword")
+                .newPassword("P@ssw0rd")
                 .build();
 		when(otpRepository.validateOtp(any())).thenReturn(true);
 		final User domainUser = mock(User.class);
-		when(domainUser.getPassword()).thenReturn("newPassword");
+		when(domainUser.getPassword()).thenReturn("P@ssw0rd");
 		when(domainUser.getType()).thenReturn(UserType.SYSTEM);
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
-        when(userService.encryptPwd(anyString())).thenReturn("newPassword");
+        when(userService.encryptPwd(anyString())).thenReturn("P@ssw0rd");
 		userService.updatePasswordForNonLoggedInUser(request);
 
-		verify(domainUser).updatePassword("newPassword");
+		verify(domainUser).updatePassword("P@ssw0rd");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -561,7 +561,7 @@ public class UserServiceTest {
 	private org.egov.user.domain.model.User validDomainUser(boolean otpValidationMandatory) {
 		return User.builder().username("supandi_rocks").name("Supandi").gender(Gender.MALE).type(UserType.CITIZEN)
 				.active(Boolean.TRUE).mobileNumber("9988776655").tenantId("tenantId").otpReference("12312")
-				.password("password").roles(Collections.singleton(Role.builder().code("roleCode1").build()))
+				.password("P@ssw0rd").roles(Collections.singleton(Role.builder().code("roleCode1").build()))
 				.accountLocked(false).otpValidationMandatory(otpValidationMandatory).build();
 	}
 
