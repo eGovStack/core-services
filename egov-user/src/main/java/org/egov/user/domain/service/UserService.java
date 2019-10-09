@@ -572,7 +572,7 @@ public class UserService {
     		Pattern p = Pattern.compile(pwdRegex, Pattern.CASE_INSENSITIVE);
     		Matcher m = p.matcher(password);
     		if (!m.find()) {
-    			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character and MUST NOT contain any spaces");
+    			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character (@#$%) and MUST NOT contain any spaces");
     		}
     	}
 		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
