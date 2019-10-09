@@ -71,8 +71,11 @@ public class UserService {
     private String pwdRegex;
     
     @Value("${egov.user.pwd.pattern.min.length}")
+    private Integer pwdMinLength;
+    
+    @Value("${egov.user.pwd.pattern.max.length}")
     private Integer pwdMaxLength;
-
+    
     @Autowired
     private RestTemplate restTemplate;
 
@@ -82,7 +85,8 @@ public class UserService {
                        @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
                        @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
                        @Value("${egov.user.pwd.pattern}") String pwdRegex,
-                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMaxLength) {
+                       @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
+                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
         this.userRepository = userRepository;
         this.otpRepository = otpRepository;
         this.passwordEncoder = passwordEncoder;
@@ -93,6 +97,8 @@ public class UserService {
         this.tokenStore = tokenStore;
         this.pwdRegex = pwdRegex;
         this.pwdMaxLength = pwdMaxLength;
+        this.pwdMinLength = pwdMinLength;
+
     }
 
     /**
@@ -565,11 +571,10 @@ public class UserService {
     public void validatePassword(String password) {
     	Map<String, String> errorMap = new HashMap<>();
     	log.info("password: "+password);
-    	log.info("pwdRegex: "+pwdRegex);
     	if(!StringUtils.isEmpty(password)) {
-        	if(password.length() < pwdMaxLength)
-    			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMaxLength+" characters.");
-    		Pattern p = Pattern.compile(pwdRegex, Pattern.CASE_INSENSITIVE);
+        	if(password.length() < pwdMinLength || password.length() > pwdMaxLength)
+    			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMinLength+" and maximum: "+pwdMaxLength+" characters.");
+    		Pattern p = Pattern.compile(pwdRegex);
     		Matcher m = p.matcher(password);
     		if (!m.find()) {
     			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character (@#$%) and MUST NOT contain any spaces");
