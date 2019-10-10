@@ -31,9 +31,12 @@ public class UserRequest {
 	private String userName;
 	private String salutation;
 	
-	@Pattern(regexp="^[a-zA-Z.]*$")
-	@Size(max=30)
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String name;
+	
+	@Pattern(regexp="^[a-zA-Z ]*$")
+	@Size(max=10)
 	private String gender;
 	
 	@Pattern(regexp="(^$|[0-9]{10})")
@@ -54,6 +57,9 @@ public class UserRequest {
 	private UserType type;
 	private Boolean accountLocked;
 	private Long accountLockedDate;
+	
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String fatherOrHusbandName;
 	private String signature;
 	private String bloodGroup;
