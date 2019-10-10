@@ -67,7 +67,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/citizen/_create")
-	public Object createCitizen(@RequestBody CreateUserRequest createUserRequest) {
+	public Object createCitizen(@RequestBody @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Citizen Registration Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(true);
 		user.setOtpValidationMandatory(IsValidationMandatory);
@@ -87,7 +87,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/users/_createnovalidate")
-	public UserDetailResponse createUserWithoutValidation(@RequestBody CreateUserRequest createUserRequest,
+	public UserDetailResponse createUserWithoutValidation(@RequestBody @Valid CreateUserRequest createUserRequest,
 			@RequestHeader HttpHeaders headers) {
 		User user = createUserRequest.toDomain(true);
 		user.setMobileValidationMandatory(isMobileValidationRequired(headers));
@@ -104,7 +104,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/_search")
-	public UserSearchResponse get(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers){
+	public UserSearchResponse get(@RequestBody @Valid UserSearchRequest request, @RequestHeader HttpHeaders headers){
 
 		log.debug("Received User search Request  " +  request);
 		if (request.getActive() == null) {
@@ -146,7 +146,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/users/_updatenovalidate")
-	public UserDetailResponse updateUserWithoutValidation(@RequestBody final CreateUserRequest createUserRequest,
+	public UserDetailResponse updateUserWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
 														  @RequestHeader HttpHeaders headers) {
 		User user = createUserRequest.toDomain(false);
 		user.setMobileValidationMandatory(isMobileValidationRequired(headers));
@@ -161,7 +161,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/profile/_update")
-	public UserDetailResponse patch(@RequestBody final CreateUserRequest createUserRequest) {
+	public UserDetailResponse patch(@RequestBody final @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Profile Update Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(false);
 		final User updatedUser = userService.partialUpdate(user);

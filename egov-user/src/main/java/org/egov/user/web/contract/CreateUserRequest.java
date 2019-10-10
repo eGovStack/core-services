@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.user.domain.model.User;
@@ -15,6 +16,7 @@ import org.egov.user.domain.model.User;
 public class CreateUserRequest {
     private RequestInfo requestInfo;
 
+    @NotNull
     @Valid
     private UserRequest user;
 
