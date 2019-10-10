@@ -11,9 +11,13 @@ import org.egov.user.domain.model.enums.BloodGroup;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -25,6 +29,9 @@ public class User {
 	
 	private Long id;
 	private String uuid;
+	
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String tenantId;
 	private String username;
 	private String title;
@@ -32,9 +39,14 @@ public class User {
 	private String salutation;
 	private String guardian;
 	private GuardianRelation guardianRelation;
+	
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String name;
 	private Gender gender;
 	private String mobileNumber;
+	
+	@Email
 	private String emailId;
 	private String altContactNumber;
 	private String pan;

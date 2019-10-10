@@ -47,6 +47,9 @@ public class UserRequest {
 	private String pan;
 	private String aadhaarNumber;
 	private String permanentAddress;
+	
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String permanentCity;
 	private String permanentPinCode;
 	private String correspondenceAddress;
@@ -69,6 +72,9 @@ public class UserRequest {
 	private String password;
 	private String otpReference;
 	private Long lastModifiedBy;
+	
+	@Pattern(regexp="^[a-zA-Z. ]*$")
+	@Size(max=50)
 	private String tenantId;
 
 	private Set<RoleRequest> roles;
