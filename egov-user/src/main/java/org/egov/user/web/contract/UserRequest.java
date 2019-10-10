@@ -10,11 +10,15 @@ import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.model.enums.BloodGroup;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.UserType;
+import org.hibernate.validator.constraints.Email;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -26,9 +30,15 @@ public class UserRequest {
 	private Long id;
 	private String userName;
 	private String salutation;
+	
+	@Pattern(regexp="^[a-zA-Z.]*$")
+	@Size(max=30)
 	private String name;
 	private String gender;
+	
+	@Pattern(regexp="(^$|[0-9]{10})")
 	private String mobileNumber;
+	@Email
 	private String emailId;
 	private String altContactNumber;
 	private String pan;
