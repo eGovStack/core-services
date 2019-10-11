@@ -13,7 +13,10 @@ import org.egov.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class OtpService {
 
 	private OtpRepository otpRepository;
@@ -35,6 +38,7 @@ public class OtpService {
 		if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType()) {
 			sendOtpForUserRegistration(otpRequest);
 		} else {
+			log.info("Passwordreset");
 			sendOtpForPasswordReset(otpRequest);
 		}
 	}
@@ -55,6 +59,7 @@ public class OtpService {
 	private void sendOtpForPasswordReset(OtpRequest otpRequest) {
 		final User matchingUser = userRepository.fetchUser(otpRequest.getMobileNumber(), otpRequest.getTenantId(),
 				otpRequest.getUserType());
+		log.info("User: "+matchingUser);
 		if (null == matchingUser) {
 			throw new UserNotFoundException();
 		}
@@ -62,6 +67,7 @@ public class OtpService {
 			throw new UserMobileNumberNotFoundException();
 		
 		final String otpNumber = otpRepository.fetchOtp(otpRequest);
+		log.info("otpNumber: "+otpNumber);
 		otpRequest.setMobileNumber(matchingUser.getMobileNumber());
 		otpSMSSender.send(otpRequest, otpNumber);
 		otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
