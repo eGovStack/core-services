@@ -26,7 +26,6 @@ public class OtpController {
     @PostMapping("/v1/_send")
     @ResponseStatus(HttpStatus.CREATED)
     public OtpResponse sendOtp(@RequestBody OtpRequest otpRequest) {
-    	log.info("otpRequest: "+otpRequest);
         otpService.sendOtp(otpRequest.toDomain());
         return OtpResponse.builder().
         		responseInfo(null).successful(true).build();

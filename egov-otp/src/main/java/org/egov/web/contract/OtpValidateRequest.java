@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.domain.model.ValidateRequest;
@@ -12,6 +13,7 @@ import org.egov.domain.model.ValidateRequest;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class OtpValidateRequest {
 	@JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
