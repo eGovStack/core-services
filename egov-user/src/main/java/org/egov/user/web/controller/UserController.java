@@ -177,23 +177,16 @@ public class UserController {
 	private UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
 
         UserSearchCriteria searchCriteria = request.toDomain();
-        
-        log.info("searchCriteria: "+searchCriteria);
-
+       
         if(!isInterServiceCall(headers)){
             if((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
                     || searchCriteria.getLimit() == 0))
                 searchCriteria.setLimit(defaultSearchSize);
         }
-
-
 		List<User> userModels = userService.searchUsers(searchCriteria, isInterServiceCall(headers));
-
-        log.info("userModels: "+userModels);
 
 		List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
 				.collect(Collectors.toList());
-        log.info("userModels: "+userContracts);
 		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
 		return new UserSearchResponse(responseInfo, userContracts);
 	}

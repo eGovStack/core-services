@@ -28,7 +28,8 @@ public class OtpController {
     public OtpResponse sendOtp(@RequestBody OtpRequest otpRequest) {
     	log.info("otpRequest: "+otpRequest);
         otpService.sendOtp(otpRequest.toDomain());
-        return new OtpResponse(null, true);
+        return OtpResponse.builder().
+        		responseInfo(null).successful(true).build();
     }
 
 }

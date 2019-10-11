@@ -38,7 +38,6 @@ public class OtpService {
 		if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType()) {
 			sendOtpForUserRegistration(otpRequest);
 		} else {
-			log.info("Passwordreset");
 			sendOtpForPasswordReset(otpRequest);
 		}
 	}
@@ -67,7 +66,6 @@ public class OtpService {
 			throw new UserMobileNumberNotFoundException();
 		
 		final String otpNumber = otpRepository.fetchOtp(otpRequest);
-		log.info("otpNumber: "+otpNumber);
 		otpRequest.setMobileNumber(matchingUser.getMobileNumber());
 		otpSMSSender.send(otpRequest, otpNumber);
 		otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
