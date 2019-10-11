@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("password")
+@Slf4j
 public class PasswordController {
 
 	private UserService userService;
@@ -43,6 +46,7 @@ public class PasswordController {
 	 */
 	@PostMapping("/nologin/_update")
 	public UpdatePasswordResponse updatePasswordForNonLoggedInUser(@RequestBody @Valid NonLoggedInUserUpdatePasswordRequest request) {
+		log.info("NonLoggedInUserUpdatePasswordRequest: "+request);
 		userService.updatePasswordForNonLoggedInUser(request.toDomain());
 		return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
 	}

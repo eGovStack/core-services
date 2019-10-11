@@ -395,8 +395,8 @@ public class UserService {
      * @param request
      */
     public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request) {
+		log.info("NonLoggedInUserUpdatePasswordRequest inside: "+request);
         request.validate();
-        // validateOtp(request.getOtpValidationRequest());
         final User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType());
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased) {
         	log.info("CITIZEN forgot password flow is disabled");
