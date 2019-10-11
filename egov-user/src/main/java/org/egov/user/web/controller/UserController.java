@@ -106,7 +106,7 @@ public class UserController {
 	@PostMapping("/_search")
 	public UserSearchResponse get(@RequestBody @Valid UserSearchRequest request, @RequestHeader HttpHeaders headers){
 
-		log.debug("Received User search Request  " +  request);
+		log.info("Received User search Request  " +  request);
 		if (request.getActive() == null) {
 			request.setActive(true);
 		}
@@ -177,6 +177,8 @@ public class UserController {
 	private UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
 
         UserSearchCriteria searchCriteria = request.toDomain();
+        
+        log.info("searchCriteria: "+searchCriteria);
 
         if(!isInterServiceCall(headers)){
             if((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
@@ -187,9 +189,11 @@ public class UserController {
 
 		List<User> userModels = userService.searchUsers(searchCriteria, isInterServiceCall(headers));
 
+        log.info("userModels: "+userModels);
 
 		List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
 				.collect(Collectors.toList());
+        log.info("userModels: "+userContracts);
 		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
 		return new UserSearchResponse(responseInfo, userContracts);
 	}

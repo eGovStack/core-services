@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.user.domain.exception.InvalidUserCreateException;
 import org.egov.user.domain.exception.InvalidUserUpdateException;
@@ -24,6 +26,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Builder(toBuilder = true)
 public class User {
 	

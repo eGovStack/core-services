@@ -163,7 +163,9 @@ public class UserService {
         searchCriteria.validate(isInterServiceCall);
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+        log.info("searchCriteria tenant: "+searchCriteria);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
+        log.info("list: "+list);
         setFileStoreUrlsByFileStoreIds(list);
         return list;
     }
