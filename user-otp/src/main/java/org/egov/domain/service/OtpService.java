@@ -58,7 +58,6 @@ public class OtpService {
 	private void sendOtpForPasswordReset(OtpRequest otpRequest) {
 		final User matchingUser = userRepository.fetchUser(otpRequest.getMobileNumber(), otpRequest.getTenantId(),
 				otpRequest.getUserType());
-		log.info("User: "+matchingUser);
 		if (null == matchingUser) {
 			throw new UserNotFoundException();
 		}

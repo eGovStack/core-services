@@ -50,7 +50,6 @@ public class OtpRepository {
 	 */
 	public boolean validateOtp(OtpValidateRequest request) {
 		try {
-	        log.info("otpValidationRequest 2: "+request);
             OtpResponse otpResponse = restTemplate.postForObject(otpValidateEndpoint, request, OtpResponse.class);
             if(null!=otpResponse && null!=otpResponse.getOtp())
                 return otpResponse.getOtp().isValidationSuccessful();

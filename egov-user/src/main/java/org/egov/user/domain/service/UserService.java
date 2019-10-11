@@ -292,7 +292,6 @@ public class UserService {
         RequestInfo requestInfo = RequestInfo.builder().action("validate").ts(new Date()).build();
         OtpValidateRequest otpValidationRequest = OtpValidateRequest.builder().requestInfo(requestInfo).otp(otp)
                 .build();
-        log.info("otpValidationRequest 1: "+otpValidationRequest);
             return otpRepository.validateOtp(otpValidationRequest);
 
     }
