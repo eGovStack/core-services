@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.domain.model.ValidateRequest;
 
@@ -17,6 +19,9 @@ import org.egov.domain.model.ValidateRequest;
 public class OtpValidateRequest {
 	@JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
+	
+	@JsonProperty("otp")
+	@NotNull
     private Otp otp;
 
     public ValidateRequest toDomainValidateRequest() {

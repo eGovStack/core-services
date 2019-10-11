@@ -1,5 +1,7 @@
 package org.egov.web.controller;
 
+import javax.validation.Valid;
+
 import org.egov.domain.model.Token;
 import org.egov.domain.service.TokenService;
 import org.egov.web.contract.OtpRequest;
@@ -25,14 +27,14 @@ public class OtpController {
 
     @PostMapping("v1/_create")
     @ResponseStatus(HttpStatus.CREATED)
-    public OtpResponse createOtp(@RequestBody OtpRequest otpRequest) {
+    public OtpResponse createOtp(@RequestBody @Valid OtpRequest otpRequest) {
     	log.info("otpRequest: "+otpRequest);
         final Token token = tokenService.create(otpRequest.getTokenRequest());
         return new OtpResponse(token);
     }
 
     @PostMapping("v1/_validate")
-    public OtpResponse validateOtp(@RequestBody OtpValidateRequest request) {
+    public OtpResponse validateOtp(@RequestBody @Valid OtpValidateRequest request) {
     	log.info("OtpValidateRequest: "+request);
         final Token token = tokenService.validate(request.toDomainValidateRequest());
         return new OtpResponse(token);
