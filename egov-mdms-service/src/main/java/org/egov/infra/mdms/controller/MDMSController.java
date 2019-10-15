@@ -34,98 +34,74 @@ import net.minidev.json.JSONArray;
 @RequestMapping(value = "/v1")
 public class MDMSController {
 
-	@Autowired
-	private MDMSService mdmsService;
+    @Autowired
+    private MDMSService mdmsService;
 
-	@PostMapping("_search")
-	@ResponseBody
-	private ResponseEntity<?> search(@RequestBody @Valid MdmsCriteriaReq mdmsCriteriaReq) {
-		
-		long startTime = new Date().getTime();
-		log.info("api startTime:"+startTime);
-		log.info("MDMSController mdmsCriteriaReq:" + mdmsCriteriaReq);
-		/*
-		 * if(bindingResult.hasErrors()) { throw new
-		 * CustomBindingResultExceprion(bindingResult); }
-		 */
-		Map<String, Map<String, JSONArray>> response = mdmsService.searchMaster(mdmsCriteriaReq);
-		MdmsResponse mdmsResponse = new MdmsResponse();
-		mdmsResponse.setMdmsRes(response);
-		
-		long endTime = new Date().getTime();
-		log.info("api endTime:"+endTime);
-		long totaltime = (endTime-startTime);
-		log.info("Total execution time in ms:"+ totaltime);
-		
-		return new ResponseEntity<>(mdmsResponse, HttpStatus.OK);
+    @PostMapping("_search")
+    @ResponseBody
+    private ResponseEntity<?> search(@RequestBody @Valid MdmsCriteriaReq mdmsCriteriaReq) {
 
-		
-	}
-	
+        Map<String, Map<String, JSONArray>> response = mdmsService.searchMaster(mdmsCriteriaReq);
+        MdmsResponse mdmsResponse = new MdmsResponse();
+        mdmsResponse.setMdmsRes(response);
 
-	@PostMapping("_get")
-	@ResponseBody
-	private ResponseEntity<?> search(@RequestParam("moduleName") String module,
-									 @RequestParam("masterName") String master,
-									 @RequestParam(value = "filter", required = false) String filter,
-									 @RequestParam("tenantId") String tenantId,
-									 @RequestBody RequestInfo requestInfo){
+        return new ResponseEntity<>(mdmsResponse, HttpStatus.OK);
+    }
 
-    	log.info("MDMSController mdmsCriteriaReq [" + module + ", " + master + ", " + filter + "]");
-    	/*if(bindingResult.hasErrors()) {
-    		throw new CustomBindingResultExceprion(bindingResult);
-    	}*/
 
-    	MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-    	mdmsCriteriaReq.setRequestInfo(requestInfo);
-		MdmsCriteria criteria = new MdmsCriteria();
-		criteria.setTenantId(tenantId);
+    @PostMapping("_get")
+    @ResponseBody
+    private ResponseEntity<?> search(@RequestParam("moduleName") String module,
+                                     @RequestParam("masterName") String master,
+                                     @RequestParam(value = "filter", required = false) String filter,
+                                     @RequestParam("tenantId") String tenantId,
+                                     @RequestBody RequestInfo requestInfo) {
 
-		ModuleDetail detail = new ModuleDetail();
-		detail.setModuleName(module);
+        log.info("MDMSController mdmsCriteriaReq [" + module + ", " + master + ", " + filter + "]");
+        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+        mdmsCriteriaReq.setRequestInfo(requestInfo);
+        MdmsCriteria criteria = new MdmsCriteria();
+        criteria.setTenantId(tenantId);
 
-		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName(master);
-		masterDetail.setFilter(filter);
-		ArrayList<MasterDetail> masterList = new ArrayList<>();
-		masterList.add(masterDetail);
-		detail.setMasterDetails(masterList);
+        ModuleDetail detail = new ModuleDetail();
+        detail.setModuleName(module);
 
-		ArrayList<ModuleDetail> moduleList = new ArrayList<>();
-		moduleList.add(detail);
+        MasterDetail masterDetail = new MasterDetail();
+        masterDetail.setName(master);
+        masterDetail.setFilter(filter);
+        ArrayList<MasterDetail> masterList = new ArrayList<>();
+        masterList.add(masterDetail);
+        detail.setMasterDetails(masterList);
 
-		criteria.setModuleDetails(moduleList);
-		mdmsCriteriaReq.setMdmsCriteria(criteria);
+        ArrayList<ModuleDetail> moduleList = new ArrayList<>();
+        moduleList.add(detail);
 
-		Map<String, Map<String, JSONArray>> response = mdmsService.searchMaster(mdmsCriteriaReq);
-		MdmsResponse mdmsResponse = new MdmsResponse();
-		mdmsResponse.setMdmsRes(response);
-		return new ResponseEntity<>(mdmsResponse ,HttpStatus.OK);
+        criteria.setModuleDetails(moduleList);
+        mdmsCriteriaReq.setMdmsCriteria(criteria);
 
-	}
-	
-	
-	
-	
-	@PostMapping("_reload")
-	@ResponseBody
-	private ResponseEntity<?> reload(@RequestParam("filePath") String filePath,
-									 @RequestParam("tenantId") String tenantId,
-									 @RequestBody RequestInfo requestInfo){
+        Map<String, Map<String, JSONArray>> response = mdmsService.searchMaster(mdmsCriteriaReq);
+        MdmsResponse mdmsResponse = new MdmsResponse();
+        mdmsResponse.setMdmsRes(response);
+        return new ResponseEntity<>(mdmsResponse, HttpStatus.OK);
 
-		System.out.println(filePath+","+tenantId);
-		mdmsService.updateCache(filePath, tenantId);
-		return new ResponseEntity<>("Success" ,HttpStatus.OK);
-	}
-	
-	@PostMapping("_reloadobj")
-	@ResponseBody
-	private ResponseEntity<?> reloadObj(@RequestBody MdmsUpdateRequest mdmsUpdateRequest){
-		System.out.println("mdmsUpdateRequest:"+mdmsUpdateRequest);
-		System.out.println("mdmsUpdateRequest key:"+mdmsUpdateRequest.getMdmsReq().keySet());
-		
-		 mdmsService.reloadObj(mdmsUpdateRequest.getMdmsReq());
-		return new ResponseEntity<>("Success" ,HttpStatus.OK);
-	}
-	
+    }
+
+
+    @PostMapping("_reload")
+    @ResponseBody
+    private ResponseEntity<?> reload(@RequestParam("filePath") String filePath,
+                                     @RequestParam("tenantId") String tenantId,
+                                     @RequestBody RequestInfo requestInfo) {
+
+        mdmsService.updateCache(filePath, tenantId);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
+
+    @PostMapping("_reloadobj")
+    @ResponseBody
+    private ResponseEntity<?> reloadObj(@RequestBody MdmsUpdateRequest mdmsUpdateRequest) {
+        mdmsService.reloadObj(mdmsUpdateRequest.getMdmsReq());
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
+
 }

@@ -14,14 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class MdmsConsumer {
-	
-	@Autowired
-	private MDMSApplicationRunnerImpl applicationRunnerImpl;
 
-	@KafkaListener(topics = {"${egov.kafka.topics.reload}"})
-	public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-		log.info("MdmsConsumer key:" + topic + ":" + "value:" + consumerRecord);
-		applicationRunnerImpl.prepareTenantMap(consumerRecord);
-	}
+    @Autowired
+    private MDMSApplicationRunnerImpl applicationRunnerImpl;
+
+    @KafkaListener(topics = {"${egov.kafka.topics.reload}"})
+    public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        log.info("MdmsConsumer key:" + topic + ":" + "value:" + consumerRecord);
+        applicationRunnerImpl.prepareTenantMap(consumerRecord);
+    }
 
 }

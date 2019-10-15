@@ -17,13 +17,13 @@ import lombok.ToString;
 @Getter
 @ToString
 public class MdmsUpdateRequest {
-	
-	@JsonProperty("RequestInfo")
-	@NotNull
-	private RequestInfo requestInfo;
-	
-	@JsonProperty("MdmsReq")
-	@NotNull
-	private Map<String, Object> mdmsReq;
+
+    @JsonProperty("RequestInfo")
+    @NotNull
+    private RequestInfo requestInfo;
+
+    @JsonProperty("MdmsReq")
+    @NotNull
+    private Map<String, Object> mdmsReq;
 
 }
