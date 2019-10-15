@@ -31,6 +31,10 @@ public class SearchReqValidator {
 	@Autowired
 	private SearchUtils searchUtils;
 	
+	@Autowired
+	private ObjectMapper mapper;
+	
+	
 	public void validate(SearchRequest searchRequest, String moduleName, String searchName) {
 		log.info("Validating search request....");
 		Map<String, SearchDefinition> searchDefinitionMap = runner.getSearchDefinitionMap();
@@ -42,23 +46,28 @@ public class SearchReqValidator {
 		SearchParams searchParams = searchDefinition.getSearchParams();
 		Map<String, String> errorMap = new HashMap<>();
 		if(null == searchParams) {
-			errorMap.put("400", "Missiing Parameter Configurations for: "+searchDefinition.getName());
+			errorMap.put("MISSING_PARAM_CONFIGS", "Missiing Parameter Configurations for: "+searchDefinition.getName());
 			throw new CustomException(errorMap);
 		}
 		if(!CollectionUtils.isEmpty(searchParams.getParams())) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Params> params = searchParams.getParams().stream().filter(param -> param.getIsMandatory()).collect(Collectors.toList());
-			params.forEach(entry -> {
-				Object paramValue = null;
-				try {
-					paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), entry.getJsonPath());
-				}catch(Exception e) {
-					errorMap.put("400", "Missiing Mandatory Property: "+entry.getJsonPath());
-				}
-				if(null == paramValue) {
-					errorMap.put("400", "Missiing Mandatory Property: "+entry.getJsonPath());
-				}
-			});
+			try {
+				String request = mapper.writeValueAsString(searchRequest);
+				params.forEach(entry -> {
+					Object paramValue = null;
+					try {
+						paramValue = JsonPath.read(request, entry.getJsonPath());
+					}catch(Exception e) {
+						errorMap.put("MISSING_MANDATORY_EXCEPTION", "Missiing Mandatory Property: "+entry.getJsonPath());
+					}
+					if(null == paramValue) {
+						errorMap.put("MISSING_MANDATORY_VALUE", "Missiing Mandatory Property: "+entry.getJsonPath());
+					}
+				});
+			}catch(Exception e) {
+				log.error("An exception has occured while validating: ",e);
+				errorMap.put("VALIDATION_EXCEPTION", "An exception has occured while validating");
+			}
 		}		
 		if(!errorMap.isEmpty())
 			throw new CustomException(errorMap);

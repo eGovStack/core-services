@@ -52,7 +52,6 @@ public class SearchService {
 
 	public Object searchData(SearchRequest searchRequest, String moduleName, String searchName) {
 		searchReqValidator.validate(searchRequest, moduleName, searchName);
-		log.info("searchRequest: "+searchRequest);
 		Map<String, SearchDefinition> searchDefinitionMap = runner.getSearchDefinitionMap();
 		Definition searchDefinition = null;
 		searchDefinition = searchUtils.getSearchDefinition(searchDefinitionMap, moduleName, searchName);
@@ -61,15 +60,14 @@ public class SearchService {
 			maps = searchRepository.fetchData(searchRequest, searchDefinition);
 		}catch(Exception e){
 			log.error("Exception: ",e);
-			throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), 
-					"There was an error encountered at the Db");
+			throw new CustomException("DB_QUERY_EXECUTION_ERROR", "There was an error encountered at the Db");
 		}
 		Object data = null;
 		try{
 			data = formatResult(maps, searchDefinition, searchRequest);
 		}catch(Exception e){
 			log.error("Exception: ",e);
-			throw new CustomException(HttpStatus.BAD_REQUEST.toString(), 
+			throw new CustomException("RESULT_FORMAT_ERROR", 
 					"There was an error encountered while formatting the result, Verify output config from the yaml file.");
 		}
 		

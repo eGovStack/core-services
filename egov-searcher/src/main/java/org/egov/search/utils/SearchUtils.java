@@ -17,8 +17,8 @@ import org.egov.search.model.SearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -36,6 +36,10 @@ public class SearchUtils {
 
 	@Value("${pagination.default.offset}")
 	private String defaultOffset;
+	
+	@Autowired
+	private ObjectMapper mapper;
+	
 	/**
 	 * Builds the query reqd for search
 	 * 
@@ -83,50 +87,55 @@ public class SearchUtils {
 	 */
 	public String buildWhereClause(SearchRequest searchRequest, SearchParams searchParam,  Map<String, Object> preparedStatementValues) {
 		StringBuilder whereClause = new StringBuilder();
-		ObjectMapper mapper = new ObjectMapper();
 		String condition = searchParam.getCondition();
-		for(Params param : searchParam.getParams()) {
-			Object paramValue = null;
-			try {
-				if(null != param.getIsConstant()) {
-					if(param.getIsConstant()) 
-						paramValue = param.getValue();
+		try {
+			String request = mapper.writeValueAsString(searchRequest);
+			for(Params param : searchParam.getParams()) {
+				Object paramValue = null;
+				try {
+					if(null != param.getIsConstant()) {
+						if(param.getIsConstant()) 
+							paramValue = param.getValue();
+						else 
+							paramValue = JsonPath.read(request, param.getJsonPath());
+					}else
+						paramValue = JsonPath.read(request, param.getJsonPath());
+					
+					if (null == paramValue)
+						continue;
 					else 
-						paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), param.getJsonPath());
-				}else
-					paramValue = JsonPath.read(mapper.writeValueAsString(searchRequest), param.getJsonPath());
-				
-				if (null == paramValue)
+						preparedStatementValues.put(param.getName(), paramValue);
+					
+				} catch (Exception e) {
 					continue;
-				else 
-					preparedStatementValues.put(param.getName(), paramValue);
-				
-			} catch (Exception e) {
-				continue;
+				}
+				if (paramValue instanceof net.minidev.json.JSONArray) {
+					String[] validListOperators = {"NOT IN", "IN"};
+					String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
+					if(!Arrays.asList(validListOperators).contains(operator))
+						operator = " IN "; 
+					whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
+				} else {
+					String[] validOperators = {"=", "GE", "LE", "NE", "LIKE"};
+					String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
+					if(!Arrays.asList(validOperators).contains(operator))
+						operator = "="; 
+					if (operator.equals("GE"))
+						operator = ">=";
+					else if (operator.equals("LE"))
+						operator = "<=";
+					else if (operator.equals("NE"))
+						operator = "!=";
+					else if (operator.equals("LIKE")) {
+						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+					}								
+					whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
+				}
+				whereClause.append(" " + condition + " ");
 			}
-			if (paramValue instanceof net.minidev.json.JSONArray) {
-				String[] validListOperators = {"NOT IN", "IN"};
-				String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
-				if(!Arrays.asList(validListOperators).contains(operator))
-					operator = " IN "; 
-				whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
-			} else {
-				String[] validOperators = {"=", "GE", "LE", "NE", "LIKE"};
-				String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
-				if(!Arrays.asList(validOperators).contains(operator))
-					operator = "="; 
-				if (operator.equals("GE"))
-					operator = ">=";
-				else if (operator.equals("LE"))
-					operator = "<=";
-				else if (operator.equals("NE"))
-					operator = "!=";
-				else if (operator.equals("LIKE")) {
-					preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
-				}								
-				whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
-			}
-			whereClause.append(" " + condition + " ");
+		}catch(Exception e) {
+			log.error("Exception while bulding query: ", e);
+			throw new CustomException("QUERY_BUILD_ERROR", "Exception while bulding query");
 		}
 		return whereClause.toString().substring(0, whereClause.toString().lastIndexOf(searchParam.getCondition()));
 	}
@@ -141,7 +150,6 @@ public class SearchUtils {
 	 */
 	public String getPaginationClause(SearchRequest searchRequest, Pagination pagination) {
 		StringBuilder paginationClause = new StringBuilder();
-		ObjectMapper mapper = new ObjectMapper();
 		Object limit = null;
 		Object offset = null;
 		if (null != pagination) {
@@ -178,10 +186,10 @@ public class SearchUtils {
 			definitions = searchDefinitionMap.get(moduleName).getDefinitions().stream()
 					.filter(def -> (def.getName().equals(searchName))).collect(Collectors.toList());
 		} catch (Exception e) {
-			throw new CustomException(HttpStatus.BAD_REQUEST.toString(), "There's no Search Definition provided for this search feature");
+			throw new CustomException("NO_SEARCH_DEFINITION_EXCEPTION", "There's no Search Definition provided for this search feature");
 		}
 		if (CollectionUtils.isEmpty(definitions)) {
-			throw new CustomException(HttpStatus.BAD_REQUEST.toString(),"There's no Search Definition provided for this search feature");
+			throw new CustomException("NO_SEARCH_DEFINITION_FOUND","There's no Search Definition provided for this search feature");
 		}
 		return definitions.get(0);
 
