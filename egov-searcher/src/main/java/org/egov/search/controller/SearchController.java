@@ -31,10 +31,14 @@ public class SearchController {
 			@PathVariable("searchName") String searchName,
 			@RequestBody @Valid final SearchRequest searchRequest) {		
 		Object searchResult = searchService.searchData(searchRequest,moduleName,searchName);
+		
 	    Type type = new TypeToken<Map<String, Object>>() {}.getType();
 		Gson gson = new Gson();
 		Map<String, Object> data = gson.fromJson(searchResult.toString(), type);
 		return new ResponseEntity<>(data, HttpStatus.OK);
+		
+		//return new ResponseEntity<>(searchResult, HttpStatus.OK);
+
 	}
 
 		
