@@ -6,7 +6,7 @@ const envVariables={
 
     KAFKA_BROKER_HOST: process.env.KAFKA_BROKER_HOST || "localhost:9092",
     KAFKA_CREATE_JOB_TOPIC: process.env.KAFKA_CREATE_JOB_TOPIC || "PDF_GEN_CREATE",
-
+    KAFKA_RECEIVE_CREATE_JOB_TOPIC: process.env.KAFKA_RECEIVE_CREATE_JOB_TOPIC || "PDF_GEN_RECEIVE", 
     DB_USER: process.env.DB_USER || "postgres",
     DB_PASSWORD: process.env.DB_PASSWORD || "postgres",
     DB_HOST: process.env.DB_HOST || "localhost",

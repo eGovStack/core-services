@@ -5,6 +5,7 @@
       "serviceName": "rainmaker-pt",
       "version": "1.0.0",
       "baseKeyPath": "$.Properties.*",
+      "entityIdPath":"$.propertyId",
       "isCommonTableBorderRequired":true,
       "mappings": [
          {

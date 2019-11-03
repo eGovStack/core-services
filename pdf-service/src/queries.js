@@ -1,6 +1,7 @@
 const Pool = require('pg').Pool
 import logger from "./config/logger";
 import producer from "./kafka/producer";
+// import consumer from "./kafka/consumer";
 import envVariables from "./EnvironmentVariables";
 
   const pool = new Pool({
@@ -12,19 +13,39 @@ import envVariables from "./EnvironmentVariables";
 })
 
 let createJobKafkaTopic=envVariables.KAFKA_CREATE_JOB_TOPIC;
-export const getFileStoreIds = (jobid,tenantId,callback) => {
+const uuidv4 = require('uuid/v4');
+ 
+
+export const getFileStoreIds = (jobid,tenantId,isconsolidated,entityid,callback) => {
       var searchquery="";
       var queryparams=[];
-      if((tenantId==undefined)||(tenantId.trim()===""))
+      var next=2;
+      searchquery="SELECT * FROM egov_pdf_gen WHERE jobid  = ANY ($1)";
+      queryparams.push(jobid);
+
+      if((tenantId!=undefined)&&(tenantId.trim()!==""))
       {
-        searchquery="SELECT * FROM egov_pdf_gen WHERE jobid  = ANY ($1)";
-        queryparams=[jobid];
+        searchquery+=` and tenantid = ($${next++})`;
+        queryparams.push(tenantId);
       }
-      else
+
+      if((isconsolidated!=undefined)&&(isconsolidated.trim()!==""))
       {
-        searchquery="SELECT * FROM egov_pdf_gen WHERE jobid  = ANY ($1) and tenantid = $2";
-        queryparams=[jobid,tenantId];
+        var ifTrue=(isconsolidated==="true")||(isconsolidated==="True");
+        var ifFalse=(isconsolidated==="false")||(isconsolidated==="false");
+        if(ifTrue || ifFalse)
+        {
+          searchquery+=` and isconsolidated = ($${next++})`;
+          queryparams.push(ifTrue);
+        }
       }
+
+      if((entityid!=undefined)&&(entityid.trim()!==""))
+      {
+        searchquery+=` and entityid = ($${next++})`;
+        queryparams.push(entityid);
+      }
+
       pool.query(searchquery, queryparams, (error, results) => {
       if (error) {
         logger.error(error.stack || error);
@@ -52,13 +73,14 @@ export const getFileStoreIds = (jobid,tenantId,callback) => {
     });
   }
 
-  export const insertStoreIds = (jobid,filestoreids,tenantId,starttime,successCallback,errorCallback,totalcount) => {
+  export const insertStoreIds = (dbInsertRecords,jobid,filestoreids,tenantId,starttime,successCallback,errorCallback,totalcount) => {
 
       var payloads = [];
       var endtime=new Date().getTime();
+      var id=uuidv4();
       payloads.push({
         topic: createJobKafkaTopic,
-        messages: JSON.stringify({jobid,filestoreids,tenantId,createdtime:starttime,endtime,totalcount})
+        messages : JSON.stringify({jobs:dbInsertRecords})
       });
       producer.send(payloads, function(err, data) {
 
