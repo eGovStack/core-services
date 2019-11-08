@@ -51,7 +51,6 @@ public class SearchRepository {
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
 		log.info("preparedStatementValues: " + preparedStatementValues);
-
 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
 
 		return searchUtils.convertPGOBjects(maps);
@@ -61,11 +60,9 @@ public class SearchRepository {
         Map<String, Object> preparedStatementValues = new HashMap<>();
 		String query = searchUtils.buildQuery(searchRequest, searchDefinition.getSearchParams(), searchDefinition.getQuery(), preparedStatementValues);
 		try {
-			Long startTime = new Date().getTime();
+			log.info("Final Query: " + query);
+			log.info("preparedStatementValues: " + preparedStatementValues);
 			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
-			Long endTime = new Date().getTime();
-			Long totalExecutionTime = endTime - startTime;
-			log.info("Query execution time in millisec: " + totalExecutionTime);
 			return result;
 		} catch (CustomException e) {
 			throw e;
