@@ -31,7 +31,7 @@ SearchDefinitions:
         bd.billdate AS bd_billdate, 
         bd.consumercode AS bd_consumercode, 
         bd.consumertype AS bd_consumertype, 
-        bd.billdescription AS bd_billdescription, 
+        bd.billdescription AS bd_billdescription,
         bd.displaymessage AS bd_displaymessage, 
         bd.minimumamount AS bd_minimumamount, 
         bd.totalamount AS bd_totalamount, 
