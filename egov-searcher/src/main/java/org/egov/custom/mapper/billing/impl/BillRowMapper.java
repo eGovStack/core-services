@@ -132,7 +132,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				billDetail.addBillAccountDetailsItem(billAccDetail);
 			
 		}
-		List<Bill> bills = (List) billMap.values();
+		
+		List<Bill> bills = new ArrayList<>(billMap.values());
 		
 		if(!CollectionUtils.isEmpty(userIds))
 			assignUsersToBill(bills, userIds);
