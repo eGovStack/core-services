@@ -3,8 +3,6 @@ package org.egov.search.controller;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.egov.search.model.SearchRequest;
 import org.egov.search.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +28,10 @@ public class SearchController {
 	@ResponseBody
 	public ResponseEntity<?> getData(@PathVariable("moduleName") String moduleName,
 			@PathVariable("searchName") String searchName,
-			@RequestBody @Valid final SearchRequest searchRequest) {		
+			@RequestBody SearchRequest searchRequest, @RequestParam Map<String, Object> queryParams) {	
+		if(null == searchRequest.getSearchCriteria()) {
+			searchRequest.setSearchCriteria(queryParams);
+		}
 		Object searchResult = searchService.searchData(searchRequest,moduleName,searchName);
 		try {
 		    Type type = new TypeToken<Map<String, Object>>() {}.getType();
