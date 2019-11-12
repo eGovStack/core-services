@@ -76,7 +76,7 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
           let ownerObject={}
           for (let k = 0; k < scema.length; k++) {
             let fieldValue= get(val[j], scema[k].key, "NA")||"NA";
-            if(scema[k].key && scema[k].key.toLowerCase().search("date")!="-1")
+            if(scema[k].key && ((scema[k].key.toLowerCase().search("date")!="-1")||(scema[k].key.toLowerCase().search("period")!="-1")))
             {            
               let myDate = new Date(fieldValue);
               if(isNaN(myDate)||(fieldValue===0))
@@ -122,7 +122,7 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
           let arrayOfItems=[];
           for(let k=0;k<scema.length;k++){
               let fieldValue=get(val[j], scema[k].key, "NA")||"NA";
-              if(scema[k].key && scema[k].key.toLowerCase().search("date")!="-1")
+              if(scema[k].key && ((scema[k].key.toLowerCase().search("date")!="-1")||(scema[k].key.toLowerCase().search("period")!="-1")))
               {            
                 let myDate = new Date(fieldValue);
                 if(isNaN(myDate)||(fieldValue===0))
@@ -163,7 +163,7 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
         directArr[i].val=checkifNullAndSetValue(directArr[i].val,"NA",directArr[i].valJsonPath);
         if((directArr[i].val!=="NA")&&directArr[i].localisation && directArr[i].localisation.required)
             variableTovalueMap[directArr[i].jPath]= await findAndUpdateLocalisation(requestInfo,localisationMap,directArr[i].localisation.prefix,directArr[i].val,directArr[i].localisation.module,localisationModuleList,directArr[i].localisation.isCategoryRequired,directArr[i].localisation.isMainTypeRequired,directArr[i].localisation.isSubTypeRequired,directArr[i].localisation.delimiter);
-        else if(directArr[i].valJsonPath && directArr[i].valJsonPath.toLowerCase().search("date")!="-1")
+        else if(directArr[i].valJsonPath && ((directArr[i].valJsonPath.toLowerCase().search("date")!="-1")||(directArr[i].valJsonPath.toLowerCase().search("period")!="-1")))
         {            
           let myDate = new Date(directArr[i].val[0]);
           if(isNaN(myDate)||(directArr[i].val[0]===0))
