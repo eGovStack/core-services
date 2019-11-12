@@ -180,7 +180,7 @@ const uploadFiles=async(dbInsertSingleRecords,dbInsertBulkRecords,formatconfig,l
 
 
 
-app.post("/pdf/v1/_create", asyncHandler(async (req, res)=> { 
+app.post("/pdf-service/v1/_create", asyncHandler(async (req, res)=> { 
   let requestInfo;
   try{
    
@@ -221,7 +221,7 @@ catch(error)
 }));
 
 
-app.post("/pdf/v1/_createnosave", asyncHandler(async (req, res)=> {
+app.post("/pdf-service/v1/_createnosave", asyncHandler(async (req, res)=> {
   let requestInfo;
   try{
    var starttime=new Date().getTime();
@@ -269,7 +269,7 @@ app.post("/pdf/v1/_createnosave", asyncHandler(async (req, res)=> {
   }
 }));
 
-app.post("/pdf/v1/_search", asyncHandler(async (req, res)=> { 
+app.post("/pdf-service/v1/_search", asyncHandler(async (req, res)=> { 
   let requestInfo;
   try{
 
