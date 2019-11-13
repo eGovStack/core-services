@@ -77,7 +77,6 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.billNumber(rs.getString("bd_billno"))
 					.billDate(rs.getLong("bd_billDate"))
 					.consumerCode(rs.getString("bd_consumerCode"))
-					.collectionModesNotAllowed(Arrays.asList(rs.getString("bd_collectionmodesnotallowed").split(",")))
 					.partPaymentAllowed(rs.getBoolean("bd_partpaymentallowed"))
 					.isAdvanceAllowed(rs.getBoolean("bd_isadvanceallowed"))
 					.additionalDetails(rs.getObject("b_additionalDetails"))
