@@ -19,9 +19,24 @@ const uuidv4 = require('uuid/v4');
 export const getFileStoreIds = (jobid,tenantId,isconsolidated,entityid,callback) => {
       var searchquery="";
       var queryparams=[];
-      var next=2;
-      searchquery="SELECT * FROM egov_pdf_gen WHERE jobid  = ANY ($1)";
-      queryparams.push(jobid);
+      var next=1;
+      var jobidPresent=false;
+      searchquery="SELECT * FROM egov_pdf_gen WHERE";
+
+      if((jobid!=undefined)&&(jobid.length>0))
+      {
+        searchquery+=` jobid = ANY ($${next++})`;
+        queryparams.push(jobid);
+        jobidPresent=true;
+      }
+      
+      if((entityid!=undefined)&&(entityid.trim()!==""))
+      {
+        if(jobidPresent)
+           searchquery+=" and";  
+        searchquery+=` entityid = ($${next++})`;
+        queryparams.push(entityid);
+      }
 
       if((tenantId!=undefined)&&(tenantId.trim()!==""))
       {
@@ -39,13 +54,6 @@ export const getFileStoreIds = (jobid,tenantId,isconsolidated,entityid,callback)
           queryparams.push(ifTrue);
         }
       }
-
-      if((entityid!=undefined)&&(entityid.trim()!==""))
-      {
-        searchquery+=` and entityid = ($${next++})`;
-        queryparams.push(entityid);
-      }
-
       pool.query(searchquery, queryparams, (error, results) => {
       if (error) {
         logger.error(error.stack || error);
