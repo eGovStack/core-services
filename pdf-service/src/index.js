@@ -287,14 +287,18 @@ app.post("/pdf-service/v1/_search", asyncHandler(async (req, res)=> {
     }
     else
     {
-      if(jobid.includes(","))
+      if(jobid)
       {
-        jobid=jobid.split(',');
+        if(jobid.includes(","))
+        {
+          jobid=jobid.split(',');
+        }
+        else
+        {
+          jobid=[jobid];
+        }
       }
-      else
-      {
-        jobid=[jobid];
-      }
+
         getFileStoreIds(jobid,tenantid,isconsolidated,entityid,responseBody => {
         // doc successfully created
         res.status(responseBody.status);
