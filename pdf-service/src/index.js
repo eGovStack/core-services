@@ -278,7 +278,7 @@ app.post("/pdf-service/v1/_search", asyncHandler(async (req, res)=> {
     let isconsolidated=req.query.isconsolidated;
     let entityid=req.query.entityid;
     requestInfo=get(req.body,"RequestInfo");
-    if((jobid==undefined)||(jobid.trim()=="")){
+    if(((jobid==undefined)||(jobid.trim()==""))&&((entityid==undefined)||(entityid.trim()==""))){
       res.status(400);
       res.json({
         ResponseInfo:requestInfo,
@@ -445,6 +445,7 @@ const updateBorderlayout=(formatconfig)=>{
  */
 export const fillValues=(variableTovalueMap,formatconfig)=>{
   let input=JSON.stringify(formatconfig);
+  console.log(variableTovalueMap);
   // console.log(mustache.render(input, variableTovalueMap).replace(/""/g,"\"").replace(/\\/g,"").replace(/"\[/g,"\[").replace(/\]"/g,"\]").replace(/\]\[/g,"\],\[").replace(/"\{/g,"\{").replace(/\}"/g,"\}"));
   let output=JSON.parse(mustache.render(input, variableTovalueMap).replace(/""/g,"\"").replace(/\\/g,"").replace(/"\[/g,"\[").replace(/\]"/g,"\]").replace(/\]\[/g,"\],\[").replace(/"\{/g,"\{").replace(/\}"/g,"\}"));
   return output;
