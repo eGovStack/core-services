@@ -282,7 +282,7 @@ app.post("/pdf-service/v1/_search", asyncHandler(async (req, res)=> {
       res.status(400);
       res.json({
         ResponseInfo:requestInfo,
-        message: "job id is missing"
+        message: "jobid and entityid both can not be empty"
       });
     }
     else
