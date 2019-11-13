@@ -15,7 +15,6 @@ import {findAndUpdateLocalisation,getDateInRequiredFormat,checkifNullAndSetValue
 
 export const externalAPIMapping=async function(key,req,dataconfig,variableTovalueMap,localisationMap,requestInfo,localisationModuleList){
 var jp = require('jsonpath');
-
    var objectOfExternalAPI = checkifNullAndSetValue(jp.query(dataconfig, "$.DataConfigs.mappings.*.mappings.*.externalAPI.*"),[],"$.DataConfigs.mappings.*.mappings.*.externalAPI.*");
    var externalAPIArray = objectOfExternalAPI.map(item => {
     return {
@@ -77,11 +76,13 @@ else
       if (externalAPIArray[i].queryParams[j] == "$") {
         flag = 1;
       }
-      if (externalAPIArray[i].queryParams[j] == ",") {
+      if (externalAPIArray[i].queryParams[j] == ","  || externalAPIArray[i].queryParams[j] == "'") {
+        
         if (flag == 1) {
           temp2 = temp1;
+          
           // temp1 = temp1.replace("$.", "");
-          var temp3 = checkifNullAndSetValue((req,temp1),"NA",temp1);          
+          var temp3 = checkifNullAndSetValue(jp.query(req,temp1),"NA",temp1);          
           externalAPIArray[i].queryParams = externalAPIArray[i].queryParams.replace(temp2, temp3);
 
           j = 0;
