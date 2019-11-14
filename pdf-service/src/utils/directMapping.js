@@ -45,6 +45,11 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
             variableTovalueMap[directArr[i].jPath]="Citizen Copy";
           }
       }
+      if(directArr[i].type == "selectFromRequestInfo")
+      {
+        directArr[i].val=checkifNullAndSetValue(jp.query(requestInfo,directArr[i].valJsonPath),"NA",directArr[i].valJsonPath);
+        variableTovalueMap[directArr[i].jPath]=directArr[i].val;
+      }
       else if (directArr[i].type == "function") {
         var fun = Function("type",directArr[i].format);
         variableTovalueMap[directArr[i].jPath]=fun(directArr[i].val[0]); 
