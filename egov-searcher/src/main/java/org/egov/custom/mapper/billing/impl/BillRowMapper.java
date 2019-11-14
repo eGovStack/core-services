@@ -81,7 +81,6 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.isAdvanceAllowed(rs.getBoolean("bd_isadvanceallowed"))
 					.additionalDetails(rs.getObject("b_additionalDetails"))
 					.auditDetails(auditDetails)
-					.collectedAmount(rs.getBigDecimal("bd_collectedamount"))
 					.address(address)
 					.user(user)
 					.build();
