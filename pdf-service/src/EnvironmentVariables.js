@@ -12,7 +12,7 @@ const envVariables={
     DB_HOST: process.env.DB_HOST || "localhost",
     DB_NAME: process.env.DB_NAME || "PdfGen",
     DB_PORT: process.env.DB_PORT || 5432,
-    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS || "https://raw.githubusercontent.com/egovernments/egov-services/gopesh_pdf_work/rainmaker/pdf-service/src/config/data-config/pt-receipt.json",
-    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS || "https://raw.githubusercontent.com/egovernments/egov-services/gopesh_pdf_work/rainmaker/pdf-service/src/config/format-config/pt-receipt.json"
+    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
+    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
 }
 export default envVariables;
