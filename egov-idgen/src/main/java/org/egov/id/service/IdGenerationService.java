@@ -57,6 +57,7 @@ public class IdGenerationService {
     @Value("${idformat.from.mdms:false}")
     public boolean idFormatFromMDMS;
 
+    //By default the auto create sequence is disabled
     @Value("${create.new.seq:false}")
     public boolean createNewSeq;
 
@@ -442,7 +443,7 @@ public class IdGenerationService {
         String sequenceSql = "SELECT NEXTVAL('" + sequenceName + "') FROM GENERATE_SERIES(1,?)";
         try {
             sequenceList = jdbcTemplate.queryForList(sequenceSql, new Object[]{count}, String.class);
-            if (sequenceList.isEmpty())  {
+            if (sequenceList.isEmpty() && createNewSeq){
                 createSequenceInDb(sequenceName);
                 sequenceList = jdbcTemplate.queryForList(sequenceSql, new Object[]{count}, String.class);
             }
