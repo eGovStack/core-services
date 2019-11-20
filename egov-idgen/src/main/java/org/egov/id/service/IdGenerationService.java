@@ -1,10 +1,9 @@
 package org.egov.id.service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +57,9 @@ public class IdGenerationService {
     @Value("${idformat.from.mdms:false}")
     public boolean idFormatFromMDMS;
 
+    @Value("${create.new.seq:false}")
+    public boolean createNewSeq;
+
     //default count value
     public Integer defaultCount = 1;
 
@@ -106,22 +108,23 @@ public class IdGenerationService {
     private List generateIdFromIdRequest(IdRequest idRequest, RequestInfo requestInfo) throws Exception {
 
         List<String> generatedId = new LinkedList<>();
+        try{
+            if (!StringUtils.isEmpty(idRequest.getIdName()))
+            {
+                // If IDName is specified then check if it is defined in MDMS
+                String idFormat = getIdFormatFinal(idRequest, requestInfo);
 
-        if (!StringUtils.isEmpty(idRequest.getIdName()))
-        {
-            // If IDName is specified then check if it is defined in MDMS
-            String idFormat = getIdFormatFinal(idRequest, requestInfo);
-
-            // If the idname is defined then the format should be used
-            // else fallback to the format in the request itself
-            if (!StringUtils.isEmpty(idFormat))
-                idRequest.setFormat(idFormat);
-        }
-
-        if (StringUtils.isEmpty(idRequest.getFormat()))
-            throw new CustomException("ID_NOT_FOUND",
-                    "No Format is available in the MDMS for the given name and tenant");
-
+                // If the idname is defined then the format should be used
+                // else fallback to the format in the request itself
+                if (!StringUtils.isEmpty(idFormat))
+                    idRequest.setFormat(idFormat);
+            }
+        }catch (Exception ex){
+            if (StringUtils.isEmpty(idRequest.getFormat()))
+                throw new CustomException("ID_NOT_FOUND",
+                        "No Format is available in the MDMS for the given name and tenant");
+            ex.printStackTrace();
+            }
         return getFormattedId(idRequest, requestInfo);
     }
 
@@ -136,11 +139,19 @@ public class IdGenerationService {
      */
     private String getIdFormatFinal(IdRequest idRequest, RequestInfo requestInfo) throws Exception {
 
-        String idFormat;
-        if (idFormatFromMDMS == true) {
-            idFormat = mdmsService.getIdFormat(requestInfo, idRequest); //from MDMS
-        } else {
-            idFormat = getIdFormatfromDB(idRequest, requestInfo); //from DB
+        String idFormat = null;
+        try{
+            if (idFormatFromMDMS == true) {
+                idFormat = mdmsService.getIdFormat(requestInfo, idRequest); //from MDMS
+            } else {
+                idFormat = getIdFormatfromDB(idRequest, requestInfo); //from DB
+            }
+        }catch(Exception ex){
+            if(StringUtils.isEmpty(idFormat)){
+                throw new CustomException("ID_NOT_FOUND",
+                        "No Format is available in the MDMS for the given name and tenant");
+            }
+            ex.printStackTrace();
         }
         return idFormat;
     }
@@ -204,15 +215,16 @@ public class IdGenerationService {
     private List getFormattedId(IdRequest idRequest, RequestInfo requestInfo) throws Exception {
         List<String> idFormatList = new LinkedList();
         String idFormat = idRequest.getFormat();
-
-        if (!StringUtils.isEmpty(idFormat.trim()) && !StringUtils.isEmpty(idRequest.getTenantId())) {
-            idFormat = idFormat.replace("[tenantid]", idRequest.getTenantId());
-            idFormat = idFormat.replace("[tenant_id]", idRequest.getTenantId().replace(".", "_"));
-            idFormat = idFormat.replace("[TENANT_ID]", idRequest.getTenantId().replace(".", "_").toUpperCase());
-        }
-
-        if (StringUtils.isEmpty(idFormat)) {
-            throw new CustomException("IDGEN_FORMAT_ERROR", "Blank format is not allowed");
+        try{
+            if (!StringUtils.isEmpty(idFormat.trim()) && !StringUtils.isEmpty(idRequest.getTenantId())) {
+                idFormat = idFormat.replace("[tenantid]", idRequest.getTenantId());
+                idFormat = idFormat.replace("[tenant_id]", idRequest.getTenantId().replace(".", "_"));
+                idFormat = idFormat.replace("[TENANT_ID]", idRequest.getTenantId().replace(".", "_").toUpperCase());
+            }
+        }catch (Exception ex){
+            if (StringUtils.isEmpty(idFormat)) {
+                throw new CustomException("IDGEN_FORMAT_ERROR", "Blank format is not allowed");
+            }
         }
 
         List<String> matchList = new ArrayList<String>();
@@ -384,6 +396,36 @@ public class IdGenerationService {
         return count;
     }
 
+
+    /**
+     * Description : This method to generate sequence in DB
+     *
+     * @param sequenceName
+     */
+
+    private void createSequenceInDb(String sequenceName) throws Exception {
+        // connection
+        Statement stmt = null;
+        Connection conn = null;
+        StringBuilder query = new StringBuilder("CREATE SEQUENCE ");
+
+        try {
+            conn = DataSourceUtils.getConnection(dataSource);
+            conn.setAutoCommit(false);
+            stmt  =  conn.createStatement();
+            query = query.append(sequenceName);
+            int res = stmt.executeUpdate(query.toString());
+            // committing the transaction
+            conn.commit();
+            conn.setAutoCommit(true);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+            conn.close();
+        }
+    }
+
     /**
      * Description : This method to generate sequence number
      *
@@ -391,21 +433,21 @@ public class IdGenerationService {
      * @param requestInfo
      * @return seqNumber
      */
-    private List<String> generateSequenceNumber(String sequenceName, RequestInfo requestInfo, IdRequest idRequest) {
+    private List<String> generateSequenceNumber(String sequenceName, RequestInfo requestInfo, IdRequest idRequest) throws Exception {
         Integer count = getCount(idRequest);
         List<String> sequenceList = new LinkedList<>();
         List<String> sequenceLists = new LinkedList<>();
         // To generate a block of seq numbers
-        String sequenceSql = "SELECT NEXTVAL('" + sequenceName + "') FROM GENERATE_SERIES(1,?)";
 
+        String sequenceSql = "SELECT NEXTVAL('" + sequenceName + "') FROM GENERATE_SERIES(1,?)";
         try {
             sequenceList = jdbcTemplate.queryForList(sequenceSql, new Object[]{count}, String.class);
-        } catch (Exception e) {
-            if (sequenceList.isEmpty()) {
-                throw new IDSeqNotFoundException(propertiesManager.getIdSequenceNotFound(), requestInfo);
-            } else {
-                throw new IDSeqOverflowException(propertiesManager.getIdSequenceOverflow(), requestInfo);
+            if (sequenceList.isEmpty())  {
+                createSequenceInDb(sequenceName);
+                sequenceList = jdbcTemplate.queryForList(sequenceSql, new Object[]{count}, String.class);
             }
+        } catch (Exception ex) {
+                throw new IDSeqOverflowException(propertiesManager.getIdSequenceOverflow(), requestInfo);
         }
         for (String seqId : sequenceList) {
             String seqNumber = String.format("%06d", Integer.parseInt(seqId)).toString();
@@ -413,5 +455,7 @@ public class IdGenerationService {
         }
         return sequenceLists;
     }
+
+
 
 }
