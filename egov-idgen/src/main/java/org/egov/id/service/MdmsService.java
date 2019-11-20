@@ -3,6 +3,7 @@ package org.egov.id.service;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.id.model.IdRequest;
 import org.egov.id.model.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -66,6 +67,9 @@ public class MdmsService {
         try {
             if (getCity != null) {
                 cityCode = getCity.get(tenantMaster);
+                if(cityCode== null){
+                    throw new CustomException("PARSING ERROR", "City code is Null/not valid");
+                }
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -163,7 +167,16 @@ public class MdmsService {
             throw new CustomException("PARSING ERROR", "Failed to get citycode/formatid from MDMS");
         }
         Map<String, String> mdmsCallMap = new HashMap();
-        mdmsCallMap.put(formatMaster, idFormatFromMdms);
+        try{
+            if(StringUtils.isEmpty(idFormatFromMdms)){
+                idFormatFromMdms = idRequest.getFormat();
+            }
+        }catch(Exception ex){
+            throw new CustomException("invalid format", "invalid mdms call");
+        }
+        if(!StringUtils.isEmpty(idFormatFromMdms)){
+            mdmsCallMap.put(formatMaster, idFormatFromMdms);
+        }
         mdmsCallMap.put(tenantMaster, cityCodeFromMdms);
 
         return mdmsCallMap;
