@@ -67,6 +67,9 @@ public class MdmsService {
         try {
             if (getCity != null) {
                 cityCode = getCity.get(tenantMaster);
+                if(cityCode== null){
+                    throw new CustomException("PARSING ERROR", "City code is Null/not valid");
+                }
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
