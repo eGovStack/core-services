@@ -122,7 +122,7 @@ public class RbacFilter extends ZuulFilter {
                 if( ! tenants.isEmpty())
                 // Filtering null tenantids will be removed once fix is done in TL service.
                     tenants.forEach(tenant -> {
-                        if (tenant != null)
+                        if (tenant != null && !tenant.equalsIgnoreCase("null"))
                             tenantIds.add(tenant);
                     });
                 else{
