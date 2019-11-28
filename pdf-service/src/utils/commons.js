@@ -28,8 +28,9 @@ export const  findAndUpdateLocalisation=async(requestInfo,localisationMap,prefix
     if(null != locale){
       locale = locale.split("|");
       locale = locale.length > 1 ? locale[1] : "en_IN";
+    }else{
+      locale = "en_IN";
     }
-    locale = "en_IN";
 
     if(key==null)
     {
