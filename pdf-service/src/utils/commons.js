@@ -24,6 +24,13 @@ export const  findAndUpdateLocalisation=async(requestInfo,localisationMap,prefix
     let keyArray=[];
     let localisedLabels=[]
     let isArray=false;
+    let locale = requestInfo.msgId;
+    if(null != locale){
+      locale = locale.split("|");
+      locale = locale.length > 1 ? locale[1] : "en_IN";
+    }
+    locale = "en_IN";
+
     if(key==null)
     {
       return key;
@@ -40,7 +47,7 @@ export const  findAndUpdateLocalisation=async(requestInfo,localisationMap,prefix
 
     if(!localisationModuleList.includes(moduleName)){
       var res = await httpRequest(
-          `${egovLocHost}/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=${moduleName}`,
+          `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=pb&module=${moduleName}`,
           {"RequestInfo":requestInfo}
           ); 
       res.messages.map(

@@ -18,7 +18,7 @@ export const directMapping=async(req,dataconfig,variableTovalueMap,localisationM
     var directArr = [];        
     // using jp-jsonpath because loadash can not handele '*'
     var objectOfDirectMapping = jp.query(dataconfig, "$.DataConfigs.mappings.*.mappings.*.direct.*");
-    objectOfDirectMapping=checkifNullAndSetValue(objectOfDirectMapping,[],"$.DataConfigs.mappings.*.mappings.*.direct.*");
+    objectOfDirectMapping = checkifNullAndSetValue(objectOfDirectMapping,[],"$.DataConfigs.mappings.*.mappings.*.direct.*");
     directArr = objectOfDirectMapping.map(item => {
       return {
         jPath: item.variable,
