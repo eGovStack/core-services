@@ -133,7 +133,7 @@ export const getDateInRequiredFormat = et => {
  * @param {*} path  - jsonpath from where the value was fetched
  */
   export const checkifNullAndSetValue=(value,setTo,path)=>{
-    if((value==undefined)||(value==null)||(value.length===0)||((value.length===1)&&(value[0]===null)))
+    if((value==undefined)||(value==null)||(value.length===0)||((value.length===1)&&((value[0]===null)||(value[0]===''))))
    {
     // logger.error(`no value found for path: ${path}`);
     return setTo;
