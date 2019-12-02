@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.egov.tracer.model.CustomException;
 import org.egov.url.shortening.model.ShortenRequest;
 import org.egov.url.shortening.service.URLConverterService;
 import org.egov.url.shortening.validator.URLValidator;
@@ -31,22 +32,19 @@ public class ShortenController {
 
     @RequestMapping(value = "/shortener", method=RequestMethod.POST, consumes = {"application/json"})
     public String shortenUrl(@RequestBody @Valid final ShortenRequest shortenRequest, HttpServletRequest request) throws Exception {
-        LOGGER.info("Received url to shorten: " + shortenRequest.getUrl());
         String longUrl = shortenRequest.getUrl();
         if (URLValidator.INSTANCE.validateURL(longUrl)) {
             String localURL = request.getRequestURL().toString();
+            LOGGER.info("localurl:"+localURL);
             String shortenedUrl = urlConverterService.shortenURL(localURL, shortenRequest);
-            LOGGER.info("Shortened url to: " + shortenedUrl);
             return shortenedUrl;
         }
-        throw new Exception("Please enter a valid URL");
+        throw new CustomException("URL_SHORTENING_INVALID_URL","Please enter a valid URL");
     }
 
-    @RequestMapping(value = "id/{id}", method=RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method=RequestMethod.GET)
     public RedirectView redirectUrl(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws IOException, URISyntaxException, Exception {
-        LOGGER.info("Received shortened url to redirect: " + id);
         String redirectUrlString = urlConverterService.getLongURLFromID(id);
-        LOGGER.info("Original URL: " + redirectUrlString);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(redirectUrlString);
         return redirectView;
