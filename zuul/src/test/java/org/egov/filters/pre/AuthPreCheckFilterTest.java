@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.monitoring.MonitoringHelper;
 import org.apache.commons.io.IOUtils;
+import org.egov.Utils.UserUtils;
 import org.egov.exceptions.CustomException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
@@ -19,6 +21,9 @@ import static org.junit.Assert.*;
 
 public class AuthPreCheckFilterTest {
     private MockHttpServletRequest request = new MockHttpServletRequest();
+
+    @Mock
+    private UserUtils userUtils;
 
     private AuthPreCheckFilter authPreCheckFilter;
 
@@ -34,7 +39,7 @@ public class AuthPreCheckFilterTest {
         openEndpointsWhitelist.add("open-endpoint2");
         anonymousEndpointsWhitelist.add("anonymous-endpoint1");
         anonymousEndpointsWhitelist.add("anonymous-endpoint2");
-        authPreCheckFilter = new AuthPreCheckFilter(openEndpointsWhitelist, anonymousEndpointsWhitelist);
+        authPreCheckFilter = new AuthPreCheckFilter(openEndpointsWhitelist, anonymousEndpointsWhitelist, userUtils);
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.clear();
         ctx.setRequest(request);
