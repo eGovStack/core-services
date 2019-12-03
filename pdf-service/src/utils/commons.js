@@ -2,10 +2,11 @@ import { httpRequest } from "../api/api";
 import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
 
-let egovLocHost=envVariables.EGOV_LOCALISATION_HOST;
+let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
+let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 export const getTransformedLocale = label => {
-    return label.toUpperCase().replace(/[.:-\s\/]/g, "_");
-  };
+  return label.toUpperCase().replace(/[.:-\s\/]/g, "_");
+};
 
 /**
  * This function returns localisation label from keys based on needs
@@ -20,124 +21,133 @@ export const getTransformedLocale = label => {
  * @param {*} isMainTypeRequired  - ex:- "GOODS_RETAIL_TST-1" = get localisation for "RETAIL"
  * @param {*} isSubTypeRequired  - - ex:- "GOODS_RETAIL_TST-1" = get localisation for "GOODS_RETAIL_TST-1"
  */
-export const  findAndUpdateLocalisation=async(requestInfo,localisationMap,prefix,key,moduleName,localisationModuleList,isCategoryRequired,isMainTypeRequired,isSubTypeRequired,delimiter=" / ")=>{
-    let keyArray=[];
-    let localisedLabels=[]
-    let isArray=false;
-    let locale = requestInfo.msgId;
-    if(null != locale){
-      locale = locale.split("|");
-      locale = locale.length > 1 ? locale[1] : "en_IN";
-    }else{
-      locale = "en_IN";
-    }
+export const findAndUpdateLocalisation = async (
+  requestInfo,
+  localisationMap,
+  prefix,
+  key,
+  moduleName,
+  localisationModuleList,
+  isCategoryRequired,
+  isMainTypeRequired,
+  isSubTypeRequired,
+  delimiter = " / "
+) => {
+  let keyArray = [];
+  let localisedLabels = [];
+  let isArray = false;
+  let locale = requestInfo.msgId;
+  if (null != locale) {
+    locale = locale.split("|");
+    locale = locale.length > 1 ? locale[1] : defaultLocale;
+  } else {
+    locale = defaultLocale;
+  }
 
-    if(key==null)
-    {
-      return key;
-    }
-    else if((typeof key)=="string")
-    {
-      keyArray.push(key);
-    }
-    else
-    {
-      keyArray=key;
-      isArray=true;
-    }
+  if (key == null) {
+    return key;
+  } else if (typeof key == "string") {
+    keyArray.push(key);
+  } else {
+    keyArray = key;
+    isArray = true;
+  }
 
-    if(!localisationModuleList.includes(moduleName)){
-      var res = await httpRequest(
-          `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=pb&module=${moduleName}`,
-          {"RequestInfo":requestInfo}
-          ); 
-      res.messages.map(
-          item=>{
-              localisationMap[item.code]=item.message;   
-          }
-      );
-      localisationModuleList.push(moduleName);
-    }
-    keyArray.map(item=>{
-
-      let labelFromKey="";
-      
-      // append main category in the beginning
-      if(isCategoryRequired)
-      {
-        labelFromKey=getLocalisationLabel(item.split(".")[0],localisationMap,prefix);
-      }
-
-      if(isMainTypeRequired)
-      {
-        if(isCategoryRequired)
-          labelFromKey=`${labelFromKey}${delimiter}`;
-        labelFromKey=getLocalisationLabel(item.split(".")[1],localisationMap,prefix);
-      }
-      
-      if(isSubTypeRequired)
-      {
-          if(isMainTypeRequired || isCategoryRequired)
-            labelFromKey=`${labelFromKey}${delimiter}`;
-          labelFromKey=`${labelFromKey}${getLocalisationLabel(item,localisationMap,prefix)}`;
-      }
-
-      if((!isCategoryRequired)&&(!isMainTypeRequired)&&(!isSubTypeRequired))
-      {
-        labelFromKey=getLocalisationLabel(item,localisationMap,prefix);
-      }
-      localisedLabels.push(labelFromKey===""?"NA":labelFromKey);
+  if (!localisationModuleList.includes(moduleName)) {
+    var res = await httpRequest(
+      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=pb&module=${moduleName}`,
+      { RequestInfo: requestInfo }
+    );
+    res.messages.map(item => {
+      localisationMap[item.code] = item.message;
     });
-    if(isArray)
-    {
-      return localisedLabels;
-    }
-    return localisedLabels[0];
-  };
+    localisationModuleList.push(moduleName);
+  }
+  keyArray.map(item => {
+    let labelFromKey = "";
 
-const getLocalisationLabel=(key,localisationMap,prefix)=>{
-  if(prefix!=undefined)
-  {
-    key=`${prefix}_${key}`;
+    // append main category in the beginning
+    if (isCategoryRequired) {
+      labelFromKey = getLocalisationLabel(
+        item.split(".")[0],
+        localisationMap,
+        prefix
+      );
+    }
+
+    if (isMainTypeRequired) {
+      if (isCategoryRequired) labelFromKey = `${labelFromKey}${delimiter}`;
+      labelFromKey = getLocalisationLabel(
+        item.split(".")[1],
+        localisationMap,
+        prefix
+      );
+    }
+
+    if (isSubTypeRequired) {
+      if (isMainTypeRequired || isCategoryRequired)
+        labelFromKey = `${labelFromKey}${delimiter}`;
+      labelFromKey = `${labelFromKey}${getLocalisationLabel(
+        item,
+        localisationMap,
+        prefix
+      )}`;
+    }
+
+    if (!isCategoryRequired && !isMainTypeRequired && !isSubTypeRequired) {
+      labelFromKey = getLocalisationLabel(item, localisationMap, prefix);
+    }
+    localisedLabels.push(labelFromKey === "" ? "NA" : labelFromKey);
+  });
+  if (isArray) {
+    return localisedLabels;
   }
-  key=getTransformedLocale(key);
-  if(localisationMap[key]){
-      return localisationMap[key];
-  } 
-  else{
+  return localisedLabels[0];
+};
+
+const getLocalisationLabel = (key, localisationMap, prefix) => {
+  if (prefix != undefined) {
+    key = `${prefix}_${key}`;
+  }
+  key = getTransformedLocale(key);
+  if (localisationMap[key]) {
+    return localisationMap[key];
+  } else {
     logger.error(`no localisation value found for key ${key}`);
-      return "NA";
+    return "NA";
   }
-}
+};
 
 export const getDateInRequiredFormat = et => {
-    if (!et) return "NA";
-    var date = new Date(Math.round(Number(et)));
-    var formattedDate =
-      date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-    return formattedDate;
-  };
+  if (!et) return "NA";
+  var date = new Date(Math.round(Number(et)));
+  var formattedDate =
+    date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+  return formattedDate;
+};
 
 // export const getDateInRequiredFormat=(date)=>{
 //     return date.toLocaleDateString('en-GB', {
 //       month : '2-digit',
 //       day : '2-digit',
 //       year : 'numeric'
-//   }); 
+//   });
 //   }
 
 /**
- * 
+ *
  * @param {*} value - values to be checked
- * @param {*} setTo - default value
+ * @param {*} defaultValue - default value
  * @param {*} path  - jsonpath from where the value was fetched
  */
-  export const checkifNullAndSetValue=(value,setTo,path)=>{
-    if((value==undefined)||(value==null)||(value.length===0)||((value.length===1)&&((value[0]===null)||(value[0]===''))))
-   {
+export const getValue = (value, defaultValue, path) => {
+  if (
+    value == undefined ||
+    value == null ||
+    value.length === 0 ||
+    (value.length === 1 && (value[0] === null || value[0] === ""))
+  ) {
     // logger.error(`no value found for path: ${path}`);
-    return setTo;
-   }
-    else
-      return value;
-  }
+    return defaultValue;
+  } else return value;
+};
