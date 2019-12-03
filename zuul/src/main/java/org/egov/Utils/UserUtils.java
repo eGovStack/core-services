@@ -25,7 +25,7 @@ public class UserUtils {
     @Value("${egov.statelevel.tenant}")
     private String stateLevelTenant;
 
-    @Value("${egov.user.host}${egov.user.search.path}")
+    @Value("${egov.auth-service-host}${egov.user.search.path}")
     private String userSearchURI;
 
     private RestTemplate restTemplate;
