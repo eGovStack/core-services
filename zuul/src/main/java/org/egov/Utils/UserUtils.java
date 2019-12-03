@@ -44,15 +44,14 @@ public class UserUtils {
     public User fetchSystemUser(){
 
         UserSearchRequest userSearchRequest =new UserSearchRequest();
-        userSearchRequest.setRoleCodes(Collections.singletonList("EMPLOYEE"));
-        userSearchRequest.setUserType("EMPLOYEE");
+        userSearchRequest.setRoleCodes(Collections.singletonList("ANONYMOUS"));
+        userSearchRequest.setUserType("SYSTEM");
         userSearchRequest.setPageSize(1);
         userSearchRequest.setTenantId(stateLevelTenant);
 
         StringBuilder uri = new StringBuilder(userSearchURI);
         User user = null;
         try {
-            log.info("User Service Call");
            UserDetailResponse response = restTemplate.postForObject(uri.toString(), userSearchRequest, UserDetailResponse.class);
            user = response.getUser().get(0);
         }
@@ -63,8 +62,8 @@ public class UserUtils {
             log.error("Exception while fetching from searcher: ",e);
         }
 
-        if(user == null)
-            throw new CustomException("NO_SYSTEUSER_FOUND","No system user found");
+        /*if(user == null)
+            throw new CustomException("NO_SYSTEUSER_FOUND","No system user found");*/
 
         return user;
     }
