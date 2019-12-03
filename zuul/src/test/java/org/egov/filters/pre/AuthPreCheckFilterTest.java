@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
@@ -21,9 +21,6 @@ import static org.junit.Assert.*;
 
 public class AuthPreCheckFilterTest {
     private MockHttpServletRequest request = new MockHttpServletRequest();
-
-    @Mock
-    private UserUtils userUtils;
 
     private AuthPreCheckFilter authPreCheckFilter;
 
@@ -39,6 +36,8 @@ public class AuthPreCheckFilterTest {
         openEndpointsWhitelist.add("open-endpoint2");
         anonymousEndpointsWhitelist.add("anonymous-endpoint1");
         anonymousEndpointsWhitelist.add("anonymous-endpoint2");
+        UserUtils userUtils = Mockito.mock(UserUtils.class);
+        Mockito.when(userUtils.fetchSystemUser()).thenReturn(null);
         authPreCheckFilter = new AuthPreCheckFilter(openEndpointsWhitelist, anonymousEndpointsWhitelist, userUtils);
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.clear();
@@ -138,6 +137,7 @@ public class AuthPreCheckFilterTest {
         request.setMethod("PUT");
         request.setContent(IOUtils.toByteArray(IOUtils.toInputStream("{\"RequestInfo\": {\"fu\": \"bar\"}}")));
         ctx.setRequest(request);
+
         authPreCheckFilter.run();
         assertFalse((Boolean) ctx.get("shouldDoAuth"));
 
