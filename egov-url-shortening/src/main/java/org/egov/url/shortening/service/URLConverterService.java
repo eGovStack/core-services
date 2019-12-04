@@ -56,7 +56,7 @@ public class URLConverterService {
     public String shortenURL(ShortenRequest shortenRequest) {
         LOGGER.info("Shortening {}", shortenRequest.getUrl());
         Long id = urlRepository.incrementID();
-        String uniqueID = IDConvertor.createUniqueID((id*1001+3)%991);
+        String uniqueID = IDConvertor.createUniqueID(id);
         try {
 			urlRepository.saveUrl("url:"+id, shortenRequest);
 		} catch (JsonProcessingException e) {
