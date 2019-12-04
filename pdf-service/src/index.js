@@ -28,8 +28,6 @@ var jp = require("jsonpath");
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 var pdfMakePrinter = require("pdfmake/src/printer");
 
-let localisationMap = {};
-let localisationModuleList = [];
 let app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({ limit: "10mb", extended: true }));
@@ -695,6 +693,8 @@ const handlelogic = async (
   requestInfo
 ) => {
   let variableTovalueMap = {};
+  let localisationMap = {};
+  let localisationModuleList = [];
   //direct mapping service
   await Promise.all([
     directMapping(

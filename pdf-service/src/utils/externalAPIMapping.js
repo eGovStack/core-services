@@ -1,11 +1,12 @@
 import get from "lodash/get";
+import axios from "axios";
 import { httpRequest } from "../api/api";
 import {
   findAndUpdateLocalisation,
   getDateInRequiredFormat,
   getValue
 } from "./commons";
-
+import logger from "../config/logger";
 /**
  *
  * @param {*} key -name of the key used to identify module configs. Provided request URL
@@ -151,52 +152,77 @@ export const externalAPIMapping = async function(
         externalAPIArray[i].jPath[j].value
       );
       let loc = externalAPIArray[i].jPath[j].localisation;
-      if (
-        replaceValue !== "NA" &&
-        externalAPIArray[i].jPath[j].localisation &&
-        externalAPIArray[i].jPath[j].localisation.required &&
-        externalAPIArray[i].jPath[j].localisation.prefix
-      )
-        variableTovalueMap[
-          externalAPIArray[i].jPath[j].variable
-        ] = await findAndUpdateLocalisation(
-          requestInfo,
-          localisationMap,
-          loc.prefix,
-          replaceValue,
-          loc.module,
-          localisationModuleList,
-          loc.isCategoryRequired,
-          loc.isMainTypeRequired,
-          loc.isSubTypeRequired,
-          loc.delimiter
-        );
-      else if (
-        externalAPIArray[i].jPath[j].value &&
-        externalAPIArray[i].jPath[j].value.toLowerCase().search("date") != "-1"
-      ) {
-        let myDate = new Date(replaceValue[0]);
-        if (isNaN(myDate) || replaceValue[0] === 0) {
-          variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
-        } else {
-          replaceValue = getDateInRequiredFormat(replaceValue[0]);
+      if (externalAPIArray[i].jPath[j].type == "image") {
+        // default empty image
+        var imageData =
+          "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII=";
+        if (replaceValue != "NA") {
+          try {
+            var response = await axios.get(replaceValue[0], {
+              responseType: "arraybuffer"
+            });
+            imageData =
+              "data:" +
+              response.headers["content-type"] +
+              ";base64," +
+              Buffer.from(response.data).toString("base64");
+          } catch (error) {
+            logger.error(error.stack || error);
+            throw {
+              message: `error while loading image from: ${replaceValue[0]}`
+            };
+          }
+        }
+        variableTovalueMap[externalAPIArray[i].jPath[j].variable] = imageData;
+      } else {
+        if (
+          replaceValue !== "NA" &&
+          externalAPIArray[i].jPath[j].localisation &&
+          externalAPIArray[i].jPath[j].localisation.required &&
+          externalAPIArray[i].jPath[j].localisation.prefix
+        )
+          variableTovalueMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = await findAndUpdateLocalisation(
+            requestInfo,
+            localisationMap,
+            loc.prefix,
+            replaceValue,
+            loc.module,
+            localisationModuleList,
+            loc.isCategoryRequired,
+            loc.isMainTypeRequired,
+            loc.isSubTypeRequired,
+            loc.delimiter
+          );
+        else if (
+          externalAPIArray[i].jPath[j].value &&
+          externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
+            "-1"
+        ) {
+          let myDate = new Date(replaceValue[0]);
+          if (isNaN(myDate) || replaceValue[0] === 0) {
+            variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
+          } else {
+            replaceValue = getDateInRequiredFormat(replaceValue[0]);
+            variableTovalueMap[
+              externalAPIArray[i].jPath[j].variable
+            ] = replaceValue;
+          }
+        } else
           variableTovalueMap[
             externalAPIArray[i].jPath[j].variable
           ] = replaceValue;
-        }
-      } else
-        variableTovalueMap[
-          externalAPIArray[i].jPath[j].variable
-        ] = replaceValue;
-      if (externalAPIArray[i].jPath[j].isUpperCaseRequired) {
-        let currentValue =
-          variableTovalueMap[externalAPIArray[i].jPath[j].variable];
-        if (typeof currentValue == "object" && currentValue.length > 0)
-          currentValue = currentValue[0];
+        if (externalAPIArray[i].jPath[j].isUpperCaseRequired) {
+          let currentValue =
+            variableTovalueMap[externalAPIArray[i].jPath[j].variable];
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
 
-        variableTovalueMap[
-          externalAPIArray[i].jPath[j].variable
-        ] = currentValue.toUpperCase();
+          variableTovalueMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = currentValue.toUpperCase();
+        }
       }
     }
   }
