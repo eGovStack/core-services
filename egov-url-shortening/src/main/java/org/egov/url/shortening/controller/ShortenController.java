@@ -31,19 +31,17 @@ public class ShortenController {
     }
 
     @RequestMapping(value = "/shortener", method=RequestMethod.POST, consumes = {"application/json"})
-    public String shortenUrl(@RequestBody @Valid final ShortenRequest shortenRequest, HttpServletRequest request) throws Exception {
+    public String shortenUrl(@RequestBody @Valid final ShortenRequest shortenRequest) throws Exception {
         String longUrl = shortenRequest.getUrl();
         if (URLValidator.INSTANCE.validateURL(longUrl)) {
-            String localURL = request.getRequestURL().toString();
-            LOGGER.info("localurl:"+localURL);
-            String shortenedUrl = urlConverterService.shortenURL(localURL, shortenRequest);
+            String shortenedUrl = urlConverterService.shortenURL(shortenRequest);
             return shortenedUrl;
         }
         throw new CustomException("URL_SHORTENING_INVALID_URL","Please enter a valid URL");
     }
 
     @RequestMapping(value = "/{id}", method=RequestMethod.GET)
-    public RedirectView redirectUrl(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws IOException, URISyntaxException, Exception {
+    public RedirectView redirectUrl(@PathVariable String id, HttpServletRequest request) throws IOException, URISyntaxException, Exception {
         String redirectUrlString = urlConverterService.getLongURLFromID(id);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(redirectUrlString);

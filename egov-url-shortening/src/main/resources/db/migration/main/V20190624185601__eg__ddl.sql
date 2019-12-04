@@ -6,9 +6,5 @@ CREATE TABLE "eg_url_shortener" (
 	"validform" bigint,
 	"validto" bigint,
 	"url"  VARCHAR(1024) NOT NULL,
-    "created_by" character varying(64),
-    "created_time" bigint,
-    "last_modified_by" character varying(64),
-    "last_modified_time" bigint,
 	PRIMARY KEY ("id")
 );

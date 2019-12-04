@@ -4,15 +4,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.egov.tracer.model.CustomException;
 import org.egov.url.shortening.model.ShortenRequest;
-import org.egov.url.shortening.repository.URLRedisRepository;
 import org.egov.url.shortening.repository.URLRepository;
-import org.egov.url.shortening.repository.UrlDBRepository;
 import org.egov.url.shortening.utils.IDConvertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -34,6 +32,9 @@ public class URLConverterService {
     @Value("${db.persistance.enabled}")
     private Boolean isDbPersitanceEnabled;
     
+    @Value("${host.name}")
+    private String hostName;
+    
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -52,29 +53,29 @@ public class URLConverterService {
     }
     
 
-    public String shortenURL(String localURL, ShortenRequest shortenRequest) {
+    public String shortenURL(ShortenRequest shortenRequest) {
         LOGGER.info("Shortening {}", shortenRequest.getUrl());
         Long id = urlRepository.incrementID();
-        String uniqueID = IDConvertor.createUniqueID(id);
+        String uniqueID = IDConvertor.createUniqueID((id*1001+3)%991);
         try {
 			urlRepository.saveUrl("url:"+id, shortenRequest);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        String baseString = formatLocalURLFromShortener(localURL);
-        String shortenedURL = baseString + uniqueID;
-        return shortenedURL;
+        return hostName + uniqueID;
     }
 
     public String getLongURLFromID(String uniqueID) throws Exception {
         Long dictionaryKey = IDConvertor.getDictionaryKeyFromUniqueID(uniqueID);
         String longUrl = urlRepository.getUrl(dictionaryKey);
         LOGGER.info("Converting shortened URL back to {}", longUrl);
+        if(longUrl.isEmpty())
+        	throw new CustomException("INVALID_REQUEST","Invalid Key");
         return longUrl;
     }
 
-    private String formatLocalURLFromShortener(String localURL) {
+   /* private String formatLocalURLFromShortener(String localURL) {
         String[] addressComponents = localURL.split("/");
         // remove the endpoint (last index)
         StringBuilder sb = new StringBuilder();
@@ -83,6 +84,6 @@ public class URLConverterService {
         }
         sb.append('/');
         return sb.toString();
-    }
+    }*/
 
 }

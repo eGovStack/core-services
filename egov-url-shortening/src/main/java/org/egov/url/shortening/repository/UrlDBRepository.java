@@ -2,7 +2,6 @@ package org.egov.url.shortening.repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 
 import org.egov.url.shortening.model.ShortenRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,8 @@ public class UrlDBRepository implements URLRepository{
     public void saveUrl(String key, ShortenRequest shortenRequest) {
 
     	String query = "INSERT INTO eg_url_shortener "
-    			+ "(id,validform,validto,url,created_by,created_time,last_modified_by,last_modified_time) "
-    			+ "values (?,?,?,?,?,?,?,?)";
+    			+ "(id,validform,validto,url) "
+    			+ "values (?,?,?,?)";
     	log.info("Saving: {} at {}", shortenRequest.getUrl(), key);
         Boolean b = jdbcTemplate.execute(query,new PreparedStatementCallback<Boolean>(){  
             @Override  
@@ -50,13 +49,8 @@ public class UrlDBRepository implements URLRepository{
                       
                 ps.setString(1,key);
                 ps.setObject(2,shortenRequest.getValidFrom());
-                ps.setLong(3,shortenRequest.getValidTill());
-                ps.setString(4,shortenRequest.getUrl());  
-                ps.setString(5,"1");
-                ps.setLong(6,new Date().getTime());
-                ps.setString(7,"1");
-                ps.setLong(8,new Date().getTime());
-                      
+                ps.setObject(3,shortenRequest.getValidTill());
+                ps.setString(4,shortenRequest.getUrl());              
                 return ps.execute();  
                       
             }  
