@@ -1,9 +1,11 @@
 import { httpRequest } from "../api/api";
 import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
+import get from "lodash/get";
 
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
 let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+let defaultTenant = envVariables.DEFAULT_LOCALISATION_TENANT;
 export const getTransformedLocale = label => {
   return label.toUpperCase().replace(/[.:-\s\/]/g, "_");
 };
@@ -43,6 +45,11 @@ export const findAndUpdateLocalisation = async (
   } else {
     locale = defaultLocale;
   }
+  let statetenantid = get(
+    requestInfo,
+    "userInfo.tenantId",
+    defaultTenant
+  ).split(".")[0];
 
   if (key == null) {
     return key;
@@ -55,7 +62,7 @@ export const findAndUpdateLocalisation = async (
 
   if (!localisationModuleList.includes(moduleName)) {
     var res = await httpRequest(
-      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=pb&module=${moduleName}`,
+      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}&module=${moduleName}`,
       { RequestInfo: requestInfo }
     );
     res.messages.map(item => {
@@ -110,6 +117,7 @@ const getLocalisationLabel = (key, localisationMap, prefix) => {
     key = `${prefix}_${key}`;
   }
   key = getTransformedLocale(key);
+
   if (localisationMap[key]) {
     return localisationMap[key];
   } else {
