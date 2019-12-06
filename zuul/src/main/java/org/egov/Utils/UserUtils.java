@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -53,13 +54,11 @@ public class UserUtils {
         User user = null;
         try {
            UserDetailResponse response = restTemplate.postForObject(uri.toString(), userSearchRequest, UserDetailResponse.class);
-           user = response.getUser().get(0);
+           if(!CollectionUtils.isEmpty(response.getUser()))
+               user = response.getUser().get(0);
         }
-        catch(HttpClientErrorException e) {
-            log.error("External Service threw an Exception: ",e);
-            throw new ServiceCallException(e.getResponseBodyAsString());
-        }catch(Exception e) {
-            log.error("Exception while fetching from searcher: ",e);
+        catch(Exception e) {
+            log.error("Exception while fetching system user: ",e);
         }
 
         /*if(user == null)

@@ -5,6 +5,7 @@ import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.monitoring.MonitoringHelper;
 import org.apache.commons.io.IOUtils;
 import org.egov.Utils.UserUtils;
+import org.egov.contract.User;
 import org.egov.exceptions.CustomException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +38,7 @@ public class AuthPreCheckFilterTest {
         anonymousEndpointsWhitelist.add("anonymous-endpoint1");
         anonymousEndpointsWhitelist.add("anonymous-endpoint2");
         UserUtils userUtils = Mockito.mock(UserUtils.class);
-        Mockito.when(userUtils.fetchSystemUser()).thenReturn(null);
+        Mockito.when(userUtils.fetchSystemUser()).thenReturn(new User());
         authPreCheckFilter = new AuthPreCheckFilter(openEndpointsWhitelist, anonymousEndpointsWhitelist, userUtils);
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.clear();
