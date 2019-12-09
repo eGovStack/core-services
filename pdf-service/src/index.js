@@ -43,11 +43,11 @@ let dataConfigMap = {};
 let formatConfigMap = {};
 
 var fontDescriptors = {
-  Roboto: {
-    normal: "src/fonts/Roboto-Regular.ttf",
-    bold: "src/fonts/Roboto-Medium.ttf",
-    italics: "src/fonts/Roboto-Italic.ttf",
-    bolditalics: "src/fonts/Roboto-MediumItalic.ttf"
+  Cambay: {
+    normal: "src/fonts/Cambay-Regular.ttf",
+    bold: "src/fonts/Cambay-Bold.ttf",
+    italics: "src/fonts/Cambay-Oblique.ttf",
+    bolditalics: "src/fonts/Cambay-BoldOblique.ttf"
   }
 };
 
