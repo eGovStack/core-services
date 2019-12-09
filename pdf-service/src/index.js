@@ -46,8 +46,8 @@ var fontDescriptors = {
   Cambay: {
     normal: "src/fonts/Cambay-Regular.ttf",
     bold: "src/fonts/Cambay-Bold.ttf",
-    italics: "src/fonts/Cambay-Oblique.ttf",
-    bolditalics: "src/fonts/Cambay-BoldOblique.ttf"
+    italics: "src/fonts/Cambay-Italic.ttf",
+    bolditalics: "src/fonts/Cambay-BoldItalic.ttf"
   }
 };
 
