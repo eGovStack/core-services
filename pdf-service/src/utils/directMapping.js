@@ -211,7 +211,20 @@ export const directMapping = async (
       // set(formatconfig,directArr[i].jPath,arrayOfBuiltUpDetails);
     }
     //setting value in pdf for no type direct mapping
-    else {
+    else if (directArr[i].type == "label") {
+      variableTovalueMap[directArr[i].jPath] = await findAndUpdateLocalisation(
+        requestInfo,
+        localisationMap,
+        directArr[i].localisation.prefix,
+        directArr[i].valJsonPath,
+        directArr[i].localisation.module,
+        localisationModuleList,
+        directArr[i].localisation.isCategoryRequired,
+        directArr[i].localisation.isMainTypeRequired,
+        directArr[i].localisation.isSubTypeRequired,
+        directArr[i].localisation.delimiter
+      );
+    } else {
       directArr[i].val = getValue(
         directArr[i].val,
         "NA",

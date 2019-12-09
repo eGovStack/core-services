@@ -113,7 +113,7 @@ export const findAndUpdateLocalisation = async (
 };
 
 const getLocalisationLabel = (key, localisationMap, prefix) => {
-  if (prefix != undefined) {
+  if (prefix != undefined && prefix != "") {
     key = `${prefix}_${key}`;
   }
   key = getTransformedLocale(key);
