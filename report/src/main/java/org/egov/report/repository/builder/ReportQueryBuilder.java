@@ -22,6 +22,7 @@ import org.egov.swagger.model.SearchParam;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +55,10 @@ public class ReportQueryBuilder {
 		 
 	public static final Logger LOGGER = LoggerFactory.getLogger(ReportQueryBuilder.class);
 	   
-	public String buildQuery(List<SearchParam> searchParams, String tenantId, ReportDefinition reportDefinition,String authToken, Long userId) {
+	public String buildQuery(List<SearchParam> searchParams, String tenantId, ReportDefinition reportDefinition,
+							 String authToken, Long userId, Map<String, Object> namedParaMap) {
 		
 		String baseQuery = null;
-		
 		
 		StringBuffer csinput = new StringBuffer();
 		LOGGER.info("ReportDefinition: "+reportDefinition);
@@ -91,30 +92,38 @@ public class ReportQueryBuilder {
 			
 			if(value instanceof Number)
 			{
-			baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),value.toString());
+				namedParaMap.put(searchParam.getName(),value.toString());
+				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
 			}
 			
 			if(value instanceof String ){
-				
-			baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"'"+value.toString()+"'");
+				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
+				namedParaMap.put(searchParam.getName(),value.toString());
+
 			} if (value instanceof Boolean ){
-				
-				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),value.toString());
+				namedParaMap.put(searchParam.getName(),value.toString());
+				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
 				
 			}
+		//	Map namedParameters = new HashMap();
 			if(value instanceof ArrayList<?>) {
 				
 				List<String> arrayInput = (ArrayList)value;
-			
+
 			    for(int i=0;i<arrayInput.size();i++) {
 			    	if (i < (arrayInput.size()-1)) {
+			    	//	namedParaMap.put("arrayInput.get(i)",arrayInput.get(i));
 			    	csinput.append("'"+arrayInput.get(i)+"',");
+
 			    	} else {
-			    		csinput.append("'"+arrayInput.get(i)+"'");
+				//		namedParaMap.put("arrayInput.get(i)",arrayInput.get(i));
+						csinput.append("'"+arrayInput.get(i)+"'");
 			    	}
 			    	
 			    }
-				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),csinput.toString());
+				namedParaMap.put(searchParam.getName(),csinput.toString());
+				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
+			//	baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),csinput.toString());
 			}
 				
 		}

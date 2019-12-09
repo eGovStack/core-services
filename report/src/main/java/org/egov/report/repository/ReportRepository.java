@@ -1,12 +1,14 @@
 package org.egov.report.repository;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.egov.report.repository.builder.ReportQueryBuilder;
 import org.egov.swagger.model.ReportDefinition;
 import org.egov.swagger.model.ReportRequest;
 import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 @Repository
 public class ReportRepository {
   
   @Autowired
   private JdbcTemplate jdbcTemplate;
-  
+
+  @Autowired
+  private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
   @Autowired
   private ReportQueryBuilder reportQueryBuilder;
   
@@ -30,13 +35,18 @@ public class ReportRepository {
   public static final Logger LOGGER = LoggerFactory.getLogger(ReportRepository.class);
   
   public List<Map<String, Object>> getData(ReportRequest reportRequest, ReportDefinition reportDefinition,String authToken) {
+
     Long userId = reportRequest.getRequestInfo().getUserInfo() == null ? null : reportRequest.getRequestInfo().getUserInfo().getId();
-    String query = reportQueryBuilder.buildQuery(reportRequest.getSearchParams(),reportRequest.getTenantId(),reportDefinition,authToken, userId);
+    Map<String, Object> namedParaMap= new HashMap<>();
+    String query = reportQueryBuilder.buildQuery(reportRequest.getSearchParams(),reportRequest.getTenantId(),reportDefinition,authToken, userId,namedParaMap);
     Long startTime = new Date().getTime();
     List<Map<String, Object>> maps = null;
+  //  List<PGobject> namedParaMap= null;
+
     LOGGER.info("final query:"+query);
     try {
-    maps = jdbcTemplate.queryForList(query);
+      maps = namedParameterJdbcTemplate.queryForList(query, namedParaMap);
+   // maps = jdbcTemplate.queryForList(query);
     } catch(Exception e){
       LOGGER.info("Query Execution Failed: ",e);
       throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), e.getMessage());
