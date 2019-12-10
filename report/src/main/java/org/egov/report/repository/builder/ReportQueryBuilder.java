@@ -79,11 +79,13 @@ public class ReportQueryBuilder {
 			} } catch(JSONException e){
 				e.printStackTrace();
 			}
-		
-		baseQuery = baseQuery.replaceAll("\\$tenantid","'"+tenantId+"'");
+
+		namedParaMap.put("tenantid",tenantId);
+		baseQuery = baseQuery.replaceAll("\\$tenantid","\\:tenantid");
 
 		if (reportDefinition.getModuleName().equalsIgnoreCase("rainmaker-pgr")) {
-			baseQuery = baseQuery.replaceAll("\\$userid", "'" + userId + "'");
+			namedParaMap.put("userid",userId);
+			baseQuery = baseQuery.replaceAll("\\$userid", "\\:userid");
 		}
 
 		for(SearchParam searchParam : searchParams){
@@ -105,25 +107,21 @@ public class ReportQueryBuilder {
 				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
 				
 			}
-		//	Map namedParameters = new HashMap();
 			if(value instanceof ArrayList<?>) {
 				
 				List<String> arrayInput = (ArrayList)value;
 
 			    for(int i=0;i<arrayInput.size();i++) {
 			    	if (i < (arrayInput.size()-1)) {
-			    	//	namedParaMap.put("arrayInput.get(i)",arrayInput.get(i));
 			    	csinput.append("'"+arrayInput.get(i)+"',");
 
 			    	} else {
-				//		namedParaMap.put("arrayInput.get(i)",arrayInput.get(i));
 						csinput.append("'"+arrayInput.get(i)+"'");
 			    	}
 			    	
 			    }
 				namedParaMap.put(searchParam.getName(),csinput.toString());
 				baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),"\\:"+searchParam.getName());
-			//	baseQuery = baseQuery.replaceAll("\\$"+searchParam.getName(),csinput.toString());
 			}
 				
 		}
