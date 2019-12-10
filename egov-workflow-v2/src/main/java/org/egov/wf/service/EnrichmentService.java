@@ -1,6 +1,7 @@
 package org.egov.wf.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -114,24 +115,25 @@ public class EnrichmentService {
     public void enrichUsers(RequestInfo requestInfo,List<ProcessStateAndAction> processStateAndActions){
         List<String> uuids = new LinkedList<>();
         processStateAndActions.forEach(processStateAndAction -> {
-            if(processStateAndAction.getProcessInstanceFromRequest().getAssignee()!=null)
-                uuids.add(processStateAndAction.getProcessInstanceFromRequest().getAssignee().getUuid());
+            if(!CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest().getAssignes()))
+                uuids.addAll(processStateAndAction.getProcessInstanceFromRequest().getAssignes().stream().map(User::getUuid).collect(Collectors.toSet()));
             uuids.add(processStateAndAction.getProcessInstanceFromRequest().getAssigner().getUuid());
         });
+
 
         Map<String,User> idToUserMap = userService.searchUser(requestInfo,uuids);
         Map<String,String> errorMap = new HashMap<>();
         processStateAndActions.forEach(processStateAndAction -> {
-            User assignee=null,assigner;
-            if(processStateAndAction.getProcessInstanceFromRequest().getAssignee()!=null)
-                 assignee = idToUserMap.get(processStateAndAction.getProcessInstanceFromRequest().getAssignee().getUuid());
-            assigner = idToUserMap.get(processStateAndAction.getProcessInstanceFromRequest().getAssigner().getUuid());
-            if(processStateAndAction.getProcessInstanceFromRequest().getAssignee()!=null && assignee==null)
-                errorMap.put("INVALID UUID","User not found for uuid: "+processStateAndAction.getProcessInstanceFromRequest().getAssignee().getUuid());
-            if(assigner==null)
-                errorMap.put("INVALID UUID","User not found for uuid: "+processStateAndAction.getProcessInstanceFromRequest().getAssigner().getUuid());
-            processStateAndAction.getProcessInstanceFromRequest().setAssignee(assignee);
-            processStateAndAction.getProcessInstanceFromRequest().setAssigner(assigner);
+
+            // Setting Assignes
+            if(!CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest().getAssignes())){
+                enrichAssignes(processStateAndAction.getProcessInstanceFromRequest(), idToUserMap, errorMap);
+            }
+
+            // Setting Assigner
+            if(processStateAndAction.getProcessInstanceFromRequest().getAssigner()!=null)
+                enrichAssigner(processStateAndAction.getProcessInstanceFromRequest(), idToUserMap, errorMap);
+
         });
         if(!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -145,23 +147,24 @@ public class EnrichmentService {
     public void enrichUsersFromSearch(RequestInfo requestInfo,List<ProcessInstance> processInstances){
         List<String> uuids = new LinkedList<>();
         processInstances.forEach(processInstance -> {
-            if(processInstance.getAssignee()!=null)
-                uuids.add(processInstance.getAssignee().getUuid());
+
+            if(!CollectionUtils.isEmpty(processInstance.getAssignes()))
+                uuids.addAll(processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList()));
+
             uuids.add(processInstance.getAssigner().getUuid());
         });
         Map<String,User> idToUserMap = userService.searchUser(requestInfo,uuids);
         Map<String,String> errorMap = new HashMap<>();
         processInstances.forEach(processInstance -> {
-            User assignee=null,assigner;
-            if(processInstance.getAssignee()!=null)
-                assignee = idToUserMap.get(processInstance.getAssignee().getUuid());
-            assigner = idToUserMap.get(processInstance.getAssigner().getUuid());
-            if(processInstance.getAssignee()!=null && assignee==null)
-                errorMap.put("INVALID UUID","User not found for uuid: "+processInstance.getAssignee().getUuid());
-            if(assigner==null)
-                errorMap.put("INVALID UUID","User not found for uuid: "+processInstance.getAssigner().getUuid());
-            processInstance.setAssignee(assignee);
-            processInstance.setAssigner(assigner);
+
+            // Enriching assignes if present
+            if(!CollectionUtils.isEmpty(processInstance.getAssignes()))
+                enrichAssignes(processInstance, idToUserMap, errorMap);
+
+            // Enriching assigner if present
+            if(processInstance.getAssigner()!=null)
+                enrichAssigner(processInstance, idToUserMap, errorMap);
+
         });
         if(!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -361,6 +364,34 @@ public class EnrichmentService {
         });
     }
 
+
+    /**
+     * Enriches the processInstance's assignes from the search response map of uuid to User
+     * @param processInstance The processInstance to be enriched
+     * @param idToUserMap Search response as a map of UUID to user
+     */
+    private void enrichAssignes(ProcessInstance processInstance, Map<String,User> idToUserMap, Map<String , String> errorMap){
+        List<User> assignes = new LinkedList<>();
+        processInstance.getAssignes().forEach(assigne -> {
+            if(idToUserMap.containsKey(assigne.getUuid()))
+                assignes.add(idToUserMap.get(assigne.getUuid()));
+            else
+                errorMap.put("INVALID UUID","User not found for uuid: "+assigne.getUuid());
+        });
+        processInstance.setAssignes(assignes);
+    }
+
+    /**
+     * Enriches the processInstance's assigner from the search response map of uuid to User
+     * @param processInstance The processInstance to be enriched
+     * @param idToUserMap Search response as a map of UUID to user
+     */
+    private void enrichAssigner(ProcessInstance processInstance, Map<String,User> idToUserMap, Map<String , String> errorMap){
+        User assigner = idToUserMap.get(processInstance.getAssigner().getUuid());
+        if(assigner==null)
+            errorMap.put("INVALID UUID","User not found for uuid: "+processInstance.getAssigner().getUuid());
+        processInstance.setAssigner(assigner);
+    }
 
 
 }

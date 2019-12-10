@@ -79,8 +79,8 @@ public class ProcessInstance   {
         @JsonProperty("assigner")
         private User assigner = null;
 
-        @JsonProperty("assignee")
-        private User assignee = null;
+        @JsonProperty("assignes")
+        private List<User> assignes = null;
 
         @JsonProperty("nextActions")
         @Valid
