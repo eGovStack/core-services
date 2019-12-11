@@ -1,0 +1,1 @@
+ALTER TABLE eg_wf_processinstance_v2 ALTER COLUMN assignee type varchar(256)[] USING array[assignee]

@@ -1,13 +1,11 @@
 package org.egov.wf.repository.rowmapper;
 
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.User;
 import org.egov.wf.web.models.Action;
@@ -18,6 +16,7 @@ import org.egov.wf.web.models.State;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Component
@@ -61,12 +60,34 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
                         .lastModifiedTime(lastModifiedTime)
                         .build();
 
-                String assigneeUuid = rs.getString("assignee");
+                // Building the assignes object
+                Array assigneeUuidArray = rs.getArray("assignee");
+                List<String> assigneeUuids;
+                List<User> assignes = null;
+
+                if(assigneeUuidArray!=null){
+
+                    // Fetch the array and convert it to list of string
+                    Object[] objs = (Object[]) assigneeUuidArray.getArray();
+                    assigneeUuids = Arrays.stream(objs).map(Object::toString).collect(Collectors.toList());
+
+                   // For every uuid build a user object
+                    if(!CollectionUtils.isEmpty(assigneeUuids)){
+                        assignes = new LinkedList<>();
+                        for(String uuid : assigneeUuids){
+                           assignes.add(User.builder().uuid(uuid).build());
+                        }
+                    }
+                }
+
+
+                // Building the assigner object
                 String assignerUuid = rs.getString("assigner");
-                User assignee=null,assigner;
+                User assigner;
                 assigner = User.builder().uuid(assignerUuid).build();
-                if(assigneeUuid!=null)
-                     assignee = User.builder().uuid(assigneeUuid).build();
+
+
+
 
                 State state = State.builder()
                         .tenantId(rs.getString("st_tenantId"))
@@ -89,7 +110,7 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
                         .action(rs.getString("action"))
                         .state(state)
                         .comment(rs.getString("comment"))
-                        .assignee(assignee)
+                        .assignes(assignes)
                         .assigner(assigner)
                         .stateSla(sla)
                         .businesssServiceSla(businessServiceSla)
