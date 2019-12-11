@@ -188,7 +188,8 @@ public class DataTransformationService {
 					if (null == response)
 						continue;
 				} catch (Exception e) {
-					log.error("Exception while trying to hit: " + uri);
+					log.error("Exception while making external call: ", e);
+					log.error("URI: "+ uri);
 					continue;
 				}
 				log.debug("Response: " + response + " from the URI: " + uriMapping.getPath());
