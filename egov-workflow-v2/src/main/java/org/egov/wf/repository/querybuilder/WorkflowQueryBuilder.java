@@ -24,25 +24,31 @@ public class WorkflowQueryBuilder {
     private static final String CONCAT = " CONCAT " ; 
 
 
-    private static final String QUERY = "SELECT pi.*,doc.*,pi.id as wf_id," +
-            "pi.lastModifiedTime as wf_lastModifiedTime,pi.createdTime as wf_createdTime," +
-            "pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status," +
-            "doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime," +
-            "doc.createdBy as doc_createdBy,doc.lastModifiedBy as doc_lastModifiedBy," +
-            "doc.tenantid as doc_tenantid,doc.id as doc_id" +
-            " FROM eg_wf_processinstance_v2 pi " +
-            LEFT_OUTER_JOIN+
-            " eg_wf_document_v2 doc " +
-            " ON doc.processinstanceid = pi.id WHERE ";
+    private static final String QUERY =
+                    "SELECT pi.*,st.*,ac.*,doc.*,pi.id as wf_id,pi.lastModifiedTime as wf_lastModifiedTime,pi.createdTime as wf_createdTime," +
+                    "       pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status," +
+                    "       doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime,doc.createdBy as doc_createdBy," +
+                    "       doc.lastModifiedBy as doc_lastModifiedBy,doc.tenantid as doc_tenantid,doc.id as doc_id,asg.assignee as assigneeuuid," +
+                    "       st.uuid as st_uuid,st.tenantId as st_tenantId, ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action" +
+                    "       FROM eg_wf_processinstance_v2 pi  " +
+                            LEFT_OUTER_JOIN  +
+                    "       eg_wf_assignee_v2 asg ON asg.processinstanceid = pi.id "  +
+                            LEFT_OUTER_JOIN  +
+                     "      eg_wf_document_v2 doc  ON doc.processinstanceid = pi.id " +
+                            INNER_JOIN +
+                    "       eg_wf_state_v2 st ON st.uuid = pi.status" +
+                            LEFT_OUTER_JOIN +
+                    "       eg_wf_action_v2 ac ON ac.currentState = st.uuid "+
+                    "       WHERE ";
 
     /*
      * ORDER BY class for wf last modified time added to make search result in desc order 
      */
-    private static final String STATE_JOIN_QUERY  = INNER_JOIN + " eg_wf_state_v2 st ON st.uuid = fp.pi_status " +
+/*    private static final String STATE_JOIN_QUERY  = INNER_JOIN + " eg_wf_state_v2 st ON st.uuid = fp.pi_status " +
             LEFT_OUTER_JOIN  + " eg_wf_action_v2 ac ON ac.currentState = st.uuid";
 
     private static final String OUTER_QUERY = "SELECT fp.*,st.*,ac.*, st.uuid as st_uuid,st.tenantId as st_tenantId,"+
-            " ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action FROM ( ";
+            " ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action FROM ( ";*/
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY wf_id) offset_ FROM " +
@@ -93,9 +99,9 @@ public class WorkflowQueryBuilder {
     }
 
     public String getProcessInstanceSearchQueryWithState(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
-       String query = getProcessInstanceSearchQuery(criteria,preparedStmtList);
-       String finalQuery = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
-       finalQuery = addOrderByCreatedTime(finalQuery);
+       String finalQuery = getProcessInstanceSearchQuery(criteria,preparedStmtList);
+   //    String finalQuery = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
+   //    finalQuery = addOrderByCreatedTime(finalQuery);
        return finalQuery;
     }
 
@@ -164,7 +170,7 @@ public class WorkflowQueryBuilder {
      */
     private String addOrderByCreatedTime(String query){
         StringBuilder builder = new StringBuilder(query);
-        builder.append(" ORDER BY fp.wf_createdTime DESC ");
+        builder.append(" ORDER BY wf_createdTime DESC ");
         return builder.toString();
     }
 
@@ -180,7 +186,7 @@ public class WorkflowQueryBuilder {
                 " AND pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
         preparedStmtList.add(criteria.getAssignee());
         preparedStmtList.add(criteria.getTenantId());
-        query = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
+      //  query = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
         return query;
     }
 
@@ -201,7 +207,8 @@ public class WorkflowQueryBuilder {
             builder.append(" and CONCAT  (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append(")");
             addToPreparedStatement(preparedStmtList,statuses);
         }
-        return OUTER_QUERY+builder.toString()+")" + " fp "+STATE_JOIN_QUERY;
+        return builder.toString();
+        // return OUTER_QUERY+builder.toString()+")" + " fp "+STATE_JOIN_QUERY;
     }
 
 

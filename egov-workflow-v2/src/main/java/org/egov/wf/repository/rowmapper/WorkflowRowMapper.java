@@ -60,26 +60,6 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
                         .lastModifiedTime(lastModifiedTime)
                         .build();
 
-                // Building the assignes object
-                Array assigneeUuidArray = rs.getArray("assignee");
-                List<String> assigneeUuids;
-                List<User> assignes = null;
-
-                if(assigneeUuidArray!=null){
-
-                    // Fetch the array and convert it to list of string
-                    Object[] objs = (Object[]) assigneeUuidArray.getArray();
-                    assigneeUuids = Arrays.stream(objs).map(Object::toString).collect(Collectors.toList());
-
-                   // For every uuid build a user object
-                    if(!CollectionUtils.isEmpty(assigneeUuids)){
-                        assignes = new LinkedList<>();
-                        for(String uuid : assigneeUuids){
-                           assignes.add(User.builder().uuid(uuid).build());
-                        }
-                    }
-                }
-
 
                 // Building the assigner object
                 String assignerUuid = rs.getString("assigner");
@@ -110,7 +90,6 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
                         .action(rs.getString("action"))
                         .state(state)
                         .comment(rs.getString("comment"))
-                        .assignes(assignes)
                         .assigner(assigner)
                         .stateSla(sla)
                         .businesssServiceSla(businessServiceSla)
@@ -133,6 +112,14 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
      * @throws SQLException
      */
     private void addChildrenToProperty(ResultSet rs, ProcessInstance processInstance) throws SQLException {
+
+        // Building the assignes object
+        String assigneeUuid = rs.getString("assigneeuuid");
+
+        if(!StringUtils.isEmpty(assigneeUuid)){
+            processInstance.addUsersItem(User.builder().uuid(assigneeUuid).build());
+        }
+
 
         String documentId = rs.getString("doc_id");
 

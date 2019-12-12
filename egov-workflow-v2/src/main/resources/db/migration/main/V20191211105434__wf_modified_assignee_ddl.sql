@@ -15,7 +15,7 @@ CREATE TABLE eg_wf_assignee_v2(
 );
 
 -- Migration of existing data
-INSERT INTO eg_wf_assignee_v2(processinstanceid, tenantid, assignee, createdBy, lastModifiedBy, createdTime, lastModifiedTime)
-SELECT id, tenantid, assignee, createdBy, lastModifiedBy ,createdTime, lastModifiedTime FROM eg_wf_processinstance_v2
-WHERE assignee !=null
+--INSERT INTO eg_wf_assignee_v2(processinstanceid, tenantid, assignee, createdBy, lastModifiedBy, createdTime, lastModifiedTime)
+--SELECT id, tenantid, assignee, createdBy, lastModifiedBy ,createdTime, lastModifiedTime FROM eg_wf_processinstance_v2
+--WHERE assignee !=null
 
