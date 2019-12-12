@@ -23,6 +23,7 @@ export const httpRequest= async(
     });
     
 try {
+  //console.log(endPoint);
   const response =  await instance.post(endPoint,requestBody);
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 200 || responseStatus === 201) {
@@ -42,4 +43,6 @@ try {
     "content-type": "application/json;charset=UTF-8",
     "accept":"application/json, text/plain, */*" 
    }
+
+
 
