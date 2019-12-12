@@ -117,7 +117,7 @@ public class StorageController {
 			responses.add(FileStoreResponse.builder().id(entry.getKey()).url(entry.getValue()).build());
 		}
 		responseMap.putAll(maps);
-		responseMap.put("fileStroreIds", responses);
+		responseMap.put("fileStoreIds", responses);
 		
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
