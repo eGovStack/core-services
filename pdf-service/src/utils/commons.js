@@ -104,7 +104,8 @@ export const findAndUpdateLocalisation = async (
     if (!isCategoryRequired && !isMainTypeRequired && !isSubTypeRequired) {
       labelFromKey = getLocalisationLabel(item, localisationMap, prefix);
     }
-    localisedLabels.push(labelFromKey === "" ? "NA" : labelFromKey);
+
+    localisedLabels.push(labelFromKey === "" ? item : labelFromKey);
   });
   if (isArray) {
     return localisedLabels;
