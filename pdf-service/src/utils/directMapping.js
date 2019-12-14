@@ -37,7 +37,6 @@ export const directMapping = async (
     "$.DataConfigs.mappings.*.mappings.*.direct.*"
   );
   directArr = objectOfDirectMapping.map(item => {
-    console.log(item.variable,item.value);
     return {
       jPath: item.variable,
       val:

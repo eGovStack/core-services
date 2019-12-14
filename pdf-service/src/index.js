@@ -626,7 +626,6 @@ const handleDerivedMapping = (dataconfig, variableTovalueMap) => {
         variableTovalueMap
       )
       .replace(/NA/g, "0");
-      console.log(expression);
     variableTovalueMap[mapping.variable] = eval(expression);
   }
 };
