@@ -433,24 +433,33 @@ dataConfigUrls &&
     if (item.includes("file://")) {
       item = item.replace("file://", "");
       fs.readFile(item, "utf8", function(err, data) {
-        if (err) {
-          logger.error(err.stack);
-        } else {
-          data = JSON.parse(data);
-          dataConfigMap[data.key] = data;
-          logger.info("loaded dataconfig: file:///" + item);
+        try {
+          if (err) {
+            logger.error(
+              "error when reading file for dataconfig: file:///" + item
+            );
+            logger.error(err.stack);
+          } else {
+            data = JSON.parse(data);
+            dataConfigMap[data.key] = data;
+            logger.info("loaded dataconfig: file:///" + item);
+          }
+        } catch (error) {
+          logger.error("error in loading dataconfig: file:///" + item);
+          logger.error(error.stack);
         }
       });
     } else {
-      axios
-        .get(item)
-        .then(response => {
+      (async () => {
+        try {
+          var response = await axios.get(item);
           dataConfigMap[response.data.key] = response.data;
           logger.info("loaded dataconfig: " + item);
-        })
-        .catch(error => {
+        } catch (error) {
+          logger.error("error in loading dataconfig: " + item);
           logger.error(error.stack);
-        });
+        }
+      })();
     }
   });
 
@@ -460,24 +469,33 @@ formatConfigUrls &&
     if (item.includes("file://")) {
       item = item.replace("file://", "");
       fs.readFile(item, "utf8", function(err, data) {
-        if (err) {
-          logger.error(err.stack);
-        } else {
-          data = JSON.parse(data);
-          formatConfigMap[data.key] = data.config;
-          logger.info("loaded formatconfig: file:///" + item);
+        try {
+          if (err) {
+            logger.error(err.stack);
+            logger.error(
+              "error when reading file for formatconfig: file:///" + item
+            );
+          } else {
+            data = JSON.parse(data);
+            formatConfigMap[data.key] = data.config;
+            logger.info("loaded formatconfig: file:///" + item);
+          }
+        } catch (error) {
+          logger.error("error in loading formatconfig: file:///" + item);
+          logger.error(error.stack);
         }
       });
     } else {
-      axios
-        .get(item)
-        .then(response => {
+      (async () => {
+        try {
+          var response = await axios.get(item);
           formatConfigMap[response.data.key] = response.data.config;
           logger.info("loaded formatconfig: " + item);
-        })
-        .catch(error => {
+        } catch (error) {
+          logger.error("error in loading formatconfig: " + item);
           logger.error(error.stack);
-        });
+        }
+      })();
     }
   });
 
@@ -569,8 +587,8 @@ const updateBorderlayout = formatconfig => {
  */
 export const fillValues = (variableTovalueMap, formatconfig) => {
   let input = JSON.stringify(formatconfig);
-   //console.log(variableTovalueMap);
-   //console.log(mustache.render(input, variableTovalueMap).replace(/""/g,"\"").replace(/\\/g,"").replace(/"\[/g,"\[").replace(/\]"/g,"\]").replace(/\]\[/g,"\],\[").replace(/"\{/g,"\{").replace(/\}"/g,"\}"));
+  //console.log(variableTovalueMap);
+  //console.log(mustache.render(input, variableTovalueMap).replace(/""/g,"\"").replace(/\\/g,"").replace(/"\[/g,"\[").replace(/\]"/g,"\]").replace(/\]\[/g,"\],\[").replace(/"\{/g,"\{").replace(/\}"/g,"\}"));
   let output = JSON.parse(
     mustache
       .render(input, variableTovalueMap)

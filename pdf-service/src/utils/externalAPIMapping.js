@@ -37,6 +37,7 @@ export const externalAPIMapping = async function(
       uri: item.path,
       queryParams: item.queryParam,
       jPath: item.responseMapping,
+      requesttype: item.requesttype || "POST",
       variable: "",
       val: ""
     };
@@ -137,12 +138,22 @@ export const externalAPIMapping = async function(
       "content-type": "application/json;charset=UTF-8",
       accept: "application/json, text/plain, */*"
     };
-    var res = await httpRequest(
-      externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams,
-      { RequestInfo: requestInfo },
-      headers
-    );
-
+    var res;
+    if (externalAPIArray[i].requesttype == "POST") {
+      res = await httpRequest(
+        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams,
+        { RequestInfo: requestInfo },
+        headers
+      );
+    } else {
+      var apires = await axios.get(
+        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams,
+        {
+          responseType: "application/json"
+        }
+      );
+      res = apires.data;
+    }
     //putting required data from external API call in format config
 
     for (let j = 0; j < externalAPIArray[i].jPath.length; j++) {
@@ -158,7 +169,8 @@ export const externalAPIMapping = async function(
           "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII=";
         if (replaceValue != "NA") {
           try {
-            var response = await axios.get(replaceValue[0], {
+            var len = replaceValue[0].split(",").length;
+            var response = await axios.get(replaceValue[0].split(",")[len-1], {
               responseType: "arraybuffer"
             });
             imageData =
@@ -197,10 +209,12 @@ export const externalAPIMapping = async function(
           );
         else if (
           externalAPIArray[i].jPath[j].value &&
-          ((externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
-            "-1")||(externalAPIArray[i].jPath[j].value.toLowerCase().search("period") !=
-            "-1")||(externalAPIArray[i].jPath[j].value.toLowerCase().search("dob") !=
-            "-1"))
+          (externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
+            "-1" ||
+            externalAPIArray[i].jPath[j].value.toLowerCase().search("period") !=
+              "-1" ||
+            externalAPIArray[i].jPath[j].value.toLowerCase().search("dob") !=
+              "-1")
         ) {
           let myDate = new Date(replaceValue[0]);
           if (isNaN(myDate) || replaceValue[0] === 0) {

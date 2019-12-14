@@ -123,7 +123,7 @@ const getLocalisationLabel = (key, localisationMap, prefix) => {
     return localisationMap[key];
   } else {
     logger.error(`no localisation value found for key ${key}`);
-    return "NA";
+    return key;
   }
 };
 
