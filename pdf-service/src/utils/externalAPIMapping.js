@@ -197,8 +197,10 @@ export const externalAPIMapping = async function(
           );
         else if (
           externalAPIArray[i].jPath[j].value &&
-          externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
-            "-1"
+          ((externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
+            "-1")||(externalAPIArray[i].jPath[j].value.toLowerCase().search("period") !=
+            "-1")||(externalAPIArray[i].jPath[j].value.toLowerCase().search("dob") !=
+            "-1"))
         ) {
           let myDate = new Date(replaceValue[0]);
           if (isNaN(myDate) || replaceValue[0] === 0) {
