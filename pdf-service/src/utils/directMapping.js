@@ -104,7 +104,8 @@ export const directMapping = async (
           if (
             scema[k].key &&
             (scema[k].key.toLowerCase().search("date") != "-1" ||
-              scema[k].key.toLowerCase().search("period") != "-1")
+              scema[k].key.toLowerCase().search("period") != "-1" ||
+              scema[k].key.toLowerCase().search("dob") != "-1")
           ) {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
@@ -161,7 +162,8 @@ export const directMapping = async (
           if (
             scema[k].key &&
             (scema[k].key.toLowerCase().search("date") != "-1" ||
-              scema[k].key.toLowerCase().search("period") != "-1")
+              scema[k].key.toLowerCase().search("period") != "-1" ||
+              scema[k].key.toLowerCase().search("dob") != "-1")
           ) {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
@@ -253,7 +255,8 @@ export const directMapping = async (
       else if (
         directArr[i].valJsonPath &&
         (directArr[i].valJsonPath.toLowerCase().search("date") != "-1" ||
-          directArr[i].valJsonPath.toLowerCase().search("period") != "-1")
+          directArr[i].valJsonPath.toLowerCase().search("period") != "-1" ||
+          directArr[i].valJsonPath.toLowerCase().search("dob") != "-1")
       ) {
         let myDate = new Date(directArr[i].val[0]);
         if (isNaN(myDate) || directArr[i].val[0] === 0) {
