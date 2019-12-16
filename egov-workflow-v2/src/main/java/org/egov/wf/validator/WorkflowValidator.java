@@ -152,7 +152,7 @@ public class WorkflowValidator {
                     List<Role> assigneeRoles = assignee.getRoles();
                     Boolean isRoleAvailableInNextState = util.isRoleAvailable(tenantId,assigneeRoles,nextStateRoles);
                     if(!isRoleAvailableInNextState)
-                        throw new CustomException("INVALID ASSIGNEE","Cannot assign to the user: "+ assignee.getUuid());
+                        throw new CustomException("INVALID_ASSIGNEE","Cannot assign to the user: "+ assignee.getUuid());
 
                 });
             }

@@ -24,7 +24,7 @@ public class WorkflowConstants {
 
     public static final String MDMS_BUSINESSSERVICECONFIG= "businessServiceConfig";
 
-    public static final String CITIZEN_ROLE = "CITIZEN";
+    public static final String CITIZEN_TYPE = "CITIZEN";
 
 
 

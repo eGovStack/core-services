@@ -136,7 +136,8 @@ public class TransitionService {
          * converting the list of process instances to map of businessId and state
          * object
          */
-        Map<String, ProcessInstance> businessStateMap = repository.getProcessInstances(criteria).stream()
+        List<ProcessInstance> processInstancesFromDB = repository.getProcessInstances(criteria);
+        Map<String, ProcessInstance> businessStateMap = processInstancesFromDB.stream()
                 .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
 
         return businessStateMap;

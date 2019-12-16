@@ -58,7 +58,7 @@ public class WorkflowQueryBuilder {
 
     private final String ORDERBY_CREATEDTIME = " ORDER BY result_offset.wf_createdTime DESC ";
 
-    private final String LATEST_RECORD = " LIMIT 1";
+    private final String LATEST_RECORD = " pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ";
 
     /**
      * Creates the query according to the search params
@@ -70,7 +70,13 @@ public class WorkflowQueryBuilder {
 
         StringBuilder builder = new StringBuilder(QUERY);
 
-        builder.append(" pi.tenantid=? ");
+        if(!criteria.getHistory())
+            builder.append(LATEST_RECORD);
+
+        if(criteria.getHistory())
+            builder.append(" pi.tenantid=? ");
+        else builder.append(" AND pi.tenantid=? ");
+
         preparedStmtList.add(criteria.getTenantId());
 
         List<String> ids = criteria.getIds();
@@ -86,12 +92,8 @@ public class WorkflowQueryBuilder {
             addToPreparedStatement(preparedStmtList,businessIds);
         }
 
-
         String query = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
         query = query + ORDERBY_CREATEDTIME;
-
-        if(!criteria.getHistory())
-            query = query + LATEST_RECORD;
 
 
         return query;

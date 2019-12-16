@@ -54,7 +54,7 @@ public class WorkflowUtil {
         if(CollectionUtils.isEmpty(userRoles))
             return false;
         for(Role role : userRoles) {
-            if(role.getTenantId()!=null && role.getTenantId().equalsIgnoreCase(tenantId)){
+            if(isTenantIdValid(role.getTenantId(),tenantId)){
                 if (actionRoles.contains(role.getCode()) || actionRoles.contains("*")) {
                     flag = true;
                     break;
@@ -304,6 +304,31 @@ public class WorkflowUtil {
         return stateUuidToTenantIdMap;
     }
 
+
+    /**
+     *  Checks if the tenantId is valid to take action
+     * @param roleTenantId The tenantId of the role
+     * @param applicationTeanantId The tenantId of the application
+     * @return
+     */
+    private Boolean isTenantIdValid(String roleTenantId, String applicationTeanantId){
+
+        if(roleTenantId == null)
+            return false;
+
+        Boolean isTenantIdValid = false;
+
+        // If the tenantId are same role can take action
+        if(roleTenantId.equalsIgnoreCase(applicationTeanantId))
+            isTenantIdValid = true;
+
+        // If the role tenantId is statelevel it can take action
+        else if(roleTenantId.equalsIgnoreCase(applicationTeanantId.split("\\.")[0]))
+            isTenantIdValid = true;
+
+        return isTenantIdValid;
+
+    }
 
 
 
