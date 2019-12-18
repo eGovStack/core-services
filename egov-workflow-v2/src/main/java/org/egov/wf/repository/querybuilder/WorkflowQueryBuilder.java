@@ -183,7 +183,7 @@ public class WorkflowQueryBuilder {
      * @return search query based on assignee
      */
     public String getAssigneeSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
-        String query = QUERY +" assignee = ? "+
+        String query = QUERY +" asg.assignee = ? "+
                 " AND pi.tenantid = ? " +
                 " AND pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
         preparedStmtList.add(criteria.getAssignee());
