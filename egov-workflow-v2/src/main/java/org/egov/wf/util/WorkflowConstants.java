@@ -26,7 +26,7 @@ public class WorkflowConstants {
 
     public static final String CITIZEN_TYPE = "CITIZEN";
 
-
+    public static final String SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
 
 
 

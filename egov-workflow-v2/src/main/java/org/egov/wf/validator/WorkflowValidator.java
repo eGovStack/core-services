@@ -14,10 +14,12 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.wf.util.WorkflowConstants.CITIZEN_TYPE;
+import static org.egov.wf.util.WorkflowConstants.SENDBACKTOCITIZEN;
+
 
 @Component
 public class WorkflowValidator {
-
 
 
     private WorkflowUtil util;
@@ -94,7 +96,9 @@ public class WorkflowValidator {
      */
     private void validateAction(RequestInfo requestInfo,List<ProcessStateAndAction> processStateAndActions
             ,BusinessService businessService){
+
         Map<String,List<String>> tenantIdToRoles = util.getTenantIdToUserRolesMap(requestInfo);
+
         for(ProcessStateAndAction processStateAndAction : processStateAndActions){
             String tenantId= processStateAndAction.getProcessInstanceFromRequest().getTenantId();
             List<String> roles = tenantIdToRoles.get(tenantId);
@@ -155,6 +159,19 @@ public class WorkflowValidator {
                         throw new CustomException("INVALID_ASSIGNEE","Cannot assign to the user: "+ assignee.getUuid());
 
                 });
+            }
+
+            /*
+            *  Validates if the application is sendback to citizen, only the citizen to whom the
+            *  application is sent back is able to take the action
+            * */
+            if(requestInfo.getUserInfo().getType().equalsIgnoreCase(CITIZEN_TYPE)){
+                ProcessInstance processInstanceFromDB = processStateAndAction.getProcessInstanceFromDb();
+                if(processInstanceFromDB.getAction().equalsIgnoreCase(SENDBACKTOCITIZEN)){
+                    List<String> assignes = processInstanceFromDB.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+                    if(!assignes.contains(requestInfo.getUserInfo().getUuid()))
+                        throw new CustomException("INVALID_USER","The user: "+requestInfo.getUserInfo().getUuid()+" is not authorized to take action");
+                }
             }
 
 
