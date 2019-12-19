@@ -167,7 +167,7 @@ public class WorkflowValidator {
             * */
             if(requestInfo.getUserInfo().getType().equalsIgnoreCase(CITIZEN_TYPE)){
                 ProcessInstance processInstanceFromDB = processStateAndAction.getProcessInstanceFromDb();
-                if(processInstanceFromDB.getAction().equalsIgnoreCase(SENDBACKTOCITIZEN)){
+                if(processInstanceFromDB!=null && processInstanceFromDB.getAction().equalsIgnoreCase(SENDBACKTOCITIZEN)){
                     List<String> assignes = processInstanceFromDB.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
                     if(!assignes.contains(requestInfo.getUserInfo().getUuid()))
                         throw new CustomException("INVALID_USER","The user: "+requestInfo.getUserInfo().getUuid()+" is not authorized to take action");
