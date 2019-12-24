@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import org.egov.domain.model.OtpRequestType;
 
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter

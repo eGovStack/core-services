@@ -13,4 +13,5 @@ public class UserSearchRequest {
 	private String userName;
 	private String tenantId;
 	private String userType;
+	private String mobileNumber;
 }

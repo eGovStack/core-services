@@ -89,7 +89,7 @@ public class OtpRepositoryTest {
         when(mockRestTemplate.postForObject(eq("http://host/otp/_create"),
                 any(),
                 eq(org.egov.persistence.contract.OtpResponse.class)))
-                .thenReturn(new org.egov.persistence.contract.OtpResponse(Otp.builder().otp(null).build()));
+                .thenReturn(new org.egov.persistence.contract.OtpResponse(null, Otp.builder().otp(null).build()));
 
         otpRepository.fetchOtp(domainOtpRequest);
     }
