@@ -227,6 +227,7 @@ export const directMapping = async (
         directArr[i].localisation.delimiter
       );
     } else {
+
       directArr[i].val = getValue(
         directArr[i].val,
         "NA",
@@ -255,7 +256,9 @@ export const directMapping = async (
         directArr[i].valJsonPath &&
         (directArr[i].valJsonPath.toLowerCase().search("date") != "-1" ||
           directArr[i].valJsonPath.toLowerCase().search("period") != "-1" ||
-          directArr[i].valJsonPath.toLowerCase().search("dob") != "-1")
+          directArr[i].valJsonPath.toLowerCase().search("dob") != "-1" || 
+          directArr[i].valJsonPath.toLowerCase().search("validFrom") != "-1" ||
+          directArr[i].valJsonPath.toLowerCase().search("validTo") != "-1")
       ) {
         let myDate = new Date(directArr[i].val[0]);
         if (isNaN(myDate) || directArr[i].val[0] === 0) {
@@ -264,7 +267,9 @@ export const directMapping = async (
           let replaceValue = getDateInRequiredFormat(directArr[i].val[0]);
           variableTovalueMap[directArr[i].jPath] = replaceValue;
         }
-      } else variableTovalueMap[directArr[i].jPath] = directArr[i].val;
+      } else {
+        variableTovalueMap[directArr[i].jPath] = directArr[i].val;
+      }
       if (directArr[i].uCaseNeeded) {
         let currentValue = variableTovalueMap[directArr[i].jPath];
         if (typeof currentValue == "object" && currentValue.length > 0)
