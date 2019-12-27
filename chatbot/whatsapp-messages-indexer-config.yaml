@@ -1,0 +1,11 @@
+ServiceMaps:
+  serviceName: whatsapp-messages
+  version: 1.0.0
+  mappings:
+    - topic: whatsapp-received-messages
+      configKey: INDEX
+      indexes:
+        - name: karix-messages
+          type: general
+          id: $.timestamp
+          timeStampField: $.timestamp

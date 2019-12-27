@@ -1,0 +1,21 @@
+name : pgr.create.complaintType
+description : "Complaint Type"
+nodeType : step
+optional : false
+
+type : text
+
+validationRequired: true
+typeOfValues: FixedSetValues
+
+message : chatbot.messages.pgrCreateComplaintType
+
+values :
+  batchSize : 10
+  class : org.egov.chat.xternal.valuefetch.ComplainTypeValueFetcher
+  params :
+    tenantId : /tenantId
+
+displayValuesAsOptions : true
+
+matchAnswerThreshold: 70

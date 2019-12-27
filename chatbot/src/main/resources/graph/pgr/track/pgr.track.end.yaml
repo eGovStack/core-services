@@ -1,0 +1,10 @@
+name : pgr.track.end
+nodeType : endpoint
+
+class : org.egov.chat.xternal.restendpoint.PGRComplaintTrack
+
+nodes : [  ]
+params :
+  tenantId : /tenantId
+  authToken : /user/authToken
+  userInfo : /user/userInfo

@@ -1,0 +1,215 @@
+package org.egov.chat.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.apache.commons.lang.StringUtils;
+import org.egov.chat.config.JsonPointerNameConstants;
+import org.egov.chat.models.ConversationState;
+import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.service.valuefetch.ValueFetcher;
+import org.egov.chat.util.LocalizationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Slf4j
+@Component
+public class FixedSetValues {
+
+    private String nextKeywordSymbol = "0";
+    private String nextKeyword = "Next";
+
+    @Autowired
+    private ValueFetcher valueFetcher;
+    @Autowired
+    private ConversationStateRepository conversationStateRepository;
+    @Autowired
+    private LocalizationService localizationService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
+    public JsonNode getAllValidValues(JsonNode config, JsonNode chatNode) {
+        ObjectNode questionDetails = objectMapper.createObjectNode();
+        if(config.get("values").get("batchSize") != null)
+            questionDetails.put("batchSize", config.get("values").get("batchSize").asInt());
+        else
+            questionDetails.put("batchSize", Integer.MAX_VALUE);
+
+        ArrayNode validValues = valueFetcher.getAllValidValues(config, chatNode);
+        ArrayNode values = objectMapper.valueToTree(validValues);
+        questionDetails.putArray("allValues").addAll(values);
+
+        return questionDetails;
+    }
+
+    public JsonNode getNextSet(JsonNode questionDetails) {
+        Integer batchSize = questionDetails.get("batchSize").asInt();
+        ArrayNode allValues = (ArrayNode) questionDetails.get("allValues");
+
+        Integer newOffset;
+        if(questionDetails.has("offset")) {
+            Integer previousOffset = questionDetails.get("offset").asInt();
+            if(previousOffset + batchSize > allValues.size())
+                return null;
+            newOffset = previousOffset + batchSize;
+        } else {
+            newOffset = 0;
+        }
+
+        ArrayNode nextSet = objectMapper.createArrayNode();
+
+        Integer upperLimit = newOffset + batchSize < allValues.size() ? newOffset + batchSize : allValues.size();
+
+        for(int i = newOffset; i < upperLimit; i++) {
+            ObjectNode value = objectMapper.createObjectNode();
+            value.put("index", i + 1);
+            value.set("value", allValues.get(i));
+            nextSet.add(value);
+        }
+
+        if(upperLimit < allValues.size()) {
+            ObjectNode value = objectMapper.createObjectNode();
+            value.put("index", nextKeywordSymbol);
+            ObjectNode nextKeywordLocaliztionJson = objectMapper.createObjectNode();
+            nextKeywordLocaliztionJson.put("value", nextKeyword);
+            value.set("value", nextKeywordLocaliztionJson);
+            nextSet.add(value);
+        }
+
+        ( (ObjectNode) questionDetails ).put("offset", newOffset);
+        ( (ObjectNode) questionDetails ).set("askedValues", nextSet);
+
+        return questionDetails;
+    }
+
+    public JsonNode extractAnswer(JsonNode config, JsonNode chatNode) {
+        boolean displayValuesAsOptions = config.get("displayValuesAsOptions") != null && config.get("displayValuesAsOptions").asBoolean();
+
+        String answer = chatNode.at(JsonPointerNameConstants.messageContent).asText();
+        ConversationState conversationState = getConversationStateForChat(chatNode);
+        JsonNode questionDetails = conversationState.getQuestionDetails();
+
+        ArrayNode allValues = (ArrayNode) questionDetails.get("allValues");
+        ArrayNode validValues = allValues.deepCopy();
+
+        if(displayValuesAsOptions) {
+            Integer offset = questionDetails.get("offset").asInt();
+            Integer batchSize = questionDetails.get("batchSize").asInt();
+            Integer upperLimit = Math.min(offset + batchSize, allValues.size());
+            validValues = objectMapper.createArrayNode();
+            for (int i = 0; i < upperLimit; i++) {
+                validValues.add(allValues.get(i));
+            }
+        }
+
+        Integer answerIndex = null;
+        Boolean reQuestion = false;
+        if(displayValuesAsOptions && (answer.equalsIgnoreCase(nextKeyword) || answer.equalsIgnoreCase(nextKeywordSymbol))) {
+            reQuestion = true;
+        } else if(displayValuesAsOptions && checkIfAnswerIsIndex(answer)) {
+            answerIndex = Integer.parseInt(answer) - 1;
+        } else {
+            Integer highestFuzzyScoreMatch = 0;
+            answerIndex = 0;
+            String locale = chatNode.at(JsonPointerNameConstants.locale).asText();
+            List<String> localizedValidValues = localizationService.getMessagesForCodes(validValues, locale);
+            for(int i = 0; i < localizedValidValues.size(); i++) {
+                if(localizedValidValues.get(i) == null)
+                    continue;
+                Integer score = FuzzySearch.ratio(localizedValidValues.get(i), answer);
+                if(score > highestFuzzyScoreMatch) {
+                    highestFuzzyScoreMatch = score;
+                    answerIndex = i;
+                }
+            }
+        }
+
+        log.debug("Answer Index : " + answerIndex);
+
+        String finalAnswer = null;
+        if(reQuestion) {
+            ( (ObjectNode) chatNode).put("reQuestion", true);
+            finalAnswer = nextKeyword;
+        } else {
+            JsonNode answerLocalizationCode = validValues.get(answerIndex);
+            log.debug("answerLocalizationCode  : " + answerLocalizationCode);
+            if(answerLocalizationCode.has("code"))
+                finalAnswer = answerLocalizationCode.get("code").asText();
+            else if(answerLocalizationCode.has("value"))
+                finalAnswer = answerLocalizationCode.get("value").asText();
+            log.debug("Final Answer : " + finalAnswer);
+            finalAnswer = valueFetcher.getCodeForValue(config, chatNode, finalAnswer);
+        }
+
+        // TODO : jsonpath
+        ( (ObjectNode) chatNode.get("message")).put("content", finalAnswer);
+
+        return chatNode;
+    }
+
+    private boolean checkIfAnswerIsIndex(String answer) {
+        return StringUtils.isNumeric(answer.trim());
+    }
+
+    // TODO : Get Question Details from ChatNode
+    private ConversationState getConversationStateForChat(JsonNode chatNode) {
+        String conversationId = chatNode.at(JsonPointerNameConstants.conversationId).asText();
+        return conversationStateRepository.getConversationStateForId(conversationId);
+    }
+
+    public boolean isValid(JsonNode config, JsonNode chatNode) {
+        boolean displayValuesAsOptions = config.get("displayValuesAsOptions") != null && config.get("displayValuesAsOptions").asBoolean();
+        String answer = chatNode.at(JsonPointerNameConstants.messageContent).asText();
+
+        ConversationState conversationState = getConversationStateForChat(chatNode);
+        JsonNode questionDetails = conversationState.getQuestionDetails();
+
+        ArrayNode allValues = (ArrayNode) questionDetails.get("allValues");
+
+        if(displayValuesAsOptions && (answer.equalsIgnoreCase(nextKeyword) || answer.equalsIgnoreCase(nextKeywordSymbol))) {
+            return true;
+        } else if(displayValuesAsOptions && checkIfAnswerIsIndex(answer)) {
+            Integer offset = questionDetails.get("offset").asInt();
+            Integer batchSize = questionDetails.get("batchSize").asInt();
+            Integer upperLimit = Math.min(offset + batchSize, allValues.size());
+            ArrayNode validValues = objectMapper.createArrayNode();
+            for (int i = 0; i < upperLimit; i++) {
+                validValues.add(allValues.get(i));
+            }
+            return checkIfIndexIsValid(answer, validValues);
+        } else {
+            String locale = chatNode.at(JsonPointerNameConstants.locale).asText();
+            List<String> localizedValidValues = localizationService.getMessagesForCodes(allValues, locale);
+            return fuzzyMatchAnswerWithValidValues(answer, localizedValidValues, config);
+        }
+    }
+
+    boolean checkIfIndexIsValid(String answer, ArrayNode validValues) {
+        Integer answerInteger = Integer.parseInt(answer);
+        if(answerInteger > 0 && answerInteger <= validValues.size())
+            return true;
+        else
+            return false;
+    }
+
+    boolean fuzzyMatchAnswerWithValidValues(String answer, List<String> validValues, JsonNode config) {
+
+        Integer matchScoreThreshold = config.get("matchAnswerThreshold").asInt();
+
+        Integer fuzzyMatchScore;
+        for(String validValue : validValues) {
+            fuzzyMatchScore = FuzzySearch.ratio(answer, validValue);
+            if(fuzzyMatchScore >= matchScoreThreshold)
+                return true;
+        }
+        return false;
+    }
+
+}
