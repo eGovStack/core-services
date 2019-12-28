@@ -170,9 +170,12 @@ export const externalAPIMapping = async function(
         if (replaceValue != "NA") {
           try {
             var len = replaceValue[0].split(",").length;
-            var response = await axios.get(replaceValue[0].split(",")[len-1], {
-              responseType: "arraybuffer"
-            });
+            var response = await axios.get(
+              replaceValue[0].split(",")[len - 1],
+              {
+                responseType: "arraybuffer"
+              }
+            );
             imageData =
               "data:" +
               response.headers["content-type"] +
@@ -186,6 +189,16 @@ export const externalAPIMapping = async function(
           }
         }
         variableTovalueMap[externalAPIArray[i].jPath[j].variable] = imageData;
+      } else if (externalAPIArray[i].jPath[j].type == "date") {
+        let myDate = new Date(replaceValue[0]);
+        if (isNaN(myDate) || replaceValue[0] === 0) {
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
+        } else {
+          replaceValue = getDateInRequiredFormat(replaceValue[0]);
+          variableTovalueMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = replaceValue;
+        }
       } else {
         if (
           replaceValue !== "NA" &&
@@ -207,25 +220,7 @@ export const externalAPIMapping = async function(
             loc.isSubTypeRequired,
             loc.delimiter
           );
-        else if (
-          externalAPIArray[i].jPath[j].value &&
-          (externalAPIArray[i].jPath[j].value.toLowerCase().search("date") !=
-            "-1" ||
-            externalAPIArray[i].jPath[j].value.toLowerCase().search("period") !=
-              "-1" ||
-            externalAPIArray[i].jPath[j].value.toLowerCase().search("dob") !=
-              "-1")
-        ) {
-          let myDate = new Date(replaceValue[0]);
-          if (isNaN(myDate) || replaceValue[0] === 0) {
-            variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
-          } else {
-            replaceValue = getDateInRequiredFormat(replaceValue[0]);
-            variableTovalueMap[
-              externalAPIArray[i].jPath[j].variable
-            ] = replaceValue;
-          }
-        } else
+        else
           variableTovalueMap[
             externalAPIArray[i].jPath[j].variable
           ] = replaceValue;
