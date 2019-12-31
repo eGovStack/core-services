@@ -92,16 +92,23 @@ export const externalAPIMapping = async function(
     //for other modules
     else {
       for (let j = 0; j < externalAPIArray[i].queryParams.length; j++) {
+        if (externalAPIArray[i].queryParams[j] == "{") {
+          externalAPIArray[i].queryParams = externalAPIArray[
+            i
+          ].queryParams.replace("{","");
+      }
+      
+
         if (externalAPIArray[i].queryParams[j] == "$") {
           flag = 1;
         }
         if (
           externalAPIArray[i].queryParams[j] == "," ||
-          externalAPIArray[i].queryParams[j] == "'"
+          externalAPIArray[i].queryParams[j] == "}"
         ) {
           if (flag == 1) {
             temp2 = temp1;
-
+            
             var temp3 = getValue(jp.query(req, temp1), "NA", temp1);
             externalAPIArray[i].queryParams = externalAPIArray[
               i
@@ -112,6 +119,12 @@ export const externalAPIMapping = async function(
             temp1 = "";
             temp2 = "";
           }
+          if (externalAPIArray[i].queryParams[j] == "}") {
+            externalAPIArray[i].queryParams = externalAPIArray[
+              i
+            ].queryParams.replace("}","");
+        }
+          
         }
         if (flag == 1) {
           temp1 += externalAPIArray[i].queryParams[j];
@@ -161,13 +174,13 @@ export const externalAPIMapping = async function(
         jp.query(res, externalAPIArray[i].jPath[j].value),
         "NA",
         externalAPIArray[i].jPath[j].value
-      );
+      );   
       let loc = externalAPIArray[i].jPath[j].localisation;
       if (externalAPIArray[i].jPath[j].type == "image") {
         // default empty image
         var imageData =
           "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII=";
-        if (replaceValue != "NA") {
+          if (replaceValue != "NA") {
           try {
             var len = replaceValue[0].split(",").length;
             var response = await axios.get(
