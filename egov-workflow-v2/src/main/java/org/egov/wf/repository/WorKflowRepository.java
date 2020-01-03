@@ -42,8 +42,6 @@ public class WorKflowRepository {
     public List<ProcessInstance> getProcessInstances(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getProcessInstanceSearchQueryWithState(criteria, preparedStmtList);
-        log.info("Query: "+query);
-        log.info("preparedStmtList: "+preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
@@ -59,8 +57,6 @@ public class WorKflowRepository {
             return new LinkedList<>();
         }else{
             String query = queryBuilder.getAssigneeSearchQuery(criteria, preparedStmtList);
-            log.info("Query: "+query);
-            log.info("preparedStmtList: "+preparedStmtList);
             return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         }
     }
@@ -74,8 +70,6 @@ public class WorKflowRepository {
     public List<ProcessInstance> getProcessInstancesForStatus(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getStatusBasedProcessInstance(criteria, preparedStmtList);
-        log.info("Query: "+query);
-        log.info("preparedStmtList: "+preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
