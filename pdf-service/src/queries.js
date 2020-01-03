@@ -53,6 +53,7 @@ export const getFileStoreIds = (
       queryparams.push(ifTrue);
     }
   }
+  searchquery = `SELECT pdf_1.* FROM egov_pdf_gen pdf_1 INNER JOIN (SELECT entityid, max(endtime) as MaxEndTime from (`+searchquery+`) as pdf_2 group by entityid) pdf_3 ON pdf_1.entityid = pdf_3.entityid AND pdf_1.endtime = pdf_3.MaxEndTime`;
   pool.query(searchquery, queryparams, (error, results) => {
     if (error) {
       logger.error(error.stack || error);
