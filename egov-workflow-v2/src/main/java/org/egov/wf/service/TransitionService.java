@@ -1,7 +1,6 @@
 package org.egov.wf.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
@@ -137,7 +136,8 @@ public class TransitionService {
          * converting the list of process instances to map of businessId and state
          * object
          */
-        Map<String, ProcessInstance> businessStateMap = repository.getProcessInstances(criteria).stream()
+        List<ProcessInstance> processInstancesFromDB = repository.getProcessInstances(criteria);
+        Map<String, ProcessInstance> businessStateMap = processInstancesFromDB.stream()
                 .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
 
         return businessStateMap;
@@ -149,7 +149,7 @@ public class TransitionService {
         BusinessServiceSearchCriteria criteria = new BusinessServiceSearchCriteria();
         String tenantId = request.getProcessInstances().get(0).getTenantId();
         String businessService = request.getProcessInstances().get(0).getBusinessService();
-        criteria.setTenantId(tenantId);
+        criteria.setTenantIds(Collections.singletonList(tenantId));
         criteria.setBusinessServices(Collections.singletonList(businessService));
         List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
         if(CollectionUtils.isEmpty(businessServices))
