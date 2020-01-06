@@ -99,7 +99,7 @@ export const directMapping = async (
         // var x = 1;
         let ownerObject = {};
         for (let k = 0; k < scema.length; k++) {
-          let fieldValue = get(val[j], scema[k].key, "NA") || "NA";
+          let fieldValue = get(val[j], scema[k].value, "NA") || "NA";
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
@@ -129,7 +129,7 @@ export const directMapping = async (
                 loc.delimiter
               );
             }
-            ownerObject[scema[k].key] = fieldValue;
+            ownerObject[scema[k].variable] = fieldValue;
           }
           // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));
           // x += 2;
