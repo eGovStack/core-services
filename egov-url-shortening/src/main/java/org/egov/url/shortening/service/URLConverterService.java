@@ -35,6 +35,9 @@ public class URLConverterService {
     @Value("${host.name}")
     private String hostName;
     
+    @Value("${server.contextPath}")
+    private String serverContextPath;
+    
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -63,7 +66,16 @@ public class URLConverterService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return hostName + uniqueID;
+        StringBuilder shortenedUrl = new StringBuilder();
+        shortenedUrl.append(hostName);
+        if(!hostName.endsWith("/") && !serverContextPath.startsWith("/"))
+        	shortenedUrl.append("/");
+        shortenedUrl.append(serverContextPath);
+        if(!serverContextPath.endsWith("/"))
+        	shortenedUrl.append("/");
+    	shortenedUrl.append(uniqueID);
+    	
+        return shortenedUrl.toString();
     }
 
     public String getLongURLFromID(String uniqueID) throws Exception {
