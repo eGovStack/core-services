@@ -66,13 +66,16 @@ public class URLConverterService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        StringBuilder shortenedUrl = new StringBuilder();
-        shortenedUrl.append(hostName);
-        if(!hostName.endsWith("/") && !serverContextPath.startsWith("/"))
+        StringBuilder shortenedUrl = new StringBuilder();  
+        
+        if(hostName.endsWith("/"))
+        	hostName = hostName.substring(0, hostName.length() - 1);
+        if(serverContextPath.startsWith("/"))
+        	serverContextPath = serverContextPath.substring(1);
+        shortenedUrl.append(hostName).append("/").append(serverContextPath);
+        if(!serverContextPath.endsWith("/")) {
         	shortenedUrl.append("/");
-        shortenedUrl.append(serverContextPath);
-        if(!serverContextPath.endsWith("/"))
-        	shortenedUrl.append("/");
+        }
     	shortenedUrl.append(uniqueID);
     	
         return shortenedUrl.toString();
