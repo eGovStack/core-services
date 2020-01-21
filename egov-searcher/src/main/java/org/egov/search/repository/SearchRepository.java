@@ -50,7 +50,7 @@ public class SearchRepository {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
-		log.info("preparedStatementValues: " + preparedStatementValues);
+		log.debug("preparedStatementValues: " + preparedStatementValues);
 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
 
 		return searchUtils.convertPGOBjects(maps);
@@ -61,7 +61,7 @@ public class SearchRepository {
 		String query = searchUtils.buildQuery(searchRequest, searchDefinition.getSearchParams(), searchDefinition.getQuery(), preparedStatementValues);
 		try {
 			log.info("Final Query: " + query);
-			log.info("preparedStatementValues: " + preparedStatementValues);
+			log.debug("preparedStatementValues: " + preparedStatementValues);
 			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
 			return result;
 		} catch (CustomException e) {
