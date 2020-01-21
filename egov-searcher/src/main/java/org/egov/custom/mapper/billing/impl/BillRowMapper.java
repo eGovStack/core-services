@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -81,7 +80,6 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.isAdvanceAllowed(rs.getBoolean("bd_isadvanceallowed"))
 					.additionalDetails(rs.getObject("b_additionalDetails"))
 					.auditDetails(auditDetails)
-					.collectedAmount(rs.getBigDecimal("bd_collectedamount"))
 					.address(address)
 					.user(user)
 					.build();

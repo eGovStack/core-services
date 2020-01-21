@@ -1,7 +1,6 @@
 package org.egov.search.repository;
 
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -27,10 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 public class SearchRepository {
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
+		
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
@@ -50,7 +45,7 @@ public class SearchRepository {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
-		log.debug("preparedStatementValues: " + preparedStatementValues);
+		//log.debug("preparedStatementValues: " + preparedStatementValues);
 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
 
 		return searchUtils.convertPGOBjects(maps);
@@ -61,7 +56,7 @@ public class SearchRepository {
 		String query = searchUtils.buildQuery(searchRequest, searchDefinition.getSearchParams(), searchDefinition.getQuery(), preparedStatementValues);
 		try {
 			log.info("Final Query: " + query);
-			log.debug("preparedStatementValues: " + preparedStatementValues);
+			//log.debug("preparedStatementValues: " + preparedStatementValues);
 			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
 			return result;
 		} catch (CustomException e) {
