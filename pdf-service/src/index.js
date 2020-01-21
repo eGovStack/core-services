@@ -48,6 +48,9 @@ var fontDescriptors = {
     bold: "src/fonts/Cambay-Bold.ttf",
     italics: "src/fonts/Cambay-Italic.ttf",
     bolditalics: "src/fonts/Cambay-BoldItalic.ttf"
+  },
+  Roboto: {
+    bold: "src/fonts/Roboto-Bold.ttf"
   }
 };
 
