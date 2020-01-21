@@ -37,10 +37,6 @@ public class ReportRepository {
     @Value(("${report.timeout.for.query}"))
     private int queryExecutionTimeout;
 
-    // If set to true, will disable reports after a certain number of failed tries
-    @Value(("${report.disable.switch}"))
-    private boolean reportDisableFlag;
-
     public static final Logger LOGGER = LoggerFactory.getLogger(ReportRepository.class);
 
     public List<Map<String, Object>> getData(ReportRequest reportRequest, ReportDefinition reportDefinition, String authToken) throws CustomException {
@@ -58,7 +54,6 @@ public class ReportRepository {
             PSQLException cause = (PSQLException) ex.getCause();
             if (cause != null && cause.getSQLState().equals("57014")) {
                 throw new CustomException("QUERY_EXECUTION_TIMEOUT", ex.getMessage());
-                    // throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(),ex.getMessage());
             } else {
                 throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
             }
