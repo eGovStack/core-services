@@ -45,11 +45,9 @@ public class ReportService {
     @Autowired
     private IntegrationService integrationService;
 
-
+    //map to store metadata with <reportname,modulename> as key
     public static Map<Pair<String, String>, MetadataResponse> metaResponseCache = new HashMap<>();
 
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
 
     public MetadataResponse getMetaData(MetaDataRequest metaDataRequest, String moduleName) throws CustomException {
         Pair<String, String> reportName = new Pair<>(metaDataRequest.getReportName(), moduleName);
@@ -72,7 +70,7 @@ public class ReportService {
                     rmt.setSerialNo(reportDefinition.isSerialNo());
                     rmt.setSelectiveDownload(reportDefinition.isSelectiveDownload());
                 } else {
-                    throw new CustomException("REPORT_CONFIG_ERROR", "ERROR IN GETTING REPORT DEFINITION");
+                    throw new CustomException("REPORT_CONFIG_ERROR", "Error in retrieving report definition");
                 }
                 List<ColumnDetail> reportHeaders = new ArrayList<>();
                 List<ColumnDetail> searchParams = new ArrayList<>();
@@ -125,15 +123,8 @@ public class ReportService {
                 return metadataResponse;
             }
         } catch (CustomException ex) {
-            if (ex.getCode().equals("INVALID_TYPE_OF_SOURCE_COLUMN")) {
-                throw new CustomException("INVALID_REPORT_CONFIG", "Type parameter in report definition is invalid for source column");
-            } else if (ex.getCode().equals("INVALID_TYPE_OF_SEARCH_PARAM")) {
-                throw new CustomException("INVALID_REPORT_CONFIG", "Type parameter in report definition is invalid for search param");
-            } else if (ex.getCode().equals("REPORT_CONFIG_ERROR")) {
-                throw new CustomException("REPORT_CONFIG_ERROR", "Error retrieving report definitions");
-            } else {
-                throw new CustomException("ERROR_GETTING_METADATA", ex.getMessage());
-            }
+            log.error("Invalid report config", ex);
+            throw ex;
         } catch (Exception e) {
             log.error("Error in getting metadata", e);
             throw new CustomException("ERROR_GETTING_METADATA", e.getMessage());

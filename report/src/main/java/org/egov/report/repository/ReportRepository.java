@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.report.repository.builder.ReportQueryBuilder;
 import org.egov.swagger.model.ReportDefinition;
 import org.egov.swagger.model.ReportRequest;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.Null;
 
+@Slf4j
 @Repository
 public class ReportRepository {
 
@@ -37,7 +39,6 @@ public class ReportRepository {
     @Value(("${report.timeout.for.query}"))
     private int queryExecutionTimeout;
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ReportRepository.class);
 
     public List<Map<String, Object>> getData(ReportRequest reportRequest, ReportDefinition reportDefinition, String authToken) throws CustomException {
         Long userId = reportRequest.getRequestInfo().getUserInfo() == null ? null : reportRequest.getRequestInfo().getUserInfo().getId();
@@ -45,28 +46,28 @@ public class ReportRepository {
         Long startTime = new Date().getTime();
         List<Map<String, Object>> maps = null;
         int count = 0;
-        LOGGER.info("final query:" + query);
+        log.info("final query:" + query);
         try {
             jdbcTemplate.setQueryTimeout(queryExecutionTimeout);
             maps = jdbcTemplate.queryForList(query);
         } catch (DataAccessResourceFailureException ex) {
-            LOGGER.info("Query Execution Failed Due To Timeout: ", ex);
+            log.info("Query Execution Failed Due To Timeout: ", ex);
             PSQLException cause = (PSQLException) ex.getCause();
             if (cause != null && cause.getSQLState().equals("57014")) {
                 throw new CustomException("QUERY_EXECUTION_TIMEOUT", ex.getMessage());
             } else {
-                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
+                throw ex;
             }
         } catch (Exception e) {
-            LOGGER.info("Query Execution Failed: ", e);
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), e.getMessage());
+            log.info("Query Execution Failed: ", e);
+            throw e;
         }
 
         Long endTime = new Date().getTime();
         Long totalExecutionTime = endTime - startTime;
-        LOGGER.info("total query execution time taken in millisecount:" + totalExecutionTime);
+        log.info("total query execution time taken in millisecount:" + totalExecutionTime);
         if (endTime - startTime > maxExecutionTime)
-            LOGGER.error("Sql query is taking time query:" + query);
+            log.error("Sql query is taking time query:" + query);
         return maps;
     }
 

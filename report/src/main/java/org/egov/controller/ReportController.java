@@ -44,9 +44,6 @@ public class ReportController {
 
     public ReportDefinitions reportDefinitions;
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
-
-
     @Autowired
     public ReportController(ReportDefinitions reportDefinitions) {
         this.reportDefinitions = reportDefinitions;
@@ -100,14 +97,8 @@ public class ReportController {
             ReportResponse reportResponse = reportService.getReportData(reportRequest, moduleName, reportRequest.getReportName(), reportRequest.getRequestInfo().getAuthToken());
             return new ResponseEntity<>(reportResponse, HttpStatus.OK);
         } catch (CustomException e) {
-            if (e.getCode().equals("QUERY_EXECUTION_TIMEOUT")) {
-                throw new CustomException("Query Execution is getting timed out", e.getMessage());
-            } else if (e.getCode().equals("500")) {
-                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), e.getMessage());
-            } else {
-                log.error("Error in getting report data", e);
-                throw new CustomException("ERROR_IN_RETRIEVING_REPORT_DATA", e.getMessage());
-            }
+            log.error("Error in getting report data", e);
+            throw e;
         } catch (Exception e) {
             log.error("Error in getting report data", e);
             throw new CustomException("ERROR_IN_RETRIEVING_REPORT_DATA", e.getMessage());
