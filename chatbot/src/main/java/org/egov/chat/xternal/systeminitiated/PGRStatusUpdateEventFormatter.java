@@ -1,4 +1,4 @@
-package org.egov.chat.post.systeminitiated.pgr;
+package org.egov.chat.xternal.systeminitiated;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
