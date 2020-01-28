@@ -40,6 +40,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@Ignore
 public class UserRepositoryTest {
 
 	@Autowired
