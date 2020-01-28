@@ -13,7 +13,10 @@ import org.egov.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class OtpService {
 
 	private OtpRepository otpRepository;
@@ -60,11 +63,14 @@ public class OtpService {
 		}
 		if (null == matchingUser.getMobileNumber() || matchingUser.getMobileNumber().isEmpty())
 			throw new UserMobileNumberNotFoundException();
-		
-		final String otpNumber = otpRepository.fetchOtp(otpRequest);
-		otpRequest.setMobileNumber(matchingUser.getMobileNumber());
-		otpSMSSender.send(otpRequest, otpNumber);
-		otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
+		try {
+			final String otpNumber = otpRepository.fetchOtp(otpRequest);
+			otpRequest.setMobileNumber(matchingUser.getMobileNumber());
+			otpSMSSender.send(otpRequest, otpNumber);
+			otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
+		}catch(Exception e) {
+			log.error("Exception while fetching otp: ",e);
+		}
 	}
 
 }
