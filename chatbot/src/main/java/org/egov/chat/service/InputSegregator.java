@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class InputSegregator {
 
-    private String rootQuestionTopic = "root-question";
+    private String rootAnswerTopic = "root-answer";
 
     @Autowired
     private ConversationStateRepository conversationStateRepository;
@@ -36,14 +36,14 @@ public class InputSegregator {
 
             kafkaTemplate.send(topic, consumerRecord.key(), chatNode);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("input segregator error",e);
         }
     }
 
     private String getOutputTopcName(String activeNodeId) {
         String topic;
         if(activeNodeId == null)
-            topic = rootQuestionTopic;
+            topic = rootAnswerTopic;
         else
             topic = topicNameGetter.getAnswerInputTopicNameForNode(activeNodeId);
         return topic;
