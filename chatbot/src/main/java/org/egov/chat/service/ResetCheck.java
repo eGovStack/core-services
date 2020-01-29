@@ -12,6 +12,7 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.JsonPointerNameConstants;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class ResetCheck {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
+
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
 
     @Autowired
     private ConversationStateRepository conversationStateRepository;
@@ -59,6 +63,7 @@ public class ResetCheck {
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
                 return Collections.emptyList();
+                // return Collections.singletonList(commonAPIErrorMessage.resetFlowDuetoError(chatNode));
             }
         }).to(resetTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
 
@@ -79,7 +84,7 @@ public class ResetCheck {
 
             return false;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("reset check error",e);
             return false;
         }
     }
