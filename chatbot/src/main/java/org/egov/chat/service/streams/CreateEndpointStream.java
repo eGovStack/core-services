@@ -15,6 +15,7 @@ import org.egov.chat.config.JsonPointerNameConstants;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.repository.MessageRepository;
 import org.egov.chat.service.restendpoint.RestAPI;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,8 @@ public class CreateEndpointStream extends CreateStream {
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
     private ObjectMapper objectMapper;
-
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private RestAPI restAPI;
 
@@ -63,12 +65,13 @@ public class CreateEndpointStream extends CreateStream {
                 List<JsonNode> nodes = new ArrayList<>();
                 nodes.add(chatNode);
 
-                nodes.add(createContinueMessageNode(chatNode));
+//                nodes.add(createContinueMessageNode(chatNode));
 
                 return nodes;
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in branch stream",e);
                 return Collections.emptyList();
+                // return Collections.singletonList(commonAPIErrorMessage.resetFlowDuetoError(chatNode));
             }
         }).to(sendMessageTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
 

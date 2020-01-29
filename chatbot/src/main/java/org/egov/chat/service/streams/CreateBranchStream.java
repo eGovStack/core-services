@@ -16,6 +16,7 @@ import org.egov.chat.config.graph.TopicNameGetter;
 import org.egov.chat.service.AnswerExtractor;
 import org.egov.chat.service.AnswerStore;
 import org.egov.chat.service.validation.Validator;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,8 @@ public class CreateBranchStream extends CreateStream {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
-
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private Validator validator;
     @Autowired
@@ -67,11 +69,11 @@ public class CreateBranchStream extends CreateStream {
                     chatNode = answerExtractor.extractAnswer(config, chatNode);
 
                     answerStore.saveAnswer(config, chatNode);
-
                     return Collections.singletonList(chatNode);
                 } catch (Exception e) {
-                    log.error(e.getMessage());
+                    log.error("error in branch stream",e);
                     return Collections.emptyList();
+                    // return Collections.singletonList(commonAPIErrorMessage.resetFlowDuetoError(chatNode));
                 }
             }).to(targetTopicName, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
 
