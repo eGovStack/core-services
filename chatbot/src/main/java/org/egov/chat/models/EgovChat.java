@@ -19,5 +19,7 @@ public class EgovChat {
 
     private Message message;
 
+    private Response response;
+
     private JsonNode extraInfo;
 }
