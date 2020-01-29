@@ -21,4 +21,6 @@ public class ConversationState {
     private JsonNode questionDetails;
 
     private String locale;
+
+    private Long lastModifiedTime;
 }

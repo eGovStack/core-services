@@ -15,8 +15,11 @@ public class Message {
 
     private String nodeId;
 
+    private String rawInput;
+
     private String messageContent;
 
     private String contentType;
 
+    private boolean isValid;
 }

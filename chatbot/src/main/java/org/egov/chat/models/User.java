@@ -1,4 +1,4 @@
-package org.egov.chat.pre.models;
+package org.egov.chat.models;
 
 import lombok.*;
 
