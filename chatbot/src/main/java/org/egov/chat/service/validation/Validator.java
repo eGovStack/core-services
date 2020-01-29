@@ -14,6 +14,8 @@ public class Validator {
     private TypeValidator typeValidator;
     @Autowired
     private FixedSetValues fixedSetValues;
+    @Autowired
+    private ConversationStartValidator conversationStartValidator;
 
     public boolean isValid(JsonNode config, JsonNode chatNode) {
         try {
@@ -29,11 +31,13 @@ public class Validator {
                     String validatorType = config.get("typeOfValues").asText();
                     if (validatorType.equalsIgnoreCase("FixedSetValues"))
                         return fixedSetValues.isValid(config, chatNode);
+                    else if(validatorType.equalsIgnoreCase("conversationStartValidator"))
+                        return conversationStartValidator.checkIfConversationStartKeyword(chatNode);
                 }
             }
             return true;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("error in validator",e);
             return false;
         }
     }
