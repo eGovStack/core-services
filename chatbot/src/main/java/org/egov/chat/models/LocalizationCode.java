@@ -3,15 +3,18 @@ package org.egov.chat.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 @Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LocalizationCode {
 
     private String code;
 
     private String tenantId;        // Optional. Defaults to state level tenantId
+
+    // OR
 
     private String value;
 

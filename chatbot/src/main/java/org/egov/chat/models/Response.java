@@ -4,10 +4,11 @@ import lombok.*;
 
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 @Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Response {
 
     private String type;
@@ -15,6 +16,8 @@ public class Response {
     private List<LocalizationCode> localizationCodes;
 
     private String text;
+
+    // OR
 
     private String fileStoreId;
 

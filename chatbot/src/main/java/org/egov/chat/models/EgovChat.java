@@ -3,10 +3,11 @@ package org.egov.chat.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 @Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EgovChat {
 
     private String tenantId;
