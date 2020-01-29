@@ -13,6 +13,7 @@ import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.egov.chat.service.ErrorMessageGenerator;
 import org.egov.chat.service.QuestionGenerator;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,9 @@ public class CreateStream {
     protected ConversationStateRepository conversationStateRepository;
 
     @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
+
+    @Autowired
     protected QuestionGenerator questionGenerator;
     @Autowired
     private ErrorMessageGenerator errorMessageGenerator;
@@ -49,26 +53,25 @@ public class CreateStream {
 
         questionKStream.flatMapValues(chatNode -> {
             try {
-                List<JsonNode> responseNodes = new ArrayList<>();
 
                 if(chatNode.has("errorMessage") && chatNode.get("errorMessage").asBoolean()) {
-                    JsonNode errorMessageNode = errorMessageGenerator.getErrorMessageNode(config, chatNode);
-                    if(errorMessageNode != null)
-                        responseNodes.add(errorMessageNode);
+                    errorMessageGenerator.fillErrorMessageInNode(config, chatNode);
+//                    if(errorMessageNode != null)
+//                        responseNodes.add(errorMessageNode);
                 }
 
-                JsonNode nodeWithQuestion = questionGenerator.getQuestion(config, chatNode);
-                responseNodes.add(nodeWithQuestion);
+                questionGenerator.fillQuestion(config, chatNode);
 
-                JsonNode questionDetails = nodeWithQuestion.get("questionDetails");
+                JsonNode questionDetails = chatNode.get("questionDetails");
 
                 conversationStateRepository.updateConversationStateForId(config.get("name").asText(),
                         questionDetails, chatNode.at(JsonPointerNameConstants.conversationId).asText());
 
-                return responseNodes;
+                return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in question stream",e);
                 return Collections.emptyList();
+                // return Collections.singletonList(commonAPIErrorMessage.resetFlowDuetoError(chatNode));
             }
         }).to(sendMessageTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
 
