@@ -1,0 +1,16 @@
+name : pgr.select.create-track
+nodeType : branch
+message : chatbot.messages.welcomeMessage
+
+validationRequired: true
+typeOfValues: FixedSetValues
+
+values : [ "File a Complaint", "Track Complaint Status", "Get last water bill" ]
+displayValuesAsOptions : true
+matchAnswerThreshold : 70
+
+type : text
+
+File a Complaint : pgr.create.tenantId
+Track Complaint Status : pgr.track.end
+Get last water bill : ws.lastbill.end
