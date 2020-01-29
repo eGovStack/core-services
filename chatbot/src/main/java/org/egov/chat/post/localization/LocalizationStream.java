@@ -49,7 +49,7 @@ public class LocalizationStream {
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in localisation stream",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

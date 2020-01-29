@@ -39,7 +39,7 @@ public class KarixRestCall {
 
             log.info("Karix Send Message Response : " + karixResponse.toString());
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("karix rest call error",e);
         }
 
     }

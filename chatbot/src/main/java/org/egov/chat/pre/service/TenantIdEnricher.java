@@ -47,7 +47,7 @@ public class TenantIdEnricher {
                 ((ObjectNode) chatNode).put("tenantId",  tenantIdWhatsAppNumberMapping.getTenantIdForNumber(recipientNumber));
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in tenantenricher stream" ,e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

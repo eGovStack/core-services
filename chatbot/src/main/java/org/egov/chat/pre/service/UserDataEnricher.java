@@ -45,7 +45,7 @@ public class UserDataEnricher {
                 log.info("Added userInfo");
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error(streamName + " error : " + e.getMessage());
+                log.error(streamName + " error : " , e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

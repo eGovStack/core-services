@@ -147,7 +147,7 @@ public class KarixRequestFormatter implements RequestFormatter {
             try {
                 return Collections.singletonList(getTransformedRequest(request));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("karix formatter error",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

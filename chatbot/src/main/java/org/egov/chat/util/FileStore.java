@@ -71,8 +71,7 @@ public class FileStore {
             tempFile.delete();
             return fileStoreId;
         }catch (Exception e){
-            log.error("Get File failed");
-            log.error(e.getMessage());
+            log.error("Get File failed",e);
         }
         return null;
     }
@@ -100,8 +99,7 @@ public class FileStore {
 
             return response.getBody().get("files").get(0).get("fileStoreId").asText();
         } catch (Exception e) {
-            log.error("Error in file store save request");
-            log.error(e.getMessage());
+            log.error("Error in file store save request",e);
         }
 
         return null;

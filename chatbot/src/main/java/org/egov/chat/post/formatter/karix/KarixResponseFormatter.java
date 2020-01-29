@@ -71,7 +71,7 @@ public class KarixResponseFormatter implements ResponseFormatter {
             try {
                 return getTransformedResponse(response);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in karix formatter",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
