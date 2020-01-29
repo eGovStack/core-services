@@ -73,14 +73,17 @@ public class ComplainTypeValueFetcher implements ExternalValueFetcher {
 
     List<String> getActiveComplaintTypes(JSONArray mdmsResValues) {
         List<String> values = new ArrayList<>();
-
+        Map<Integer,String>entriesWithOrder=new HashMap<>();
         for(Object mdmsResValue : mdmsResValues) {
             HashMap mdmsValue = (HashMap) mdmsResValue;
-            if(mdmsValue.get("active").toString().equalsIgnoreCase("true")) {
-                values.add(mdmsValue.get("serviceCode").toString());
+            if(mdmsValue.get("active").toString().equalsIgnoreCase("true")&&(mdmsValue.get("order")!=null)) {
+                entriesWithOrder.put(Integer.parseInt(mdmsValue.get("order").toString()),mdmsValue.get("serviceCode").toString());
             }
         }
-
+        TreeSet <Integer>sortedSet=new TreeSet<>(entriesWithOrder.keySet());
+        for(Integer key:sortedSet){
+            values.add(entriesWithOrder.get(key));
+        }
         return values;
     }
 
