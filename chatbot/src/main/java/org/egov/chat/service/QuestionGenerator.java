@@ -27,7 +27,7 @@ public class QuestionGenerator {
     @Autowired
     private NumeralLocalization numeralLocalization;
 
-    public JsonNode getQuestion(JsonNode config, JsonNode chatNode) {
+    public void fillQuestion(JsonNode config, JsonNode chatNode) {
 
         ObjectNode localizationCode = objectMapper.createObjectNode();
         localizationCode.put("code", getQuesitonForConfig(config));
@@ -36,12 +36,24 @@ public class QuestionGenerator {
 
         localizationCodesArrayNode.addAll(getOptionsForConfig(config, chatNode));
 
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("type", "text");
-        response.set("localizationCodes", localizationCodesArrayNode);
+        // check if response object already created in case of error
+        if(chatNode.has("response")&&chatNode.at("/response").has("localizationCodes")){
+            ArrayNode responseLocalisationCodes= (ArrayNode) chatNode.at("/response/localizationCodes");
+            ObjectNode newlineNode = objectMapper.createObjectNode();
+            newlineNode.put("value", "\n");
+            responseLocalisationCodes.add(newlineNode);
+            responseLocalisationCodes.addAll(localizationCodesArrayNode);
+            ObjectNode response= (ObjectNode) chatNode.at("/response");
+            response.set("localizationCodes", responseLocalisationCodes);
+            ((ObjectNode) chatNode).set("response", response);
+        }
+        else {
+            ObjectNode response = objectMapper.createObjectNode();
+            response.put("type", "text");
+            response.set("localizationCodes", localizationCodesArrayNode);
+            ((ObjectNode) chatNode).set("response", response);
+        }
 
-        ((ObjectNode) chatNode).set("response", response);
-        return chatNode;
     }
 
     private String getQuesitonForConfig(JsonNode config) {
@@ -76,8 +88,8 @@ public class QuestionGenerator {
                     JsonNode value = values.get(i);
                     tempString += "\n";
                     if(config.get("values").isArray())
-                        tempString += "Type ";
-                    tempString += value.get("index").asText();
+                        tempString += "*Send ";
+                    tempString += value.get("index").asText()+"*";
                     if(config.get("values").isArray())
                         tempString += " to ";
                     else

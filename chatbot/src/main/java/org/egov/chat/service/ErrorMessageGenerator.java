@@ -15,13 +15,13 @@ public class ErrorMessageGenerator {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public JsonNode getErrorMessageNode(JsonNode config, JsonNode chatNode) {
+    public void fillErrorMessageInNode(JsonNode config, JsonNode chatNode) {
         String errorMessage = getErrorMessageForConfig(config);
         if(errorMessage == null) {
-            return null;
+            return ;
         }
 
-        JsonNode errorMessageNode = chatNode.deepCopy();
+//        JsonNode errorMessageNode = chatNode.deepCopy();
 
 
         ObjectNode localizationCode = objectMapper.createObjectNode();
@@ -33,9 +33,7 @@ public class ErrorMessageGenerator {
         response.put("type", "text");
         response.set("localizationCodes", localizationCodesArrayNode);
 
-        ((ObjectNode) errorMessageNode).set("response", response);
-
-        return errorMessageNode;
+        ((ObjectNode) chatNode).set("response", response);
     }
 
     private String getErrorMessageForConfig(JsonNode config) {
