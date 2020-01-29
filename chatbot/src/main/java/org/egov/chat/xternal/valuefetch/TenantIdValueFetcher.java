@@ -1,5 +1,6 @@
 package org.egov.chat.xternal.valuefetch;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,7 +26,8 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     private ObjectMapper objectMapper;
 
     private String moduleName = "tenant";
-    private String masterDetailsName = "tenants";
+    private String masterDetailsName = "citymodule";
+    private String filter = "$.[?(@.module=='PGR.WHATSAPP')].tenants.*";
 
     @Value("${mdms.service.host}")
     private String mdmsHost;
@@ -50,7 +52,7 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     }
 
     private JSONArray fetchMdmsData(String tenantId) {
-        MasterDetail masterDetail = MasterDetail.builder().name(masterDetailsName).build();
+        MasterDetail masterDetail = MasterDetail.builder().name(masterDetailsName).filter(filter).build();
         ModuleDetail moduleDetail =
                 ModuleDetail.builder().moduleName(moduleName).masterDetails(Collections.singletonList(masterDetail)).build();
         MdmsCriteria mdmsCriteria =
