@@ -37,7 +37,7 @@ public class WSFetchLastBill implements RestEndpoint {
     private String hardcodedResponseWithoutAttachment ="{\"message\":\"Dear Consumer,\\nWater bill of Consumer No.: 2113008277 for 2018-2019-Q2 (Jul to Sept) is Rs. 420.00/- . Payment Due Date: 03/07/2019 . Link to pay online http://bit.ly/SunamWater\\nThanks,\\nSunam-DEV Municipal Council\"}";
 
     @Override
-    public ObjectNode getMessageForRestCall(ObjectNode params) throws Exception {
+    public ObjectNode getMessageForRestCall(ObjectNode params, JsonNode chatNode) throws Exception {
 
         String mobileNumber = params.get("mobileNumber").asText();
 
