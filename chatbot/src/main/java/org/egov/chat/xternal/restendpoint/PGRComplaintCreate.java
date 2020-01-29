@@ -10,6 +10,7 @@ import com.jayway.jsonpath.WriteContext;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -35,7 +36,8 @@ public class PGRComplaintCreate implements RestEndpoint {
 
     @Value("${egov.external.host}")
     private String egovExternalHost;
-
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
     @Value("${pgr.service.host}")
     private String pgrHost;
     @Value("${pgr.service.create.path}")
@@ -49,7 +51,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             "\"source\":\"whatsapp\",\"tenantId\":\"\",\"description\":\"\"}]}";
 
     @Override
-    public ObjectNode getMessageForRestCall(ObjectNode params) throws Exception {
+    public ObjectNode getMessageForRestCall(ObjectNode params, JsonNode chatNode) throws Exception {
         String authToken = params.get("authToken").asText();
         String refreshToken = params.get("refreshToken").asText();
         String mobileNumber = params.get("mobileNumber").asText();
@@ -95,14 +97,17 @@ public class PGRComplaintCreate implements RestEndpoint {
         try {
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
                     requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response, refreshToken);
+            responseMessage = makeMessageForResponse(response, refreshToken,mobileNumber);
         } catch (Exception e) {
             responseMessage.put("text", "Error occured");
+            log.error("error in pgr create",e);
+            // commonAPIErrorMessage.resetConversation(chatNode);
+            // responseMessage = commonAPIErrorMessage.getErrorMessageResponse();
         }
         return responseMessage;
     }
 
-    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token) throws Exception {
+    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token,String mobileNumber) throws Exception {
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
 
@@ -110,8 +115,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode( complaintNumber, "UTF-8" );
-            String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
-            url += "?token=" + token;
+            String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath;
 
             ObjectNode param;
 
@@ -130,6 +134,8 @@ public class PGRComplaintCreate implements RestEndpoint {
             localizationCodes.add(template);
             responseMessage.set("localizationCodes", localizationCodes);
         } else {
+            log.error("error occurred while calling create endpoint",responseEntity.toString());
+            // responseMessage = commonAPIErrorMessage.getErrorMessageResponse();
             responseMessage.put("text", "Error Occured");
         }
         return responseMessage;
