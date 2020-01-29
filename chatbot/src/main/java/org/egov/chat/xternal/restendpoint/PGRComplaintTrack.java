@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -37,6 +38,9 @@ public class PGRComplaintTrack implements RestEndpoint {
     @Autowired
     private NumeralLocalization numeralLocalization;
 
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
+
     private String complaintCategoryLocalizationPrefix = "pgr.complaint.category.";
 
     private String trackComplaintHeaderLocalizationCode = "chatbot.message.pgrTrackComplaintEndHeader";
@@ -54,7 +58,7 @@ public class PGRComplaintTrack implements RestEndpoint {
     String pgrRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":\"\"}}";
 
     @Override
-    public ObjectNode getMessageForRestCall(ObjectNode params) throws Exception {
+    public ObjectNode getMessageForRestCall(ObjectNode params, JsonNode chatNode) throws Exception {
         String tenantId = params.get("tenantId").asText();
         String authToken = params.get("authToken").asText();
         DocumentContext userInfo = JsonPath.parse(params.get("userInfo").asText());
@@ -82,7 +86,10 @@ public class PGRComplaintTrack implements RestEndpoint {
             responseMessage = makeMessageForResponse(response);
 
         } catch (Exception e) {
-            responseMessage.put("text", "Error occured");
+            log.error("pgr track error",e);
+            // commonAPIErrorMessage.resetConversation(chatNode);
+            // responseMessage = commonAPIErrorMessage.getErrorMessageResponse();
+           responseMessage.put("text", "Error occured");
         }
 
         return responseMessage;
@@ -158,7 +165,9 @@ public class PGRComplaintTrack implements RestEndpoint {
 
 
         } else {
-            responseMessage.put("text", "Error Occured");
+           responseMessage.put("text", "Error Occured");
+            log.error("error occurred while calling search endpoint",responseEntity.toString());
+            // responseMessage = commonAPIErrorMessage.getErrorMessageResponse();
         }
 
         return responseMessage;
