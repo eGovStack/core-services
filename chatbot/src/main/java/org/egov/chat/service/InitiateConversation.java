@@ -2,9 +2,11 @@ package org.egov.chat.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -15,12 +17,11 @@ import org.egov.chat.config.JsonPointerNameConstants;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.ConversationState;
 import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,6 +34,9 @@ public class InitiateConversation {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
+
+    @Autowired
+    CommonAPIErrorMessage commonAPIErrorMessage;
 
     @Autowired
     private ConversationStateRepository conversationStateRepository;
@@ -49,8 +53,9 @@ public class InitiateConversation {
             try {
                 return Collections.singletonList(createOrContinueConversation(chatNode));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in initiate conversation",e);
                 return Collections.emptyList();
+                // return Collections.singletonList(commonAPIErrorMessage.resetFlowDuetoError(chatNode));
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
 
