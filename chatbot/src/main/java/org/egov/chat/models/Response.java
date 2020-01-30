@@ -13,6 +13,10 @@ public class Response {
 
     private String type;
 
+    private String nodeId;
+
+    private Long timestamp;
+
     private List<LocalizationCode> localizationCodes;
 
     private String text;
