@@ -8,8 +8,9 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
-import org.egov.chat.config.JsonPointerNameConstants;
 import org.egov.chat.config.KafkaStreamsConfig;
+import org.egov.chat.models.EgovChat;
+import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.egov.chat.service.ErrorMessageGenerator;
 import org.egov.chat.service.QuestionGenerator;
@@ -44,33 +45,32 @@ public class CreateStream {
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
 
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, JsonNode> questionKStream = builder.stream(questionTopic, Consumed.with(Serdes.String(),
-                kafkaStreamsConfig.getJsonSerde()));
+        KStream<String, EgovChat> questionKStream = builder.stream(questionTopic, Consumed.with(Serdes.String(),
+                EgovChatSerdes.getSerde()));
 
         questionKStream.flatMapValues(chatNode -> {
             try {
-                List<JsonNode> responseNodes = new ArrayList<>();
+                List<EgovChat> responseNodes = new ArrayList<>();
 
-                if(chatNode.has("errorMessage") && chatNode.get("errorMessage").asBoolean()) {
-                    JsonNode errorMessageNode = errorMessageGenerator.getErrorMessageNode(config, chatNode);
-                    if(errorMessageNode != null)
+                if (chatNode.isErrorMessage()) {
+                    EgovChat errorMessageNode = errorMessageGenerator.getErrorMessageNode(config, chatNode);
+                    if (errorMessageNode != null)
                         responseNodes.add(errorMessageNode);
                 }
 
-                JsonNode nodeWithQuestion = questionGenerator.getQuestion(config, chatNode);
+                EgovChat nodeWithQuestion = questionGenerator.getQuestion(config, chatNode);
                 responseNodes.add(nodeWithQuestion);
 
-                JsonNode questionDetails = nodeWithQuestion.get("questionDetails");
-
+                JsonNode questionDetails = nodeWithQuestion.getConversationState().getQuestionDetails();
                 conversationStateRepository.updateConversationStateForId(config.get("name").asText(),
-                        questionDetails, chatNode.at(JsonPointerNameConstants.conversationId).asText());
+                        questionDetails, chatNode.getConversationState().getConversationId());
 
                 return responseNodes;
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in create stream", e);
                 return Collections.emptyList();
             }
-        }).to(sendMessageTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+        }).to(sendMessageTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         kafkaStreamsConfig.startStream(builder, streamConfiguration);
 

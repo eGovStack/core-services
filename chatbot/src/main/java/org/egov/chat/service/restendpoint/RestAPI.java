@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.config.JsonPointerNameConstants;
+import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.Message;
+import org.egov.chat.models.Response;
 import org.egov.chat.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,16 +30,20 @@ public class RestAPI {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    ObjectMapper objectMapper;
 
-    public ObjectNode makeRestEndpointCall(JsonNode config, JsonNode chatNode) throws Exception {
+    public Response makeRestEndpointCall(JsonNode config, EgovChat chatNode) throws Exception {
 
         String restClassName = config.get("class").asText();
 
         RestEndpoint restEndpoint = getRestEndpointClass(restClassName);
 
-        ObjectNode params = makeParamsforConfig(config, chatNode);
+        JsonNode chatNodeInJson = objectMapper.valueToTree(chatNode);
+        ObjectNode params = makeParamsforConfig(config, chatNodeInJson);
 
-        return restEndpoint.getMessageForRestCall(params);
+        JsonNode response = restEndpoint.getMessageForRestCall(params);
+        return objectMapper.convertValue(response, Response.class);
     }
 
     private ObjectNode makeParamsforConfig(JsonNode config, JsonNode chatNode) {
@@ -50,11 +56,11 @@ public class RestAPI {
 
         ArrayNode nodeConfigs = (ArrayNode) config.get("nodes");
 
-        for(JsonNode node : nodeConfigs) {
+        for (JsonNode node : nodeConfigs) {
             String nodeId = node.asText();
             Optional<Message> message =
                     messageList.stream().filter(message1 -> message1.getNodeId().equalsIgnoreCase(nodeId)).findFirst();
-            if(message.isPresent())
+            if (message.isPresent())
                 params.set(nodeId, TextNode.valueOf(message.get().getMessageContent()));
             else
                 params.set(nodeId, NullNode.getInstance());
@@ -69,7 +75,7 @@ public class RestAPI {
 
             String paramConfiguration = paramConfigurations.get(key).asText();
 
-            if(paramConfiguration.substring(0, 1).equalsIgnoreCase("/")) {
+            if (paramConfiguration.substring(0, 1).equalsIgnoreCase("/")) {
                 paramValue = chatNode.at(paramConfiguration);
             } else {
                 paramValue = TextNode.valueOf(paramConfiguration);
@@ -85,8 +91,8 @@ public class RestAPI {
     }
 
     RestEndpoint getRestEndpointClass(String className) {
-        for(RestEndpoint restEndpoint : restEndpointList) {
-            if(restEndpoint.getClass().getName().equalsIgnoreCase(className))
+        for (RestEndpoint restEndpoint : restEndpointList) {
+            if (restEndpoint.getClass().getName().equalsIgnoreCase(className))
                 return restEndpoint;
         }
         return null;

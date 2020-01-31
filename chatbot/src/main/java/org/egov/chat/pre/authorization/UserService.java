@@ -2,9 +2,8 @@ package org.egov.chat.pre.authorization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.chat.pre.config.JsonPointerNameConstants;
+import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,13 +23,13 @@ public class UserService {
     @Autowired
     private CreateNewUserService createNewUserService;
 
-    public JsonNode addLoggedInUser(JsonNode chatNode) throws Exception {
-        String tenantId = chatNode.at(JsonPointerNameConstants.tenantId).asText();
-        String mobileNumber = chatNode.at(JsonPointerNameConstants.mobileNumber).asText();
+    public EgovChat addLoggedInUser(EgovChat chatNode) throws Exception {
+        String tenantId = chatNode.getTenantId();
+        String mobileNumber = chatNode.getUser().getMobileNumber();
 
         User user = getUser(mobileNumber, tenantId);
 
-        chatNode = addUserDataToChatNode(user, chatNode);
+        chatNode.setUser(user);
         return chatNode;
     }
 
@@ -72,11 +71,6 @@ public class UserService {
 
     JsonNode createUserForSystem(String mobileNumber, String tenantId) throws Exception {
         return createNewUserService.createNewUser(mobileNumber, tenantId);
-    }
-
-    JsonNode addUserDataToChatNode(User user, JsonNode chatNode) {
-        ( (ObjectNode) chatNode).set("user", objectMapper.valueToTree(user));
-        return chatNode;
     }
 
 }

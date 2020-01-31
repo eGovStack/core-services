@@ -16,7 +16,7 @@ values :
   params :
     tenantId : ~pgr.create.tenantId
     authToken : /user/authToken
-    recipient: /recipient/to
+    recipient: /extraInfo/recipient
 
 matchAnswerThreshold: 70
 

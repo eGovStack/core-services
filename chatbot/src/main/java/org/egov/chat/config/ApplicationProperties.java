@@ -28,4 +28,7 @@ public class ApplicationProperties {
     @Value("${user.service.chatbot.citizen.passwrord}")
     private String hardcodedPassword;
 
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+
 }

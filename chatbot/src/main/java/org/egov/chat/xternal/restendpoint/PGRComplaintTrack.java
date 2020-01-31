@@ -61,7 +61,7 @@ public class PGRComplaintTrack implements RestEndpoint {
 
         DocumentContext request = JsonPath.parse(pgrRequestBody);
         request.set("$.RequestInfo.authToken", authToken);
-        request.set("$.RequestInfo.userInfo",  userInfo.json());
+        request.set("$.RequestInfo.userInfo", userInfo.json());
 
         UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(pgrHost + pgrSearchComplaintPath);
         uriComponents.queryParam("tenantId", tenantId);
@@ -95,21 +95,22 @@ public class PGRComplaintTrack implements RestEndpoint {
 
         ArrayNode localizationCodesArrayNode = objectMapper.createArrayNode();
 
-        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
 
             DocumentContext documentContext = JsonPath.parse(responseEntity.getBody().toString());
 
-            Integer numberOfServices = (Integer) ( (JSONArray) documentContext.read("$..services.length()")) .get(0);
+            Integer numberOfServices = (Integer) ((JSONArray) documentContext.read("$..services.length()")).get(0);
 
-            if(numberOfServices > 0) {
+            if (numberOfServices > 0) {
                 ObjectNode trackComplaintHeader = objectMapper.createObjectNode();
                 trackComplaintHeader.put("code", trackComplaintHeaderLocalizationCode);
                 localizationCodesArrayNode.add(trackComplaintHeader);
 
                 for (int i = 0; i < numberOfServices; i++) {
-                    if(numberOfServices > 1) {
+                    if (numberOfServices > 1) {
                         String value = "\n\n*" + (i + 1) + ".* ";
-                        localizationCodesArrayNode.addAll(numeralLocalization.getLocalizationCodesForStringContainingNumbers(value));
+                        ArrayNode localisationCodes = objectMapper.valueToTree(numeralLocalization.getLocalizationCodesForStringContainingNumbers(value));
+                        localizationCodesArrayNode.addAll(localisationCodes);
                     } else {
                         ObjectNode valueString = objectMapper.createObjectNode();
                         valueString.put("value", "\n");
@@ -124,7 +125,7 @@ public class PGRComplaintTrack implements RestEndpoint {
                     ObjectNode params = objectMapper.createObjectNode();
 
                     String complaintNumber = documentContext.read("$.services.[" + i + "].serviceRequestId");
-                    params.set("complaintNumber", numeralLocalization.getLocalizationCodesForStringContainingNumbers(complaintNumber));
+                    params.set("complaintNumber", objectMapper.valueToTree(numeralLocalization.getLocalizationCodesForStringContainingNumbers(complaintNumber)));
 
                     String complaintCategory = documentContext.read("$.services.[" + i + "].serviceCode");
                     param = objectMapper.createObjectNode();
@@ -133,14 +134,14 @@ public class PGRComplaintTrack implements RestEndpoint {
 
                     Date createdDate = new Date((long) documentContext.read("$.services.[" + i + "].auditDetails.createdTime"));
                     String filedDate = getDateFromTimestamp(createdDate);
-                    params.set("filedDate", numeralLocalization.getLocalizationCodesForStringContainingNumbers(filedDate));
+                    params.set("filedDate", objectMapper.valueToTree(numeralLocalization.getLocalizationCodesForStringContainingNumbers(filedDate)));
 
                     String status = documentContext.read("$.services.[" + i + "].status");
                     param = objectMapper.createObjectNode();
                     param.put("value", status);
                     params.set("status", param);
 
-                    String encodedPath = URLEncoder.encode( documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8" );
+                    String encodedPath = URLEncoder.encode(documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8");
                     String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
                     param = objectMapper.createObjectNode();
                     param.put("value", url);

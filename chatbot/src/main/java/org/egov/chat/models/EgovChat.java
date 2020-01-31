@@ -5,7 +5,7 @@ import lombok.*;
 
 @Setter
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class EgovChat {
@@ -23,4 +23,8 @@ public class EgovChat {
     private Response response;
 
     private JsonNode extraInfo;
+
+    private boolean askForNextBatch;
+
+    private boolean errorMessage;
 }

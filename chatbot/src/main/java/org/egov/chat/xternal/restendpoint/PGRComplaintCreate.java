@@ -67,7 +67,7 @@ public class PGRComplaintCreate implements RestEndpoint {
         WriteContext request = JsonPath.parse(pgrCreateRequestBody);
 
         request.set("$.RequestInfo.authToken", authToken);
-        request.set("$.RequestInfo.userInfo",  userInfo.json());
+        request.set("$.RequestInfo.userInfo", userInfo.json());
         request.set("$.services.[0].city", city);
         request.set("$.services.[0].tenantId", city);
 //        request.set("$.services.[0].addressDetail.latitude", locationNode.get("latitude").asText());
@@ -78,8 +78,8 @@ public class PGRComplaintCreate implements RestEndpoint {
         request.set("$.services.[0].phone", mobileNumber);
         request.set("$.services.[0].description", complaintDetails);
 
-        if(! photo.equalsIgnoreCase("null"))
-           request.add("$.actionInfo.[0].media", photo);
+        if (!photo.equalsIgnoreCase("null"))
+            request.add("$.actionInfo.[0].media", photo);
 
         log.info("PGR Create complaint request : " + request.jsonString());
 
@@ -106,17 +106,21 @@ public class PGRComplaintCreate implements RestEndpoint {
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
 
-        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
-            String encodedPath = URLEncoder.encode( complaintNumber, "UTF-8" );
+            String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
             String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
             url += "?token=" + token;
 
             ObjectNode param;
 
             ObjectNode params = objectMapper.createObjectNode();
-            params.set("complaintNumber", numeralLocalization.getLocalizationCodesForStringContainingNumbers(complaintNumber));
+
+
+            ArrayNode localizationCodeArray = objectMapper.valueToTree(
+                    numeralLocalization.getLocalizationCodesForStringContainingNumbers(complaintNumber));
+            params.set("complaintNumber", localizationCodeArray);
 
             param = objectMapper.createObjectNode();
             param.put("value", url);

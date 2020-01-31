@@ -2,12 +2,14 @@ package org.egov.chat.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.chat.models.LocalizationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +24,13 @@ public class TemplateMessageService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public String getMessageForTemplate(JsonNode localizationCode, String locale) {
+    public String getMessageForTemplate(LocalizationCode localizationCode, String locale) throws IOException {
 
-        String templateId = localizationCode.get("templateId").asText();
-        ObjectNode templateLocalizationNode = objectMapper.createObjectNode();
-        templateLocalizationNode.put("code", templateId);
+        String templateId = localizationCode.getTemplateId();
+        LocalizationCode templateLocalizationNode = LocalizationCode.builder().code(templateId).build();
         String templateString = localizationService.getMessageForCode(templateLocalizationNode, locale);
 
-        ObjectNode params = (ObjectNode) localizationCode.get("params");
+        ObjectNode params = (ObjectNode) localizationCode.getParams();
 
         Iterator<Map.Entry<String, JsonNode>> paramIterator = params.fields();
         while (paramIterator.hasNext()) {
@@ -37,14 +38,15 @@ public class TemplateMessageService {
             String key = param.getKey();
 
             String localizedValue;
-            if(param.getValue().isArray()) {
+            if (param.getValue().isArray()) {
                 localizedValue = "";
-                List<String> localizedValues = localizationService.getMessagesForCodes((ArrayNode) param.getValue(), locale);
-                for(String string : localizedValues) {
+                List<LocalizationCode> localizationCodeList = Arrays.asList(objectMapper.convertValue(param.getValue(), LocalizationCode[].class));
+                List<String> localizedValues = localizationService.getMessagesForCodes(localizationCodeList, locale);
+                for (String string : localizedValues) {
                     localizedValue += string;
                 }
             } else {
-                localizedValue = localizationService.getMessageForCode(param.getValue(), locale);
+                localizedValue = localizationService.getMessageForCode(objectMapper.convertValue(param.getValue(), LocalizationCode.class), locale);
             }
             templateString = templateString.replace("{{" + key + "}}", localizedValue);
         }

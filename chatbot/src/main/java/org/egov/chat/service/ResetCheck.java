@@ -1,6 +1,5 @@
 package org.egov.chat.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.apache.kafka.common.serialization.Serdes;
@@ -9,8 +8,9 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
-import org.egov.chat.config.JsonPointerNameConstants;
 import org.egov.chat.config.KafkaStreamsConfig;
+import org.egov.chat.models.EgovChat;
+import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,19 +40,19 @@ public class ResetCheck {
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, JsonNode> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
-                kafkaStreamsConfig.getJsonSerde()));
+        KStream<String, EgovChat> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
+                EgovChatSerdes.getSerde()));
 
-        KStream<String, JsonNode>[] branches = messagesKStream.branch(
-                (key, chatNode) -> ! isResetKeyword(chatNode),
+        KStream<String, EgovChat>[] branches = messagesKStream.branch(
+                (key, chatNode) -> !isResetKeyword(chatNode),
                 (key, value) -> true
         );
 
-        branches[0].mapValues(chatNode -> chatNode).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+        branches[0].mapValues(chatNode -> chatNode).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         branches[1].flatMapValues(chatNode -> {
             try {
-                String conversationId = chatNode.at(JsonPointerNameConstants.conversationId).asText();
+                String conversationId = chatNode.getConversationState().getConversationId();
 
                 conversationStateRepository.markConversationInactive(conversationId);
 
@@ -60,16 +60,16 @@ public class ResetCheck {
             } catch (Exception e) {
                 return Collections.emptyList();
             }
-        }).to(resetTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+        }).to(resetTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         kafkaStreamsConfig.startStream(builder, streamConfiguration);
 
         log.info(streamName + " stream started");
     }
 
-    private boolean isResetKeyword(JsonNode chatNode) {
+    private boolean isResetKeyword(EgovChat chatNode) {
         try {
-            String answer = chatNode.at(JsonPointerNameConstants.messageContent).asText();
+            String answer = chatNode.getMessage().getRawInput();
 
             for (String resetKeyword : resetKeywords) {
                 int score = FuzzySearch.tokenSetRatio(resetKeyword, answer);

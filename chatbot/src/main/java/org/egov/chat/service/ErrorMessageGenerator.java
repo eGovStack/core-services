@@ -2,11 +2,15 @@ package org.egov.chat.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.chat.models.EgovChat;
+import org.egov.chat.models.LocalizationCode;
+import org.egov.chat.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -15,31 +19,26 @@ public class ErrorMessageGenerator {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public JsonNode getErrorMessageNode(JsonNode config, JsonNode chatNode) {
+    public EgovChat getErrorMessageNode(JsonNode config, EgovChat chatNode) {
         String errorMessage = getErrorMessageForConfig(config);
-        if(errorMessage == null) {
+        if (errorMessage == null) {
             return null;
         }
 
-        JsonNode errorMessageNode = chatNode.deepCopy();
+        EgovChat errorMessageNode = chatNode.toBuilder().build();
 
 
-        ObjectNode localizationCode = objectMapper.createObjectNode();
-        localizationCode.put("code", getErrorMessageForConfig(config));
-        ArrayNode localizationCodesArrayNode = objectMapper.createArrayNode();
-        localizationCodesArrayNode.add(localizationCode);
-
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("type", "text");
-        response.set("localizationCodes", localizationCodesArrayNode);
-
-        ((ObjectNode) errorMessageNode).set("response", response);
+        LocalizationCode localizationCode = LocalizationCode.builder().code(getErrorMessageForConfig(config)).build();
+        List<LocalizationCode> localizationCodesArray = new ArrayList<>();
+        localizationCodesArray.add(localizationCode);
+        Response response = Response.builder().type("text").localizationCodes(localizationCodesArray).build();
+        errorMessageNode.setResponse(response);
 
         return errorMessageNode;
     }
 
     private String getErrorMessageForConfig(JsonNode config) {
-        if(config.has("errorMessage"))
+        if (config.has("errorMessage"))
             return config.get("errorMessage").asText();
         return null;
     }

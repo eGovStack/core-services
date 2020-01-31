@@ -2,6 +2,7 @@ package org.egov.chat.service.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.chat.models.EgovChat;
 import org.egov.chat.service.FixedSetValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class Validator {
     @Autowired
     private FixedSetValues fixedSetValues;
 
-    public boolean isValid(JsonNode config, JsonNode chatNode) {
+    public boolean isValid(JsonNode config, EgovChat chatNode) {
         try {
             if (!(config.get("validationRequired") != null && config.get("validationRequired").asText()
                     .equalsIgnoreCase("true")))

@@ -1,5 +1,6 @@
 package org.egov.chat.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
 import java.util.List;
@@ -25,4 +26,5 @@ public class Response {
 
     private String fileStoreId;
 
+    private JsonNode Location;
 }

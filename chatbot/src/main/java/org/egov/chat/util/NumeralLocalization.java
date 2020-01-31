@@ -1,12 +1,13 @@
 package org.egov.chat.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.chat.models.LocalizationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -17,12 +18,12 @@ public class NumeralLocalization {
 
     private String localizationPrefix = "chatbot.numbers.numeric";
 
-    public ArrayNode getLocalizationCodesForStringContainingNumbers(String stringWithNumbers) {
-        ArrayNode localizationCodes = objectMapper.createArrayNode();
+    public List<LocalizationCode> getLocalizationCodesForStringContainingNumbers(String stringWithNumbers) {
+        List<LocalizationCode> localizationCodes = new ArrayList<>();
         String tempString = "";
-        for(char c : stringWithNumbers.toCharArray()) {
-            if(Character.isDigit(c)) {
-                if(! tempString.isEmpty()) {
+        for (char c : stringWithNumbers.toCharArray()) {
+            if (Character.isDigit(c)) {
+                if (!tempString.isEmpty()) {
                     localizationCodes.add(getLocalizationNodeForValue(tempString));
                     tempString = "";
                 }
@@ -31,22 +32,18 @@ public class NumeralLocalization {
                 tempString += c;
             }
         }
-        if(! tempString.isEmpty()) {
+        if (!tempString.isEmpty()) {
             localizationCodes.add(getLocalizationNodeForValue(tempString));
         }
         return localizationCodes;
     }
 
-    private JsonNode getLocalizationNodeForNumber(Character number) {
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("code", localizationPrefix + number);
-        return objectNode;
+    private LocalizationCode getLocalizationNodeForNumber(Character number) {
+        return LocalizationCode.builder().code(localizationPrefix + number).build();
     }
 
-    private JsonNode getLocalizationNodeForValue(String value) {
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("value", value);
-        return objectNode;
+    private LocalizationCode getLocalizationNodeForValue(String value) {
+        return LocalizationCode.builder().value(value).build();
     }
 
 }
