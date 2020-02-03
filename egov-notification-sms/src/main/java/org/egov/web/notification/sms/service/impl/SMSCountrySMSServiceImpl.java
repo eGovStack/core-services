@@ -1,15 +1,11 @@
 package org.egov.web.notification.sms.service.impl;
 
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.SMSBodyBuilder;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,16 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Service
 @ConditionalOnProperty(value = "sms.gateway.to.use", havingValue = "SMS_COUNTRY")
 @Slf4j
 public class SMSCountrySMSServiceImpl implements SMSService {
 
-	@Autowired
 	private SMSProperties smsProperties;
 
 	@Autowired
@@ -36,9 +32,12 @@ public class SMSCountrySMSServiceImpl implements SMSService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Value("${blacklist.numbers}")
+	private List<String> blacklistNumbers;
+
 	@Override
 	public void sendSMS(Sms sms) {
-		if (!sms.isValid()) {
+		if (!sms.isValid() || blacklistNumbers.contains(sms.getMobileNumber())) {
 			log.error(String.format("Sms %s is not valid", sms));
 			return;
 		}
@@ -47,13 +46,9 @@ public class SMSCountrySMSServiceImpl implements SMSService {
 
 	private void submitToExternalSmsService(Sms sms) {
 		try {
-			String baseURL = smsProperties.getUrl();
-			MultiValueMap<String, String> params = getRequest(sms).getBody();
-			URI uri = UriComponentsBuilder
-			           .fromUriString(baseURL)
-			           .queryParams(params)
-			           .build().encode().toUri();
-			String response = restTemplate.postForObject(uri, "{}", String.class);
+			String url = smsProperties.getUrl();
+            HttpEntity<HttpEntity<MultiValueMap<String, String>>> request = new HttpEntity<>(getRequest(sms), getHttpHeaders());
+			String response = restTemplate.postForObject(url, request, String.class);
 			log.info("response: "+response);
 		} catch (RestClientException e) {
 			log.error("Error occurred while sending SMS to " + sms.getMobileNumber(), e);

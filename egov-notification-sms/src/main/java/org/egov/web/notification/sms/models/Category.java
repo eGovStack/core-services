@@ -40,8 +40,9 @@
 
 package org.egov.web.notification.sms.models;
 
-public enum Priority {
-	HIGH, MEDIUM, LOW;
+public enum Category {
+	//HIGH, MEDIUM, LOW;
+	OTP, TRANSACTIONAL, PROMOTIONAL,OTHERS;
 
 	@Override
 	public String toString() {

@@ -1,6 +1,6 @@
 package org.egov.web.notification.sms.consumer.contract;
 
-import org.egov.web.notification.sms.models.Priority;
+import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.Sms;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ public class SMSRequest {
     private String message;
 
     public Sms toDomain() {
-        return new Sms(mobileNumber, message, Priority.HIGH);
+        //Dhaval enum
+        return new Sms(mobileNumber, message, Category.OTP);
     }
 }

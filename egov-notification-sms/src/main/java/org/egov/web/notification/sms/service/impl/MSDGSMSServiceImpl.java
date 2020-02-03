@@ -12,6 +12,7 @@ import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.SMSBodyBuilder;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,9 +38,12 @@ public class MSDGSMSServiceImpl implements SMSService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Value("${blacklist.numbers}")
+	private List<String> blacklistNumbers;
+
 	@Override
 	public void sendSMS(Sms sms) {
-		if (!sms.isValid()) {
+		if (!sms.isValid() || blacklistNumbers.contains(sms.getMobileNumber())) {
 			log.error(String.format("Sms %s is not valid", sms));
 			return;
 		}
@@ -54,7 +58,7 @@ public class MSDGSMSServiceImpl implements SMSService {
             String sss = "&#"+j+";";
             finalmessage = finalmessage+sss;
         }
-        sms.setMessage(finalmessage);      
+        sms.setMessage(finalmessage);
 		try {
 			String url = smsProperties.getUrl();
 			final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
@@ -64,6 +68,8 @@ public class MSDGSMSServiceImpl implements SMSService {
 			log.info("response: " + response);
 		} catch (Exception e) {
 			log.error("Error occurred while sending SMS to " + sms.getMobileNumber(), e);
+			//Dhaval
+
 		}
 	}
 	

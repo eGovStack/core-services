@@ -1,14 +1,17 @@
 package org.egov.web.notification.sms.consumer;
 
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.consumer.contract.SMSRequest;
 import org.egov.web.notification.sms.models.RequestContext;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
+import java.util.UUID;
+
+@Slf4j
 @Service
 public class SmsNotificationListener {
 
@@ -24,7 +27,16 @@ public class SmsNotificationListener {
             group = "${kafka.topics.notification.sms.group}")
     public void process(SMSRequest request) {
         RequestContext.setId(UUID.randomUUID().toString());
-        smsService.sendSMS(request.toDomain());
+        //
+        try {
+            smsService.sendSMS(request.toDomain());
+        } catch (RestClientException Rx ) {
+            //go to backup
+            log.info("Going to backup SMS Service");
+
+        } catch (Exception ex) {
+            log.error("Sms service failed", ex);
+        }
     }
 
 }
