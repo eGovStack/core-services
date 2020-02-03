@@ -31,6 +31,7 @@ public class ConversationStateResultSetExtractor implements ResultSetExtractor<C
                     .questionDetails(getJsonValue((PGobject) resultSet.getObject("question_details")))
                     .active(resultSet.getBoolean("active"))
                     .locale(resultSet.getString("locale"))
+                    .lastModifiedTime(resultSet.getLong("last_modified_time"))
                     .build();
         return null;
     }

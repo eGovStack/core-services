@@ -9,6 +9,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.KafkaStreamsConfig;
+import org.egov.chat.models.ConversationState;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
@@ -52,18 +53,24 @@ public class CreateStream {
             try {
                 List<EgovChat> responseNodes = new ArrayList<>();
 
-                if (chatNode.isErrorMessage()) {
+                if (chatNode.isAddErrorMessage()) {
                     EgovChat errorMessageNode = errorMessageGenerator.getErrorMessageNode(config, chatNode);
                     if (errorMessageNode != null)
                         responseNodes.add(errorMessageNode);
                 }
 
+                ConversationState currentConversationState = chatNode.getConversationState();
+                ConversationState nextConversationState = chatNode.getConversationState().toBuilder().build();
+                nextConversationState.setLastModifiedTime(System.currentTimeMillis());
+                nextConversationState.setActiveNodeId(config.get("name").asText());
+                nextConversationState.setQuestionDetails(null);
+
+                chatNode.setNextConversationState(nextConversationState);
+
                 EgovChat nodeWithQuestion = questionGenerator.getQuestion(config, chatNode);
                 responseNodes.add(nodeWithQuestion);
 
-                JsonNode questionDetails = nodeWithQuestion.getConversationState().getQuestionDetails();
-                conversationStateRepository.updateConversationStateForId(config.get("name").asText(),
-                        questionDetails, chatNode.getConversationState().getConversationId());
+                conversationStateRepository.updateConversationStateForId(chatNode.getNextConversationState());
 
                 return responseNodes;
             } catch (Exception e) {

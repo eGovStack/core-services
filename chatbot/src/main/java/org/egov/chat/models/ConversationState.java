@@ -5,7 +5,7 @@ import lombok.*;
 
 @Setter
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConversationState {

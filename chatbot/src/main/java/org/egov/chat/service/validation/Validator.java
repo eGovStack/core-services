@@ -19,22 +19,31 @@ public class Validator {
     public boolean isValid(JsonNode config, EgovChat chatNode) {
         try {
             if (!(config.get("validationRequired") != null && config.get("validationRequired").asText()
-                    .equalsIgnoreCase("true")))
+                    .equalsIgnoreCase("true"))) {
+                chatNode.getMessage().setValid(true);
                 return true;
+            }
 
-            if (!typeValidator.isValid(config, chatNode))
+            if (!typeValidator.isValid(config, chatNode)) {
+                chatNode.getMessage().setValid(false);
                 return false;
+            }
 
             if (config.get("validationRequired") != null && config.get("validationRequired").asText().equalsIgnoreCase("true")) {
                 if (config.get("typeOfValues") != null) {
                     String validatorType = config.get("typeOfValues").asText();
-                    if (validatorType.equalsIgnoreCase("FixedSetValues"))
-                        return fixedSetValues.isValid(config, chatNode);
+                    if (validatorType.equalsIgnoreCase("FixedSetValues")) {
+                        boolean valid = fixedSetValues.isValid(config, chatNode);
+                        chatNode.getMessage().setValid(valid);
+                        return valid;
+                    }
                 }
             }
+            chatNode.getMessage().setValid(true);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage());
+            chatNode.getMessage().setValid(false);
             return false;
         }
     }

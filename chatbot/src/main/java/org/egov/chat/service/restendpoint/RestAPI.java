@@ -52,7 +52,7 @@ public class RestAPI {
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         ObjectNode params = mapper.createObjectNode();
 
-        List<Message> messageList = messageRepository.getMessagesOfConversation(conversationId);
+        List<Message> messageList = messageRepository.getValidMessagesOfConversation(conversationId);
 
         ArrayNode nodeConfigs = (ArrayNode) config.get("nodes");
 

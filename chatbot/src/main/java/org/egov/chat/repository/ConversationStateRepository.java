@@ -47,10 +47,9 @@ public class ConversationStateRepository {
                 conversationState.getLocale());
     }
 
-    public int updateConversationStateForId(String activeNodeId, JsonNode questionDetails, String conversationId) {
+    public int updateConversationStateForId(ConversationState conversationState) {
         return namedParameterJdbcTemplate.update(ConversationStateQueryBuilder.UPDATE_CONVERSATION_STATE_QUERY,
-                ConversationStateQueryBuilder.getParametersForConversationStateUpdate(activeNodeId, questionDetails, conversationId));
-//        return jdbcTemplate.update(updateConversationStateQuery, activeNodeId, questionDetails, conversationId);
+                ConversationStateQueryBuilder.getParametersForConversationStateUpdate(conversationState));
     }
 
     public int markConversationInactive(String conversationId) {

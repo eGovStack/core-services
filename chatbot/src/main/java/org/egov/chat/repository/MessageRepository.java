@@ -15,22 +15,24 @@ public class MessageRepository {
     private JdbcTemplate jdbcTemplate;
 
     private static final String insertMessageQuery = "INSERT INTO eg_chat_message (message_id, conversation_id, " +
-            "node_id, message_content, content_type) VALUES (?, ?, ?, ?, ?)";
+            "node_id, raw_input, message_content, content_type, is_valid) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String selectMessagesOfConversationQuery = "SELECT * FROM eg_chat_message WHERE " +
-            "conversation_id=?";
+    private static final String selectValidMessagesOfConversationQuery = "SELECT * FROM eg_chat_message WHERE " +
+            "conversation_id=? AND is_valid=true";
 
     public int insertMessage(Message message) {
         return jdbcTemplate.update(insertMessageQuery,
                 message.getMessageId(),
                 message.getConversationId(),
                 message.getNodeId(),
+                message.getRawInput(),
                 message.getMessageContent(),
-                message.getContentType());
+                message.getContentType(),
+                message.isValid());
     }
 
-    public List<Message> getMessagesOfConversation(String conversationId) {
-        return jdbcTemplate.query(selectMessagesOfConversationQuery, new Object[] { conversationId },
+    public List<Message> getValidMessagesOfConversation(String conversationId) {
+        return jdbcTemplate.query(selectValidMessagesOfConversationQuery, new Object[] { conversationId },
                 new BeanPropertyRowMapper<>(Message.class));
     }
 }

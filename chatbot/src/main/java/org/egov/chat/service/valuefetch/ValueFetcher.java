@@ -94,7 +94,7 @@ public class ValueFetcher {
             } else if (paramConfiguration.substring(0, 1).equalsIgnoreCase("~")) {
                 String nodeId = paramConfiguration.substring(1);
                 String conversationId = chatNode.at(JsonPointerNameConstants.conversationId).asText();
-                List<Message> messages = messageRepository.getMessagesOfConversation(conversationId);
+                List<Message> messages = messageRepository.getValidMessagesOfConversation(conversationId);
                 paramValue = TextNode.valueOf(findMessageForNode(messages, nodeId));
             } else {
                 paramValue = TextNode.valueOf(paramConfiguration);

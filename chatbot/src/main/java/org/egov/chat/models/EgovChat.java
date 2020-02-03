@@ -18,6 +18,8 @@ public class EgovChat {
 
     private ConversationState conversationState;
 
+    private ConversationState nextConversationState;
+
     private Message message;
 
     private Response response;
@@ -26,5 +28,5 @@ public class EgovChat {
 
     private boolean askForNextBatch;
 
-    private boolean errorMessage;
+    private boolean addErrorMessage;
 }

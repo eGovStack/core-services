@@ -73,7 +73,7 @@ public class CreateStepStream extends CreateStream {
         }).to(answerOutputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         branches[1].mapValues(chatNode -> {
-            chatNode.setErrorMessage(true);
+            chatNode.setAddErrorMessage(true);
             return chatNode;
         }).to(questionTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 

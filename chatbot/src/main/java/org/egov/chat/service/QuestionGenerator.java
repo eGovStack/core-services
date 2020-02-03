@@ -38,7 +38,8 @@ public class QuestionGenerator {
         localizationCodeArray.add(localizationCode);
         localizationCodeArray.addAll(getOptionsForConfig(config, chatNode));
 
-        Response response = Response.builder().type("text").localizationCodes(localizationCodeArray).build();
+        Response response = Response.builder().timestamp(System.currentTimeMillis())
+                .type("text").localizationCodes(localizationCodeArray).build();
         chatNode.setResponse(response);
         return chatNode;
     }
@@ -66,7 +67,7 @@ public class QuestionGenerator {
 
                 questionDetails = fixedSetValues.getNextSet(questionDetails);
 
-                chatNode.getConversationState().setQuestionDetails(questionDetails);
+                chatNode.getNextConversationState().setQuestionDetails(questionDetails);
 
                 ArrayNode values = (ArrayNode) questionDetails.get("askedValues");
 
@@ -88,7 +89,7 @@ public class QuestionGenerator {
             } else {
 
                 JsonNode questionDetails = fixedSetValues.getAllValidValues(config, chatNode);
-                chatNode.getConversationState().setQuestionDetails(questionDetails);
+                chatNode.getNextConversationState().setQuestionDetails(questionDetails);
 
             }
 

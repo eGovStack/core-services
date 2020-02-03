@@ -21,5 +21,5 @@ public class Message {
 
     private String contentType;
 
-    private boolean isValid;
+    private boolean valid;
 }
