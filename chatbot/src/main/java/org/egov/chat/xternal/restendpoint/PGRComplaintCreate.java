@@ -111,7 +111,6 @@ public class PGRComplaintCreate implements RestEndpoint {
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
             String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath;
-            url += "?token=" + token;
 
             ObjectNode param;
 
