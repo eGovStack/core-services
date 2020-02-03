@@ -95,14 +95,14 @@ public class PGRComplaintCreate implements RestEndpoint {
         try {
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
                     requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response, refreshToken);
+            responseMessage = makeMessageForResponse(response, refreshToken, mobileNumber);
         } catch (Exception e) {
             responseMessage.put("text", "Error occured");
         }
         return responseMessage;
     }
 
-    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token) throws Exception {
+    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token, String mobileNumber) throws Exception {
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
 
@@ -110,7 +110,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
-            String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
+            String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath;
             url += "?token=" + token;
 
             ObjectNode param;

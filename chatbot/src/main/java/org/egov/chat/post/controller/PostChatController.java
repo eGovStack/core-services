@@ -2,6 +2,8 @@ package org.egov.chat.post.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.egov.chat.post.formatter.ValueFirst.ValueFirstResponseFormatter;
+import org.egov.chat.post.formatter.ValueFirst.ValueFirstRestCall;
 import org.egov.chat.post.formatter.karix.KarixResponseFormatter;
 import org.egov.chat.post.formatter.karix.KarixRestCall;
 import org.egov.chat.post.localization.LocalizationStream;
@@ -24,10 +26,14 @@ public class PostChatController {
 
     @Autowired
     private LocalizationStream localizationStream;
+    // @Autowired
+    // private KarixResponseFormatter karixResponseFormatter;
+    // @Autowired
+    // private KarixRestCall karixRestCall;
     @Autowired
-    private KarixResponseFormatter karixResponseFormatter;
+    private ValueFirstResponseFormatter valueFirstResponseFormatter;
     @Autowired
-    private KarixRestCall karixRestCall;
+    private ValueFirstRestCall valueFirstRestCall;
 
 
     @PostConstruct
@@ -36,13 +42,15 @@ public class PostChatController {
         pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message");
 
         localizationStream.startStream("send-message", "send-message-localized");
-        karixResponseFormatter.startResponseStream("send-message-localized", "karix-send-message");
+                // karixResponseFormatter.startResponseStream("send-message-localized", "karix-send-message");
+        valueFirstResponseFormatter.startResponseStream("send-message-localized", "valuefirst-send-message");
     }
 
     // TODO : Move to kafka-connect-http-sink
-    @KafkaListener(groupId = "karix-rest-call", topics = "karix-send-message")
+    @KafkaListener(groupId = "valuefirst-rest-call", topics = "valuefirst-send-message")
     public void sendMessage(ConsumerRecord<String, JsonNode> consumerRecord) {
-        karixRestCall.sendMessage(consumerRecord.value());
+//        karixRestCall.sendMessage(consumerRecord.value());
+        valueFirstRestCall.sendMessage(consumerRecord.value());
     }
 
 

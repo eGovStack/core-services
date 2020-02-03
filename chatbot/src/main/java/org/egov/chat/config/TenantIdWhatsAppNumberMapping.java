@@ -10,7 +10,7 @@ public class TenantIdWhatsAppNumberMapping {
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
-    @Value("${karix.whatsapp.number}")
+    @Value("${valuefirst.whatsapp.number}")
     private String whatsappNumber;
 
     // TODO : Remove hard-coded mapping

@@ -61,7 +61,7 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
         String mobile = params.get("recipient").asText();
         String tenantId = params.get("tenantId").asText();
 
-        return egovExternalHost + localityOptionsPath + "?mobile=" + mobile + "&tenantId=" + tenantId;
+        return egovExternalHost + localityOptionsPath + "?phone=" + mobile + "&tenantId=" + tenantId;
     }
 
     private ObjectNode fetchValues(ObjectNode params) {
