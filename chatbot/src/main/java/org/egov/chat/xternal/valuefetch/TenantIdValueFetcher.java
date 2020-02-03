@@ -25,8 +25,8 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     private ObjectMapper objectMapper;
 
     private String moduleName = "tenant";
-    private String masterDetailsName = "tenants";
-
+    private String masterDetailsName = "citymodule";
+    private String filter = "$.[?(@.module=='PGR.WHATSAPP')].tenants.*";
     @Value("${mdms.service.host}")
     private String mdmsHost;
     @Value("${mdms.service.search.path}")
@@ -50,7 +50,7 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     }
 
     private JSONArray fetchMdmsData(String tenantId) {
-        MasterDetail masterDetail = MasterDetail.builder().name(masterDetailsName).build();
+        MasterDetail masterDetail = MasterDetail.builder().name(masterDetailsName).filter(filter).build();
         ModuleDetail moduleDetail =
                 ModuleDetail.builder().moduleName(moduleName).masterDetails(Collections.singletonList(masterDetail)).build();
         MdmsCriteria mdmsCriteria =

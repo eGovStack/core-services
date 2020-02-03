@@ -9,7 +9,7 @@ message: chatbot.messages.pgrCreateTenantId
 
 validationRequired : true
 typeOfValues : FixedSetValues
-displayValuesAsOptions : false
+displayValuesAsOptions : true
 
 values :
   batchSize : 9
