@@ -19,22 +19,21 @@ public class ErrorMessageGenerator {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public EgovChat getErrorMessageNode(JsonNode config, EgovChat chatNode) {
+    public void fillErrorMessageInChatNode(JsonNode config, EgovChat chatNode) {
         String errorMessage = getErrorMessageForConfig(config);
         if (errorMessage == null) {
-            return null;
+            return;
         }
 
-        EgovChat errorMessageNode = chatNode.toBuilder().build();
+//        EgovChat errorMessageNode = chatNode.toBuilder().build();
 
 
         LocalizationCode localizationCode = LocalizationCode.builder().code(getErrorMessageForConfig(config)).build();
         List<LocalizationCode> localizationCodesArray = new ArrayList<>();
         localizationCodesArray.add(localizationCode);
-        Response response = Response.builder().type("text").localizationCodes(localizationCodesArray).build();
-        errorMessageNode.setResponse(response);
-
-        return errorMessageNode;
+        Response response = Response.builder().type("text").timestamp(System.currentTimeMillis())
+                .localizationCodes(localizationCodesArray).build();
+        chatNode.setResponse(response);
     }
 
     private String getErrorMessageForConfig(JsonNode config) {

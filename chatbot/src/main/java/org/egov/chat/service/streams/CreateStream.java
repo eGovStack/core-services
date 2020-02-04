@@ -54,9 +54,7 @@ public class CreateStream {
                 List<EgovChat> responseNodes = new ArrayList<>();
 
                 if (chatNode.isAddErrorMessage()) {
-                    EgovChat errorMessageNode = errorMessageGenerator.getErrorMessageNode(config, chatNode);
-                    if (errorMessageNode != null)
-                        responseNodes.add(errorMessageNode);
+                    errorMessageGenerator.fillErrorMessageInChatNode(config,chatNode);
                 }
 
                 ConversationState currentConversationState = chatNode.getConversationState();
@@ -67,8 +65,8 @@ public class CreateStream {
 
                 chatNode.setNextConversationState(nextConversationState);
 
-                EgovChat nodeWithQuestion = questionGenerator.getQuestion(config, chatNode);
-                responseNodes.add(nodeWithQuestion);
+                questionGenerator.fillQuestion(config,chatNode);
+                responseNodes.add(chatNode);
 
                 conversationStateRepository.updateConversationStateForId(chatNode.getNextConversationState());
 
