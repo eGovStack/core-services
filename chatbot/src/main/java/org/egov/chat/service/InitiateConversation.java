@@ -61,7 +61,7 @@ public class InitiateConversation {
 
         String userId = chatNode.getUser().getUserId();
 
-        ConversationState conversationState = conversationStateRepository.getConversationStateForUserId(userId);
+        ConversationState conversationState = conversationStateRepository.getActiveConversationStateForUserId(userId);
 
         if (conversationState == null) {
             conversationState = createNewConversationForUser(userId);

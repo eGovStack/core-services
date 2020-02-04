@@ -2,6 +2,7 @@ package org.egov.chat.service.streams;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -10,6 +11,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.KafkaStreamsConfig;
+import org.egov.chat.models.ConversationState;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.models.Response;
@@ -17,6 +19,7 @@ import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.MessageRepository;
 import org.egov.chat.service.restendpoint.RestAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -39,7 +42,13 @@ public class CreateEndpointStream extends CreateStream {
     @Autowired
     private MessageRepository messageRepository;
 
-    private String continueMessageLocalizationCode = "chatbot.messages.continueMessage";
+    @Value("${contact.card.whatsapp.name}")
+    private String nameInContactCard;
+
+    @Value("${contact.card.whatsapp.number}")
+    private String numberInContactCard;
+
+    private String contactMessageLocalizationCode = "chatbot.messages.contactMessage";
 
     public void createEndpointStream(JsonNode config, String inputTopic, String sendMessageTopic) {
 
@@ -64,7 +73,9 @@ public class CreateEndpointStream extends CreateStream {
                 List<EgovChat> nodes = new ArrayList<>();
                 nodes.add(chatNode);
 
-                nodes.add(createContinueMessageNode(chatNode));
+                EgovChat contactMessageNode=createContactMessageNode(chatNode);
+                if(contactMessageNode!=null)
+                     nodes.add(contactMessageNode);
 
                 return nodes;
             } catch (Exception e) {
@@ -78,12 +89,20 @@ public class CreateEndpointStream extends CreateStream {
         log.info("Endpoint Stream started : " + streamName + ", from : " + inputTopic + ", to : " + sendMessageTopic);
     }
 
-    private EgovChat createContinueMessageNode(EgovChat chatNode) {
-        EgovChat continueMessageNode = chatNode.toBuilder().build();
-        LocalizationCode localizationCode1 = LocalizationCode.builder().code(continueMessageLocalizationCode).build();
-        Response response1 = Response.builder().type("text").localizationCodes(Collections.singletonList(localizationCode1)).build();
-        continueMessageNode.setResponse(response1);
-        return continueMessageNode;
+    private EgovChat createContactMessageNode(EgovChat chatNode) {
+
+        int recordcount = conversationStateRepository.getConversationStateCountForUserId(chatNode.getUser().getUserId());
+        if(recordcount>1)
+            return null;
+
+        EgovChat contactMessageNode = chatNode.toBuilder().build();
+        ObjectNode contactcard=objectMapper.createObjectNode();
+        contactcard.put("number",nameInContactCard);
+        contactcard.put("name",numberInContactCard);
+        LocalizationCode localizationCode = LocalizationCode.builder().code(contactMessageLocalizationCode).build();
+        Response response = Response.builder().timestamp(System.currentTimeMillis()).type("contactcard").contactCard(contactcard).localizationCodes(Collections.singletonList(localizationCode)).build();
+        contactMessageNode.setResponse(response);
+        return contactMessageNode;
     }
 
 }

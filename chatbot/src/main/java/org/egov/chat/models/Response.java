@@ -26,5 +26,7 @@ public class Response {
 
     private String fileStoreId;
 
-    private JsonNode Location;
+    private JsonNode location;
+
+    private JsonNode contactCard;
 }

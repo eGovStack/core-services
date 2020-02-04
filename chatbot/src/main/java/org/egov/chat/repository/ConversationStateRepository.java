@@ -1,6 +1,5 @@
 package org.egov.chat.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.chat.models.ConversationState;
 import org.egov.chat.repository.querybuilder.ConversationStateQueryBuilder;
 import org.egov.chat.repository.rowmapper.ConversationStateResultSetExtractor;
@@ -36,8 +35,11 @@ public class ConversationStateRepository {
     private static final String selectConversationStateForIdQuery = "SELECT * FROM eg_chat_conversation_state WHERE " +
             "conversation_id=?";
 
-    private static final String selectConversationStateForUserIdQuery = "SELECT * FROM eg_chat_conversation_state WHERE " +
+    private static final String selectActiveConversationStateForUserIdQuery = "SELECT * FROM eg_chat_conversation_state WHERE " +
             "user_id=? AND active=TRUE";
+
+    private static final String selectCountConversationStateForUserIdQuery = "SELECT count(*) FROM eg_chat_conversation_state WHERE " +
+            "user_id=?";
 
     public int insertNewConversation(ConversationState conversationState) {
         return jdbcTemplate.update(insertNewConversationQuery,
@@ -61,13 +63,18 @@ public class ConversationStateRepository {
                 String.class));
     }
 
-    public ConversationState getConversationStateForUserId(String userId) {
+    public ConversationState getActiveConversationStateForUserId(String userId) {
         try {
-            return jdbcTemplate.query(selectConversationStateForUserIdQuery, new Object[]{ userId },
+            return jdbcTemplate.query(selectActiveConversationStateForUserIdQuery, new Object[]{ userId },
                     conversationStateResultSetExtractor);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    public int getConversationStateCountForUserId(String userId) {
+        return  (jdbcTemplate.queryForObject(selectCountConversationStateForUserIdQuery, new Object[] { userId },
+                Integer.class));
     }
 
     public ConversationState getConversationStateForId(String conversationId) {

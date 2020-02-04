@@ -111,6 +111,10 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 request = JsonPath.parse(valueFirstTextMessageRequestBody);
                 request.set("$.SMS[0].@TEXT", response.at(ChatNodeJsonPointerConstants.responseText).asText());
             }
+            else if(type.equalsIgnoreCase("contactcard")) {
+                request = JsonPath.parse(valueFirstTextMessageRequestBody);
+                request.set("$.SMS[0].@TEXT", response.at(ChatNodeJsonPointerConstants.responseText).asText());
+            }
 //        } else if(type.equalsIgnoreCase("attachment")) {
 //            request = JsonPath.parse(karixAttachmentMessageRequestBody);
 //            request.set("$.message.content.type", type);
