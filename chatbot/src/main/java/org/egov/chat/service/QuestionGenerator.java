@@ -32,15 +32,24 @@ public class QuestionGenerator {
     @Autowired
     private NumeralLocalization numeralLocalization;
 
-    public EgovChat getQuestion(JsonNode config, EgovChat chatNode) throws IOException {
-        LocalizationCode localizationCode = LocalizationCode.builder().code(getQuesitonForConfig(config)).build();
+    public EgovChat fillQuestion(JsonNode config, EgovChat chatNode) throws IOException {
         List<LocalizationCode> localizationCodeArray = new ArrayList<>();
+
+        if(chatNode.getResponse() == null) {
+            Response response = Response.builder().timestamp(System.currentTimeMillis()).type("text")
+                    .localizationCodes(localizationCodeArray).build();
+            chatNode.setResponse(response);
+        } else {
+            localizationCodeArray = chatNode.getResponse().getLocalizationCodes();
+            LocalizationCode newLine = LocalizationCode.builder().value("\n").build();
+            localizationCodeArray.add(newLine);
+            localizationCodeArray.add(newLine);
+        }
+
+        LocalizationCode localizationCode = LocalizationCode.builder().code(getQuesitonForConfig(config)).build();
         localizationCodeArray.add(localizationCode);
         localizationCodeArray.addAll(getOptionsForConfig(config, chatNode));
 
-        Response response = Response.builder().timestamp(System.currentTimeMillis())
-                .type("text").localizationCodes(localizationCodeArray).build();
-        chatNode.setResponse(response);
         return chatNode;
     }
 
