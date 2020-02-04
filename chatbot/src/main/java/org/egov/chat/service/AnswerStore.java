@@ -22,7 +22,7 @@ public class AnswerStore {
         String nodeId = config.get("name").asText();
         String conversationId = chatNode.getConversationState().getConversationId();
         if (!typeValidator.isValid(config, chatNode))
-            return;
+            chatNode.getMessage().setValid(false);
 
         chatNode.getMessage().setConversationId(conversationId);
         chatNode.getMessage().setMessageId(UUID.randomUUID().toString());

@@ -57,8 +57,10 @@ public class CreateBranchStream extends CreateStream {
                 EgovChatSerdes.getSerde()));
         KStream<String, EgovChat>[] kStreamBranches = answerKStream.branch(predicates.toArray(new Predicate[predicates.size()]));
 
-        kStreamBranches[0].mapValues(value -> value).to(questionTopic, Produced.with(Serdes.String(),
-                EgovChatSerdes.getSerde()));
+        kStreamBranches[0].mapValues(chatNode -> {
+            answerStore.saveAnswer(config, chatNode);
+            return chatNode;
+        }).to(questionTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         for (int i = 1; i < kStreamBranches.length; i++) {
             String targetNode = config.get(branchNames.get(i - 1)).asText();
