@@ -40,12 +40,10 @@ public class LocalizationService {
     private List<String> supportedLocales;
 
     private Map<String, Map<String, String>> codeToMessageMapping;
-    private Map<String, Map<String, String>> messageToCodeMapping;
 
     @PostConstruct
     public void init() {
         codeToMessageMapping = new HashMap<>();
-        messageToCodeMapping = new HashMap<>();
 
         for (String locale : supportedLocales) {
             UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(localizationHost + localizationSearchPath);
@@ -74,7 +72,6 @@ public class LocalizationService {
         }
 
         codeToMessageMapping.put(locale, codeToMessageMappingForLocale);
-        messageToCodeMapping.put(locale, messageToCodeMappingForLocale);
     }
 
     public Map<String, String> fetchLocalizationData(String tenantId, String locale) {
@@ -135,13 +132,4 @@ public class LocalizationService {
         return codeToMessageMapping.get(locale).get(code);
     }
 
-    @Deprecated
-    public String getCodeForMessage(String message) {
-        return getCodeForMessage(message, "en_IN");
-    }
-
-    @Deprecated
-    public String getCodeForMessage(String message, String locale) {
-        return messageToCodeMapping.get(locale).get(message);
-    }
 }
