@@ -13,6 +13,7 @@ import org.egov.chat.models.ConversationState;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,8 @@ public class InitiateConversation {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private ConversationStateRepository conversationStateRepository;
 
@@ -47,7 +49,8 @@ public class InitiateConversation {
             try {
                 return Collections.singletonList(createOrContinueConversation(chatNode));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in initiate conversation",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

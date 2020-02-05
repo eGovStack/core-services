@@ -63,7 +63,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     @Override
     public String getStreamName() {
-        return "karix-response-transform";
+        return "valuefirst-response-transform";
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
             try {
                 return getTransformedResponse(response);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error while transforming",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

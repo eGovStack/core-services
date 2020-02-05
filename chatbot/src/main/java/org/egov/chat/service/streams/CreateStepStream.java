@@ -14,6 +14,7 @@ import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.service.AnswerExtractor;
 import org.egov.chat.service.AnswerStore;
 import org.egov.chat.service.validation.Validator;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,8 @@ public class CreateStepStream extends CreateStream {
     private AnswerStore answerStore;
     @Autowired
     private KafkaTemplate<String, EgovChat> kafkaTemplate;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void createEvaluateAnswerStreamForConfig(JsonNode config, String answerInputTopic, String answerOutputTopic, String questionTopic) {
 
@@ -68,6 +70,7 @@ public class CreateStepStream extends CreateStream {
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
                 log.error("step stream error", e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(answerOutputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

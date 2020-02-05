@@ -11,6 +11,7 @@ import org.egov.chat.config.ApplicationProperties;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,8 @@ import java.util.Properties;
 public class TenantIdEnricher {
 
     private String streamName = "tenant-enrich";
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private ApplicationProperties applicationProperties;
     @Autowired
@@ -42,7 +44,8 @@ public class TenantIdEnricher {
                 chatNode.setTenantId(applicationProperties.getStateLevelTenantId());
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in tenantid enricher",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

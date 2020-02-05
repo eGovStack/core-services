@@ -26,7 +26,6 @@ public class LocalizationService {
     private ObjectMapper objectMapper;
     @Autowired
     private RestTemplate restTemplate;
-
     @Autowired
     private TemplateMessageService templateMessageService;
 

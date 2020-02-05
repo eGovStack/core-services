@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.chat.config.graph.TopicNameGetter;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,13 @@ public class InputSegregator {
     private KafkaTemplate<String, EgovChat> kafkaTemplate;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void segregateAnswer(ConsumerRecord<String, JsonNode> consumerRecord) {
+        EgovChat chatNode=null;
         try {
-            EgovChat chatNode = objectMapper.convertValue(consumerRecord.value(), EgovChat.class);
+            chatNode = objectMapper.convertValue(consumerRecord.value(), EgovChat.class);
             String conversationId = chatNode.getConversationState().getConversationId();
 
             String activeNodeId = conversationStateRepository.getActiveNodeIdForConversation(conversationId);
@@ -39,7 +43,9 @@ public class InputSegregator {
 
             kafkaTemplate.send(topic, consumerRecord.key(), chatNode);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("error in input segregator",e);
+            if(chatNode!=null)
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
         }
     }
 

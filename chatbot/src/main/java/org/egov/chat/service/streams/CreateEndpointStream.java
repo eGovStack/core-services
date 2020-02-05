@@ -18,6 +18,7 @@ import org.egov.chat.models.Response;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.MessageRepository;
 import org.egov.chat.service.restendpoint.RestAPI;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,8 @@ public class CreateEndpointStream extends CreateStream {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -68,6 +71,14 @@ public class CreateEndpointStream extends CreateStream {
                 chatNode.setResponse(responseMessage);
 
                 String conversationId = chatNode.getConversationState().getConversationId();
+                chatNode.getConversationState().setActiveNodeId(config.get("name").asText());
+
+                ConversationState nextConversationState = chatNode.getConversationState().toBuilder().build();
+                nextConversationState.setLastModifiedTime(System.currentTimeMillis());
+                nextConversationState.setActiveNodeId(config.get("name").asText());
+                nextConversationState.setQuestionDetails(null);
+                chatNode.setNextConversationState(nextConversationState);
+                conversationStateRepository.updateConversationStateForId(nextConversationState);
                 conversationStateRepository.markConversationInactive(conversationId);
 
                 List<EgovChat> nodes = new ArrayList<>();
@@ -79,7 +90,8 @@ public class CreateEndpointStream extends CreateStream {
 
                 return nodes;
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in create endpoint stream",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(sendMessageTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
@@ -104,5 +116,4 @@ public class CreateEndpointStream extends CreateStream {
         contactMessageNode.setResponse(response);
         return contactMessageNode;
     }
-
 }

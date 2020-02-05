@@ -15,6 +15,7 @@ import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.egov.chat.service.ErrorMessageGenerator;
 import org.egov.chat.service.QuestionGenerator;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,8 @@ public class CreateStream {
     protected QuestionGenerator questionGenerator;
     @Autowired
     private ErrorMessageGenerator errorMessageGenerator;
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void createQuestionStreamForConfig(JsonNode config, String questionTopic, String sendMessageTopic) {
 
@@ -57,7 +60,6 @@ public class CreateStream {
                     errorMessageGenerator.fillErrorMessageInChatNode(config,chatNode);
                 }
 
-                ConversationState currentConversationState = chatNode.getConversationState();
                 ConversationState nextConversationState = chatNode.getConversationState().toBuilder().build();
                 nextConversationState.setLastModifiedTime(System.currentTimeMillis());
                 nextConversationState.setActiveNodeId(config.get("name").asText());
@@ -73,6 +75,7 @@ public class CreateStream {
                 return responseNodes;
             } catch (Exception e) {
                 log.error("error in create stream", e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(sendMessageTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

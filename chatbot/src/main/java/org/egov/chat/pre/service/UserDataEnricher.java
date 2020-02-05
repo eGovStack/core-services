@@ -12,6 +12,7 @@ import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.pre.authorization.UserService;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,8 @@ public class UserDataEnricher {
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void startUserDataStream(String inputTopic, String outputTopic) {
 
@@ -46,7 +48,8 @@ public class UserDataEnricher {
                 log.info("Added userInfo");
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error(streamName + " error : " + e.getMessage());
+                log.error(streamName + " error : ",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

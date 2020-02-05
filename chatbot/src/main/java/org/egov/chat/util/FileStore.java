@@ -52,9 +52,6 @@ public class FileStore {
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
 
-    @Value("${karix.authentication.token}")
-    private String karixAuthenticationToken;
-
     public String downloadAndStore(String getLink) {
         String filename = FilenameUtils.getName(getLink);
         return downloadAndStore(getLink, filename);
@@ -71,8 +68,7 @@ public class FileStore {
             tempFile.delete();
             return fileStoreId;
         }catch (Exception e){
-            log.error("Get File failed");
-            log.error(e.getMessage());
+            log.error("Get File failed",e);
         }
         return null;
     }
@@ -100,8 +96,7 @@ public class FileStore {
 
             return response.getBody().get("files").get(0).get("fileStoreId").asText();
         } catch (Exception e) {
-            log.error("Error in file store save request");
-            log.error(e.getMessage());
+            log.error("Error in file store save request",e);
         }
 
         return null;
@@ -150,21 +145,4 @@ public class FileStore {
         return new String(Base64.getEncoder().encode(FileUtils.readFileToByteArray(file)));
     }
 
-    public String downloadFromKarixAndStore(String getLink) throws Exception {
-        URL url = new URL(getLink);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authentication", karixAuthenticationToken);
-        conn.setDoOutput(true);
-
-        InputStream inputStream = conn.getInputStream();
-        String ext = MimeTypes.getDefaultMimeTypes().forName(conn.getContentType()).getExtension();
-        File file = File.createTempFile(moduleName, ext);
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        IOUtils.copy(inputStream, fileOutputStream);
-
-        String fileStoreId = saveToFileStore(file);
-        file.delete();
-        return fileStoreId;
-    }
 }

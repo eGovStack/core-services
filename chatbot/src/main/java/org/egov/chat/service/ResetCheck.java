@@ -12,6 +12,7 @@ import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.repository.ConversationStateRepository;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,8 @@ public class ResetCheck {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private ConversationStateRepository conversationStateRepository;
 
@@ -53,11 +55,12 @@ public class ResetCheck {
         branches[1].flatMapValues(chatNode -> {
             try {
                 String conversationId = chatNode.getConversationState().getConversationId();
-
+                chatNode.getConversationState().setActiveNodeId("Reset");
                 conversationStateRepository.markConversationInactive(conversationId);
-
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
+                log.error("error in reset check",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(resetTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
@@ -79,7 +82,7 @@ public class ResetCheck {
 
             return false;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("error in reset check",e);
             return false;
         }
     }

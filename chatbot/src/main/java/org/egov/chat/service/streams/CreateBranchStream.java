@@ -17,6 +17,7 @@ import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.service.AnswerExtractor;
 import org.egov.chat.service.AnswerStore;
 import org.egov.chat.service.validation.Validator;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,8 @@ public class CreateBranchStream extends CreateStream {
     private AnswerStore answerStore;
     @Autowired
     private TopicNameGetter topicNameGetter;
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void createEvaluateAnswerStreamForConfig(JsonNode config, String answerInputTopic, String questionTopic) {
 
@@ -73,7 +76,8 @@ public class CreateBranchStream extends CreateStream {
 
                     return Collections.singletonList(chatNode);
                 } catch (Exception e) {
-                    log.error(e.getMessage());
+                    log.error("error in branch stream",e);
+                    commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                     return Collections.emptyList();
                 }
             }).to(targetTopicName, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -67,23 +68,12 @@ public class PGRComplaintTrack implements RestEndpoint {
         uriComponents.queryParam("tenantId", tenantId);
         uriComponents.queryParam("noOfRecords", numberOfRecentComplaints);
 
-        JsonNode requestObject = null;
-        try {
-            requestObject = objectMapper.readTree(request.jsonString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        JsonNode requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-        try {
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(uriComponents.buildAndExpand().toUri(),
                     requestObject, ObjectNode.class);
             responseMessage = makeMessageForResponse(response);
-
-        } catch (Exception e) {
-            responseMessage.put("text", "Error occured");
-        }
 
         return responseMessage;
     }
@@ -159,7 +149,8 @@ public class PGRComplaintTrack implements RestEndpoint {
 
 
         } else {
-            responseMessage.put("text", "Error Occured");
+            log.error("Exception in PGR search",responseEntity.toString());
+            throw new CustomException("PGR_SEARCH_ERROR","Exception while searching PGR complaint "+responseEntity.toString());
         }
 
         return responseMessage;

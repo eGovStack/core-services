@@ -12,6 +12,7 @@ import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
+import org.egov.chat.util.CommonAPIErrorMessage;
 import org.egov.chat.util.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,8 @@ public class LocalizationStream {
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
     private LocalizationService localizationService;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
     public String getStreamName() {
         return "localization-stream";
     }
@@ -48,7 +50,8 @@ public class LocalizationStream {
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in localization stream",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

@@ -37,7 +37,7 @@ public class ValueFirstRestCall {
 
             log.info("ValueFirst Send Message Response : " + valueFirstResponse.toString());
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("error in value first rest call",e);
         }
 
     }

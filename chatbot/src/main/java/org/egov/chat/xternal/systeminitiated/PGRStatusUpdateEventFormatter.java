@@ -82,7 +82,7 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
             try {
                 return createChatNodes(event);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in PGR status update",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
