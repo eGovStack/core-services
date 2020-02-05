@@ -13,18 +13,14 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.config.TenantIdWhatsAppNumberMapping;
-import org.egov.chat.models.EgovChat;
-import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.post.formatter.ChatNodeJsonPointerConstants;
 import org.egov.chat.post.formatter.ResponseFormatter;
 import org.egov.chat.util.FileStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.*;
 
 
@@ -109,11 +105,15 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //        else
             if(type.equalsIgnoreCase("text")) {
                 request = JsonPath.parse(valueFirstTextMessageRequestBody);
-                request.set("$.SMS[0].@TEXT", response.at(ChatNodeJsonPointerConstants.responseText).asText());
+                String message = response.at(ChatNodeJsonPointerConstants.responseText).asText();
+                String encodedMessage = URLEncoder.encode( message, "UTF-8" );
+                request.set("$.SMS[0].@TEXT", encodedMessage);
             }
             else if(type.equalsIgnoreCase("contactcard")) {
                 request = JsonPath.parse(valueFirstTextMessageRequestBody);
-                request.set("$.SMS[0].@TEXT", response.at(ChatNodeJsonPointerConstants.responseText).asText());
+                String message = response.at(ChatNodeJsonPointerConstants.responseText).asText();
+                String encodedMessage = URLEncoder.encode( message, "UTF-8" );
+                request.set("$.SMS[0].@TEXT", encodedMessage);
             }
 //        } else if(type.equalsIgnoreCase("attachment")) {
 //            request = JsonPath.parse(karixAttachmentMessageRequestBody);
