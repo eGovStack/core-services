@@ -10,6 +10,8 @@ import com.jayway.jsonpath.WriteContext;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
+import org.egov.chat.util.URLShorteningSevice;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -25,6 +27,8 @@ import java.net.URLEncoder;
 @Component
 public class PGRComplaintCreate implements RestEndpoint {
 
+    @Autowired
+    private URLShorteningSevice urlShorteningService;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -84,21 +88,12 @@ public class PGRComplaintCreate implements RestEndpoint {
         log.info("PGR Create complaint request : " + request.jsonString());
 
         JsonNode requestObject = null;
-        try {
-            requestObject = objectMapper.readTree(request.jsonString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-        try {
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
                     requestObject, ObjectNode.class);
             responseMessage = makeMessageForResponse(response, refreshToken, mobileNumber);
-        } catch (Exception e) {
-            responseMessage.put("text", "Error occured");
-        }
         return responseMessage;
     }
 
@@ -111,7 +106,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
             String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath;
-
+            String shortenedURL = urlShorteningService.shortenURL(url);
             ObjectNode param;
 
             ObjectNode params = objectMapper.createObjectNode();
@@ -122,7 +117,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             params.set("complaintNumber", localizationCodeArray);
 
             param = objectMapper.createObjectNode();
-            param.put("value", url);
+            param.put("value", shortenedURL);
             params.set("url", param);
 
             ObjectNode template = objectMapper.createObjectNode();
@@ -133,7 +128,8 @@ public class PGRComplaintCreate implements RestEndpoint {
             localizationCodes.add(template);
             responseMessage.set("localizationCodes", localizationCodes);
         } else {
-            responseMessage.put("text", "Error Occured");
+            log.error("Exception in PGR create",responseEntity.toString());
+            throw new CustomException("PGR_CREATE_ERROR","Exception while creating PGR complaint "+responseEntity.toString());
         }
         return responseMessage;
     }

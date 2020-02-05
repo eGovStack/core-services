@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
+import org.egov.chat.util.URLShorteningSevice;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,8 @@ public class PGRComplaintTrack implements RestEndpoint {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
-
+    @Autowired
+    private URLShorteningSevice urlShorteningService;
     @Autowired
     private NumeralLocalization numeralLocalization;
 
@@ -133,8 +135,9 @@ public class PGRComplaintTrack implements RestEndpoint {
 
                     String encodedPath = URLEncoder.encode(documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8");
                     String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
+                    String encodedURL=urlShorteningService.shortenURL(url);
                     param = objectMapper.createObjectNode();
-                    param.put("value", url);
+                    param.put("value", encodedURL);
                     params.set("url", param);
 
                     template.set("params", params);

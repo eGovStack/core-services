@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.egov.chat.service.valuefetch.ExternalValueFetcher;
+import org.egov.chat.util.URLShorteningSevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -37,7 +38,8 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
     private String egovExternalHost;
     @Value("${locality.options.path}")
     private String localityOptionsPath;
-
+    @Autowired
+    private URLShorteningSevice urlShorteningSevice;
 
     private Map<String, String> defaultQueryParams = new HashMap<String, String>() {{
         put("hierarchyTypeCode","ADMIN");
@@ -61,7 +63,9 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
         String mobile = params.get("recipient").asText();
         String tenantId = params.get("tenantId").asText();
 
-        return egovExternalHost + localityOptionsPath + "?phone=" + mobile + "&tenantId=" + tenantId;
+        String url = egovExternalHost + localityOptionsPath + "?phone=" + mobile + "&tenantId=" + tenantId;
+        String shortenedURL=urlShorteningSevice.shortenURL(url);
+        return  shortenedURL;
     }
 
     private ObjectNode fetchValues(ObjectNode params) {
