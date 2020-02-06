@@ -79,21 +79,24 @@ public class QuestionGenerator {
                 chatNode.getNextConversationState().setQuestionDetails(questionDetails);
 
                 ArrayNode values = (ArrayNode) questionDetails.get("askedValues");
-
+                String numberPrefixLocalizationCode=config.get("numberPrefixLocalizationCode").asText();
+                String numberNameSeparatorLocalizationCode=config.get("numberNameSeparatorLocalizationCode").asText();
+                // TODO : Currently using * for Bold
                 for (int i = 0; i < values.size(); i++) {
-                    String tempString = "";
+                    LocalizationCode newLineCode=LocalizationCode.builder().value("\n").build();
+                    localizationCodes.add(newLineCode);
+                    LocalizationCode prefixCode=LocalizationCode.builder().code(numberPrefixLocalizationCode).build();
+                    localizationCodes.add(prefixCode);
                     JsonNode value = values.get(i);
-                    tempString += "\n";
-                    if (config.get("values").isArray())
-                        tempString += "Type ";
-                    tempString += value.get("index").asText();
-                    if (config.get("values").isArray())
-                        tempString += " to ";
-                    else
-                        tempString += ". ";
-
+                    String tempString = "*"+value.get("index").asText()+"*";
                     localizationCodes.addAll(numeralLocalization.getLocalizationCodesForStringContainingNumbers(tempString));
-                    localizationCodes.add(objectMapper.convertValue(value.get("value"), LocalizationCode.class));
+                    LocalizationCode separatorCode=LocalizationCode.builder().code(numberNameSeparatorLocalizationCode).build();
+                    localizationCodes.add(separatorCode);
+                    LocalizationCode starForBold=LocalizationCode.builder().value("*").build();
+                    localizationCodes.add(starForBold);
+                    LocalizationCode localizationCode=objectMapper.convertValue(value.get("value"), LocalizationCode.class);
+                    localizationCodes.add(localizationCode);
+                    localizationCodes.add(starForBold);
                 }
             } else {
 

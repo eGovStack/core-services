@@ -31,8 +31,6 @@ public class UserDataEnricher {
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
     private UserService userService;
-    @Autowired
-    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void startUserDataStream(String inputTopic, String outputTopic) {
 
@@ -49,7 +47,6 @@ public class UserDataEnricher {
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
                 log.error(streamName + " error : ",e);
-                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

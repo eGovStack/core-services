@@ -9,13 +9,13 @@ validationRequired: true
 typeOfValues: FixedSetValues
 
 message : chatbot.messages.pgrCreateComplaintType
-
+displayValuesAsOptions: true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberNameSeparatorLocalizationCode: chatbot.message.numberNameSeparatorLocalizationCodeFor
 values :
   batchSize : 10
   class : org.egov.chat.xternal.valuefetch.ComplainTypeValueFetcher
   params :
     tenantId : /tenantId
-
-displayValuesAsOptions : true
 
 matchAnswerThreshold: 70

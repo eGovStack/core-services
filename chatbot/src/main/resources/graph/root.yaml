@@ -5,12 +5,15 @@ message : chatbot.messages.rootMessage
 validationRequired: true
 typeOfValues: FixedSetValues
 
-values : [ "File a complaint", "Track complaint", "Get last water bill" ]
+values : [ "File a complaint", "Track complaint"]
 displayValuesAsOptions : true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberNameSeparatorLocalizationCode: chatbot.message.numberNameSeparatorLocalizationCodeTo
 matchAnswerThreshold : 70
 
 type : text
 
 File a complaint : pgr.create.tenantId
 Track complaint : pgr.track.end
-Get last water bill : ws.lastbill.end
+
+errorMessage: chatbot.messages.rootErrorMessage
