@@ -1,6 +1,6 @@
 name : root
 nodeType : branch
-message : chatbot.messages.welcomeMessage
+message : chatbot.messages.rootMessage
 
 validationRequired: true
 typeOfValues: FixedSetValues

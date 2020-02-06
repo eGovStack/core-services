@@ -27,7 +27,7 @@ public class ResetCheck {
 
     private String streamName = "reset-check";
 
-    private List<String> resetKeywords = Arrays.asList("reset", "cancel");
+    private List<String> resetKeywords = Arrays.asList("mseva", "hi", "hello", "missedCall");
     private int fuzzymatchScoreThreshold = 90;
 
     @Autowired
@@ -37,7 +37,7 @@ public class ResetCheck {
     @Autowired
     private ConversationStateRepository conversationStateRepository;
 
-    public void startStream(String inputTopic, String outputTopic, String resetTopic) {
+    public void startStream(String inputTopic, String outputTopic) {
 
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
@@ -45,25 +45,16 @@ public class ResetCheck {
         KStream<String, EgovChat> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
                 EgovChatSerdes.getSerde()));
 
-        KStream<String, EgovChat>[] branches = messagesKStream.branch(
-                (key, chatNode) -> !isResetKeyword(chatNode),
-                (key, value) -> true
-        );
-
-        branches[0].mapValues(chatNode -> chatNode).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
-
-        branches[1].flatMapValues(chatNode -> {
+        messagesKStream.flatMapValues(chatNode -> {
             try {
-                String conversationId = chatNode.getConversationState().getConversationId();
-                chatNode.getConversationState().setActiveNodeId("Reset");
-                conversationStateRepository.markConversationInactive(conversationId);
+                chatNode.setResetConversation(isResetKeyword(chatNode));
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
                 log.error("error in reset check",e);
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
-        }).to(resetTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
+        }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         kafkaStreamsConfig.startStream(builder, streamConfiguration);
 

@@ -1,0 +1,10 @@
+name: "welcome"
+description: "Define configuration for reset and welcome messages and keywords"
+type: "text"
+message : chatbot.messages.welcomeMessage
+
+errorMessage: chatbot.messages.welcomeError
+
+values: ["mseva", "hi", "hello", "missedCall"]
+
+matchAnswerThreshold: 90

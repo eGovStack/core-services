@@ -66,6 +66,14 @@ public class InitiateConversation {
 
         ConversationState conversationState = conversationStateRepository.getActiveConversationStateForUserId(userId);
 
+        if(chatNode.isResetConversation() && conversationState != null) {
+            String conversationId = conversationState.getConversationId();
+            conversationState.setActiveNodeId(conversationState.getActiveNodeId() + "-reset");
+            conversationStateRepository.updateConversationStateForId(conversationState);
+            conversationStateRepository.markConversationInactive(conversationId);
+            conversationState = null;
+        }
+
         if (conversationState == null) {
             conversationState = createNewConversationForUser(userId);
             conversationStateRepository.insertNewConversation(conversationState);

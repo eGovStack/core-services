@@ -28,18 +28,25 @@ public class InputSegregator {
     ObjectMapper objectMapper;
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
+    @Autowired
+    private WelcomeMessageHandler welcomeMessageHandler;
 
     public void segregateAnswer(ConsumerRecord<String, JsonNode> consumerRecord) {
         EgovChat chatNode=null;
         try {
             chatNode = objectMapper.convertValue(consumerRecord.value(), EgovChat.class);
-            String conversationId = chatNode.getConversationState().getConversationId();
 
-            String activeNodeId = conversationStateRepository.getActiveNodeIdForConversation(conversationId);
+            String activeNodeId = chatNode.getConversationState().getActiveNodeId();
 
             log.debug("Active Node Id : " + activeNodeId);
 
-            String topic = getOutputTopcName(activeNodeId);
+            if(activeNodeId == null) {
+                chatNode = welcomeMessageHandler.welcomeUser(chatNode);
+                if(chatNode == null)
+                    return;
+            }
+
+            String topic = getOutputTopicName(activeNodeId);
 
             kafkaTemplate.send(topic, consumerRecord.key(), chatNode);
         } catch (Exception e) {
@@ -49,7 +56,7 @@ public class InputSegregator {
         }
     }
 
-    private String getOutputTopcName(String activeNodeId) {
+    private String getOutputTopicName(String activeNodeId) {
         String topic;
         if (activeNodeId == null)
             topic = rootQuestionTopic;

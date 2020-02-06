@@ -14,9 +14,13 @@ public class StreamController {
     private ResetCheck resetCheck;
 
     public void generateStreams() {
-        initiateConversation.startStream("input-messages", "input-reset-check");
+//        initiateConversation.startStream("input-messages", "input-reset-check");
+//
+//        resetCheck.startStream("input-reset-check", "input-answer", "answer-reset");
 
-        resetCheck.startStream("input-reset-check", "input-answer", "answer-reset");
+        resetCheck.startStream("input-messages", "input-reset-check");
+
+        initiateConversation.startStream("input-reset-check", "input-answer");
     }
 
 }

@@ -29,4 +29,6 @@ public class EgovChat {
     private boolean askForNextBatch;
 
     private boolean addErrorMessage;
+
+    private boolean resetConversation;
 }
