@@ -27,7 +27,8 @@ public class TenantIdEnricher {
     private ApplicationProperties applicationProperties;
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
-
+    @Autowired
+    private CommonAPIErrorMessage commonAPIErrorMessage;
 
     public void startTenantEnricherStream(String inputTopic, String outputTopic) {
 
@@ -43,6 +44,7 @@ public class TenantIdEnricher {
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
                 log.error("error in tenantid enricher",e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));

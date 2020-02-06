@@ -51,7 +51,8 @@ public class CommonAPIErrorMessage {
     public void resetFlowDuetoError(EgovChat chatNode)
     {
         try{
-            resetConversation(chatNode);
+            if(chatNode.getConversationState()!=null)
+                resetConversation(chatNode);
             chatNode.setResponse(getErrorMessageResponse());
             kafkaTemplate.send(localizedTopic,chatNode);
         }
