@@ -668,9 +668,8 @@ public class IndexerUtils {
 	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
 		if(dssTopicPushEnabled) {
 			if(index.getName().contains("collection") || index.getName().contains("payment")) {
-				log.info("Index name - "+ index.getName());
+				log.info("Index name: "+ index.getName());
 				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-				log.info("Data: "+enrichedObject);
 				
 				producer.producer(dssTopicForCollection, enrichedObject);
 			}

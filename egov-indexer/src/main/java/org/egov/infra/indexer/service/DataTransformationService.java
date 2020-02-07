@@ -85,6 +85,7 @@ public class DataTransformationService {
 						if (null != builder)
 							jsonTobeIndexed = builder;
 					} else {
+						indexerUtils.pushCollectionToDSSTopic(stringifiedObject, index);
 						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, null);
 						if (null != builder)
 							jsonTobeIndexed = builder;
