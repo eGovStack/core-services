@@ -80,6 +80,7 @@ public class DataTransformationService {
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
 					if (isCustom) {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(), stringifiedObject);
+						indexerUtils.pushCollectionToDSSTopic(customIndexJson, index);
 						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, customIndexJson);
 						if (null != builder)
 							jsonTobeIndexed = builder;

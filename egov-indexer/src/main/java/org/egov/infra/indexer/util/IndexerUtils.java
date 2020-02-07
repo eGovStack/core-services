@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.indexer.consumer.config.ReindexConsumerConfig;
 import org.egov.infra.indexer.models.AuditDetails;
+import org.egov.infra.indexer.producer.IndexerProducer;
 import org.egov.infra.indexer.web.contract.APIDetails;
 import org.egov.infra.indexer.web.contract.FilterMapping;
 import org.egov.infra.indexer.web.contract.Index;
@@ -67,6 +68,12 @@ public class IndexerUtils {
 
 	@Value("${egov.service.host}")
 	private String serviceHost;
+	
+	@Value("${egov.indexer.dss.collectionindex.topic}")
+	private String dssTopicForCollection;
+	
+	@Autowired
+	private IndexerProducer producer;
 
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -646,5 +653,24 @@ public class IndexerUtils {
 		df.setMaximumFractionDigits(0);
 		return df.format(Double.valueOf(value));
 	}
+	
+	
+	/**
+	 * For the sake of DSS, collections data is being used from a different index.
+	 * This method pushes only the collections data to a different topic, for the dss ingest to pick.
+	 * 
+	 * @param enrichedObject
+	 * @param index
+	 */
+	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
+		if(index.getName().contains("collection") || index.getName().contains("payment")) {
+			log.info("Index name - "+ index.getName());
+			log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
+			log.info("Data: "+enrichedObject);
+			
+			producer.producer(dssTopicForCollection, enrichedObject);
+		}
+	}
+	
 
 }
