@@ -72,6 +72,9 @@ public class IndexerUtils {
 	@Value("${egov.indexer.dss.collectionindex.topic}")
 	private String dssTopicForCollection;
 	
+	@Value("${dss.collectionindex.topic.push.enabled}")
+	private Boolean dssTopicPushEnabled;
+	
 	@Autowired
 	private IndexerProducer producer;
 
@@ -663,12 +666,14 @@ public class IndexerUtils {
 	 * @param index
 	 */
 	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
-		if(index.getName().contains("collection") || index.getName().contains("payment")) {
-			log.info("Index name - "+ index.getName());
-			log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-			log.info("Data: "+enrichedObject);
-			
-			producer.producer(dssTopicForCollection, enrichedObject);
+		if(dssTopicPushEnabled) {
+			if(index.getName().contains("collection") || index.getName().contains("payment")) {
+				log.info("Index name - "+ index.getName());
+				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
+				log.info("Data: "+enrichedObject);
+				
+				producer.producer(dssTopicForCollection, enrichedObject);
+			}
 		}
 	}
 	
