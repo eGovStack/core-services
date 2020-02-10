@@ -214,3 +214,8 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "chatbot/src/main/resources/db"
         image-name: "chatbot-db"
+  - name: "builds/core-services/egov-user-chatbot"
+    build:
+      - work-dir: "egov-user-chatbot"
+        image-name: "egov-user-chatbot"
+        dockerfile: "build/maven/Dockerfile"
