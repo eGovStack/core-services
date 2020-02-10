@@ -81,7 +81,7 @@ public class User {
 
     public void validateNewUser() {
         if (isUsernameAbsent()
-                || isNameAbsent()
+//                || isNameAbsent()
                 || isMobileNumberAbsent()
                 || isActiveIndicatorAbsent()
                 || isTypeAbsent()
