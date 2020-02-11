@@ -3,7 +3,7 @@
     {
       "id": 1,
       "emailId": "foo@bar.com",
-      "mobileNumber" : "123"
+      "mobileNumber": "123"
     }
   ]
 }

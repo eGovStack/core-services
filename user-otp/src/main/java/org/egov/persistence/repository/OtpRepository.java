@@ -1,13 +1,12 @@
 package org.egov.persistence.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.domain.exception.OtpNumberNotPresentException;
 import org.egov.domain.model.OtpRequest;
 import org.egov.persistence.contract.OtpResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -29,12 +28,12 @@ public class OtpRepository {
         try {
             final OtpResponse otpResponse =
                     restTemplate.postForObject(otpCreateUrl, request, OtpResponse.class);
-            if(isOtpNumberAbsent(otpResponse)) {
+            if (isOtpNumberAbsent(otpResponse)) {
                 throw new OtpNumberNotPresentException();
             }
             return otpResponse.getOtpNumber();
-        }catch(Exception e) {
-        	log.error("Exception while fetching OTP: ", e);
+        } catch (Exception e) {
+            log.error("Exception while fetching OTP: ", e);
             throw new OtpNumberNotPresentException();
         }
     }

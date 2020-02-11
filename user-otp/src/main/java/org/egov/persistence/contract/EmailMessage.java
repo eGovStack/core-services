@@ -10,8 +10,8 @@ import lombok.Getter;
 @Builder
 @EqualsAndHashCode
 public class EmailMessage {
-	private String email;
-	private String subject;
-	private String body;
-	private String sender;
+    private String email;
+    private String subject;
+    private String body;
+    private String sender;
 }

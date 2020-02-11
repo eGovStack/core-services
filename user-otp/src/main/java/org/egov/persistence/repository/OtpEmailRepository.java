@@ -19,34 +19,34 @@ public class OtpEmailRepository {
 
     @Autowired
     public OtpEmailRepository(CustomKafkaTemplate<String, EmailMessage> kafkaTemplate,
-							  @Value("${email.topic}") String emailTopic) {
+                              @Value("${email.topic}") String emailTopic) {
         this.kafkaTemplate = kafkaTemplate;
         this.emailTopic = emailTopic;
     }
 
     public void send(String email, String otpNumber) {
-    	if (isEmpty(email)) {
-			return;
-		}
-		sendEmail(email, otpNumber);
+        if (isEmpty(email)) {
+            return;
+        }
+        sendEmail(email, otpNumber);
     }
 
-	private void sendEmail(String email, String otpNumber) {
-		final EmailMessage emailMessage = EmailMessage.builder()
-				.body(getBody(otpNumber))
-				.subject(getSubject())
-				.email(email)
-				.sender(EMPTY)
-				.build();
-		kafkaTemplate.send(emailTopic, emailMessage);
-	}
+    private void sendEmail(String email, String otpNumber) {
+        final EmailMessage emailMessage = EmailMessage.builder()
+                .body(getBody(otpNumber))
+                .subject(getSubject())
+                .email(email)
+                .sender(EMPTY)
+                .build();
+        kafkaTemplate.send(emailTopic, emailMessage);
+    }
 
-	private String getSubject() {
-		return PASSWORD_RESET_SUBJECT;
-	}
+    private String getSubject() {
+        return PASSWORD_RESET_SUBJECT;
+    }
 
-	private String getBody(String otpNumber) {
-		return format(PASSWORD_RESET_BODY, otpNumber);
-	}
+    private String getBody(String otpNumber) {
+        return format(PASSWORD_RESET_BODY, otpNumber);
+    }
 
 }

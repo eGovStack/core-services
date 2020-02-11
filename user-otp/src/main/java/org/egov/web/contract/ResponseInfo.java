@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ResponseInfo   {
+public class ResponseInfo {
     private String apiId;
     private String ver;
     private String ts;

@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Import;
 @Import(TracerConfiguration.class)
 public class UserOtpApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(UserOtpApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(UserOtpApplication.class, args);
+    }
 
 }

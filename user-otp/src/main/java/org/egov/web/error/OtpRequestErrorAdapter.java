@@ -21,17 +21,17 @@ public class OtpRequestErrorAdapter implements ErrorAdapter<OtpRequest> {
     private static final String MOBILE_MANDATORY_MESSAGE = "Mobile number field is mandatory";
     private static final String MOBILE_FIELD = "otp.mobileNumber";
 
-	private static final String TYPE_INVALID_CODE = "OTP.REQUEST_TYPE_MANDATORY";
-	private static final String TYPE_INVALID_MESSAGE = "Request type (register, passwordreset,login) is mandatory";
-	private static final String TYPE_FIELD = "otp.type";
-	
-	private static final String MOBILE_INVALID_CODE = "OTP.MOBILE_NUMBER_INVALID";
-	private static final String MOBILE_INVALID_MESSAGE = "Mobile number field should be numeric.";
-	private static final String MOBILE_INVALID_FIELD = "otp.mobileNumber";
+    private static final String TYPE_INVALID_CODE = "OTP.REQUEST_TYPE_MANDATORY";
+    private static final String TYPE_INVALID_MESSAGE = "Request type (register, passwordreset,login) is mandatory";
+    private static final String TYPE_FIELD = "otp.type";
 
-	private static final String MOBILE_INVALIDLENGTH_CODE = "OTP.MOBILE_NUMBER_INVALIDLENGTH";
-	private static final String MOBILE_INVALIDLENGTH_MESSAGE = "Mobile number length should be min 10 and max 13 digits";
-	private static final String MOBILE_INVALIDLENGTH_FIELD = "otp.mobileNumber";
+    private static final String MOBILE_INVALID_CODE = "OTP.MOBILE_NUMBER_INVALID";
+    private static final String MOBILE_INVALID_MESSAGE = "Mobile number field should be numeric.";
+    private static final String MOBILE_INVALID_FIELD = "otp.mobileNumber";
+
+    private static final String MOBILE_INVALIDLENGTH_CODE = "OTP.MOBILE_NUMBER_INVALIDLENGTH";
+    private static final String MOBILE_INVALIDLENGTH_MESSAGE = "Mobile number length should be min 10 and max 13 digits";
+    private static final String MOBILE_INVALIDLENGTH_FIELD = "otp.mobileNumber";
 
     @Override
     public ErrorResponse adapt(OtpRequest model) {
@@ -54,23 +54,23 @@ public class OtpRequestErrorAdapter implements ErrorAdapter<OtpRequest> {
         addMobileNumberValidationErrors(model, errorFields);
         addRequestTypeValidationErrors(model, errorFields);
         addMobileNumberInvalidValidationErrors(model, errorFields);
-		addMobileNumberValidLengthValidationError(model, errorFields);
+        addMobileNumberValidLengthValidationError(model, errorFields);
         return errorFields;
     }
 
-	private void addRequestTypeValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
-		if (!model.isInvalidType()) {
-			return;
-		}
-		final ErrorField latitudeErrorField = ErrorField.builder()
-				.code(TYPE_INVALID_CODE)
-				.message(TYPE_INVALID_MESSAGE)
-				.field(TYPE_FIELD)
-				.build();
-		errorFields.add(latitudeErrorField);
-	}
+    private void addRequestTypeValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
+        if (!model.isInvalidType()) {
+            return;
+        }
+        final ErrorField latitudeErrorField = ErrorField.builder()
+                .code(TYPE_INVALID_CODE)
+                .message(TYPE_INVALID_MESSAGE)
+                .field(TYPE_FIELD)
+                .build();
+        errorFields.add(latitudeErrorField);
+    }
 
-	private void addMobileNumberValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
+    private void addMobileNumberValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
         if (!model.isMobileNumberAbsent()) {
             return;
         }
@@ -93,23 +93,23 @@ public class OtpRequestErrorAdapter implements ErrorAdapter<OtpRequest> {
                 .build();
         errorFields.add(longitudeErrorField);
     }
-    
-	private void addMobileNumberValidLengthValidationError(OtpRequest model, List<ErrorField> errorFields) {
-		if (!model.isMobileNumberValidLength()) {
-			return;
-		}
-		final ErrorField latitudeErrorField = ErrorField.builder().code(MOBILE_INVALIDLENGTH_CODE)
-				.message(MOBILE_INVALIDLENGTH_MESSAGE).field(MOBILE_INVALIDLENGTH_FIELD).build();
-		errorFields.add(latitudeErrorField);
-	}
 
-	private void addMobileNumberInvalidValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
-		if (!model.isMobileNumberNumeric()) {
-			return;
-		}
-		final ErrorField latitudeErrorField = ErrorField.builder().code(MOBILE_INVALID_CODE)
-				.message(MOBILE_INVALID_MESSAGE).field(MOBILE_INVALID_FIELD).build();
-		errorFields.add(latitudeErrorField);
-	}
+    private void addMobileNumberValidLengthValidationError(OtpRequest model, List<ErrorField> errorFields) {
+        if (!model.isMobileNumberValidLength()) {
+            return;
+        }
+        final ErrorField latitudeErrorField = ErrorField.builder().code(MOBILE_INVALIDLENGTH_CODE)
+                .message(MOBILE_INVALIDLENGTH_MESSAGE).field(MOBILE_INVALIDLENGTH_FIELD).build();
+        errorFields.add(latitudeErrorField);
+    }
+
+    private void addMobileNumberInvalidValidationErrors(OtpRequest model, List<ErrorField> errorFields) {
+        if (!model.isMobileNumberNumeric()) {
+            return;
+        }
+        final ErrorField latitudeErrorField = ErrorField.builder().code(MOBILE_INVALID_CODE)
+                .message(MOBILE_INVALID_MESSAGE).field(MOBILE_INVALID_FIELD).build();
+        errorFields.add(latitudeErrorField);
+    }
 
 }

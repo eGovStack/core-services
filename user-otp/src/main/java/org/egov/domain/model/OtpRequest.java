@@ -12,49 +12,49 @@ import static org.springframework.util.StringUtils.isEmpty;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class OtpRequest {
-	@Setter
+    @Setter
     private String mobileNumber;
     private String tenantId;
     private OtpRequestType type;
     private String userType;
 
     public void validate() {
-        if(isTenantIdAbsent()
-				|| isMobileNumberAbsent()
-				|| isInvalidType()
-				|| isMobileNumberNumeric()
-				|| isMobileNumberValidLength()) {
+        if (isTenantIdAbsent()
+                || isMobileNumberAbsent()
+                || isInvalidType()
+                || isMobileNumberNumeric()
+                || isMobileNumberValidLength()) {
             throw new InvalidOtpRequestException(this);
         }
     }
 
-	public boolean isMobileNumberNumeric() {
-		// TODO Auto-generated method stub
-		if(!(type!=null && type.toString().equalsIgnoreCase(OtpRequestType.PASSWORD_RESET.toString())))
-		return !StringUtils.isNumeric(mobileNumber);
-		return false;
-	}
+    public boolean isMobileNumberNumeric() {
+        // TODO Auto-generated method stub
+        if (!(type != null && type.toString().equalsIgnoreCase(OtpRequestType.PASSWORD_RESET.toString())))
+            return !StringUtils.isNumeric(mobileNumber);
+        return false;
+    }
 
-	public boolean isMobileNumberValidLength() {
-		// TODO Auto-generated method stub
-		if(!(type!=null && type.toString().equalsIgnoreCase(OtpRequestType.PASSWORD_RESET.toString())))
-		return !(mobileNumber != null && mobileNumber.matches("^[0-9]{10,13}$"));
-		return false;
-	}
-    
-	public boolean isRegistrationRequestType() {
-    	return OtpRequestType.REGISTER.equals(getType());
-	}
-	
-	public boolean isLoginRequestType() {
-    	return OtpRequestType.LOGIN.equals(getType());
-	}
+    public boolean isMobileNumberValidLength() {
+        // TODO Auto-generated method stub
+        if (!(type != null && type.toString().equalsIgnoreCase(OtpRequestType.PASSWORD_RESET.toString())))
+            return !(mobileNumber != null && mobileNumber.matches("^[0-9]{10,13}$"));
+        return false;
+    }
 
-	public boolean isInvalidType() {
-    	return isEmpty(type);
-	}
+    public boolean isRegistrationRequestType() {
+        return OtpRequestType.REGISTER.equals(getType());
+    }
 
-	public boolean isTenantIdAbsent() {
+    public boolean isLoginRequestType() {
+        return OtpRequestType.LOGIN.equals(getType());
+    }
+
+    public boolean isInvalidType() {
+        return isEmpty(type);
+    }
+
+    public boolean isTenantIdAbsent() {
         return isEmpty(tenantId);
     }
 
