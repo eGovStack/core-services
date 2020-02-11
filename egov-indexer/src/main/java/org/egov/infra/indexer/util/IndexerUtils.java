@@ -672,7 +672,7 @@ public class IndexerUtils {
 				log.info("Index name: "+ index.getName());
 				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
 				JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
-				producer.producer(dssTopicForCollection, enrichedObject);
+				producer.producer(dssTopicForCollection, enrichedObjectNode);
 			}
 		}
 	}
