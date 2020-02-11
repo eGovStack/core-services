@@ -98,7 +98,7 @@ config:
         
   - name: "builds/core-services/egov-notification-sms-otp"
     build:
-      - work-dir: "egov-notification-sms-otp"
+      - work-dir: "egov-notification-sms"
         image-name: "egov-notification-sms-otp"
         dockerfile: "build/maven/Dockerfile"
 
