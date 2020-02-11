@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,6 +19,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
+@PropertySources({
+        @PropertySource("classpath:xternal.properties"),
+        @PropertySource("classpath:application.properties")
+})
 public class URLShorteningSevice {
 
     @Autowired
@@ -26,7 +32,7 @@ public class URLShorteningSevice {
     private ObjectMapper objectMapper;
 
     @Value("${egov.urlshortner.host}")
-    private String egovhost;
+    private String urlShortnerServiceHost;
 
     @Value("${egov.urlshortner.endpoint}")
     private String shortenURLendpoint;
@@ -35,7 +41,7 @@ public class URLShorteningSevice {
     {
         ObjectNode requestbody=objectMapper.createObjectNode();
         requestbody.put("url",url);
-        String shortenedURL = restTemplate.postForObject(egovhost+shortenURLendpoint,
+        String shortenedURL = restTemplate.postForObject(urlShortnerServiceHost+shortenURLendpoint,
                 requestbody, String.class);
         return shortenedURL;
     }
