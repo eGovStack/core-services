@@ -1,6 +1,6 @@
 //package org.egov.chat.pre.formatter.karix;
 //
-//public class KairxJsonPointerConstants {
+//public class ValueFirstPointerConstants {
 //
 //    public static String recipientMobileNumber = "/body/eventContent/message/to";
 //

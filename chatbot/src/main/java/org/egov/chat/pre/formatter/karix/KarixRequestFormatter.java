@@ -25,7 +25,7 @@
 //
 //@Slf4j
 //@Component
-//public class KarixRequestFormatter implements RequestFormatter {
+//public class ValueFirstRequestFormatter implements RequestFormatter {
 //
 //    @Autowired
 //    private ObjectMapper objectMapper;
@@ -46,11 +46,11 @@
 //            if(checkForMissedCallNotification(inputRequest))
 //                return true;
 //
-//            String contentType = inputRequest.at(KairxJsonPointerConstants.contentType).asText();
+//            String contentType = inputRequest.at(ValueFirstPointerConstants.contentType).asText();
 //            if(contentType.equalsIgnoreCase("text") || contentType.equalsIgnoreCase("location")) {
 //                return true;
 //            } else if(contentType.equalsIgnoreCase("ATTACHMENT")) {
-//                String attachmentType = inputRequest.at(KairxJsonPointerConstants.attachmentType).asText();
+//                String attachmentType = inputRequest.at(ValueFirstPointerConstants.attachmentType).asText();
 //                if(attachmentType.equalsIgnoreCase("image"))
 //                    return true;
 //            }
@@ -68,29 +68,29 @@
 //            inputRequest = makeNodeForMissedCallRequest(inputRequest);
 //        }
 //
-//        String inputMobile = inputRequest.at(KairxJsonPointerConstants.userMobileNumber).asText();
+//        String inputMobile = inputRequest.at(ValueFirstPointerConstants.userMobileNumber).asText();
 //        String mobileNumber = inputMobile.substring(2, 2 + 10);
 //        ObjectNode user = objectMapper.createObjectNode();
 //        user.set("mobileNumber", TextNode.valueOf(mobileNumber));
 //
 //        ObjectNode message = objectMapper.createObjectNode();
-//        String contentType = inputRequest.at(KairxJsonPointerConstants.contentType).asText();
+//        String contentType = inputRequest.at(ValueFirstPointerConstants.contentType).asText();
 //        message.put("type", contentType);
 //        if(contentType.equalsIgnoreCase("text")) {
-//            message.set("content", inputRequest.at(KairxJsonPointerConstants.textContent));
+//            message.set("content", inputRequest.at(ValueFirstPointerConstants.textContent));
 //        } else if(contentType.equalsIgnoreCase("location")) {
-//            message.set("content", TextNode.valueOf(inputRequest.at(KairxJsonPointerConstants.locationContent).toString()));
+//            message.set("content", TextNode.valueOf(inputRequest.at(ValueFirstPointerConstants.locationContent).toString()));
 //        } else if(contentType.equalsIgnoreCase("ATTACHMENT")) {
-//            if(inputRequest.at(KairxJsonPointerConstants.attachmentType).asText().equalsIgnoreCase("image")) {
+//            if(inputRequest.at(ValueFirstPointerConstants.attachmentType).asText().equalsIgnoreCase("image")) {
 //                message.put("type", "image");
 //            }
-//            String imageLink = inputRequest.at(KairxJsonPointerConstants.imageFileLink).asText();
+//            String imageLink = inputRequest.at(ValueFirstPointerConstants.imageFileLink).asText();
 //            String fileStoreId = fileStore.downloadFromKarixAndStore(imageLink);
 //            message.put("content", fileStoreId);
 //        }
 //
 //        ObjectNode recipient = objectMapper.createObjectNode();
-//        recipient.set("to", inputRequest.at(KairxJsonPointerConstants.recipientMobileNumber));
+//        recipient.set("to", inputRequest.at(ValueFirstPointerConstants.recipientMobileNumber));
 //
 //        ObjectNode chatNode = objectMapper.createObjectNode();
 //
