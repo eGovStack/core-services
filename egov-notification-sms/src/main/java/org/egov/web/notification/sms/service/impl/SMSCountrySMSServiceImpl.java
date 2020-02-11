@@ -1,5 +1,6 @@
 package org.egov.web.notification.sms.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.SMSBodyBuilder;
@@ -15,8 +16,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 
 @Service
@@ -24,48 +23,48 @@ import java.util.List;
 @Slf4j
 public class SMSCountrySMSServiceImpl implements SMSService {
 
-	private SMSProperties smsProperties;
+    private SMSProperties smsProperties;
 
-	@Autowired
-	private SMSBodyBuilder bodyBuilder;
-	
-	@Autowired
-	private RestTemplate restTemplate;
+    @Autowired
+    private SMSBodyBuilder bodyBuilder;
 
-	@Value("${blacklist.numbers}")
-	private List<String> blacklistNumbers;
+    @Autowired
+    private RestTemplate restTemplate;
 
-	@Override
-	public void sendSMS(Sms sms) {
-		if (!sms.isValid() || blacklistNumbers.contains(sms.getMobileNumber())) {
-			log.error(String.format("Sms %s is not valid", sms));
-			return;
-		}
-		submitToExternalSmsService(sms);
-	}
+    @Value("${blacklist.numbers}")
+    private List<String> blacklistNumbers;
 
-	private void submitToExternalSmsService(Sms sms) {
-		try {
-			String url = smsProperties.getUrl();
+    @Override
+    public void sendSMS(Sms sms) {
+        if (!sms.isValid() || blacklistNumbers.contains(sms.getMobileNumber())) {
+            log.error(String.format("Sms %s is not valid", sms));
+            return;
+        }
+        submitToExternalSmsService(sms);
+    }
+
+    private void submitToExternalSmsService(Sms sms) {
+        try {
+            String url = smsProperties.getUrl();
             HttpEntity<HttpEntity<MultiValueMap<String, String>>> request = new HttpEntity<>(getRequest(sms), getHttpHeaders());
-			String response = restTemplate.postForObject(url, request, String.class);
-			log.info("response: "+response);
-		} catch (RestClientException e) {
-			log.error("Error occurred while sending SMS to " + sms.getMobileNumber(), e);
-			throw e;
-		}
-	}
+            String response = restTemplate.postForObject(url, request, String.class);
+            log.info("response: " + response);
+        } catch (RestClientException e) {
+            log.error("Error occurred while sending SMS to " + sms.getMobileNumber(), e);
+            throw e;
+        }
+    }
 
 
-	private HttpEntity<MultiValueMap<String, String>> getRequest(Sms sms) {
-		final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
-		return new HttpEntity<>(requestBody, getHttpHeaders());
-	}
+    private HttpEntity<MultiValueMap<String, String>> getRequest(Sms sms) {
+        final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
+        return new HttpEntity<>(requestBody, getHttpHeaders());
+    }
 
-	private HttpHeaders getHttpHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		return headers;
-	}
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return headers;
+    }
 
 }

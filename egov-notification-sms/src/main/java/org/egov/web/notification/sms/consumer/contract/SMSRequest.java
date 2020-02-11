@@ -7,10 +7,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.Sms;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Calendar;
-import java.util.Date;
 
 @Slf4j
 @Getter

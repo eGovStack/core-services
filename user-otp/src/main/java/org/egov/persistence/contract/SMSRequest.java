@@ -13,6 +13,6 @@ public class SMSRequest {
     private String mobileNumber;
     private String message;
     private Category category;
-    private long epochtime;
+    private long expiryTime;
 
 }
