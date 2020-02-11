@@ -672,7 +672,6 @@ public class IndexerUtils {
 			if(index.getName().contains("collection") || index.getName().contains("payment")) {
 				log.info("Index name: "+ index.getName());
 				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-				JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
 				try{
 					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
 					producer.producer(dssTopicForCollection, enrichedObjectNode);
