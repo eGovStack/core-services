@@ -1,5 +1,6 @@
 package org.egov.infra.indexer.util;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -671,8 +672,14 @@ public class IndexerUtils {
 			if(index.getName().contains("collection") || index.getName().contains("payment")) {
 				log.info("Index name: "+ index.getName());
 				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-				JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
-				producer.producer(dssTopicForCollection, enrichedObject);
+				try{
+					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
+					producer.producer(dssTopicForCollection, enrichedObjectNode);
+
+				} catch (IOException e){
+					log.error("Failed pushing collections data to the DSS topic: "+dssTopicForCollection);
+
+				}
 			}
 		}
 	}
