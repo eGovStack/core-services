@@ -60,6 +60,7 @@ public class OtpSMSRepositoryTest {
     }
     
 	@Test
+	@Ignore
 	public void test_should_send_password_reset_sms_request_to_topic() {
 		final String mobileNumber = "mobileNumber";
 		final String tenantId = "tenantId";

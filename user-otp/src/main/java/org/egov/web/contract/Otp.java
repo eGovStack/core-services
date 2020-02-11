@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import org.egov.domain.model.OtpRequestType;
 
@@ -14,6 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@ToString
 public class Otp {
 	private static final String USER_REGISTRATION = "register";
 	private static final String PASSWORD_RESET = "passwordreset";

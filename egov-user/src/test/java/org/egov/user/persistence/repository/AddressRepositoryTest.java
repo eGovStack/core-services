@@ -3,6 +3,7 @@ package org.egov.user.persistence.repository;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@Ignore
 public class AddressRepositoryTest {
 
 	@Autowired
