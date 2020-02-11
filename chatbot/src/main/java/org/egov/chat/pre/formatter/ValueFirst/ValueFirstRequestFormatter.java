@@ -97,7 +97,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         chatNode.set("user", user);
         chatNode.set("message", message);
         chatNode.set("extraInfo", extraInfo);
-
+        chatNode.set("timestamp", inputRequest.at(ValueFirstPointerConstants.timestampPath));
 //        if(missedCall) {
 //            chatNode.put("missedCall", true);
 //        }
