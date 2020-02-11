@@ -8,6 +8,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
 import org.egov.chat.util.URLShorteningSevice;
@@ -44,7 +45,7 @@ public class PGRComplaintTrack implements RestEndpoint {
 
     private String trackComplaintHeaderLocalizationCode = "chatbot.message.pgrTrackComplaintEndHeader";
     private String complaintSummaryTemplateLocalizationCode = "chatbot.template.pgrTrackComplaintSummary";
-
+    private String noComplaintFoundMessage = "chatbot.message.noComplaintFoundMessage";
     @Value("${egov.external.host}")
     private String egovExternalHost;
     @Value("${pgr.service.host}")
@@ -146,8 +147,10 @@ public class PGRComplaintTrack implements RestEndpoint {
                 }
                 responseMessage.set("localizationCodes", localizationCodesArrayNode);
             } else {
-                String message = "No complaints to display";
-                responseMessage.put("text", message);
+                ObjectNode localizationCode = objectMapper.createObjectNode();
+                localizationCode.put("code", noComplaintFoundMessage);
+                localizationCodesArrayNode.add(localizationCode);
+                responseMessage.set("localizationCodes", localizationCodesArrayNode);
             }
 
 
