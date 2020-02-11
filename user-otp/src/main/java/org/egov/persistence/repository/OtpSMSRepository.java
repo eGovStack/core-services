@@ -1,7 +1,9 @@
 package org.egov.persistence.repository;
 
+import org.egov.domain.model.Category;
 import org.egov.domain.model.OtpRequest;
 import org.egov.domain.service.LocalizationService;
+import org.egov.persistence.contract.Otp;
 import org.egov.persistence.contract.SMSRequest;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,19 @@ import java.util.Map;
 @Service
 @Slf4j
 public class OtpSMSRepository {
+  
+	@Value("${max.otp.execution.time.millisec:45000}")
+	private Long maxExecutionTime;
+  
+  
 	private static final String LOCALIZATION_KEY_REGISTER_SMS = "sms.register.otp.msg";
 	private static final String LOCALIZATION_KEY_LOGIN_SMS = "sms.login.otp.msg";
 	private static final String LOCALIZATION_KEY_PWD_RESET_SMS = "sms.pwd.reset.otp.msg";
 	
 	private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 	private String smsTopic;
-	
+	private Long currentTime = System.currentTimeMillis() +maxExecutionTime ;
+
 	@Autowired
 	private LocalizationService localizationService;
 
@@ -34,9 +42,11 @@ public class OtpSMSRepository {
 		this.smsTopic = smsTopic;
 	}
 
+
+
 	public void send(OtpRequest otpRequest, String otpNumber) {
 		final String message = getMessage(otpNumber, otpRequest);
-		kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message));
+		kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP,currentTime));
 	}
 
 	private String getMessage(String otpNumber, OtpRequest otpRequest) {
