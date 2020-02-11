@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
@@ -670,7 +671,7 @@ public class IndexerUtils {
 			if(index.getName().contains("collection") || index.getName().contains("payment")) {
 				log.info("Index name: "+ index.getName());
 				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-				
+				JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
 				producer.producer(dssTopicForCollection, enrichedObject);
 			}
 		}
