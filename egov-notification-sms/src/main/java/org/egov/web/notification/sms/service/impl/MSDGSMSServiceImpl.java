@@ -14,6 +14,7 @@ import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,7 +35,8 @@ public class MSDGSMSServiceImpl implements SMSService {
 
 	@Autowired
 	private SMSBodyBuilder bodyBuilder;
-	
+
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -59,18 +61,12 @@ public class MSDGSMSServiceImpl implements SMSService {
             finalmessage = finalmessage+sss;
         }
         sms.setMessage(finalmessage);
-		try {
-			String url = smsProperties.getUrl();
-			final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
-			postProcessor(requestBody);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, getHttpHeaders());
-			String response = restTemplate.postForObject(url, request, String.class);
-			log.info("response: " + response);
-		} catch (Exception e) {
-			log.error("Error occurred while sending SMS to " + sms.getMobileNumber(), e);
-			//Dhaval
-
-		}
+		String url = smsProperties.getUrl();
+		final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
+		postProcessor(requestBody);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, getHttpHeaders());
+		String response = restTemplate.postForObject(url, request, String.class);
+		log.info("response: " + response);
 	}
 	
     private HttpHeaders getHttpHeaders() {
