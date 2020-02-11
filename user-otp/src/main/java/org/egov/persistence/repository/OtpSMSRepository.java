@@ -26,7 +26,7 @@ public class OtpSMSRepository {
     private static final String LOCALIZATION_KEY_PWD_RESET_SMS = "sms.pwd.reset.otp.msg";
 
     @Value("${expiry.time.for.otp: 4000}")
-    private long maxExecutionTime=3000L;
+    private long maxExecutionTime=2000L;
 
 
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
@@ -45,6 +45,7 @@ public class OtpSMSRepository {
 
     public void send(OtpRequest otpRequest, String otpNumber) {
 		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
+        System.out.println("maxExecutedTime: "+maxExecutionTime);
 		final String message = getMessage(otpNumber, otpRequest);
         kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
     }
