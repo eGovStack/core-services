@@ -15,9 +15,9 @@ public class ExpiredSms {
     private String ExpirySmsTopic;
 
     public ExpiredSms(CustomKafkaTemplate<String, SMSRequest> kafkaTemplate,
-                      @Value("${kafka.topics.Expiry.sms}") String BackupSmsTopic) {
+                      @Value("${kafka.topics.expiry.sms}") String ExpiredSmsTopic) {
         this.kafkaTemplate = kafkaTemplate;
-        this.ExpirySmsTopic = BackupSmsTopic;
+        this.ExpirySmsTopic = ExpiredSmsTopic;
     }
 
     public void sendToExpiryTopic(SMSRequest request) {
