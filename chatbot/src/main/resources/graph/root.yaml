@@ -5,7 +5,7 @@ message : chatbot.messages.rootMessage
 validationRequired: true
 typeOfValues: FixedSetValues
 
-values : [ "File a complaint", "Track complaint"]
+values : [ "File a complaint", "Track complaint Status"]
 displayValuesAsOptions : true
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberNameSeparatorLocalizationCode: chatbot.message.numberNameSeparatorLocalizationCodeTo
@@ -14,6 +14,6 @@ matchAnswerThreshold : 70
 type : text
 
 File a complaint : pgr.create.tenantId
-Track complaint : pgr.track.end
+Track complaint Status : pgr.track.end
 
 errorMessage: chatbot.messages.rootErrorMessage

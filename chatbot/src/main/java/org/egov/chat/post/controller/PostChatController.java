@@ -39,7 +39,7 @@ public class PostChatController {
     @PostConstruct
     public void init() {
 //        waterSewerageEventFormatter.startStream("water-sewerage-received-messages", "send-message");
-        pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message");
+//        pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message");
 
         localizationStream.startStream("send-message", "send-message-localized");
                 // karixResponseFormatter.startResponseStream("send-message-localized", "karix-send-message");
