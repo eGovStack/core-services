@@ -666,7 +666,7 @@ public class IndexerUtils {
 	 * @param enrichedObject
 	 * @param index
 	 */
-	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
+	public void pushCollectionToDSSTopic(String enrichedObject, Index index) throws IOException {
 		if(dssTopicPushEnabled) {
 			if(index.getName().contains("collection") || index.getName().contains("payment")) {
 				log.info("Index name: "+ index.getName());
