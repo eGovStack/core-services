@@ -16,6 +16,7 @@ import org.egov.chat.config.TenantIdWhatsAppNumberMapping;
 import org.egov.chat.post.formatter.ChatNodeJsonPointerConstants;
 import org.egov.chat.post.formatter.ResponseFormatter;
 import org.egov.chat.util.FileStore;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -92,7 +93,9 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         String tenantId = response.at(ChatNodeJsonPointerConstants.tenantId).asText();
         String userMobileNumber = response.at(ChatNodeJsonPointerConstants.toMobileNumber).asText();
         String type = response.at(ChatNodeJsonPointerConstants.responseType).asText();
-
+        String fromMobileNumber = response.at(ChatNodeJsonPointerConstants.fromMobileNumber).asText();
+        if((fromMobileNumber==null)||(fromMobileNumber.equals("")))
+            throw new CustomException("INVALID_RECEIPIENT_NUMBER","Receipient number can not be empty");
         List<JsonNode> valueFirstRequests = new ArrayList<>();
 
         log.debug("Response Type : " + type);
