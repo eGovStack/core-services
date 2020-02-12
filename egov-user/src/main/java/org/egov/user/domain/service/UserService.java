@@ -71,6 +71,9 @@ public class UserService {
     @Value("${max.invalid.login.attempts.period.minutes}")
     private Long maxInvalidLoginAttemptsPeriod;
 
+    @Value("${create.user.validate.name}")
+    private boolean createUserValidateName;
+
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
@@ -181,7 +184,7 @@ public class UserService {
      */
     public User createUser(User user, RequestInfo requestInfo) {
         user.setUuid(UUID.randomUUID().toString());
-        user.validateNewUser();
+        user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
         user= encryptionDecryptionUtil.encryptObject(user,"User",User.class);
