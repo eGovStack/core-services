@@ -2,12 +2,7 @@ package org.egov.web.contract;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import javax.validation.constraints.NotNull;
+import lombok.*;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.domain.model.ValidateRequest;
@@ -15,13 +10,11 @@ import org.egov.domain.model.ValidateRequest;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class OtpValidateRequest {
-	@JsonProperty("RequestInfo")
+    @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
-	
-	@JsonProperty("otp")
-	@NotNull
+
+    @JsonProperty("otp")
     private Otp otp;
 
     public ValidateRequest toDomainValidateRequest() {

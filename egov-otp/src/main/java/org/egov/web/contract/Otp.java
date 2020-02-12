@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import org.egov.domain.model.Token;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class Otp {
     private String otp;
     @JsonProperty("UUID")

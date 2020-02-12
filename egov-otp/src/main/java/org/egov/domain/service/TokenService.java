@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
 import java.util.UUID;
 
-import org.egov.domain.exception.TokenAlreadyUsedException;
 import org.egov.domain.exception.TokenValidationFailureException;
 import org.egov.domain.model.Token;
 import org.egov.domain.model.TokenRequest;
@@ -12,8 +11,10 @@ import org.egov.domain.model.TokenSearchCriteria;
 import org.egov.domain.model.Tokens;
 import org.egov.domain.model.ValidateRequest;
 import org.egov.persistence.repository.TokenRepository;
+import org.egov.web.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.*;
+import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,55 +23,71 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenService {
 
-	private TokenRepository tokenRepository;
-	private static final int TTL_IN_SECONDS = 300;
+    private TokenRepository tokenRepository;
 
-	@Value("${egov.otp.length}")
-	private int otpLength;
+    private OtpConfiguration otpConfiguration;
 
-	@Autowired
-	public TokenService(TokenRepository tokenRepository) {
-		this.tokenRepository = tokenRepository;
-	}
+    private PasswordEncoder passwordEncoder;
 
-	public Token create(TokenRequest tokenRequest) {
-		tokenRequest.validate();
-		Token token = Token.builder().uuid(UUID.randomUUID().toString()).tenantId(tokenRequest.getTenantId())
-				.identity(tokenRequest.getIdentity()).number(randomNumeric(otpLength))
-				.timeToLiveInSeconds(tokenRequest.getTimeToLive()).build();
-		return tokenRepository.save(token);
-	}
+    @Autowired
+    public TokenService(TokenRepository tokenRepository, PasswordEncoder passwordEncoder, OtpConfiguration otpConfiguration) {
+        this.tokenRepository = tokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.otpConfiguration = otpConfiguration;
+    }
 
-	public Token validate(ValidateRequest validateRequest) {
-		validateRequest.validate();
-		Tokens tokens = tokenRepository.findByNumberAndIdentityAndTenantId(validateRequest);
+    public Token create(TokenRequest tokenRequest) {
+        tokenRequest.validate();
 
-		if (tokens != null && tokens.getTokens().isEmpty())
-			tokens = tokenRepository.findByNumberAndIdentityAndTenantIdLike(validateRequest);
+//        if (otpConfiguration.isReuseOTP() && !otpConfiguration.isEncryptOTP()) {
+//            Tokens tokens = tokenRepository.findByIdentityAndTenantId(new ValidateRequest(tokenRequest.getTenantId(), null, tokenRequest.getIdentity()));
+//
+//            Long currentTime = System.currentTimeMillis() / 1000;
+//
+//            for (Token t: tokens.getTokens()) {
+//                if (t.getCreatedTime()/1000 + t.getTimeToLiveInSeconds() - currentTime
+//                        >= 0) {
+//                    tokenRepository.updateTTL(t);
+//                    return t;
+//                }
+//            }
+//        }
 
-		Long currentTime = System.currentTimeMillis() / 1000;
-		Long createdTime = 0l;
+        String originalOtp = randomNumeric(otpConfiguration.getOtpLength());
+        String encryptedOtp = originalOtp;
 
-		if (tokens != null && tokens.getTokens() != null && !tokens.getTokens().isEmpty()) {
-			Token token = tokens.getTokens().get(0);
-			if (token.isValidated()) {
-				throw new TokenAlreadyUsedException();
-			}
-			createdTime = token.getCreatedTime() / 1000;
-		} else if (tokens.getTokens().isEmpty()) {
-			throw new TokenValidationFailureException();
-		}
+        if (otpConfiguration.isEncryptOTP()){
+            encryptedOtp = passwordEncoder.encode(originalOtp);
+        }
 
-		if (!((currentTime - createdTime) <= TTL_IN_SECONDS)) {
-			log.info("Token validation failure for otp #", validateRequest.getOtp());
-			throw new TokenValidationFailureException();
-		}
-		final Token matchingToken = tokens.getTokens().get(0);
-		tokenRepository.markAsValidated(matchingToken);
-		return matchingToken;
-	}
+        Token token = Token.builder().uuid(UUID.randomUUID().toString()).tenantId(tokenRequest.getTenantId())
+                .identity(tokenRequest.getIdentity()).number(encryptedOtp)
+                .timeToLiveInSeconds(otpConfiguration.getTtl()).build();
+        token = tokenRepository.save(token);
+        token.setNumber(originalOtp);
+        return token;
+    }
 
-	public Token search(TokenSearchCriteria searchCriteria) {
-		return tokenRepository.findBy(searchCriteria);
-	}
+    public Token validate(ValidateRequest validateRequest) {
+        validateRequest.validate();
+
+        Tokens tokens = tokenRepository.findByIdentityAndTenantId(validateRequest);
+
+        if (tokens == null || tokens.getTokens().isEmpty())
+            throw new TokenValidationFailureException();
+
+        for (Token t: tokens.getTokens()) {
+
+            if (!otpConfiguration.isEncryptOTP() && validateRequest.getOtp().equalsIgnoreCase(t.getNumber())
+             || (otpConfiguration.isEncryptOTP()  && passwordEncoder.matches(validateRequest.getOtp(), t.getNumber()))) {
+                tokenRepository.markAsValidated(t);
+                return t;
+            }
+        }
+        throw new TokenValidationFailureException();
+    }
+
+    public Token search(TokenSearchCriteria searchCriteria) {
+        return tokenRepository.findBy(searchCriteria);
+    }
 }

@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import org.egov.domain.exception.InvalidTokenValidateRequestException;
+import org.springframework.security.crypto.bcrypt.*;
+import org.springframework.util.*;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -15,12 +14,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Builder
 @EqualsAndHashCode
 @Getter
-@Setter
-@ToString
 public class ValidateRequest {
     private String tenantId;
     private String otp;
     private String identity;
+
 
     public void validate() {
         if (isTenantIdAbsent() || isOtpAbsent() || isIdentityAbsent()) {
