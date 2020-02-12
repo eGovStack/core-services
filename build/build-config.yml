@@ -199,3 +199,9 @@ config:
       - work-dir: "core-services/egov-telemetry/egov-telemetry-batch-process"
         image-name: "egov-telemetry-batch-process"
         dockerfile: "build/maven/Dockerfile" 
+        
+  - name: "builds/core-services/egov-user-chatbot"
+    build:
+      - work-dir: "egov-user"
+        image-name: "egov-user-chatbot"
+        dockerfile: "build/maven/Dockerfile"
