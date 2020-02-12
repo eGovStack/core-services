@@ -19,3 +19,5 @@ values :
     tenantId : /tenantId
 
 matchAnswerThreshold: 70
+
+errorMessage: chatbot.messages.pgrCreateComplaintTypeError
