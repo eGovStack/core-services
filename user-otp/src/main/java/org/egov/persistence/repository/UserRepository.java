@@ -31,7 +31,7 @@ public class UserRepository {
 
     public User fetchUser(String mobileNumber, String tenantId, String userType) {
         UserSearchRequest request = null;
-        if (userType.equals("EMPLOYEE")) {
+        if (userType !=null && userType.equals("EMPLOYEE")) {
             request = new UserSearchRequest(null, tenantId, userType, mobileNumber);
         } else {
             request = new UserSearchRequest(mobileNumber, tenantId, userType, null);
