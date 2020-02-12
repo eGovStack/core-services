@@ -53,7 +53,7 @@ export const findAndUpdateLocalisation = async (
 
   if (key == null) {
     return key;
-  } else if (typeof key == "string") {
+  } else if (typeof key == "string" || typeof key == "number") {
     keyArray.push(key);
   } else {
     keyArray = key;
