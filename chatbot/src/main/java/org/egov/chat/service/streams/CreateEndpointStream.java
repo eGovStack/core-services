@@ -109,10 +109,18 @@ public class CreateEndpointStream extends CreateStream {
 
         EgovChat contactMessageNode = chatNode.toBuilder().build();
         ObjectNode contactcard=objectMapper.createObjectNode();
-        contactcard.put("number",nameInContactCard);
-        contactcard.put("name",numberInContactCard);
-        LocalizationCode localizationCode = LocalizationCode.builder().code(contactMessageLocalizationCode).build();
-        Response response = Response.builder().timestamp(System.currentTimeMillis()).type("contactcard").contactCard(contactcard).localizationCodes(Collections.singletonList(localizationCode)).build();
+        contactcard.put("number",numberInContactCard);
+        contactcard.put("name",nameInContactCard);
+        LocalizationCode contactCardMessageCode = LocalizationCode.builder().code(contactMessageLocalizationCode).build();
+        LocalizationCode contactCardContactName = LocalizationCode.builder().value(nameInContactCard).build();
+        LocalizationCode mobNameSeparator = LocalizationCode.builder().value(" - ").build();
+        LocalizationCode contactCardMobNo = LocalizationCode.builder().value(numberInContactCard).build();
+        List<LocalizationCode>localizationCodeList=new ArrayList<>();
+        localizationCodeList.add(contactCardMessageCode);
+        localizationCodeList.add(contactCardContactName);
+        localizationCodeList.add(mobNameSeparator);
+        localizationCodeList.add(contactCardMobNo);
+        Response response = Response.builder().timestamp(System.currentTimeMillis()).type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
         contactMessageNode.setResponse(response);
         return contactMessageNode;
     }
