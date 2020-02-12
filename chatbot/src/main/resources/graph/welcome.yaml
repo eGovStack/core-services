@@ -5,6 +5,6 @@ message : chatbot.messages.welcomeMessage
 
 errorMessage: chatbot.messages.welcomeError
 
-values: ["mseva", "hi", "hello", "missedCall"]
+values: ["mseva", "hi", "hello", "missedCall", "Start", "Hey"]
 
 matchAnswerThreshold: 90
