@@ -20,16 +20,18 @@ public class SmsNotificationListener {
     private SMSService smsService;
     private BackupSMSServiceListner backupSMSService;
     private ExpiredSms expiredSms;
+    private SmsErrorListener smsErrorListener;
 
     @Autowired
     private ObjectMapper objectMapper;
 
 
     @Autowired
-    public SmsNotificationListener(SMSService smsService, BackupSMSServiceListner backupSMSService, ExpiredSms expiredSms) {
+    public SmsNotificationListener(SMSService smsService, BackupSMSServiceListner backupSMSService, ExpiredSms expiredSms, SmsErrorListener smsErrorListener) {
         this.smsService = smsService;
         this.backupSMSService = backupSMSService;
         this.expiredSms = expiredSms;
+        this.smsErrorListener = smsErrorListener;
     }
 
     @KafkaListener(id = "${kafka.topics.notification.sms.id}",
@@ -43,19 +45,17 @@ public class SmsNotificationListener {
             Long expiryTime = request.getExpiryTime();
             Long currentTime = System.currentTimeMillis();
             if (expiryTime < currentTime) {
-                //write to kafka for expired OTP
                 log.info("OTP Expired");
                 expiredSms.sendToExpiryTopic(request);
             } else {
                 smsService.sendSMS(request.toDomain());
             }
         } catch (RestClientException Rx) {
-            //go to backup
-            log.info("Going to backup SMS Service");
+            log.info("Going to backup SMS Service",Rx);
             backupSMSService.sendToBackup(request);
-        }
-         catch (Exception ex) {
+        } catch (Exception ex) {
             log.error("Sms service failed", ex);
+            smsErrorListener.sendToErrorQueue(request);
         }
 
     }
