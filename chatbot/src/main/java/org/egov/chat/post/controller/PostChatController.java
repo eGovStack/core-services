@@ -7,6 +7,7 @@ import org.egov.chat.post.formatter.ValueFirst.ValueFirstRestCall;
 import org.egov.chat.post.formatter.karix.KarixResponseFormatter;
 import org.egov.chat.post.formatter.karix.KarixRestCall;
 import org.egov.chat.post.localization.LocalizationStream;
+import org.egov.chat.util.KafkaTopicCreater;
 import org.egov.chat.xternal.systeminitiated.PGRStatusUpdateEventFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,7 +24,8 @@ public class PostChatController {
 //    private WaterSewerageEventFormatter waterSewerageEventFormatter;
     @Autowired
     private PGRStatusUpdateEventFormatter pgrStatusUpdateEventFormatter;
-
+    @Autowired
+    private KafkaTopicCreater kafkaTopicCreater;
     @Autowired
     private LocalizationStream localizationStream;
     // @Autowired
@@ -40,6 +42,10 @@ public class PostChatController {
     public void init() {
 //        waterSewerageEventFormatter.startStream("water-sewerage-received-messages", "send-message");
 //        pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message");
+
+        kafkaTopicCreater.createTopic("send-message");
+        kafkaTopicCreater.createTopic("send-message-localized");
+        kafkaTopicCreater.createTopic("valuefirst-send-message");
 
         localizationStream.startStream("send-message", "send-message-localized");
                 // karixResponseFormatter.startResponseStream("send-message-localized", "karix-send-message");
