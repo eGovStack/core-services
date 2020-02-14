@@ -9,6 +9,7 @@ import org.egov.chat.config.graph.TopicNameGetter;
 import org.egov.chat.service.streams.CreateBranchStream;
 import org.egov.chat.service.streams.CreateEndpointStream;
 import org.egov.chat.service.streams.CreateStepStream;
+import org.egov.chat.util.KafkaTopicCreater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,8 @@ public class GraphStreamGenerator {
     private GraphReader graphReader;
     @Autowired
     private TopicNameGetter topicNameGetter;
+    @Autowired
+    private KafkaTopicCreater kafkaTopicCreater;
 
     String rootFolder = "graph/";
     String fileExtension = ".yaml";
@@ -48,26 +51,39 @@ public class GraphStreamGenerator {
             String nodeType = config.get("nodeType").asText();
 
             if(nodeType.equalsIgnoreCase("step")) {
+                String answerInputTopicName=topicNameGetter.getAnswerInputTopicNameForNode(node);
+                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
+                String answerOutputTopicName=topicNameGetter.getAnswerOutputTopicNameForNode(node);
+                kafkaTopicCreater.createTopic(answerInputTopicName);
+                kafkaTopicCreater.createTopic(questionTopicName);
+                kafkaTopicCreater.createTopic(answerOutputTopicName);
                 createStepStream.createEvaluateAnswerStreamForConfig(config,
-                        topicNameGetter.getAnswerInputTopicNameForNode(node),
-                        topicNameGetter.getAnswerOutputTopicNameForNode(node),
-                        topicNameGetter.getQuestionTopicNameForNode(node));
+                        answerInputTopicName,
+                        answerOutputTopicName,
+                        questionTopicName);
 
                 createStepStream.createQuestionStreamForConfig(config,
                         topicNameGetter.getQuestionTopicNameForNode(node),
                         "send-message");
 
             } else if(nodeType.equalsIgnoreCase("branch")) {
+                String answerInputTopicName=topicNameGetter.getAnswerInputTopicNameForNode(node);
+                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
+                kafkaTopicCreater.createTopic(questionTopicName);
+                kafkaTopicCreater.createTopic(answerInputTopicName);
+
                 createBranchStream.createEvaluateAnswerStreamForConfig(config,
-                        topicNameGetter.getAnswerInputTopicNameForNode(node),
-                        topicNameGetter.getQuestionTopicNameForNode(node));
+                        answerInputTopicName,
+                        questionTopicName);
 
                 createBranchStream.createQuestionStreamForConfig(config,
                         topicNameGetter.getQuestionTopicNameForNode(node),
                         "send-message");
             } else if(nodeType.equalsIgnoreCase("endpoint")) {
 
-                createEndpointStream.createEndpointStream(config, topicNameGetter.getQuestionTopicNameForNode(node),
+                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
+                kafkaTopicCreater.createTopic(questionTopicName);
+                createEndpointStream.createEndpointStream(config, questionTopicName,
                         "send-message");
             }
         }

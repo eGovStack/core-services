@@ -3,6 +3,7 @@ package org.egov.chat.pre.controller;
 import org.egov.chat.pre.formatter.ValueFirst.ValueFirstRequestFormatter;
 import org.egov.chat.pre.service.TenantIdEnricher;
 import org.egov.chat.pre.service.UserDataEnricher;
+import org.egov.chat.util.KafkaTopicCreater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,11 +18,18 @@ public class PreChatController {
     private TenantIdEnricher tenantIdEnricher;
     @Autowired
     private UserDataEnricher userDataEnricher;
+    @Autowired
+    private KafkaTopicCreater kafkaTopicCreater;
 
     @PostConstruct
     public void initPreChatbotStreams() {
 //        karixRequestFormatter.startRequestFormatterStream("whatsapp-received-messages",
 //                "transformed-input-messages", "chatbot-error-messages");
+        kafkaTopicCreater.createTopic("transformed-input-messages");
+        kafkaTopicCreater.createTopic("chatbot-error-messages");
+        kafkaTopicCreater.createTopic("tenant-enriched-messages");
+        kafkaTopicCreater.createTopic("input-messages");
+        kafkaTopicCreater.createTopic("whatsapp-received-messages");
         valueFirstRequestFormatter.startRequestFormatterStream("whatsapp-received-messages",
                 "transformed-input-messages", "chatbot-error-messages");
         tenantIdEnricher.startTenantEnricherStream("transformed-input-messages", "tenant-enriched-messages");
