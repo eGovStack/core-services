@@ -3,6 +3,7 @@ package org.egov.web.notification.sms.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.consumer.contract.SMSRequest;
+import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.RequestContext;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +43,20 @@ public class SmsNotificationListener {
         SMSRequest request = null;
         try {
             request = objectMapper.convertValue(consumerRecord, SMSRequest.class);
-            Long expiryTime = request.getExpiryTime();
-            Long currentTime = System.currentTimeMillis();
-            if (expiryTime < currentTime) {
-                log.info("OTP Expired");
-                expiredSms.sendToExpiryTopic(request);
+            if (request.getExpiryTime() != null && request.getCategory() == Category.OTP) {
+                Long expiryTime = request.getExpiryTime();
+                Long currentTime = System.currentTimeMillis();
+                if (expiryTime < currentTime) {
+                    log.info("OTP Expired");
+                    expiredSms.sendToExpiryTopic(request);
+                } else {
+                    smsService.sendSMS(request.toDomain());
+                }
             } else {
                 smsService.sendSMS(request.toDomain());
             }
         } catch (RestClientException Rx) {
-            log.info("Going to backup SMS Service",Rx);
+            log.info("Going to backup SMS Service", Rx);
             backupSMSService.sendToBackup(request);
         } catch (Exception ex) {
             log.error("Sms service failed", ex);
