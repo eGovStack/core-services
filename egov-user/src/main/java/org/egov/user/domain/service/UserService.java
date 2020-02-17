@@ -309,8 +309,10 @@ public class UserService {
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         validateUserRoles(user);
         user.validateUserModification();
-        validatePassword(user.getPassword());
-        user.setPassword(encryptPwd(user.getPassword()));
+        if(!StringUtils.isEmpty(user.getPassword())){
+            validatePassword(user.getPassword());
+            user.setPassword(encryptPwd(user.getPassword()));
+        }
         userRepository.update(user, existingUser);
 
         // If user is being unlocked via update, reset failed login attempts
@@ -361,7 +363,10 @@ public class UserService {
         final User existingUser = getUserByUuid(user.getUuid());
         validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
         user.nullifySensitiveFields();
-        validatePassword(user.getPassword());
+        if(!StringUtils.isEmpty(user.getPassword())){
+            validatePassword(user.getPassword());
+            user.setPassword(encryptPwd(user.getPassword()));
+        }
         userRepository.update(user, existingUser);
         User updatedUser = getUserByUuid(user.getUuid());
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
