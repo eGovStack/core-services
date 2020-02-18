@@ -1,5 +1,6 @@
 package org.egov.infra.indexer.util;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -183,6 +184,10 @@ public class IndexerUtils {
 							}
 						}
 						queryParam = values.toString();
+					}
+					if(null == queryParam) {
+						log.error("No value found for queryParam {}", queryParamsArray[i]);
+						continue;
 					}
 					resolvedParam.append(queryParamExpression[0].trim()).append("=")
 							.append(queryParam.toString().trim());
@@ -493,13 +498,17 @@ public class IndexerUtils {
 			ObjectMapper mapper = getObjectMapper();
 			String epochValue = mapper
 					.writeValueAsString(JsonPath.read(context.jsonString().toString(), index.getTimeStampField()));
-			Date date = new Date(Long.valueOf(epochValue));
+			if(null == epochValue) {
+				log.info("NULL found in place of timestamp field.");
+				return context;
+			}
+			Date date = new Date(Long.valueOf(convertEpochToLong(epochValue)));
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			context.put("$", "@timestamp", formatter.format(date));
 		} catch (Exception e) {
-			log.info("Exception while adding timestamp!");
-			log.debug("Data: " + context.jsonString());
+			log.info("Exception while adding timestamp: ",e);
+			log.info("Time stamp field: "+index.getTimeStampField());
 		}
 
 		return context;
@@ -623,6 +632,19 @@ public class IndexerUtils {
 	public String splitCamelCase(String s) {
 		return s.replaceAll(String.format("%s|%s|%s", "(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])",
 				"(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
+	}
+	
+	/**
+	 * Method to convert double with scientific precision to plain long
+	 * ex:- 1.5534533434E10-->15534533434
+	 *
+	 * @param value
+	 * @return
+	 */
+	public String convertEpochToLong(String value){
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		return df.format(Double.valueOf(value));
 	}
 
 }
