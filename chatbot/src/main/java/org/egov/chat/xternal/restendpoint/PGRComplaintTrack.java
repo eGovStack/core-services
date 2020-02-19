@@ -46,6 +46,7 @@ public class PGRComplaintTrack implements RestEndpoint {
     private String trackComplaintHeaderLocalizationCode = "chatbot.message.pgrTrackComplaintEndHeader";
     private String complaintSummaryTemplateLocalizationCode = "chatbot.template.pgrTrackComplaintSummary";
     private String noComplaintFoundMessage = "chatbot.message.noComplaintFoundMessage";
+    private String  messageWhenComplaintsExistsCode= "chatbot.message.trackend.exist";
     @Value("${egov.external.host}")
     private String egovExternalHost;
     @Value("${pgr.service.host}")
@@ -55,12 +56,14 @@ public class PGRComplaintTrack implements RestEndpoint {
     @Value("${pgr.recent.complaints.count}")
     private Integer numberOfRecentComplaints;
 
+    private String pgrStatusLocalisationPrefix = "chatbot.pgr.";
     String pgrRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":\"\"}}";
 
     @Override
     public ObjectNode getMessageForRestCall(ObjectNode params) throws Exception {
         String tenantId = params.get("tenantId").asText();
         String authToken = params.get("authToken").asText();
+        String mobileNumber = params.get("mobileNumber").asText();
         DocumentContext userInfo = JsonPath.parse(params.get("userInfo").asText());
 
         DocumentContext request = JsonPath.parse(pgrRequestBody);
@@ -76,12 +79,12 @@ public class PGRComplaintTrack implements RestEndpoint {
         responseMessage.put("type", "text");
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(uriComponents.buildAndExpand().toUri(),
                     requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response);
+            responseMessage = makeMessageForResponse(response,mobileNumber);
 
         return responseMessage;
     }
 
-    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity) throws UnsupportedEncodingException {
+    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String mobileNumber) throws UnsupportedEncodingException {
 
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
@@ -131,20 +134,29 @@ public class PGRComplaintTrack implements RestEndpoint {
 
                     String status = documentContext.read("$.services.[" + i + "].status");
                     param = objectMapper.createObjectNode();
-                    param.put("value", status);
+                    param.put("code", pgrStatusLocalisationPrefix+status);
                     params.set("status", param);
 
                     String encodedPath = URLEncoder.encode(documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8");
-                    String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
+                    String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
                     String encodedURL=urlShorteningService.shortenURL(url);
                     param = objectMapper.createObjectNode();
-                    param.put("value", encodedURL);
+                    param.put("value", "\n"+encodedURL);
                     params.set("url", param);
 
                     template.set("params", params);
 
                     localizationCodesArrayNode.add(template);
                 }
+                ObjectNode localizationCode = objectMapper.createObjectNode();
+                localizationCode.put("code", messageWhenComplaintsExistsCode);
+                localizationCodesArrayNode.add(localizationCode);
+
+                ObjectNode localizationCodeForLink = objectMapper.createObjectNode();
+                String complaintViewURL = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=my-complaints?";
+                String shortenedcomplaintViewURL=urlShorteningService.shortenURL(complaintViewURL);
+                localizationCodeForLink.put("value", "\n"+shortenedcomplaintViewURL );
+                localizationCodesArrayNode.add(localizationCodeForLink);
                 responseMessage.set("localizationCodes", localizationCodesArrayNode);
             } else {
                 ObjectNode localizationCode = objectMapper.createObjectNode();
