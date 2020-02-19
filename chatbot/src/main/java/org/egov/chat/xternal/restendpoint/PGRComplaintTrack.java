@@ -47,6 +47,7 @@ public class PGRComplaintTrack implements RestEndpoint {
     private String complaintSummaryTemplateLocalizationCode = "chatbot.template.pgrTrackComplaintSummary";
     private String noComplaintFoundMessage = "chatbot.message.noComplaintFoundMessage";
     private String  messageWhenComplaintsExistsCode= "chatbot.message.trackend.exist";
+    private String pgrShowComplaintForStatusArray [] = {"rejected","resolved","assigned","open","reassignrequested"};
     @Value("${egov.external.host}")
     private String egovExternalHost;
     @Value("${pgr.service.host}")
@@ -73,7 +74,7 @@ public class PGRComplaintTrack implements RestEndpoint {
         UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(pgrHost + pgrSearchComplaintPath);
         uriComponents.queryParam("tenantId", tenantId);
         uriComponents.queryParam("noOfRecords", numberOfRecentComplaints);
-
+        uriComponents.queryParam("status", pgrShowComplaintForStatusArray);
         JsonNode requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
