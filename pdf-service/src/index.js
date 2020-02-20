@@ -51,7 +51,7 @@ var fontDescriptors = {
   },
   Roboto: {
     bold: "src/fonts/Roboto-Bold.ttf",
-	normal: "src/fonts/Roboto-Regular.ttf"
+    normal: "src/fonts/Roboto-Regular.ttf"
   }
 };
 
