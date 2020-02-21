@@ -36,7 +36,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
     @Value("${valuefirst.password}")
     public String valueFirstPassword;
 
-    String valueFirstTextMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"demosoumya1\",\"@PASSWORD\":\"demosoumya1\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"1\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}]}";
+    String valueFirstTextMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"Vusername\",\"@PASSWORD\":\"Vpassword\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"1\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}]}";
 
     String karixAttachmentMessageRequestBody = "{\"message\":{\"channel\":\"WABA\",\"content\":{\"type\":\"ATTACHMENT\",\"attachment\":{\"type\":\"image\",\"caption\":\"\",\"mimeType\":\"\",\"attachmentData\":\"\"}},\"recipient\":{\"to\":\"\",\"recipient_type\":\"individual\",\"reference\":{\"cust_ref\":\"Some Customer Ref\",\"messageTag1\":\"Message Tag Val1\",\"conversationId\":\"Some Optional Conversation ID\"}},\"sender\":{\"from\":\"\"},\"preferences\":{\"webHookDNId\":\"1001\"}},\"metaData\":{\"version\":\"v1.0.9\"}}";
 
@@ -69,6 +69,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     @Override
     public void startResponseStream(String inputTopic, String outputTopic) {
+        valueFirstTextMessageRequestBody = valueFirstTextMessageRequestBody.replace("Vusername",valueFirstUsername).replace("Vpassword",valueFirstPassword);
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
         StreamsBuilder builder = new StreamsBuilder();
