@@ -31,8 +31,7 @@ public class CommonAPIErrorMessage {
     private Response getErrorMessageResponse()
     {
         String localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage);
-        LocalizationCode localizationCode= LocalizationCode.builder().value(localizedErrorMessage).build();
-        Response response =Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").localizationCodes(Collections.singletonList(localizationCode)).build();
+        Response response =Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").text(localizedErrorMessage).build();
         return response;
     }
 
