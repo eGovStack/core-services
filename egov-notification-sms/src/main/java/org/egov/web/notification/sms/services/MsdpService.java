@@ -92,6 +92,10 @@ public class MsdpService implements SMSService {
     @Value("${sms.verify.response:false}")
     private boolean verifyResponse;
 
+    @Value("${sms.print.response:false}")
+    private boolean printResponse;
+
+
     @Value("${sms.verify.responseContains:}")
     private String verifyResponseContains;
 
@@ -160,6 +164,10 @@ public class MsdpService implements SMSService {
             {
                 HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(getRequestMap(sms), getHttpHeaders());
                 response = restTemplate.postForEntity(url, request, String.class);
+
+                if (printResponse)
+                    log.debug("Response from API", response.getBody());
+
                 if (isResponseCodeInKnownErrorCodeList(response)) {
                     throw new RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL);
                 }
@@ -174,7 +182,10 @@ public class MsdpService implements SMSService {
                }
 
                String responseString = restTemplate.getForObject(final_url, String.class);
-               
+
+                if (printResponse)
+                    log.debug("Response from API", response.getBody());
+
                if (verifyResponse && !responseString.contains(verifyResponseContains)) {
                    LOGGER.error("Response from API - " + responseString);
                    throw new RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL);
