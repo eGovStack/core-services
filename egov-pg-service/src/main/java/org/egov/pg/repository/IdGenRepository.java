@@ -1,5 +1,7 @@
 package org.egov.pg.repository;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
@@ -19,6 +21,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
+@NoArgsConstructor
+@AllArgsConstructor
 public class IdGenRepository {
 
     private AppProperties appProperties;

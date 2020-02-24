@@ -90,12 +90,12 @@ public class TransactionValidator {
         return statuses.get(0);
     }
 
-    public boolean skipGateway(Transaction transaction){
+    public boolean skipGateway(Transaction transaction) {
         return new BigDecimal(transaction.getTxnAmount()).compareTo(BigDecimal.ZERO) == 0;
     }
 
     public boolean shouldGenerateReceipt(Transaction prevStatus, Transaction newStatus) {
-        if(prevStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS) && !isEmpty(prevStatus.getReceipt())) {
+        if (prevStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS) && !isEmpty(prevStatus.getReceipt())) {
             return false;
         }
 
@@ -124,7 +124,7 @@ public class TransactionValidator {
      * No transaction should exists in success / pending state for this bill     *
      *
      * @param transactionRequest Request for which validation should happen
-     * @param errorMap     Map of errors occurred during validations
+     * @param errorMap           Map of errors occurred during validations
      */
     private void validateIfTxnExistsForBill(TransactionRequest transactionRequest, Map<String, String> errorMap) {
         Transaction txn = transactionRequest.getTransaction();
@@ -151,14 +151,14 @@ public class TransactionValidator {
                     "mandatory");
     }
 
-    private void validateTxnAmount(TransactionRequest transactionRequest, Map<String, String> errorMap){
+    private void validateTxnAmount(TransactionRequest transactionRequest, Map<String, String> errorMap) {
         Transaction txn = transactionRequest.getTransaction();
         BigDecimal totalPaid = BigDecimal.ZERO;
 
-        for(TaxAndPayment taxAndPayment : txn.getTaxAndPayments()){
+        for (TaxAndPayment taxAndPayment : txn.getTaxAndPayments()) {
             totalPaid = totalPaid.add(taxAndPayment.getAmountPaid());
         }
-        if(totalPaid.compareTo(new BigDecimal(txn.getTxnAmount())) != 0)
+        if (totalPaid.compareTo(new BigDecimal(txn.getTxnAmount())) != 0)
             errorMap.put("TXN_CREATE_INVALID_TXN_AMT", "Transaction amount should be equal to sum of all " +
                     " amountPaids in taxAndPayments");
 

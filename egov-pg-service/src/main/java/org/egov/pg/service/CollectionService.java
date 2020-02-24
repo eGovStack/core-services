@@ -29,7 +29,7 @@ public class CollectionService {
 
         List<BillDetail> billDetails = new ArrayList<>();
 
-        for(TaxAndPayment taxAndPayment : transaction.getTaxAndPayments()){
+        for (TaxAndPayment taxAndPayment : transaction.getTaxAndPayments()) {
             BillDetail billDetail = BillDetail.builder()
                     .amountPaid(taxAndPayment.getAmountPaid())
                     .totalAmount(taxAndPayment.getTaxAmount())
@@ -51,41 +51,41 @@ public class CollectionService {
                 .billDetails(billDetails)
                 .build();
 
-            Instrument instrument = Instrument.builder()
-                    .amount(new BigDecimal(transaction.getTxnAmount()))
-                    .instrumentType(InstrumentType.builder().name("Online").build())
-                    .transactionType(TransactionType.Debit)
-                    .transactionDateInput(transaction.getAuditDetails().getCreatedTime())
-                    .transactionNumber(transaction.getTxnId())
-                    .payee(transaction.getUser().getName())
-                    .tenantId(transaction.getTenantId())
-                    .build();
+        Instrument instrument = Instrument.builder()
+                .amount(new BigDecimal(transaction.getTxnAmount()))
+                .instrumentType(InstrumentType.builder().name("Online").build())
+                .transactionType(TransactionType.Debit)
+                .transactionDateInput(transaction.getAuditDetails().getCreatedTime())
+                .transactionNumber(transaction.getTxnId())
+                .payee(transaction.getUser().getName())
+                .tenantId(transaction.getTenantId())
+                .build();
 
-            Receipt receipt = Receipt.builder()
-                    .bill(Collections.singletonList(bill))
-                    .instrument(instrument)
-                    .tenantId(transaction.getTenantId())
-                    .build();
+        Receipt receipt = Receipt.builder()
+                .bill(Collections.singletonList(bill))
+                .instrument(instrument)
+                .tenantId(transaction.getTenantId())
+                .build();
 
-            ReceiptReq receiptReq = ReceiptReq.builder()
-                    .receipt(Collections.singletonList(receipt))
-                    .requestInfo(requestInfo)
-                    .build();
+        ReceiptReq receiptReq = ReceiptReq.builder()
+                .receipt(Collections.singletonList(receipt))
+                .requestInfo(requestInfo)
+                .build();
 
-            List<Receipt> receipts = collectionsRepository.generateReceipt(receiptReq).getReceipts();
-            if (receipts.isEmpty()) {
-                log.error("Unable to generate receipt");
-                throw new CustomException("RECEIPT_GEN_COLLECTION_ERROR", "Receipt generation failed");
-            } else
-                return receipts;
+        List<Receipt> receipts = collectionsRepository.generateReceipt(receiptReq).getReceipts();
+        if (receipts.isEmpty()) {
+            log.error("Unable to generate receipt");
+            throw new CustomException("RECEIPT_GEN_COLLECTION_ERROR", "Receipt generation failed");
+        } else
+            return receipts;
     }
 
-    public List<Receipt> validateProvisionalReceipt(TransactionRequest transactionRequest){
+    public List<Receipt> validateProvisionalReceipt(TransactionRequest transactionRequest) {
         Transaction transaction = transactionRequest.getTransaction();
 
         List<BillDetail> billDetails = new ArrayList<>();
 
-        for(TaxAndPayment taxAndPayment : transaction.getTaxAndPayments()){
+        for (TaxAndPayment taxAndPayment : transaction.getTaxAndPayments()) {
             BillDetail billDetail = BillDetail.builder()
                     .amountPaid(taxAndPayment.getAmountPaid())
                     .totalAmount(taxAndPayment.getTaxAmount())

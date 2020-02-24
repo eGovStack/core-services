@@ -22,7 +22,7 @@ public class AppProperties {
     private final String saveTxnDumpTopic;
 
     private final String updateTxnDumpTopic;
-    
+
     private final String idGenHost;
 
     private final String idGenPath;
@@ -37,12 +37,13 @@ public class AppProperties {
 
     private final String collectionServiceValidatePath;
 
-    private final String bankAccountHost;
+    private final String mdmsHost;
 
-    private final String bankAccountPath;
+    private final String mdmsPath;
+
 
     @Autowired
-    public AppProperties(Environment environment){
+    public AppProperties(Environment environment) {
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
         this.saveTxnTopic = environment.getRequiredProperty("persister.save.pg.txns");
         this.updateTxnTopic = environment.getRequiredProperty("persister.update.pg.txns");
@@ -55,8 +56,8 @@ public class AppProperties {
         this.collectionServiceHost = environment.getRequiredProperty("egov.collectionservice.host");
         this.collectionServiceCreatePath = environment.getRequiredProperty("egov.collectionservice.create.path");
         this.collectionServiceValidatePath = environment.getRequiredProperty("egov.collectionservice.validate.path");
-        this.bankAccountHost = environment.getRequiredProperty("egov.bankaccountservice.host");
-        this.bankAccountPath = environment.getRequiredProperty("egov.bankaccountservice.path");
+        this.mdmsHost = environment.getRequiredProperty("egov.mdms.host");
+        this.mdmsPath = environment.getRequiredProperty("egov.mdms.path");
     }
 
 }

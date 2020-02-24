@@ -2,7 +2,10 @@ package org.egov.pg.service.gateways.paytm;
 
 import com.paytm.pg.merchant.CheckSumServiceHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.pg.models.GatewayParams;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransactionRequest;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
@@ -58,7 +61,8 @@ public class PaytmGateway implements Gateway {
     }
 
     @Override
-    public URI generateRedirectURI(Transaction transaction) {
+    public URI generateRedirectURI(Transaction transaction, RequestInfo requestInfo) {
+
         TreeMap<String, String> paramMap = new TreeMap<>();
         paramMap.put("MID", MID);
         paramMap.put("ORDER_ID", transaction.getTxnId());

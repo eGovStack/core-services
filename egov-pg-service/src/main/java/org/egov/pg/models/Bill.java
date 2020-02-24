@@ -16,47 +16,47 @@ import java.util.List;
 @EqualsAndHashCode
 public class Bill {
     // TODO some of the fields are mandatory in yml, lets discuss billdetail and billaccountdetail also for more clarity
-	
-	  @JsonProperty("id")
-	  private String id = null;
 
-	  @JsonProperty("mobileNumber")
-	  private String mobileNumber = null;
-	  
-	  @JsonProperty("paidBy")
-	  private String paidBy = null;
+    @JsonProperty("id")
+    private String id = null;
 
-	  @JsonProperty("payerName")
-	  private String payerName = null;
+    @JsonProperty("mobileNumber")
+    private String mobileNumber = null;
 
-	  @JsonProperty("payerAddress")
-	  private String payerAddress = null;
+    @JsonProperty("paidBy")
+    private String paidBy = null;
 
-	  @JsonProperty("payerEmail")
-	  private String payerEmail = null;
+    @JsonProperty("payerName")
+    private String payerName = null;
 
-	  @JsonProperty("isActive")
-	  private Boolean isActive = null;
+    @JsonProperty("payerAddress")
+    private String payerAddress = null;
 
-	  @JsonProperty("isCancelled")
-	  private Boolean isCancelled = null;
+    @JsonProperty("payerEmail")
+    private String payerEmail = null;
 
-	  @JsonProperty("additionalDetails")
-	  private Object additionalDetails = null;
+    @JsonProperty("isActive")
+    private Boolean isActive = null;
 
-	  @JsonProperty("taxAndPayments")
-	  @Valid
-	  @NotNull
-	  private List<TaxAndPayment> taxAndPayments = null;
+    @JsonProperty("isCancelled")
+    private Boolean isCancelled = null;
 
-	  @JsonProperty("billDetails")
-	  @Valid
-	  private List<BillDetail> billDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
-	  @JsonProperty("tenantId")
-	  private String tenantId = null;
+    @JsonProperty("taxAndPayments")
+    @Valid
+    @NotNull
+    private List<TaxAndPayment> taxAndPayments = null;
 
-	  @JsonProperty("auditDetails")
-	  private AuditDetails auditDetails = null;
+    @JsonProperty("billDetails")
+    @Valid
+    private List<BillDetail> billDetails = null;
+
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -40,7 +41,8 @@ public class QuartzConfig {
     }
 
     //     Uncomment for local dev run
-//    @DependsOn("flywayInitializer")
+   // @DependsOn("flywayInitializer")
+
     @Bean
     SchedulerFactoryBean quartzScheduler() {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();

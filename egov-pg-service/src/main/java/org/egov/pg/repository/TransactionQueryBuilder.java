@@ -80,7 +80,6 @@ class TransactionQueryBuilder {
         }
 
 
-
         if (!queryParams.isEmpty()) {
 
             builder.append(" WHERE ");
@@ -101,7 +100,7 @@ class TransactionQueryBuilder {
     }
 
     private static String addPagination(String query, TransactionCriteria transactionCriteria, List<Object>
-            preparedStmtList){
+            preparedStmtList) {
         if (transactionCriteria.getLimit() > 0) {
             query = query + " limit ? ";
             preparedStmtList.add(transactionCriteria.getLimit());
@@ -114,7 +113,7 @@ class TransactionQueryBuilder {
         return query;
     }
 
-    private static String addOrderByClause(String query){
+    private static String addOrderByClause(String query) {
         return query + " order by pg.created_time desc ";
     }
 

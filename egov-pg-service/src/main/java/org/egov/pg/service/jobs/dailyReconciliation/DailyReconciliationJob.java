@@ -61,7 +61,7 @@ public class DailyReconciliationJob implements Job {
         for (Transaction txn : pendingTxns) {
             log.info(transactionService.updateTransaction(requestInfo, Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txn
                     .getTxnId
-                    ())).toString());
+                            ())).toString());
         }
 
     }

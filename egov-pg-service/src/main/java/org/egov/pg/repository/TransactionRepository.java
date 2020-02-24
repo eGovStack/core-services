@@ -14,8 +14,8 @@ import java.util.List;
 @Slf4j
 public class TransactionRepository {
 
-    private final JdbcTemplate jdbcTemplate;
     private static final TransactionRowMapper rowMapper = new TransactionRowMapper();
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     TransactionRepository(JdbcTemplate jdbcTemplate) {

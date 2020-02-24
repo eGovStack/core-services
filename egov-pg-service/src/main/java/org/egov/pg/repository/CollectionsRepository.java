@@ -38,7 +38,7 @@ public class CollectionsRepository {
         return fetchReceipt(receiptReq, uri);
     }
 
-    public ReceiptRes validateReceipt(ReceiptReq receiptReq){
+    public ReceiptRes validateReceipt(ReceiptReq receiptReq) {
         String uri = UriComponentsBuilder
                 .fromHttpUrl(appProperties.getCollectionServiceHost())
                 .path(appProperties.getCollectionServiceValidatePath())
@@ -48,7 +48,7 @@ public class CollectionsRepository {
         return fetchReceipt(receiptReq, uri);
     }
 
-    private ReceiptRes fetchReceipt(ReceiptReq receiptReq, String uri){
+    private ReceiptRes fetchReceipt(ReceiptReq receiptReq, String uri) {
         try {
             return restTemplate.postForObject(uri, receiptReq, ReceiptRes.class);
         } catch (HttpClientErrorException e) {

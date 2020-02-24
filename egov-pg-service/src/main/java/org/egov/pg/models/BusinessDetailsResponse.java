@@ -16,10 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 public class BusinessDetailsResponse {
 
-	@JsonProperty("ResponseInfo")
+    @JsonProperty("ResponseInfo")
     @JsonIgnore
-	private ResponseInfo responseInfo;
+    private ResponseInfo responseInfo;
 
-	@JsonProperty("BusinessDetails")
-	private List<BusinessDetailsRequestInfo> businessDetails;
+    @JsonProperty("BusinessDetails")
+    private List<BusinessDetailsRequestInfo> businessDetails;
 }
