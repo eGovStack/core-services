@@ -13,10 +13,10 @@ const app = express();
         if (req.method === 'OPTIONS') res.sendStatus(200)
         else next()
     })
-    app.use(bodyParser.json({ limit: '10mb' }));
+    app.use(bodyParser.json({ limit:'50mb' }));
     // app.use(logger('dev'));
     app.use(express.json());
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({ extended: false, limit:'50mb' }));
     // app.use(cookieParser());
     app.use('/', require('./routes'));
     module.exports = app;

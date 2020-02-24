@@ -4,7 +4,7 @@
     "description": "Push http request to kafka topic",
     "main": "app.js",
     "scripts": {
-        "start": "node app.js",
+        "start": "node --max-http-header-size 512000 app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "eGov",
