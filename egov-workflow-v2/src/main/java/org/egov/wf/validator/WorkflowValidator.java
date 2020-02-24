@@ -102,9 +102,11 @@ public class WorkflowValidator {
         for(ProcessStateAndAction processStateAndAction : processStateAndActions){
             String tenantId= processStateAndAction.getProcessInstanceFromRequest().getTenantId();
             List<String> roles = tenantIdToRoles.get(tenantId);
-            if(CollectionUtils.isEmpty(roles)){
-                roles = tenantIdToRoles.get(tenantId.split("\\.")[0]);
-            }
+
+            // Adding the state level roles
+            if(!CollectionUtils.isEmpty(tenantIdToRoles.get(tenantId.split("\\.")[0])))
+                roles.addAll(tenantIdToRoles.get(tenantId.split("\\.")[0]));
+
             Action action = processStateAndAction.getAction();
             if(action==null && !processStateAndAction.getCurrentState().getIsTerminateState())
                 throw new CustomException("INVALID ACTION","Action not found for businessIds: "+
