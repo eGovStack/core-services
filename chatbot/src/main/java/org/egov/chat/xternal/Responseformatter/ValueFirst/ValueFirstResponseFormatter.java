@@ -1,4 +1,4 @@
-package org.egov.chat.post.formatter.ValueFirst;
+package org.egov.chat.xternal.Responseformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.*;
-
 
 
 @Slf4j

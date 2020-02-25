@@ -81,7 +81,7 @@ public class PGRComplaintTrack implements RestEndpoint {
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(uriComponents.buildAndExpand().toUri(),
                     requestObject, ObjectNode.class);
             responseMessage = makeMessageForResponse(response,mobileNumber);
-
+        responseMessage.put("timestamp", System.currentTimeMillis());
         return responseMessage;
     }
 
@@ -156,7 +156,7 @@ public class PGRComplaintTrack implements RestEndpoint {
                 ObjectNode localizationCodeForLink = objectMapper.createObjectNode();
                 String complaintViewURL = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=my-complaints?";
                 String shortenedcomplaintViewURL=urlShorteningService.shortenURL(complaintViewURL);
-                localizationCodeForLink.put("value", "\n"+shortenedcomplaintViewURL );
+                localizationCodeForLink.put("value", shortenedcomplaintViewURL );
                 localizationCodesArrayNode.add(localizationCodeForLink);
                 responseMessage.set("localizationCodes", localizationCodesArrayNode);
             } else {

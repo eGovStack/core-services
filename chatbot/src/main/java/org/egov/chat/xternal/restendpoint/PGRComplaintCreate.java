@@ -93,13 +93,14 @@ public class PGRComplaintCreate implements RestEndpoint {
         requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-            ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
-                    requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response, refreshToken, mobileNumber, photo);
+        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
+                requestObject, ObjectNode.class);
+        responseMessage = makeMessageForResponse(response, mobileNumber, photo);
+        responseMessage.put("timestamp", System.currentTimeMillis());
         return responseMessage;
     }
 
-    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token, String mobileNumber, String photo) throws Exception {
+    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String mobileNumber, String photo) throws Exception {
         ObjectNode responseMessage = objectMapper.createObjectNode();
         if (!photo.equalsIgnoreCase("null")) {
             responseMessage.put("type", "image");
