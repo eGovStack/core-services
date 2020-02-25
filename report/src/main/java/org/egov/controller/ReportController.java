@@ -58,9 +58,6 @@ public class ReportController {
     @Autowired
     public static ResourceLoader resourceLoader;
 
-    //max number of times which a specific report can fail before getting disabled
-    @Value(("${report.count.to.disable}"))
-    private int reportDisableCount;
 
     @PostMapping("/{moduleName}/metadata/_get")
     @ResponseBody

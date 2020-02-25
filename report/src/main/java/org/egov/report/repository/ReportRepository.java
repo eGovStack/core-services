@@ -36,7 +36,7 @@ public class ReportRepository {
     @Value("${max.sql.execution.time.millisec:45000}")
     private Long maxExecutionTime;
 
-    @Value(("${report.timeout.for.query}"))
+    @Value(("${report.query.timeout}"))
     private int queryExecutionTimeout;
 
 
