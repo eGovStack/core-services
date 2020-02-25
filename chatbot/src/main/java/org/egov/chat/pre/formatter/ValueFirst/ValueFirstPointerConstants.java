@@ -12,6 +12,8 @@ public class ValueFirstPointerConstants {
 
     public static String timestampPath = "/timestamp";
 
+    public static String mediaData = "/queryParams/media_data";
+
     public static String locationContent = "/body/eventContent/message/location";
 
     public static String attachmentType = "/body/eventContent/message/attachmentType";
