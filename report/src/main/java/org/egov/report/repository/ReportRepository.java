@@ -47,7 +47,7 @@ public class ReportRepository {
             log.info("Query Execution Failed Due To Timeout: ", ex);
             PSQLException cause = (PSQLException) ex.getCause();
             if (cause != null && cause.getSQLState().equals("57014")) {
-                throw new CustomException("QUERY_EXECUTION_TIMEOUT", ex.getMessage());
+                throw new CustomException("QUERY_EXECUTION_TIMEOUT", "Query failed, as it took more than: "+ (queryExecutionTimeout) + " seconds to execute");
             } else {
                 throw ex;
             }
