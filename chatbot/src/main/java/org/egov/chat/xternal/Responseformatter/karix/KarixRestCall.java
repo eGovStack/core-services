@@ -1,4 +1,4 @@
-package org.egov.chat.post.formatter.karix;
+package org.egov.chat.xternal.Responseformatter.karix;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;

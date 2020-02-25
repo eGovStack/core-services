@@ -1,4 +1,4 @@
-package org.egov.chat.pre.formatter.ValueFirst;
+package org.egov.chat.xternal.Requestformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -151,7 +151,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
             try {
                 return Collections.singletonList(getTransformedRequest(request));
             } catch (Exception e) {
-                log.error("error in valuefirst pre request formatter",e);
+                log.error("error in valuefirst pre request Requestformatter",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
