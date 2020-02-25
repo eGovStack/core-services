@@ -44,7 +44,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 //                return true;
 
             String mediaType = inputRequest.at(ValueFirstPointerConstants.mediaType).asText();
-            if(mediaType.equalsIgnoreCase("text")) {
+            if(mediaType.equalsIgnoreCase("text") || mediaType.equalsIgnoreCase("image")) {
                 return true;
             }
 //            else if(contentType.equalsIgnoreCase("ATTACHMENT")) {
@@ -76,6 +76,10 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         message.put("contentType", mediaType);
         if(mediaType.equalsIgnoreCase("text")) {
             message.set("rawInput", inputRequest.at(ValueFirstPointerConstants.textContent));
+        }
+        else if(mediaType.equalsIgnoreCase("image")) {
+            String imageInBase64String = inputRequest.at(ValueFirstPointerConstants.mediaData).asText();
+            message.put("rawInput", fileStore.convertFromBase64AndStore(imageInBase64String));
         }
 
 //        else if(mediaType.equalsIgnoreCase("location")) {
@@ -147,7 +151,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
             try {
                 return Collections.singletonList(getTransformedRequest(request));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("error in valuefirst pre request formatter",e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));

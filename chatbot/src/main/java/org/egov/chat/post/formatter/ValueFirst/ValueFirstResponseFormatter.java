@@ -20,7 +20,10 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -36,15 +39,9 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
     @Value("${valuefirst.password}")
     public String valueFirstPassword;
 
-    String valueFirstTextMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"Vusername\",\"@PASSWORD\":\"Vpassword\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"1\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}]}";
+    String valueFirstTextMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"1\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}]}";
 
-    String karixAttachmentMessageRequestBody = "{\"message\":{\"channel\":\"WABA\",\"content\":{\"type\":\"ATTACHMENT\",\"attachment\":{\"type\":\"image\",\"caption\":\"\",\"mimeType\":\"\",\"attachmentData\":\"\"}},\"recipient\":{\"to\":\"\",\"recipient_type\":\"individual\",\"reference\":{\"cust_ref\":\"Some Customer Ref\",\"messageTag1\":\"Message Tag Val1\",\"conversationId\":\"Some Optional Conversation ID\"}},\"sender\":{\"from\":\"\"},\"preferences\":{\"webHookDNId\":\"1001\"}},\"metaData\":{\"version\":\"v1.0.9\"}}";
-
-    String karixLocationRequestBody = "{\"message\":{\"channel\":\"WABA\",\"content\":{\"type\":\"location\",\"location\":{\"latitude\":\"\",\"longitude\":\"\"}},\"recipient\":{\"to\":\"\",\"recipient_type\":\"individual\"},\"sender\":{\"from\":\"\"}},\"metaData\":{\"version\":\"v1.0.9\"}}";
-
-    String karixTemplateMessageRequestBody = "{\"message\":{\"channel\":\"WABA\",\"content\":{\"preview_url\":false,\"type\":\"TEMPLATE\",\"template\":{\"templateId\":\"MSEVAWELCOME\",\"parameterValues\":{}}},\"recipient\":{\"to\":\"919428010077\",\"recipient_type\":\"individual\",\"reference\":{\"cust_ref\":\"Some Customer Ref\",\"messageTag1\":\"Message Tag Val1\",\"conversationId\":\"Some Optional Conversation ID\"}},\"sender\":{\"from\":\"919845315868\"},\"preferences\":{\"webHookDNId\":\"sandbox\"}},\"metaData\":{\"version\":\"v1.0.9\"}}";
-
-    String welcomeMessageTemplateId = "MSEVAWELCOME";
+    String valueFirstImageMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"XXX\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"some clientside random data\"}]}]}";
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
@@ -69,7 +66,8 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     @Override
     public void startResponseStream(String inputTopic, String outputTopic) {
-        valueFirstTextMessageRequestBody = valueFirstTextMessageRequestBody.replace("Vusername",valueFirstUsername).replace("Vpassword",valueFirstPassword);
+        valueFirstTextMessageRequestBody = fillCredentials(valueFirstTextMessageRequestBody);
+        valueFirstImageMessageRequestBody = fillCredentials(valueFirstImageMessageRequestBody);
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
         StreamsBuilder builder = new StreamsBuilder();
@@ -119,6 +117,22 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 String encodedMessage = URLEncoder.encode( message, "UTF-8" );
                 request.set("$.SMS[0].@TEXT", encodedMessage);
             }
+            else if(type.equalsIgnoreCase("image")) {
+                String fileStoreId = response.at(ChatNodeJsonPointerConstants.fileStoreId).asText();
+                File file = fileStore.getFileForFileStoreId(fileStoreId);
+                String base64Image = fileStore.getBase64EncodedStringOfFile(file);
+                file.delete();
+                request = JsonPath.parse(valueFirstImageMessageRequestBody);
+                String message = response.at(ChatNodeJsonPointerConstants.responseText).asText();
+                request.set("$.SMS[0].@TEXT", base64Image);
+                request.set("$.SMS[0].@CAPTION", message);
+                String uniqueImageMessageId = UUID.randomUUID().toString();
+                request.set("$.SMS[0].@ID", uniqueImageMessageId);
+            }
+//            else if(response.has("missedCall") && response.get("missedCall").asBoolean()) {
+//                request = JsonPath.parse(karixTemplateMessageRequestBody);
+//                request.set("$.message.content.template.templateId", welcomeMessageTemplateId);
+//            }
 //        } else if(type.equalsIgnoreCase("attachment")) {
 //            request = JsonPath.parse(karixAttachmentMessageRequestBody);
 //            request.set("$.message.content.type", type);
@@ -181,5 +195,10 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //
 //        return objectMapper.readTree(request.jsonString());
 //    }
-
+    public String fillCredentials(String requestBody){
+        DocumentContext request = JsonPath.parse(requestBody);
+        request.set("$.USER.@USERNAME", valueFirstUsername);
+        request.set("$.USER.@PASSWORD", valueFirstPassword);
+        return request.jsonString();
+    }
 }

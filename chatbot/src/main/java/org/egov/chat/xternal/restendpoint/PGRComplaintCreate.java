@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Collections;
 
 @PropertySource("classpath:xternal.properties")
 @Slf4j
@@ -80,7 +81,8 @@ public class PGRComplaintCreate implements RestEndpoint {
         request.set("$.services.[0].addressDetail.mohalla", locality);
         request.set("$.services.[0].serviceCode", complaintType);
         request.set("$.services.[0].phone", mobileNumber);
-        request.set("$.services.[0].description", complaintDetails);
+        if (!complaintDetails.equalsIgnoreCase("No"))
+            request.set("$.services.[0].description", complaintDetails);
 
         if (!photo.equalsIgnoreCase("null"))
             request.add("$.actionInfo.[0].media", photo);
@@ -93,14 +95,18 @@ public class PGRComplaintCreate implements RestEndpoint {
         responseMessage.put("type", "text");
             ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
                     requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response, refreshToken, mobileNumber);
+            responseMessage = makeMessageForResponse(response, refreshToken, mobileNumber, photo);
         return responseMessage;
     }
 
-    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token, String mobileNumber) throws Exception {
+    private ObjectNode makeMessageForResponse(ResponseEntity<ObjectNode> responseEntity, String token, String mobileNumber, String photo) throws Exception {
         ObjectNode responseMessage = objectMapper.createObjectNode();
-        responseMessage.put("type", "text");
-
+        if (!photo.equalsIgnoreCase("null")) {
+            responseMessage.put("type", "image");
+            responseMessage.put("fileStoreId", photo);
+        } else {
+            responseMessage.put("type", "text");
+        }
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();

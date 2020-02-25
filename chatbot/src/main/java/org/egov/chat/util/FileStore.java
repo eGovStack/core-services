@@ -61,6 +61,17 @@ public class FileStore {
         return downloadAndStore(getLink, filename, stateLevelTenantId, moduleName);
     }
 
+    public String convertFromBase64AndStore(String imageInBase64String) throws IOException {
+        String tmpFileName = "pgr-whatsapp-"+System.currentTimeMillis()+".png";
+        File tempFile = new File(tmpFileName);
+        imageInBase64String = imageInBase64String.replaceAll(" ", "+");
+        byte[] bytes = Base64.getDecoder().decode(imageInBase64String);
+        FileUtils.writeByteArrayToFile(tempFile, bytes);
+        String fileStoreId = saveToFileStore(tempFile);
+        tempFile.delete();
+        return fileStoreId;
+    }
+
     public String downloadAndStore(String getLink, String filename, String tenantId, String module) {
         try {
             File tempFile = getFileAt(getLink, filename);
@@ -89,17 +100,10 @@ public class FileStore {
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(formData, headers);
 
-        try {
-            ResponseEntity<ObjectNode> response = restTemplate.exchange (fileStoreHost + fileStorePutEndpoint,
-                    HttpMethod.POST, request, ObjectNode.class);
-            log.debug("File Store response : " + response.getBody().toString());
-
-            return response.getBody().get("files").get(0).get("fileStoreId").asText();
-        } catch (Exception e) {
-            log.error("Error in file store save request",e);
-        }
-
-        return null;
+        ResponseEntity<ObjectNode> response = restTemplate.exchange(fileStoreHost + fileStorePutEndpoint,
+                HttpMethod.POST, request, ObjectNode.class);
+        log.debug("File Store response : " + response.getBody().toString());
+        return response.getBody().get("files").get(0).get("fileStoreId").asText();
     }
 
     public File getFileForFileStoreId(String fileStoreId) throws IOException {

@@ -15,4 +15,6 @@ public class ChatNodeJsonPointerConstants {
     public static final String tenantId = "/tenantId";
 
     public static final String fromMobileNumber = "/extraInfo/recipient";
+
+    public static final String fileStoreId = "/response/fileStoreId";
 }
