@@ -67,7 +67,8 @@ public class CreateEndpointStream extends CreateStream {
         answerKStream.flatMapValues(chatNode -> {
             try {
                 Response responseMessage = restAPI.makeRestEndpointCall(config, chatNode);
-
+                String nodeId = config.get("name").asText();
+                responseMessage.setNodeId(nodeId);
                 chatNode.setResponse(responseMessage);
 
                 String conversationId = chatNode.getConversationState().getConversationId();
@@ -120,7 +121,7 @@ public class CreateEndpointStream extends CreateStream {
         localizationCodeList.add(contactCardContactName);
         localizationCodeList.add(mobNameSeparator);
         localizationCodeList.add(contactCardMobNo);
-        Response response = Response.builder().timestamp(System.currentTimeMillis()).type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
+        Response response = Response.builder().timestamp(System.currentTimeMillis()).nodeId("contactcard").type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
         contactMessageNode.setResponse(response);
         return contactMessageNode;
     }
