@@ -139,7 +139,7 @@ public class PGRComplaintTrack implements RestEndpoint {
                     params.set("status", param);
 
                     String encodedPath = URLEncoder.encode(documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8");
-                    String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
+                    String url = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
                     String encodedURL=urlShorteningService.shortenURL(url);
                     param = objectMapper.createObjectNode();
                     param.put("value", "\n"+encodedURL);
@@ -154,7 +154,7 @@ public class PGRComplaintTrack implements RestEndpoint {
                 localizationCodesArrayNode.add(localizationCode);
 
                 ObjectNode localizationCodeForLink = objectMapper.createObjectNode();
-                String complaintViewURL = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=my-complaints?";
+                String complaintViewURL = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=my-complaints?";
                 String shortenedcomplaintViewURL=urlShorteningService.shortenURL(complaintViewURL);
                 localizationCodeForLink.put("value", shortenedcomplaintViewURL );
                 localizationCodesArrayNode.add(localizationCodeForLink);

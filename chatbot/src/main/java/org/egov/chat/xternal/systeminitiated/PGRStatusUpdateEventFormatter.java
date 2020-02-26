@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -16,6 +17,7 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.post.systeminitiated.SystemInitiatedEventFormatter;
 import org.egov.chat.util.LocalizationService;
+import org.egov.chat.util.URLShorteningSevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +45,12 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private URLShorteningSevice urlShorteningSevice;
 
     private String complaintCategoryLocalizationPrefix = "pgr.complaint.category.";
+
+    private String citizenKeywordLocalization = "chatbot.template.citizen";
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
@@ -56,6 +62,9 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     @Value("${user.service.search.path}")
     private String userServiceSearchPath;
 
+    @Value("${valuefirst.whatsapp.number}")
+    private String sourceWhatsAppNumber;
+
     @Value("${pgr.service.host}")
     private String pgrServiceHost;
     @Value("${pgr.service.search.path}")
@@ -65,9 +74,23 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
     private String complaintDetailsRequest = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}}}";
 
+    private String rejectTemplateId = "194263";
+
+    private String reassignAssignedTemplateId = "194271";
+
+    private String assignedCitizenTemplateId = "194255";
+
+    private String assignedEmployeeTemplateId = "194273";
+
+    private String commentTemplateId = "194255";
+
+    private String reassignrequestedTemplateId = "194267";
+
+    private String resolvedTemplateId = "194259";
+
     @Override
     public String getStreamName() {
-        return "pgr-update-formatter";
+        return "pgr-update-requestformatter";
     }
 
     @Override
@@ -80,9 +103,14 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
         messagesKStream.flatMapValues(event -> {
             try {
-                return createChatNodes(event);
+                String source = event.at("/services/0/source").asText();
+                if ((source != null) && source.equals("whatsapp")) {
+                    return createChatNodes(event);
+                } else {
+                    return Collections.emptyList();
+                }
             } catch (Exception e) {
-                log.error("error in PGR status update",e);
+                log.error("error in PGR status update", e);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
@@ -95,99 +123,124 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     public List<JsonNode> createChatNodes(JsonNode event) throws Exception {
         List<JsonNode> chatNodes = new ArrayList<>();
 
+        String status = event.at("/actionInfo/0/status").asText();
+        String action = event.at("/actionInfo/0/action").asText();
+        String comments = event.at("/actionInfo/0/comments").asText();
+        String citizenName = event.at("/services/0/citizen/name").asText();
         String mobileNumber = event.at("/services/0/citizen/mobileNumber").asText();
-        String status = event.at("/services/0/status").asText();
+        if (StringUtils.isEmpty(citizenName))
+            citizenName = localizationService.getMessageForCode(citizenKeywordLocalization);
+        ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event);
 
-        JsonNode complaintDetails = getComplaintDetails(event);
-
-        ObjectNode chatNode = objectMapper.createObjectNode();
-        chatNode.put("tenantId", stateLevelTenantId);
-
-        ObjectNode user = objectMapper.createObjectNode();
-        user.put("mobileNumber", mobileNumber);
-        chatNode.set("user", user);
-
-        chatNode.set("response", createResponseMessage(event));
-
-        if(status.equalsIgnoreCase("resolved")) {
-            addImageWhenResolved(event, chatNode);
+        if (!StringUtils.isEmpty(comments)) {
+            ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
+            userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName));
+            chatNodes.add(userChatNodeForComment);
         }
 
-        chatNodes.add(chatNode);
+        JsonNode extraInfo = null;
+        if (status != null) {
+            if (status.equalsIgnoreCase("rejected")) {
+                extraInfo = responseForRejectedStatus(event, comments, citizenName);
 
-        if(status.equalsIgnoreCase("assigned")) {
-            chatNodes.addAll(createChatNodeForAssignee(event, complaintDetails));
+            } else if ((action + "-" + status).equalsIgnoreCase("reassign-assigned")) {
+                extraInfo = responseForReassignedtatus(event, citizenName, mobileNumber);
+                JsonNode chatNodeForAssignee = createChatNodeForAssignee(event);
+                chatNodes.add(chatNodeForAssignee);
+//                checkAndgetResponseIfCommented(event);
+            } else if (status.equalsIgnoreCase("assigned")) {
+                extraInfo = responseForAssignedStatus(event, citizenName, mobileNumber);
+                JsonNode chatNodeForAssignee = createChatNodeForAssignee(event);
+                chatNodes.add(chatNodeForAssignee);
+                // send to LME
+                // send To citizen
+//                checkAndgetResponseIfCommented(event);
+            } else if (status.equalsIgnoreCase("reassignrequested")) {
+                extraInfo = responseForRequestedReassignstatus(event, citizenName);
+//                checkAndgetResponseIfCommented(event);
+            } else if (status.equalsIgnoreCase("resolved")) {
+                extraInfo = responseForResolvedStatus(event, citizenName, mobileNumber);
+//                checkAndgetResponseIfCommented(event);
+            }
         }
 
+        if (extraInfo != null) {
+            userChatNodeForStatusUpdate.set("extraInfo", extraInfo);
+            chatNodes.add(userChatNodeForStatusUpdate);
+        }
         return chatNodes;
     }
 
-    private List<JsonNode> createChatNodeForAssignee(JsonNode event, JsonNode complaintDetails) throws Exception {
-        List<JsonNode> chatNodes = new ArrayList<>();
+    private ObjectNode createChatNodeForUser(JsonNode event) throws Exception {
+        String mobileNumber = event.at("/services/0/citizen/mobileNumber").asText();
+        ObjectNode chatNode = objectMapper.createObjectNode();
+        chatNode.put("tenantId", stateLevelTenantId);
+        ObjectNode user = objectMapper.createObjectNode();
+        user.put("mobileNumber", mobileNumber);
+        chatNode.set("user", user);
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        chatNode.set("extraInfo", extraInfo);
+        return chatNode;
+    }
 
+    private JsonNode createChatNodeForAssignee(JsonNode event) throws Exception {
         JsonNode assignee = getAssignee(event);
         String assigneeMobileNumber = assignee.at("/mobileNumber").asText();
 
         ObjectNode chatNode = objectMapper.createObjectNode();
         chatNode.put("tenantId", stateLevelTenantId);
-
         ObjectNode user = objectMapper.createObjectNode();
         user.put("mobileNumber", assigneeMobileNumber);
         chatNode.set("user", user);
+        chatNode.set("extraInfo", createResponseMessageForAssignee(event, assignee));
 
-        chatNode.set("response", createResponseMessageForAssignee(event, assignee));
+//        addImageToChatNodeForAssignee(complaintDetails, chatNode);
 
-        chatNodes.add(chatNode);
-
-        if(eventContainsLocation(event))
-            chatNodes.add(createLocationNode(event, assignee));
-
-        addImageToChatNodeForAssignee(complaintDetails, chatNode);
-
-        return chatNodes;
+        return chatNode;
     }
 
     // TODO : Here only single image is being added
-    private void addImageToChatNodeForAssignee(JsonNode complaintDetails, JsonNode chatNode) {
-        ArrayNode actionHistory = (ArrayNode) complaintDetails.at("/actionHistory/0/actions");
-        for(JsonNode action : actionHistory) {
-            if(action.get("action").asText().equalsIgnoreCase("open")) {
-                ArrayNode media = (ArrayNode) action.get("media");
-                if(media.size() > 0) {
-                    log.debug("Link to media file : " + media.get(0).asText());
-                    ObjectNode response = (ObjectNode) chatNode.get("response");
-                    response.put("type", "attachment");
-                    ObjectNode attachment = objectMapper.createObjectNode();
-                    attachment.put("fileStoreId", media.get(0).asText());
-                    response.set("attachment", attachment);
-                    return;
-                }
-            }
-        }
-        log.debug("No image found for assignee");
-    }
-
-    private void addImageWhenResolved(JsonNode event, JsonNode chatNode) {
-        ArrayNode actionHistory = (ArrayNode) event.at("/actionInfo");
-        for(JsonNode action : actionHistory) {
-            if(action.get("action").asText().equalsIgnoreCase("resolve")) {
-                ArrayNode media = (ArrayNode) action.get("media");
-                if(media.size() > 0) {
-                    log.debug("Link to media file : " + media.get(0).asText());
-                    ObjectNode response = (ObjectNode) chatNode.get("response");
-                    response.put("type", "attachment");
-                    ObjectNode attachment = objectMapper.createObjectNode();
-                    attachment.put("fileStoreId", media.get(0).asText());
-                    response.set("attachment", attachment);
-                    return;
-                }
-            }
-        }
-        log.debug("No image found when complaint is resolved");
-    }
+//    private void addImageToChatNodeForAssignee(JsonNode complaintDetails, JsonNode chatNode) {
+//        ArrayNode actionHistory = (ArrayNode) complaintDetails.at("/actionHistory/0/actions");
+//        for(JsonNode action : actionHistory) {
+//            if(action.get("action").asText().equalsIgnoreCase("open")) {
+//                ArrayNode media = (ArrayNode) action.get("media");
+//                if(media.size() > 0) {
+//                    log.debug("Link to media file : " + media.get(0).asText());
+//                    ObjectNode response = (ObjectNode) chatNode.get("response");
+//                    response.put("type", "attachment");
+//                    ObjectNode attachment = objectMapper.createObjectNode();
+//                    attachment.put("fileStoreId", media.get(0).asText());
+//                    response.set("attachment", attachment);
+//                    return;
+//                }
+//            }
+//        }
+//        log.debug("No image found for assignee");
+//    }
+//
+//    private void addImageWhenResolved(JsonNode event, JsonNode chatNode) {
+//        ArrayNode actionHistory = (ArrayNode) event.at("/actionInfo");
+//        for(JsonNode action : actionHistory) {
+//            if(action.get("action").asText().equalsIgnoreCase("resolve")) {
+//                ArrayNode media = (ArrayNode) action.get("media");
+//                if(media.size() > 0) {
+//                    log.debug("Link to media file : " + media.get(0).asText());
+//                    ObjectNode response = (ObjectNode) chatNode.get("response");
+//                    response.put("type", "attachment");
+//                    ObjectNode attachment = objectMapper.createObjectNode();
+//                    attachment.put("fileStoreId", media.get(0).asText());
+//                    response.set("attachment", attachment);
+//                    return;
+//                }
+//            }
+//        }
+//        log.debug("No image found when complaint is resolved");
+//    }
 
     private JsonNode getComplaintDetails(JsonNode event) throws IOException {
-        DocumentContext userInfo =  JsonPath.parse(event.at("/RequestInfo/userInfo").toString());
+        DocumentContext userInfo = JsonPath.parse(event.at("/RequestInfo/userInfo").toString());
 
         log.debug("UserInfo : " + userInfo.jsonString());
 
@@ -210,134 +263,177 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         return responseEntity.getBody();
     }
 
-    private boolean eventContainsLocation(JsonNode event) {
-        if(event.get("services").get(0).get("addressDetail").get("latitude") != null)
-            return true;
-        return false;
-    }
 
-    private JsonNode createLocationNode(JsonNode event, JsonNode assignee) {
-        ObjectNode chatNode = objectMapper.createObjectNode();
-        chatNode.put("tenantId", stateLevelTenantId);
+    private JsonNode createResponseForComment(JsonNode event, String comment, String citizenName) throws IOException {
+        String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
+        String serviceCode = event.at("/services/0/serviceCode").asText();
+        JsonNode assignee = getCommentor(event);
+        String commentorName = assignee.at("/name").asText();
 
-        ObjectNode user = objectMapper.createObjectNode();
-        user.put("mobileNumber", assignee.at("/mobileNumber").asText());
-        chatNode.set("user", user);
-
-        chatNode.set("response", createLocationResponse(event));
-
-        return chatNode;
-    }
-
-    private JsonNode createLocationResponse(JsonNode event) {
-        ObjectNode responseMessage = objectMapper.createObjectNode();
-        responseMessage.put("type", "location");
-        ObjectNode location = objectMapper.createObjectNode();
-        location.put("latitude", event.at("/services/0/addressDetail/latitude").toString());
-        location.put("longitude", event.at("/services/0/addressDetail/longitude").toString());
-        responseMessage.set("location", location);
-        return responseMessage;
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        params.add(citizenName);
+        params.add(commentorName);
+        params.add(serviceRequestId);
+        params.add(complaintCategory);
+        params.add(comment);
+        extraInfo.put("templateId", commentTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
     }
 
     private JsonNode createResponseMessageForAssignee(JsonNode event, JsonNode assignee) throws UnsupportedEncodingException {
         ObjectNode responseMessage = objectMapper.createObjectNode();
-        responseMessage.put("type", "text");
         String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
         String serviceCode = event.at("/services/0/serviceCode").asText();
 
-        String message = "";
-        message += "Hey " + assignee.at("/name").asText() + ",";
-        message += "\nYou have been assigned a new complaint to resolve.";
-        message += "\nComplaint Number : " + serviceRequestId;
-        message += "\nCategory : " + localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
-        message += "\n" + makeEmployeeURLForComplaint(serviceRequestId);
-
-        responseMessage.put("text", message);
-
-        return responseMessage;
+        String assigneeName = assignee.at("/name").asText();
+        String complaintURL = makeEmployeeURLForComplaint(serviceRequestId);
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        params.add(assigneeName);
+        params.add(serviceRequestId);
+        params.add(complaintCategory);
+        params.add(complaintURL);
+        extraInfo.put("templateId", assignedEmployeeTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
     }
 
 
-    private JsonNode createResponseMessage(JsonNode event) throws IOException {
-        String status = event.at("/services/0/status").asText();
-
-        if(status.equalsIgnoreCase("resolved")) {
-            return responseForResolvedStatus(event);
-        } else if(status.equalsIgnoreCase("assigned")) {
-            return responseForAssignedtatus(event);
-        }
-
-        return null;
-    }
-
-    private JsonNode responseForAssignedtatus(JsonNode event) throws IOException {
+    private JsonNode responseForAssignedStatus(JsonNode event, String citizenName, String mobileNumber) throws IOException {
         String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
         String serviceCode = event.at("/services/0/serviceCode").asText();
 
         JsonNode assignee = getAssignee(event);
-        String assigneeMobileNumber = assignee.at("/mobileNumber").asText();
-
-        String message = "Your complaint has been assigned.";
-        message += "\nComplaint Number : " + serviceRequestId;
-        message += "\nCategory : " + localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
-        message += "\nAssignee Mobile Number : " + assigneeMobileNumber;
-        message += "\n" + makeCitizenURLForComplaint(serviceRequestId);
-
-        ObjectNode responseMessage = objectMapper.createObjectNode();
-
-        responseMessage.put("type", "text");
-        responseMessage.put("text", message);
-
-        return responseMessage;
+        String assigneeName = assignee.at("/name").asText();
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintURL = makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        params.add(citizenName);
+        params.add(serviceRequestId);
+        params.add(complaintCategory);
+        params.add(assigneeName);
+        params.add(complaintURL);
+        extraInfo.put("templateId", assignedCitizenTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
     }
 
     private JsonNode getAssignee(JsonNode event) throws IOException {
-
         String assigneeId = event.at("/actionInfo/0/assignee").asText();
-        String tenantId = event.at("/actionInfo/0/tenantId").asText();
+        return searchUser(event, assigneeId);
+    }
 
+    private JsonNode getCommentor(JsonNode event) throws IOException {
+        String userString = event.at("/actionInfo/0/by").asText();
+        String userId = userString.split(":")[0];
+        return searchUser(event, userId);
+    }
+
+    private JsonNode searchUser(JsonNode event, String userId) throws IOException {
         DocumentContext request = JsonPath.parse(userServiceSearchRequest);
-
+        String tenantId = event.at("/actionInfo/0/tenantId").asText();
         request.set("$.tenantId", tenantId);
-        request.set("$.id.[0]", assigneeId);
+        request.set("$.id.[0]", userId);
 
         JsonNode requestObject = null;
         requestObject = objectMapper.readTree(request.jsonString());
 
         ResponseEntity<ObjectNode> response = restTemplate.postForEntity(userServiceHost + userServiceSearchPath,
-                    requestObject, ObjectNode.class);
+                requestObject, ObjectNode.class);
 
         return response.getBody().at("/user/0");
     }
 
-    private JsonNode responseForResolvedStatus(JsonNode event) throws UnsupportedEncodingException {
+    private JsonNode responseForRejectedStatus(JsonNode event, String comments, String citizenName) {
+
+        String rejectReason = comments.split(";")[0];
+        String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
+        String serviceCode = event.at("/services/0/serviceCode").asText();
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        params.add(citizenName);
+        params.add(complaintCategory);
+        params.add(serviceRequestId);
+        params.add(rejectReason);
+        extraInfo.put("templateId", rejectTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
+    }
+
+    private JsonNode responseForResolvedStatus(JsonNode event, String citizenName, String mobileNumber) throws UnsupportedEncodingException {
 
         String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
         String serviceCode = event.at("/services/0/serviceCode").asText();
-
-        String message = "Your complaint has been resolved.";
-        message += "\nComplaint Number : " + serviceRequestId;
-        message += "\nCategory : " + localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
-        message += "\nYou can rate the service here : " + makeCitizenURLForComplaint(serviceRequestId);
-
-        ObjectNode responseMessage = objectMapper.createObjectNode();
-
-        responseMessage.put("type", "text");
-        responseMessage.put("text", message);
-
-        return responseMessage;
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        String complaintURL = makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
+        params.add(citizenName);
+        params.add(complaintCategory);
+        params.add(serviceRequestId);
+        params.add(complaintURL);
+        extraInfo.put("templateId", resolvedTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
     }
 
-    private String makeCitizenURLForComplaint(String serviceRequestId) throws UnsupportedEncodingException {
-        String encodedPath = URLEncoder.encode( serviceRequestId, "UTF-8" );
-        String url = egovExternalHost + "/citizen/complaint-details/" + encodedPath;
-        return url;
+    private JsonNode responseForReassignedtatus(JsonNode event, String citizenName, String mobileNumber) throws UnsupportedEncodingException {
+
+        String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
+        String serviceCode = event.at("/services/0/serviceCode").asText();
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        String complaintURL = makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
+        params.add(citizenName);
+        params.add(complaintCategory);
+        params.add(serviceRequestId);
+        params.add(complaintURL);
+        extraInfo.put("templateId", reassignAssignedTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
+    }
+
+    private JsonNode responseForRequestedReassignstatus(JsonNode event, String citizenName) throws UnsupportedEncodingException {
+
+        String serviceRequestId = event.at("/services/0/serviceRequestId").asText();
+        String serviceCode = event.at("/services/0/serviceCode").asText();
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        ArrayNode params = objectMapper.createArrayNode();
+        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
+        params.add(citizenName);
+        params.add(complaintCategory);
+        params.add(serviceRequestId);
+        extraInfo.put("templateId", reassignrequestedTemplateId);
+        extraInfo.put("recipient", sourceWhatsAppNumber);
+        extraInfo.set("params", params);
+        return extraInfo;
+    }
+
+    private String makeCitizenURLForComplaint(String serviceRequestId, String mobileNumber) throws UnsupportedEncodingException {
+        String encodedPath = URLEncoder.encode(serviceRequestId, "UTF-8");
+        String url = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=/complaint-details/" + encodedPath+"?";
+        String shortenedURL = urlShorteningSevice.shortenURL(url);
+        return shortenedURL;
     }
 
     private String makeEmployeeURLForComplaint(String serviceRequestId) throws UnsupportedEncodingException {
-        String encodedPath = URLEncoder.encode( serviceRequestId, "UTF-8" );
-        String url = egovExternalHost + "/employee/complaint-details/" + encodedPath;
-        return url;
+        String encodedPath = URLEncoder.encode(serviceRequestId, "UTF-8");
+        String url = egovExternalHost + "employee/complaint-details/" + encodedPath;
+        String shortenedURL = urlShorteningSevice.shortenURL(url);
+        return shortenedURL;
     }
 
 }

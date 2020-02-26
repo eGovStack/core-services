@@ -3,7 +3,7 @@ package org.egov.chat.pre.controller;
 import org.egov.chat.pre.service.TenantIdEnricher;
 import org.egov.chat.pre.service.UserDataEnricher;
 import org.egov.chat.util.KafkaTopicCreater;
-import org.egov.chat.xternal.Requestformatter.ValueFirst.ValueFirstRequestFormatter;
+import org.egov.chat.xternal.requestformatter.ValueFirst.ValueFirstRequestFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

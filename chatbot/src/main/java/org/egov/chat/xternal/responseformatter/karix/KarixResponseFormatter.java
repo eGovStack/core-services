@@ -1,4 +1,4 @@
-package org.egov.chat.xternal.Responseformatter.karix;
+package org.egov.chat.xternal.responseformatter.karix;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

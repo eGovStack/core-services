@@ -1,4 +1,4 @@
-package org.egov.chat.xternal.Responseformatter.ValueFirst;
+package org.egov.chat.xternal.responseformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;

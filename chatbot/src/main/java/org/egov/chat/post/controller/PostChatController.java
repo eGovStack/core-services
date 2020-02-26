@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.chat.post.localization.LocalizationStream;
 import org.egov.chat.util.KafkaTopicCreater;
-import org.egov.chat.xternal.Responseformatter.ValueFirst.ValueFirstResponseFormatter;
-import org.egov.chat.xternal.Responseformatter.ValueFirst.ValueFirstRestCall;
+import org.egov.chat.xternal.responseformatter.ValueFirst.ValueFirstResponseFormatter;
+import org.egov.chat.xternal.responseformatter.ValueFirst.ValueFirstRestCall;
 import org.egov.chat.xternal.systeminitiated.PGRStatusUpdateEventFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -39,7 +39,7 @@ public class PostChatController {
     @PostConstruct
     public void init() {
 //        waterSewerageEventFormatter.startStream("water-sewerage-received-messages", "send-message");
-        // pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message-localized");
+        pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message-localized");
 
         kafkaTopicCreater.createTopic("send-message");
         kafkaTopicCreater.createTopic("send-message-localized");

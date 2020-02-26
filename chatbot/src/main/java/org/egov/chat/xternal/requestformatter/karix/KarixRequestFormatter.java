@@ -1,4 +1,4 @@
-package org.egov.chat.xternal.Requestformatter.karix;//package org.egov.chat.pre.Requestformatter.karix;
+package org.egov.chat.xternal.requestformatter.karix;//package org.egov.chat.pre.requestformatter.karix;
 //
 //import com.fasterxml.jackson.databind.JsonNode;
 //import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@ package org.egov.chat.xternal.Requestformatter.karix;//package org.egov.chat.pre
 //import org.apache.kafka.streams.kstream.KStream;
 //import org.apache.kafka.streams.kstream.Produced;
 //import org.egov.chat.config.KafkaStreamsConfig;
-//import org.egov.chat.pre.Requestformatter.RequestFormatter;
+//import org.egov.chat.pre.requestformatter.RequestFormatter;
 //import org.egov.chat.util.FileStore;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;

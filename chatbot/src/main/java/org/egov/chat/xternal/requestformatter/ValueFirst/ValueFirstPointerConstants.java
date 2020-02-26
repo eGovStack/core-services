@@ -1,4 +1,4 @@
-package org.egov.chat.xternal.Requestformatter.ValueFirst;//package org.egov.chat.pre.Requestformatter.karix;
+package org.egov.chat.xternal.requestformatter.ValueFirst;//package org.egov.chat.pre.requestformatter.karix;
 
 public class ValueFirstPointerConstants {
 

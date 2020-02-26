@@ -112,7 +112,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
-            String url = egovExternalHost + "/citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
+            String url = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
             String shortenedURL = urlShorteningService.shortenURL(url);
             ObjectNode param;
 
