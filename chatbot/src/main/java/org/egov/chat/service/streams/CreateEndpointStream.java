@@ -67,7 +67,8 @@ public class CreateEndpointStream extends CreateStream {
         answerKStream.flatMapValues(chatNode -> {
             try {
                 Response responseMessage = restAPI.makeRestEndpointCall(config, chatNode);
-
+                String nodeId = config.get("name").asText();
+                responseMessage.setNodeId(nodeId);
                 chatNode.setResponse(responseMessage);
 
                 String conversationId = chatNode.getConversationState().getConversationId();
@@ -84,7 +85,7 @@ public class CreateEndpointStream extends CreateStream {
                 List<EgovChat> nodes = new ArrayList<>();
                 nodes.add(chatNode);
 
-                EgovChat contactMessageNode=createContactMessageNode(chatNode);
+                EgovChat contactMessageNode=createContactMessageNode(chatNode, nodeId);
                 if(contactMessageNode!=null)
                      nodes.add(contactMessageNode);
 
@@ -101,7 +102,7 @@ public class CreateEndpointStream extends CreateStream {
         log.info("Endpoint Stream started : " + streamName + ", from : " + inputTopic + ", to : " + sendMessageTopic);
     }
 
-    private EgovChat createContactMessageNode(EgovChat chatNode) {
+    private EgovChat createContactMessageNode(EgovChat chatNode, String nodeId) {
 
         int recordcount = conversationStateRepository.getConversationStateCountForUserId(chatNode.getUser().getUserId());
         if(recordcount>1)
@@ -120,7 +121,7 @@ public class CreateEndpointStream extends CreateStream {
         localizationCodeList.add(contactCardContactName);
         localizationCodeList.add(mobNameSeparator);
         localizationCodeList.add(contactCardMobNo);
-        Response response = Response.builder().timestamp(System.currentTimeMillis()).type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
+        Response response = Response.builder().timestamp(System.currentTimeMillis()).nodeId(nodeId).type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
         contactMessageNode.setResponse(response);
         return contactMessageNode;
     }

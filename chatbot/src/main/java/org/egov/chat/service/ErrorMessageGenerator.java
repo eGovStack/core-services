@@ -31,7 +31,7 @@ public class ErrorMessageGenerator {
         LocalizationCode localizationCode = LocalizationCode.builder().code(getErrorMessageForConfig(config)).build();
         List<LocalizationCode> localizationCodesArray = new ArrayList<>();
         localizationCodesArray.add(localizationCode);
-        Response response = Response.builder().type("text").timestamp(System.currentTimeMillis())
+        Response response = Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId(config.get("name").asText())
                 .localizationCodes(localizationCodesArray).build();
         chatNode.setResponse(response);
     }

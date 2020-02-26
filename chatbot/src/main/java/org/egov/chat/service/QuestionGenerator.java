@@ -36,7 +36,7 @@ public class QuestionGenerator {
         List<LocalizationCode> localizationCodeArray = new ArrayList<>();
 
         if(chatNode.getResponse() == null) {
-            Response response = Response.builder().timestamp(System.currentTimeMillis()).type("text")
+            Response response = Response.builder().timestamp(System.currentTimeMillis()).type("text").nodeId(config.get("name").asText())
                     .localizationCodes(localizationCodeArray).build();
             chatNode.setResponse(response);
         } else {
