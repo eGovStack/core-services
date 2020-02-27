@@ -79,24 +79,31 @@ public class QuestionGenerator {
                 chatNode.getNextConversationState().setQuestionDetails(questionDetails);
 
                 ArrayNode values = (ArrayNode) questionDetails.get("askedValues");
-                String numberPrefixLocalizationCode=config.get("numberPrefixLocalizationCode").asText();
-                String numberNameSeparatorLocalizationCode=config.get("numberNameSeparatorLocalizationCode").asText();
+                String numberPrefixLocalizationCode = null;
+                String numberNameSeparatorLocalizationCode = null;
+                if(config.has("numberPrefixLocalizationCode"))
+                     numberPrefixLocalizationCode=config.get("numberPrefixLocalizationCode").asText();
+                if(config.has("numberPostfixLocalizationCode"))
+                     numberNameSeparatorLocalizationCode=config.get("numberPostfixLocalizationCode").asText();
                 // TODO : Currently using * for Bold
                 for (int i = 0; i < values.size(); i++) {
                     LocalizationCode newLineCode=LocalizationCode.builder().value("\n").build();
                     localizationCodes.add(newLineCode);
-                    LocalizationCode prefixCode=LocalizationCode.builder().code(numberPrefixLocalizationCode).build();
-                    localizationCodes.add(prefixCode);
+                    if(numberPrefixLocalizationCode!=null)
+                    {
+                        LocalizationCode prefixCode=LocalizationCode.builder().code(numberPrefixLocalizationCode).build();
+                        localizationCodes.add(prefixCode);
+                    }
                     JsonNode value = values.get(i);
-                    String tempString = "*"+value.get("index").asText()+"*";
+                    String tempString = value.get("index").asText();
                     localizationCodes.addAll(numeralLocalization.getLocalizationCodesForStringContainingNumbers(tempString));
-                    LocalizationCode separatorCode=LocalizationCode.builder().code(numberNameSeparatorLocalizationCode).build();
-                    localizationCodes.add(separatorCode);
-                    LocalizationCode starForBold=LocalizationCode.builder().value("*").build();
-                    localizationCodes.add(starForBold);
+                    if(numberNameSeparatorLocalizationCode!=null)
+                    {
+                        LocalizationCode separatorCode=LocalizationCode.builder().code(numberNameSeparatorLocalizationCode).build();
+                        localizationCodes.add(separatorCode);
+                    }
                     LocalizationCode localizationCode=objectMapper.convertValue(value.get("value"), LocalizationCode.class);
                     localizationCodes.add(localizationCode);
-                    localizationCodes.add(starForBold);
                 }
             } else {
 
