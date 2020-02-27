@@ -431,7 +431,7 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
     private String makeEmployeeURLForComplaint(String serviceRequestId) throws UnsupportedEncodingException {
         String encodedPath = URLEncoder.encode(serviceRequestId, "UTF-8");
-        String url = egovExternalHost + "employee/complaint-details/" + encodedPath;
+        String url = egovExternalHost + "employee/complaint-details/" + encodedPath+"?";
         String shortenedURL = urlShorteningSevice.shortenURL(url);
         return shortenedURL;
     }
