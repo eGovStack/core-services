@@ -120,6 +120,11 @@ public class ReportService {
                 metadataResponse.setReportDetails(rmt);
                 metadataResponse.setTenantId(metaDataRequest.getTenantId());
                 metaResponseCache.put(reportName, metadataResponse);
+                try {
+                    integrationService.getData(reportDefinition, metadataResponse, metaDataRequest.getRequestInfo(), moduleName);
+                } catch (Exception e) {
+                    log.error("Error getting metadata");
+                }
                 return metadataResponse;
             }
         } catch (CustomException ex) {
