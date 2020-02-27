@@ -6,7 +6,11 @@ public class ValueFirstPointerConstants {
 
     public static String userMobileNumber = "/queryParams/from";
 
+    public static String missedCallFromMobileNumber = "/queryParams/mobile_number";
+
     public static String mediaType = "/queryParams/media_type";
+
+    public static String missedCallToNumber = "/queryParams/vmn_tollfree";
 
     public static String textContent = "/queryParams/text";
 

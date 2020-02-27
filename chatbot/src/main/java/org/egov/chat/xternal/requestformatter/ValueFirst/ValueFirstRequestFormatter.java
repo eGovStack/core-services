@@ -2,9 +2,11 @@ package org.egov.chat.xternal.requestformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -15,8 +17,10 @@ import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.pre.formatter.RequestFormatter;
 import org.egov.chat.util.FileStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -29,6 +33,9 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
 
+    @Value("${valuefirst.whatsapp.number}")
+    private String valueFirstWAMobNo;
+
     @Autowired
     private FileStore fileStore;
 
@@ -40,18 +47,13 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
     @Override
     public boolean isValid(JsonNode inputRequest) {
         try {
-//            if(checkForMissedCallNotification(inputRequest))
-//                return true;
+            if(checkForMissedCallNotification(inputRequest))
+                return true;
 
             String mediaType = inputRequest.at(ValueFirstPointerConstants.mediaType).asText();
             if(mediaType.equalsIgnoreCase("text") || mediaType.equalsIgnoreCase("image")) {
                 return true;
             }
-//            else if(contentType.equalsIgnoreCase("ATTACHMENT")) {
-//                String attachmentType = inputRequest.at(ValueFirstPointerConstants.attachmentType).asText();
-//                if(attachmentType.equalsIgnoreCase("image"))
-//                    return true;
-//            }
         } catch (Exception e) {
             log.error("Invalid request");
         }
@@ -60,19 +62,47 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 
     @Override
     public JsonNode getTransformedRequest(JsonNode inputRequest) throws Exception {
+        boolean missedCall = checkForMissedCallNotification(inputRequest);
+        JsonNode chatNode = null;
+        if (missedCall) {
+            chatNode = getMissedCallChatNode(inputRequest);
+        } else {
+            chatNode = getUserMessageChatNode(inputRequest);
+        }
+        return chatNode;
+    }
 
-//        boolean missedCall = checkForMissedCallNotification(inputRequest);
-//        if(missedCall) {
-//            inputRequest = makeNodeForMissedCallRequest(inputRequest);
-//        }
-
-        String inputMobile = inputRequest.at(ValueFirstPointerConstants.userMobileNumber).asText();
+    public JsonNode getMissedCallChatNode(JsonNode inputRequest){
+        String inputMobile = getValueFromNode(inputRequest.at(ValueFirstPointerConstants.missedCallFromMobileNumber));
         String mobileNumber = inputMobile.substring(2, 2 + 10);
         ObjectNode user = objectMapper.createObjectNode();
         user.set("mobileNumber", TextNode.valueOf(mobileNumber));
 
         ObjectNode message = objectMapper.createObjectNode();
+        message.put("contentType", "text");
+        message.put("rawInput", "missedCall");
+
+        ObjectNode extraInfo = objectMapper.createObjectNode();
+        extraInfo.put("recipient", valueFirstWAMobNo);
+        extraInfo.put("missedCall", true);
+
+        ObjectNode chatNode = objectMapper.createObjectNode();
+
+        chatNode.set("user", user);
+        chatNode.set("message", message);
+        chatNode.set("extraInfo", extraInfo);
+        chatNode.set("timestamp", inputRequest.at(ValueFirstPointerConstants.timestampPath));
+        return chatNode;
+    }
+
+    public JsonNode getUserMessageChatNode(JsonNode inputRequest) throws IOException {
+        String inputMobile = inputRequest.at(ValueFirstPointerConstants.userMobileNumber).asText();
+        String mobileNumber = inputMobile.substring(2, 2 + 10);
         String mediaType = inputRequest.at(ValueFirstPointerConstants.mediaType).asText();
+        ObjectNode user = objectMapper.createObjectNode();
+        user.set("mobileNumber", TextNode.valueOf(mobileNumber));
+
+        ObjectNode message = objectMapper.createObjectNode();
         message.put("contentType", mediaType);
         if(mediaType.equalsIgnoreCase("text")) {
             message.set("rawInput", inputRequest.at(ValueFirstPointerConstants.textContent));
@@ -81,17 +111,6 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
             String imageInBase64String = inputRequest.at(ValueFirstPointerConstants.mediaData).asText();
             message.put("rawInput", fileStore.convertFromBase64AndStore(imageInBase64String));
         }
-
-//        else if(mediaType.equalsIgnoreCase("location")) {
-//            message.set("content", TextNode.valueOf(inputRequest.at(ValueFirstPointerConstants.locationContent).toString()));
-//        } else if(mediaType.equalsIgnoreCase("ATTACHMENT")) {
-//            if(inputRequest.at(ValueFirstPointerConstants.attachmentType).asText().equalsIgnoreCase("image")) {
-//                message.put("type", "image");
-//            }
-//            String imageLink = inputRequest.at(ValueFirstPointerConstants.imageFileLink).asText();
-//            String fileStoreId = fileStore.downloadFromKarixAndStore(imageLink);
-//            message.put("content", fileStoreId);
-//        }
 
         ObjectNode extraInfo = objectMapper.createObjectNode();
         extraInfo.set("recipient", inputRequest.at(ValueFirstPointerConstants.recipientMobileNumber));
@@ -102,13 +121,8 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         chatNode.set("message", message);
         chatNode.set("extraInfo", extraInfo);
         chatNode.set("timestamp", inputRequest.at(ValueFirstPointerConstants.timestampPath));
-//        if(missedCall) {
-//            chatNode.put("missedCall", true);
-//        }
-
         return chatNode;
     }
-
     // TODO : set actual recipient number in input request not missed call number
 //    private JsonNode makeNodeForMissedCallRequest(JsonNode inputRequest) throws IOException {
 //        JsonNode body = inputRequest.get("body");
@@ -125,14 +139,22 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 //        return inputRequest;
 //    }
 //
-//    private boolean checkForMissedCallNotification(JsonNode inputRequest) {
-//        JsonNode body = inputRequest.get("body");
-//        if(body.size() == 2) {
-//            if(body.has("Callernumber") && body.has("UserNumber"))
-//                return true;
-//        }
-//        return false;
-//    }
+    private boolean checkForMissedCallNotification(JsonNode inputRequest) {
+        if(!StringUtils.isEmpty(inputRequest.at(ValueFirstPointerConstants.missedCallToNumber).asText()))
+        {
+            return  true;
+        }
+        return false;
+    }
+
+    private String getValueFromNode(JsonNode jsonNode) {
+        if(jsonNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode)jsonNode;
+            return arrayNode.get(0).asText();
+        } else {
+            return jsonNode.asText();
+        }
+    }
 
     @Override
     public void startRequestFormatterStream(String inputTopic, String outputTopic, String errorTopic) {
