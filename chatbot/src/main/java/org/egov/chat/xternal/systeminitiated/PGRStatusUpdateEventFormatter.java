@@ -132,11 +132,11 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
             citizenName = localizationService.getMessageForCode(citizenKeywordLocalization);
         ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event);
 
-        if (!StringUtils.isEmpty(comments)) {
-            ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
-            userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName));
-            chatNodes.add(userChatNodeForComment);
-        }
+//        if (!StringUtils.isEmpty(comments)) {
+//            ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
+//            userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName));
+//            chatNodes.add(userChatNodeForComment);
+//        }
 
         JsonNode extraInfo = null;
         if (status != null) {
