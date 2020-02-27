@@ -295,8 +295,8 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         ArrayNode params = objectMapper.createArrayNode();
         String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
         params.add(assigneeName);
-        params.add(serviceRequestId);
         params.add(complaintCategory);
+        params.add(serviceRequestId);
         params.add(complaintURL);
         extraInfo.put("templateId", assignedEmployeeTemplateId);
         extraInfo.put("recipient", sourceWhatsAppNumber);
@@ -316,8 +316,8 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         String complaintURL = makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
         String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
         params.add(citizenName);
-        params.add(serviceRequestId);
         params.add(complaintCategory);
+        params.add(serviceRequestId);
         params.add(assigneeName);
         params.add(complaintURL);
         extraInfo.put("templateId", assignedCitizenTemplateId);
