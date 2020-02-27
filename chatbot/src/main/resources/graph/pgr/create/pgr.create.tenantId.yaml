@@ -11,7 +11,7 @@ validationRequired : true
 typeOfValues : FixedSetValues
 displayValuesAsOptions: true
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
-numberNameSeparatorLocalizationCode: chatbot.message.numberNameSeparatorLocalizationCodeFor
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
 values :
   batchSize : 9
   class : org.egov.chat.xternal.valuefetch.TenantIdValueFetcher
