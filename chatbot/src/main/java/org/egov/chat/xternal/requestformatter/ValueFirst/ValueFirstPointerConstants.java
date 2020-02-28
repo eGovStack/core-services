@@ -2,17 +2,17 @@ package org.egov.chat.xternal.requestformatter.ValueFirst;//package org.egov.cha
 
 public class ValueFirstPointerConstants {
 
-    public static String recipientMobileNumber = "/queryParams/to";
+    public static String recipientMobileNumber = "/body/to";
 
-    public static String userMobileNumber = "/queryParams/from";
+    public static String userMobileNumber = "/body/from";
 
     public static String missedCallFromMobileNumber = "/queryParams/mobile_number";
 
-    public static String mediaType = "/queryParams/media_type";
+    public static String mediaType = "/body/media_type";
 
     public static String missedCallToNumber = "/queryParams/vmn_tollfree";
 
-    public static String textContent = "/queryParams/text";
+    public static String textContent = "/body/text";
 
     public static String timestampPath = "/timestamp";
 
