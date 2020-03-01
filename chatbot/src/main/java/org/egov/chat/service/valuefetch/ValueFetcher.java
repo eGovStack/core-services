@@ -95,7 +95,7 @@ public class ValueFetcher {
                 String nodeId = paramConfiguration.substring(1);
                 String conversationId = chatNode.at(JsonPointerNameConstants.conversationId).asText();
                 List<Message> messages = messageRepository.getValidMessagesOfConversation(conversationId);
-                paramValue = TextNode.valueOf(findMessageForNode(messages, nodeId));
+                paramValue = TextNode.valueOf(findMessageForNode(messages, nodeId, chatNode));
             } else {
                 paramValue = TextNode.valueOf(paramConfiguration);
             }
@@ -115,11 +115,16 @@ public class ValueFetcher {
         return null;
     }
 
-    String findMessageForNode(List<Message> messages, String nodeId) {
+    String findMessageForNode(List<Message> messages, String nodeId, JsonNode chatNode) {
         for (Message message : messages) {
             if (message.getNodeId().equalsIgnoreCase(nodeId)) {
                 return message.getMessageContent();
             }
+        }
+        //If nodeId isn't found in previously saved messages in DB
+        //Try to find in the last received message
+        if(chatNode.at("/message/nodeId").asText().equalsIgnoreCase(nodeId)) {
+            return chatNode.at("message/messageContent").asText();
         }
         return null;
     }
