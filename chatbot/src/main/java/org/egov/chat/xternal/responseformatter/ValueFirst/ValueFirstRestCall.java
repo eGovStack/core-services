@@ -32,9 +32,6 @@ public class ValueFirstRestCall {
 
             ResponseEntity<JsonNode> valueFirstResponse = restTemplate.postForEntity(valueFirstSendMessageUrl, request, JsonNode.class);
 
-            // TODO : Remove delay after discussing with Karix
-
-
             log.info("ValueFirst Send Message Response : " + valueFirstResponse.toString());
         } catch (Exception e) {
             log.error("error in value first rest call",e);
