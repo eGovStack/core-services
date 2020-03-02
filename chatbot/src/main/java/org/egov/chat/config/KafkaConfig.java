@@ -1,12 +1,14 @@
 package org.egov.chat.config;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.connect.json.JsonDeserializer;
+import org.apache.kafka.connect.json.JsonSerializer;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +63,21 @@ public class KafkaConfig {
 
     @Bean
     public KafkaTemplate<String, EgovChat> kafkaTemplate() {
-        return new KafkaTemplate<String, EgovChat>(producerFactory());
+        return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public ProducerFactory<String, JsonNode> producerFactoryPersister() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, JsonNode> kafkaTemplatePersister() {
+        return new KafkaTemplate<>(producerFactoryPersister());
     }
 
 }
