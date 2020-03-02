@@ -124,7 +124,7 @@ public class ValueFetcher {
         //If nodeId isn't found in previously saved messages in DB
         //Try to find in the last received message
         if(chatNode.at("/message/nodeId").asText().equalsIgnoreCase(nodeId)) {
-            return chatNode.at("message/messageContent").asText();
+            return chatNode.at("/message/messageContent").asText();
         }
         return null;
     }
