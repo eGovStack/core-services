@@ -41,7 +41,7 @@ public class InputSegregator {
             log.debug("Active Node Id : " + activeNodeId);
 
             if(activeNodeId == null) {
-                chatNode = welcomeMessageHandler.welcomeUser(chatNode);
+                chatNode = welcomeMessageHandler.welcomeUser(chatNode, consumerRecord.key());
                 if(chatNode == null)
                     return;
             }

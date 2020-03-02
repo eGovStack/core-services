@@ -55,7 +55,7 @@ public class WelcomeMessageHandler {
         fuzzymatchScoreThreshold = welcomeConfig.get("matchAnswerThreshold").asInt();
     }
 
-    public EgovChat welcomeUser(EgovChat chatNode) {
+    public EgovChat welcomeUser(EgovChat chatNode, String keyForKafka) {
 
         chatNode.getMessage().setNodeId(welcomeConfig.get("name").asText());
         chatNode.getMessage().setValid(isWelcomeTriggerKeyword(chatNode));
@@ -75,7 +75,7 @@ public class WelcomeMessageHandler {
 
             welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, welcomeChatNode);
+            kafkaTemplate.send(sendMessageTopic,keyForKafka, welcomeChatNode);
 
             return chatNode;
 
@@ -88,7 +88,7 @@ public class WelcomeMessageHandler {
 
             chatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, chatNode);
+            kafkaTemplate.send(sendMessageTopic,keyForKafka, chatNode);
 
             conversationStateRepository.updateConversationStateForId(chatNode.getConversationState());
             conversationStateRepository.markConversationInactive(chatNode.getConversationState().getConversationId());
