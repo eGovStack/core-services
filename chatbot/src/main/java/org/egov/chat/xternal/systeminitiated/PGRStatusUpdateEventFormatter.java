@@ -72,21 +72,20 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
     private String userServiceSearchRequest = "{\"RequestInfo\":{},\"tenantId\":\"\",\"id\":[\"\"]}";
 
-    private String complaintDetailsRequest = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}}}";
+    @Value("${valuefirst.notification.rejected.templateid}")
+    private String rejectTemplateId = "194785";
 
-    private String rejectTemplateId = "194263";
+    @Value("${valuefirst.notification.reassigned.templateid}")
+    private String reassignAssignedTemplateId = "194787";
 
-    private String reassignAssignedTemplateId = "194271";
+    @Value("${valuefirst.notification.assigned.templateid}")
+    private String assignedCitizenTemplateId = "194781";
 
-    private String assignedCitizenTemplateId = "194255";
+    @Value("${valuefirst.notification.commented.templateid}")
+    private String commentTemplateId = "194789";
 
-    private String assignedEmployeeTemplateId = "194273";
-
-    private String commentTemplateId = "194255";
-
-    private String reassignrequestedTemplateId = "194267";
-
-    private String resolvedTemplateId = "194259";
+    @Value("${valuefirst.notification.resolved.templateid}")
+    private String resolvedTemplateId = "194783";
 
     @Override
     public String getStreamName() {
@@ -119,50 +118,33 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         List<JsonNode> chatNodes = new ArrayList<>();
         ArrayNode actionInfoArray = (ArrayNode) event.at("/actionInfo");
         for (int index = 0; index < actionInfoArray.size(); index++) {
-
-            String source = event.at("/services/"+index+"/source").asText();
+            String source = event.at("/services/" + index + "/source").asText();
             if ((source != null) && source.equals("whatsapp")) {
-                String status = event.at("/actionInfo/"+index+"/status").asText();
-                String action = event.at("/actionInfo/"+index+"/action").asText();
-                String comments = event.at("/actionInfo/"+index+"/comments").asText();
-                String citizenName = event.at("/services/"+index+"/citizen/name").asText();
-                String mobileNumber = event.at("/services/"+index+"/citizen/mobileNumber").asText();
+                String status = event.at("/actionInfo/" + index + "/status").asText();
+                String action = event.at("/actionInfo/" + index + "/action").asText();
+                String comments = event.at("/actionInfo/" + index + "/comments").asText();
+                String citizenName = event.at("/services/" + index + "/citizen/name").asText();
+                String mobileNumber = event.at("/services/" + index + "/citizen/mobileNumber").asText();
                 if (StringUtils.isEmpty(citizenName))
                     citizenName = localizationService.getMessageForCode(citizenKeywordLocalization);
-                ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event,index);
-
-//        if (!StringUtils.isEmpty(comments)) {
-//            ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
-//            userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName));
-//            chatNodes.add(userChatNodeForComment);
-//        }
-
+                ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event, index);
+                if (!StringUtils.isEmpty(comments)) {
+                    ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
+                    userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName, index));
+                    chatNodes.add(userChatNodeForComment);
+                }
                 JsonNode extraInfo = null;
                 if (status != null) {
                     if (status.equalsIgnoreCase("rejected")) {
-                        extraInfo = responseForRejectedStatus(event, comments, citizenName,index);
-
+                        extraInfo = responseForRejectedStatus(event, comments, citizenName, index);
                     } else if ((action + "-" + status).equalsIgnoreCase("reassign-assigned")) {
-                        extraInfo = responseForReassignedtatus(event, citizenName, mobileNumber,index);
-                        JsonNode chatNodeForAssignee = createChatNodeForAssignee(event,index);
-                        chatNodes.add(chatNodeForAssignee);
-//                checkAndgetResponseIfCommented(event);
+                        extraInfo = responseForReassignedtatus(event, citizenName, mobileNumber, index);
                     } else if (status.equalsIgnoreCase("assigned")) {
-                        extraInfo = responseForAssignedStatus(event, citizenName, mobileNumber,index);
-                        JsonNode chatNodeForAssignee = createChatNodeForAssignee(event,index);
-                        chatNodes.add(chatNodeForAssignee);
-                        // send to LME
-                        // send To citizen
-//                checkAndgetResponseIfCommented(event);
-                    } else if (status.equalsIgnoreCase("reassignrequested")) {
-                        extraInfo = responseForRequestedReassignstatus(event, citizenName,index);
-//                checkAndgetResponseIfCommented(event);
+                        extraInfo = responseForAssignedStatus(event, citizenName, mobileNumber, index);
                     } else if (status.equalsIgnoreCase("resolved")) {
-                        extraInfo = responseForResolvedStatus(event, citizenName, mobileNumber,index);
-//                checkAndgetResponseIfCommented(event);
+                        extraInfo = responseForResolvedStatus(event, citizenName, mobileNumber, index);
                     }
                 }
-
                 if (extraInfo != null) {
                     userChatNodeForStatusUpdate.set("extraInfo", extraInfo);
                     chatNodes.add(userChatNodeForStatusUpdate);
@@ -182,22 +164,6 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         ObjectNode extraInfo = objectMapper.createObjectNode();
         extraInfo.put("recipient", sourceWhatsAppNumber);
         chatNode.set("extraInfo", extraInfo);
-        return chatNode;
-    }
-
-    private JsonNode createChatNodeForAssignee(JsonNode event,int index) throws Exception {
-        JsonNode assignee = getAssignee(event,index);
-        String assigneeMobileNumber = assignee.at("/mobileNumber").asText();
-
-        ObjectNode chatNode = objectMapper.createObjectNode();
-        chatNode.put("tenantId", stateLevelTenantId);
-        ObjectNode user = objectMapper.createObjectNode();
-        user.put("mobileNumber", assigneeMobileNumber);
-        chatNode.set("user", user);
-        chatNode.set("extraInfo", createResponseMessageForAssignee(event, assignee,index));
-
-//        addImageToChatNodeForAssignee(complaintDetails, chatNode);
-
         return chatNode;
     }
 
@@ -276,8 +242,8 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
         params.add(citizenName);
         params.add(commentorName);
-        params.add(serviceRequestId);
         params.add(complaintCategory);
+        params.add(serviceRequestId);
         params.add(comment);
         extraInfo.put("templateId", commentTemplateId);
         extraInfo.put("recipient", sourceWhatsAppNumber);
@@ -285,30 +251,9 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         return extraInfo;
     }
 
-    private JsonNode createResponseMessageForAssignee(JsonNode event, JsonNode assignee,int index) throws UnsupportedEncodingException {
-        String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
-        String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
-
-        String assigneeName = assignee.at("/name").asText();
-        String complaintURL = makeEmployeeURLForComplaint(serviceRequestId);
-        ObjectNode extraInfo = objectMapper.createObjectNode();
-        ArrayNode params = objectMapper.createArrayNode();
-        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
-        params.add(assigneeName);
-        params.add(complaintCategory);
-        params.add(serviceRequestId);
-        params.add(complaintURL);
-        extraInfo.put("templateId", assignedEmployeeTemplateId);
-        extraInfo.put("recipient", sourceWhatsAppNumber);
-        extraInfo.set("params", params);
-        return extraInfo;
-    }
-
-
     private JsonNode responseForAssignedStatus(JsonNode event, String citizenName, String mobileNumber,int index) throws IOException {
         String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
         String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
-
         JsonNode assignee = getAssignee(event,index);
         String assigneeName = assignee.at("/name").asText();
         ObjectNode extraInfo = objectMapper.createObjectNode();
@@ -353,7 +298,6 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     }
 
     private JsonNode responseForRejectedStatus(JsonNode event, String comments, String citizenName,int index) {
-
         String rejectReason = comments.split(";")[0];
         String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
         String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
@@ -371,7 +315,6 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     }
 
     private JsonNode responseForResolvedStatus(JsonNode event, String citizenName, String mobileNumber,int index) throws UnsupportedEncodingException {
-
         String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
         String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
         ObjectNode extraInfo = objectMapper.createObjectNode();
@@ -388,10 +331,11 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         return extraInfo;
     }
 
-    private JsonNode responseForReassignedtatus(JsonNode event, String citizenName, String mobileNumber,int index) throws UnsupportedEncodingException {
-
+    private JsonNode responseForReassignedtatus(JsonNode event, String citizenName, String mobileNumber,int index) throws IOException {
         String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
         String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
+        JsonNode assignee = getAssignee(event,index);
+        String assigneeName = assignee.at("/name").asText();
         ObjectNode extraInfo = objectMapper.createObjectNode();
         ArrayNode params = objectMapper.createArrayNode();
         String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
@@ -399,24 +343,9 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         params.add(citizenName);
         params.add(complaintCategory);
         params.add(serviceRequestId);
+        params.add(assigneeName);
         params.add(complaintURL);
         extraInfo.put("templateId", reassignAssignedTemplateId);
-        extraInfo.put("recipient", sourceWhatsAppNumber);
-        extraInfo.set("params", params);
-        return extraInfo;
-    }
-
-    private JsonNode responseForRequestedReassignstatus(JsonNode event, String citizenName,int index) throws UnsupportedEncodingException {
-
-        String serviceRequestId = event.at("/services/"+index+"/serviceRequestId").asText();
-        String serviceCode = event.at("/services/"+index+"/serviceCode").asText();
-        ObjectNode extraInfo = objectMapper.createObjectNode();
-        ArrayNode params = objectMapper.createArrayNode();
-        String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
-        params.add(citizenName);
-        params.add(complaintCategory);
-        params.add(serviceRequestId);
-        extraInfo.put("templateId", reassignrequestedTemplateId);
         extraInfo.put("recipient", sourceWhatsAppNumber);
         extraInfo.set("params", params);
         return extraInfo;
@@ -428,12 +357,4 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
         String shortenedURL = urlShorteningSevice.shortenURL(url);
         return shortenedURL;
     }
-
-    private String makeEmployeeURLForComplaint(String serviceRequestId) throws UnsupportedEncodingException {
-        String encodedPath = URLEncoder.encode(serviceRequestId, "UTF-8");
-        String url = egovExternalHost + "employee/complaint-details/" + encodedPath+"?";
-        String shortenedURL = urlShorteningSevice.shortenURL(url);
-        return shortenedURL;
-    }
-
 }

@@ -55,7 +55,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
                 return true;
             }
         } catch (Exception e) {
-            log.error("Invalid request");
+            log.error("Invalid request",e);
         }
         return false;
     }

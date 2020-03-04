@@ -47,9 +47,11 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     String valueFirstWelcomeTemplateMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]},{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}]}";
 
-    private  String welcomeMessageTemplateId = "194275";
+    @Value("${valuefirst.notification.welcome.templateid}")
+    private  String welcomeMessageTemplateId;
 
-    private  String rootMessageTemplateId = "194277";
+    @Value("${valuefirst.notification.root.templateid}")
+    private  String rootMessageTemplateId;
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
@@ -105,6 +107,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         String fromMobileNumber = response.at(ChatNodeJsonPointerConstants.fromMobileNumber).asText();
         String templateId = response.at(ChatNodeJsonPointerConstants.templateId).asText();
         boolean missedCall = response.at(ChatNodeJsonPointerConstants.checkIfMissedCall).asBoolean();
+        String activeNodeId = response.at(ChatNodeJsonPointerConstants.activeNodeId).asText();
         if((fromMobileNumber==null)||(fromMobileNumber.equals("")))
             throw new CustomException("INVALID_RECEIPIENT_NUMBER","Receipient number can not be empty");
         List<JsonNode> valueFirstRequests = new ArrayList<>();
@@ -118,13 +121,16 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //        }
 //        else
         if(missedCall){
-            request = JsonPath.parse(valueFirstWelcomeTemplateMessageRequestBody);
-            request.set("$.SMS[0].@TEMPLATEINFO", welcomeMessageTemplateId);
-            request.set("$.SMS[1].@TEMPLATEINFO", rootMessageTemplateId);
-            request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
-            request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
-            request.set("$.SMS[1].ADDRESS[0].@TO", "91" + userMobileNumber);
-            request.set("$.SMS[1].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+            if(StringUtils.equals(activeNodeId,"root")){
+                request = JsonPath.parse(valueFirstWelcomeTemplateMessageRequestBody);
+                request.set("$.SMS[0].@TEMPLATEINFO", welcomeMessageTemplateId);
+                request.set("$.SMS[1].@TEMPLATEINFO", rootMessageTemplateId);
+                request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
+                request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+                request.set("$.SMS[1].ADDRESS[0].@TO", "91" + userMobileNumber);
+                request.set("$.SMS[1].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+                valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
+            }
         }
         else
         {
@@ -160,9 +166,8 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
             }
             request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
             request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+            valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
         }
-
-        valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
 
         log.debug("ValueFirst Requests : " + valueFirstRequests.size());
 
