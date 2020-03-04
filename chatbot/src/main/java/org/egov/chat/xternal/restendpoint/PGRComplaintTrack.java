@@ -8,7 +8,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
 import org.egov.chat.util.URLShorteningSevice;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;

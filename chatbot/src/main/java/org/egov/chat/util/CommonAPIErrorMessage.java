@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.models.ConversationState;
 import org.egov.chat.models.EgovChat;
-import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.models.Response;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Component
 @Slf4j

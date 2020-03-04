@@ -18,10 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Collections;
 
 @PropertySource("classpath:xternal.properties")
 @Slf4j

@@ -1,7 +1,6 @@
 package org.egov.chat.post.systeminitiated;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.List;
 

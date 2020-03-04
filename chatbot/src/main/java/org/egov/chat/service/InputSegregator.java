@@ -1,12 +1,8 @@
 package org.egov.chat.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.chat.config.graph.TopicNameGetter;
 import org.egov.chat.models.EgovChat;
-import org.egov.chat.repository.ConversationStateRepository;
 import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
