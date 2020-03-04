@@ -70,6 +70,8 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
     public void init() {
         valueFirstTextMessageRequestBody = fillCredentials(valueFirstTextMessageRequestBody);
         valueFirstImageMessageRequestBody = fillCredentials(valueFirstImageMessageRequestBody);
+        valueFirstTemplateMessageRequestBody =fillCredentials(valueFirstTemplateMessageRequestBody);
+        valueFirstWelcomeTemplateMessageRequestBody = fillCredentials(valueFirstWelcomeTemplateMessageRequestBody);
     }
 
 //    @Override
