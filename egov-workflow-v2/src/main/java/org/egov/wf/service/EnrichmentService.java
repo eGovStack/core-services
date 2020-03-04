@@ -174,6 +174,7 @@ public class EnrichmentService {
     public List<ProcessStateAndAction> enrichNextActionForSearch(RequestInfo requestInfo,List<ProcessInstance> processInstances){
         List<ProcessStateAndAction> processStateAndActions = new LinkedList<>();
         Map<String, List<ProcessInstance>> businessServiceToProcessInstance = getRequestByBusinessService(new ProcessInstanceRequest(requestInfo,processInstances));
+
         for(Map.Entry<String, List<ProcessInstance>> entry : businessServiceToProcessInstance.entrySet()){
             try{
              processStateAndActions.addAll(transitionService.getProcessStateAndActions(entry.getValue(),false));}
@@ -181,6 +182,7 @@ public class EnrichmentService {
                 e.printStackTrace();
             }
         }
+
         setNextActions(requestInfo,processStateAndActions,false);
         return processStateAndActions;
     }

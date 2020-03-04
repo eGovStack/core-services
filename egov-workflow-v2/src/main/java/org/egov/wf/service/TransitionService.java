@@ -52,6 +52,7 @@ public class TransitionService {
         Map<String,ProcessInstance> idToProcessInstanceFromDbMap = prepareProcessStateAndAction(processInstances,businessService);
         List<String> allowedRoles = workflowUtil.rolesAllowedInService(businessService);
         for(ProcessInstance processInstance: processInstances){
+
             ProcessStateAndAction processStateAndAction = new ProcessStateAndAction();
             processStateAndAction.setProcessInstanceFromRequest(processInstance);
             if(isTransitionCall){
@@ -64,9 +65,11 @@ public class TransitionService {
             else if(!isTransitionCall)
                 currentState = processStateAndAction.getProcessInstanceFromRequest().getState();
 
+
             //Assign businessSla when creating processInstance
-            if(processStateAndAction.getProcessInstanceFromDb()==null)
+            if(processStateAndAction.getProcessInstanceFromDb()==null && isTransitionCall)
                 processInstance.setBusinesssServiceSla(businessService.getBusinessServiceSla());
+
 
             if(currentState==null){
                     for(State state : businessService.getStates()){
@@ -89,6 +92,7 @@ public class TransitionService {
                 }
             }
 
+
             if(isTransitionCall){
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
@@ -106,6 +110,8 @@ public class TransitionService {
             processStateAndActions.add(processStateAndAction);
 
         }
+
+
         return processStateAndActions;
     }
 
