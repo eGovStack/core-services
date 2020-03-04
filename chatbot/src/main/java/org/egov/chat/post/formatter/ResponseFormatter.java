@@ -11,6 +11,4 @@ public interface ResponseFormatter {
 
     public List<JsonNode> getTransformedResponse(JsonNode response) throws IOException;
 
-    public void startResponseStream(String inputTopic, String outputTopic);
-
 }

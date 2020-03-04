@@ -33,38 +33,7 @@ public class ResetCheck {
 
     private int fuzzymatchScoreThreshold = 90;
 
-    @Autowired
-    private KafkaStreamsConfig kafkaStreamsConfig;
-    @Autowired
-    private CommonAPIErrorMessage commonAPIErrorMessage;
-    @Autowired
-    private ConversationStateRepository conversationStateRepository;
-
-    public void startStream(String inputTopic, String outputTopic) {
-
-        Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
-        streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
-        StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, EgovChat> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
-                EgovChatSerdes.getSerde()));
-
-        messagesKStream.flatMapValues(chatNode -> {
-            try {
-                chatNode.setResetConversation(isResetKeyword(chatNode));
-                return Collections.singletonList(chatNode);
-            } catch (Exception e) {
-                log.error("error in reset check",e);
-                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
-                return Collections.emptyList();
-            }
-        }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
-
-        kafkaStreamsConfig.startStream(builder, streamConfiguration);
-
-        log.info(streamName + " stream started");
-    }
-
-    private boolean isResetKeyword(EgovChat chatNode) {
+    public boolean isResetKeyword(EgovChat chatNode) {
         try {
             String answer = chatNode.getMessage().getRawInput();
             for (String resetKeyword : resetKeywordsString.split(",")) {

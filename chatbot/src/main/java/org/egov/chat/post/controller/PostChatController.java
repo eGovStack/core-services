@@ -12,6 +12,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.List;
 
 //import org.egov.chat.xternal.systeminitiated.WaterSewerageEventFormatter;
 
@@ -46,16 +48,16 @@ public class PostChatController {
         kafkaTopicCreater.createTopic("valuefirst-send-message");
 
         localizationStream.startStream("send-message", "send-message-localized");
-                // karixResponseFormatter.startResponseStream("send-message-localized", "karix-send-message");
-        valueFirstResponseFormatter.startResponseStream("send-message-localized", "valuefirst-send-message");
     }
 
-    // TODO : Move to kafka-connect-http-sink
-    @KafkaListener(groupId = "valuefirst-rest-call", topics = "valuefirst-send-message")
-    public void sendMessage(ConsumerRecord<String, JsonNode> consumerRecord) {
-//        karixRestCall.sendMessage(consumerRecord.value());
-        valueFirstRestCall.sendMessage(consumerRecord.value());
-    }
 
+    @KafkaListener(groupId = "valuefirst-rest-call", topics = "send-message-localized")
+    public void sendMessage(ConsumerRecord<String, JsonNode> consumerRecord) throws IOException {
+        JsonNode jsonNode = consumerRecord.value();
+        List<JsonNode> messages = valueFirstResponseFormatter.getTransformedResponse(jsonNode);
+        for(JsonNode message : messages) {
+            valueFirstRestCall.sendMessage(message);
+        }
+    }
 
 }
