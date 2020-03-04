@@ -27,8 +27,6 @@ import java.util.List;
 public class WelcomeMessageHandler {
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private KafkaTemplate<String, EgovChat> kafkaTemplate;
     @Autowired
     private ConversationStateRepository conversationStateRepository;
@@ -55,13 +53,12 @@ public class WelcomeMessageHandler {
         fuzzymatchScoreThreshold = welcomeConfig.get("matchAnswerThreshold").asInt();
     }
 
-    public EgovChat welcomeUser(EgovChat chatNode) {
+    public EgovChat welcomeUser(String consumerRecordKey, EgovChat chatNode) {
 
         chatNode.getMessage().setNodeId(welcomeConfig.get("name").asText());
         chatNode.getMessage().setValid(isWelcomeTriggerKeyword(chatNode));
 
         answerStore.saveAnswer(welcomeConfig, chatNode);
-
 
         if(chatNode.getMessage().isValid() || isNewUser(chatNode)) {
 
@@ -75,7 +72,7 @@ public class WelcomeMessageHandler {
 
             welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, welcomeChatNode);
+            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, welcomeChatNode);
 
             return chatNode;
 
@@ -88,7 +85,7 @@ public class WelcomeMessageHandler {
 
             chatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, chatNode);
+            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, chatNode);
 
             conversationStateRepository.updateConversationStateForId(chatNode.getConversationState());
             conversationStateRepository.markConversationInactive(chatNode.getConversationState().getConversationId());

@@ -10,6 +10,4 @@ public interface RequestFormatter {
 
     public JsonNode getTransformedRequest(JsonNode inputRequest) throws Exception;
 
-    public void startRequestFormatterStream(String inputTopic, String outputTopic, String errorTopic);
-
 }

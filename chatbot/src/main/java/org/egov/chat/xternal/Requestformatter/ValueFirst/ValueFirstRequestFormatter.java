@@ -134,30 +134,30 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 //        return false;
 //    }
 
-    @Override
-    public void startRequestFormatterStream(String inputTopic, String outputTopic, String errorTopic) {
-        Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
-        streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
-        StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, JsonNode> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
-                kafkaStreamsConfig.getJsonSerde()));
-
-        KStream<String, JsonNode>[] branches = messagesKStream.branch(
-                (key, inputRequest) -> isValid(inputRequest),
-                (key, value) -> true
-        );
-
-        branches[0].flatMapValues(request -> {
-            try {
-                return Collections.singletonList(getTransformedRequest(request));
-            } catch (Exception e) {
-                log.error("error in valuefirst pre request Requestformatter",e);
-                return Collections.emptyList();
-            }
-        }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
-
-        branches[1].mapValues(request -> request).to(errorTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
-
-        kafkaStreamsConfig.startStream(builder, streamConfiguration);
-    }
+//    @Override
+//    public void startRequestFormatterStream(String inputTopic, String outputTopic, String errorTopic) {
+//        Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
+//        streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
+//        StreamsBuilder builder = new StreamsBuilder();
+//        KStream<String, JsonNode> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
+//                kafkaStreamsConfig.getJsonSerde()));
+//
+//        KStream<String, JsonNode>[] branches = messagesKStream.branch(
+//                (key, inputRequest) -> isValid(inputRequest),
+//                (key, value) -> true
+//        );
+//
+//        branches[0].flatMapValues(request -> {
+//            try {
+//                return Collections.singletonList(getTransformedRequest(request));
+//            } catch (Exception e) {
+//                log.error("error in valuefirst pre request Requestformatter",e);
+//                return Collections.emptyList();
+//            }
+//        }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+//
+//        branches[1].mapValues(request -> request).to(errorTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+//
+//        kafkaStreamsConfig.startStream(builder, streamConfiguration);
+//    }
 }
