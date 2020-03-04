@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -74,30 +75,34 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         return "valuefirst-response-transform";
     }
 
-    @Override
-    public void startResponseStream(String inputTopic, String outputTopic) {
+    @PostConstruct
+    public void init() {
         valueFirstTextMessageRequestBody = fillCredentials(valueFirstTextMessageRequestBody);
         valueFirstImageMessageRequestBody = fillCredentials(valueFirstImageMessageRequestBody);
-        valueFirstTemplateMessageRequestBody = fillCredentials(valueFirstTemplateMessageRequestBody);
-        valueFirstWelcomeTemplateMessageRequestBody = fillCredentials(valueFirstWelcomeTemplateMessageRequestBody);
-        Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
-        streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
-        StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, JsonNode> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
-                kafkaStreamsConfig.getJsonSerde()));
-
-        messagesKStream.flatMapValues(response -> {
-            try {
-                return getTransformedResponse(response);
-            } catch (Exception e) {
-                log.error("error while transforming",e);
-                return Collections.emptyList();
-            }
-        }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
-
-        kafkaStreamsConfig.startStream(builder, streamConfiguration);
-
     }
+
+//    @Override
+//    public void startResponseStream(String inputTopic, String outputTopic) {
+//        valueFirstTextMessageRequestBody = fillCredentials(valueFirstTextMessageRequestBody);
+//        valueFirstImageMessageRequestBody = fillCredentials(valueFirstImageMessageRequestBody);
+//        Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
+//        streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, getStreamName());
+//        StreamsBuilder builder = new StreamsBuilder();
+//        KStream<String, JsonNode> messagesKStream = builder.stream(inputTopic, Consumed.with(Serdes.String(),
+//                kafkaStreamsConfig.getJsonSerde()));
+//
+//        messagesKStream.flatMapValues(response -> {
+//            try {
+//                return getTransformedResponse(response);
+//            } catch (Exception e) {
+//                log.error("error while transforming",e);
+//                return Collections.emptyList();
+//            }
+//        }).to(outputTopic, Produced.with(Serdes.String(), kafkaStreamsConfig.getJsonSerde()));
+//
+//        kafkaStreamsConfig.startStream(builder, streamConfiguration);
+//
+//    }
 
     @Override
     public List<JsonNode> getTransformedResponse(JsonNode response) throws IOException {

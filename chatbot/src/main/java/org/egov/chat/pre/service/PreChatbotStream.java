@@ -11,6 +11,7 @@ import org.egov.chat.config.ApplicationProperties;
 import org.egov.chat.config.KafkaStreamsConfig;
 import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
+import org.egov.chat.pre.authorization.UserService;
 import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,11 @@ import java.util.Properties;
 
 @Slf4j
 @Service
-public class TenantIdEnricher {
+public class PreChatbotStream {
 
-    private String streamName = "tenant-enrich";
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private ApplicationProperties applicationProperties;
     @Autowired
@@ -30,7 +33,10 @@ public class TenantIdEnricher {
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
 
-    public void startTenantEnricherStream(String inputTopic, String outputTopic) {
+    private String streamName = "pre-chatbot";
+
+
+    public void startPreChatbotStream(String inputTopic, String outputTopic) {
 
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
@@ -41,15 +47,17 @@ public class TenantIdEnricher {
         messagesKStream.flatMapValues(chatNode -> {
             try {
                 chatNode.setTenantId(applicationProperties.getStateLevelTenantId());
+                userService.addLoggedInUser(chatNode);
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error("error in tenantid enricher",e);
+                log.error("error in pre-chatbot stream",e);
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
         }).to(outputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         kafkaStreamsConfig.startStream(builder, streamConfiguration);
+
     }
 
 }

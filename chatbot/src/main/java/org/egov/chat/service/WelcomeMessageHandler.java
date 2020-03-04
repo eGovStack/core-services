@@ -27,8 +27,6 @@ import java.util.List;
 public class WelcomeMessageHandler {
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private KafkaTemplate<String, EgovChat> kafkaTemplate;
     @Autowired
     private ConversationStateRepository conversationStateRepository;
@@ -55,17 +53,15 @@ public class WelcomeMessageHandler {
         fuzzymatchScoreThreshold = welcomeConfig.get("matchAnswerThreshold").asInt();
     }
 
-    public EgovChat welcomeUser(EgovChat chatNode, String keyForKafka) {
+    public EgovChat welcomeUser(String consumerRecordKey, EgovChat chatNode) {
+        EgovChat welcomeChatNode = chatNode.toBuilder().build();
 
-        chatNode.getMessage().setNodeId(welcomeConfig.get("name").asText());
-        chatNode.getMessage().setValid(isWelcomeTriggerKeyword(chatNode));
+        welcomeChatNode.getMessage().setNodeId(welcomeConfig.get("name").asText());
+        welcomeChatNode.getMessage().setValid(isWelcomeTriggerKeyword(welcomeChatNode));
 
-        answerStore.saveAnswer(welcomeConfig, chatNode);
+        answerStore.saveAnswer(welcomeConfig, welcomeChatNode);
 
-
-        if(chatNode.getMessage().isValid() || isNewUser(chatNode)) {
-
-            EgovChat welcomeChatNode = chatNode.toBuilder().build();
+        if(welcomeChatNode.getMessage().isValid() || isNewUser(welcomeChatNode)) {
 
             LocalizationCode localizationCode =
                     LocalizationCode.builder().code(welcomeConfig.get("message").asText()).build();
@@ -75,7 +71,7 @@ public class WelcomeMessageHandler {
 
             welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic,keyForKafka, welcomeChatNode);
+            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, welcomeChatNode);
 
             return chatNode;
 
@@ -86,12 +82,12 @@ public class WelcomeMessageHandler {
             Response response = Response.builder().timestamp(System.currentTimeMillis()).nodeId("welcome")
                     .type("text").localizationCodes(Collections.singletonList(localizationCode)).build();
 
-            chatNode.setResponse(response);
+            welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic,keyForKafka, chatNode);
+            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, welcomeChatNode);
 
-            conversationStateRepository.updateConversationStateForId(chatNode.getConversationState());
-            conversationStateRepository.markConversationInactive(chatNode.getConversationState().getConversationId());
+            conversationStateRepository.updateConversationStateForId(welcomeChatNode.getConversationState());
+            conversationStateRepository.markConversationInactive(welcomeChatNode.getConversationState().getConversationId());
 
             return null;
         }

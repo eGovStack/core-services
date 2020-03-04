@@ -96,8 +96,8 @@ public class LocalizationService {
 
     public List<String> getMessagesForCodes(List<LocalizationCode> localizationCodes, String locale) throws IOException {
         List<String> values = new ArrayList<>();
-        String tenantId = "";
-        Map<String, String> codeToMessageMapping = null;
+        String tenantId = stateLevelTenantId;
+        Map<String, String> codeToMessageMapping = this.codeToMessageMapping.get(locale);
         for (LocalizationCode code : localizationCodes) {
             if (code.getValue() != null) {
                 values.add(code.getValue());

@@ -1,39 +1,41 @@
 package org.egov.chat.pre.controller;
 
-import org.egov.chat.pre.service.TenantIdEnricher;
-import org.egov.chat.pre.service.UserDataEnricher;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.egov.chat.pre.service.MessageWebhook;
+import org.egov.chat.pre.service.PreChatbotStream;
 import org.egov.chat.util.KafkaTopicCreater;
 import org.egov.chat.xternal.requestformatter.ValueFirst.ValueFirstRequestFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
-@Controller
+@RestController
 public class PreChatController {
-//
+
     @Autowired
-    private ValueFirstRequestFormatter valueFirstRequestFormatter;
+    private MessageWebhook messageWebhook;
     @Autowired
-    private TenantIdEnricher tenantIdEnricher;
-    @Autowired
-    private UserDataEnricher userDataEnricher;
+    private PreChatbotStream preChatbotStream;
     @Autowired
     private KafkaTopicCreater kafkaTopicCreater;
 
     @PostConstruct
     public void initPreChatbotStreams() {
-//        karixRequestFormatter.startRequestFormatterStream("whatsapp-received-messages",
-//                "transformed-input-messages", "chatbot-error-messages");
+        kafkaTopicCreater.createTopic("whatsapp-received-messages");
         kafkaTopicCreater.createTopic("transformed-input-messages");
         kafkaTopicCreater.createTopic("chatbot-error-messages");
-        kafkaTopicCreater.createTopic("tenant-enriched-messages");
         kafkaTopicCreater.createTopic("input-messages");
-        kafkaTopicCreater.createTopic("whatsapp-received-messages");
-        valueFirstRequestFormatter.startRequestFormatterStream("whatsapp-received-messages",
-                "transformed-input-messages", "chatbot-error-messages");
-        tenantIdEnricher.startTenantEnricherStream("transformed-input-messages", "tenant-enriched-messages");
-        userDataEnricher.startUserDataStream("tenant-enriched-messages", "input-messages");
+
+        preChatbotStream.startPreChatbotStream("transformed-input-messages", "input-messages");
+    }
+
+    @RequestMapping(value="/messages", method = RequestMethod.POST)
+    public ResponseEntity<Object> receiveMessage(@RequestBody JsonNode message) throws Exception {
+        return new ResponseEntity<>(messageWebhook.receiveMessage(message), HttpStatus.OK );
     }
 
 }

@@ -19,36 +19,25 @@ public class InputSegregator {
     private String rootQuestionTopic = "root-question";
 
     @Autowired
-    private ConversationStateRepository conversationStateRepository;
-    @Autowired
     private TopicNameGetter topicNameGetter;
     @Autowired
     private KafkaTemplate<String, EgovChat> kafkaTemplate;
-    @Autowired
-    ObjectMapper objectMapper;
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private WelcomeMessageHandler welcomeMessageHandler;
 
-    public void segregateAnswer(ConsumerRecord<String, JsonNode> consumerRecord) {
-        EgovChat chatNode=null;
+    public void segregateAnswer(String consumerRecordKey, EgovChat chatNode) {
         try {
-            chatNode = objectMapper.convertValue(consumerRecord.value(), EgovChat.class);
-
             String activeNodeId = chatNode.getConversationState().getActiveNodeId();
-
             log.debug("Active Node Id : " + activeNodeId);
-
             if(activeNodeId == null) {
-                chatNode = welcomeMessageHandler.welcomeUser(chatNode, consumerRecord.key());
+                chatNode = welcomeMessageHandler.welcomeUser(consumerRecordKey, chatNode);
                 if(chatNode == null)
                     return;
             }
-
             String topic = getOutputTopicName(activeNodeId);
-
-            kafkaTemplate.send(topic, consumerRecord.key(), chatNode);
+            kafkaTemplate.send(topic, consumerRecordKey, chatNode);
         } catch (Exception e) {
             log.error("error in input segregator",e);
             if(chatNode!=null)
