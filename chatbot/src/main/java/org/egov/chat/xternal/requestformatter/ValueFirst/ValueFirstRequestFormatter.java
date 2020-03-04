@@ -47,15 +47,15 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
     @Override
     public boolean isValid(JsonNode inputRequest) {
         try {
-            if(checkForMissedCallNotification(inputRequest))
+            if (checkForMissedCallNotification(inputRequest))
                 return true;
 
             String mediaType = inputRequest.at(ValueFirstPointerConstants.mediaType).asText();
-            if(mediaType.equalsIgnoreCase("text") || mediaType.equalsIgnoreCase("image")) {
+            if (mediaType.equalsIgnoreCase("text") || mediaType.equalsIgnoreCase("image")) {
                 return true;
             }
         } catch (Exception e) {
-            log.error("Invalid request",e);
+            log.error("Invalid request", e);
         }
         return false;
     }
@@ -72,7 +72,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         return chatNode;
     }
 
-    public JsonNode getMissedCallChatNode(JsonNode inputRequest){
+    public JsonNode getMissedCallChatNode(JsonNode inputRequest) {
         String inputMobile = getValueFromNode(inputRequest.at(ValueFirstPointerConstants.missedCallFromMobileNumber));
         String mobileNumber = inputMobile.substring(2, 2 + 10);
         ObjectNode user = objectMapper.createObjectNode();
@@ -104,10 +104,9 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 
         ObjectNode message = objectMapper.createObjectNode();
         message.put("contentType", mediaType);
-        if(mediaType.equalsIgnoreCase("text")) {
+        if (mediaType.equalsIgnoreCase("text")) {
             message.set("rawInput", inputRequest.at(ValueFirstPointerConstants.textContent));
-        }
-        else if(mediaType.equalsIgnoreCase("image")) {
+        } else if (mediaType.equalsIgnoreCase("image")) {
             String imageInBase64String = inputRequest.at(ValueFirstPointerConstants.mediaData).asText();
             message.put("rawInput", fileStore.convertFromBase64AndStore(imageInBase64String));
         }
@@ -123,6 +122,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         chatNode.set("timestamp", inputRequest.at(ValueFirstPointerConstants.timestampPath));
         return chatNode;
     }
+
     // TODO : set actual recipient number in input request not missed call number
 //    private JsonNode makeNodeForMissedCallRequest(JsonNode inputRequest) throws IOException {
 //        JsonNode body = inputRequest.get("body");
@@ -140,16 +140,15 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 //    }
 //
     private boolean checkForMissedCallNotification(JsonNode inputRequest) {
-        if(!StringUtils.isEmpty(inputRequest.at(ValueFirstPointerConstants.missedCallToNumber).asText()))
-        {
-            return  true;
+        if (!StringUtils.isEmpty(inputRequest.at(ValueFirstPointerConstants.missedCallToNumber).asText())) {
+            return true;
         }
         return false;
     }
 
     private String getValueFromNode(JsonNode jsonNode) {
-        if(jsonNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode)jsonNode;
+        if (jsonNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) jsonNode;
             return arrayNode.get(0).asText();
         } else {
             return jsonNode.asText();

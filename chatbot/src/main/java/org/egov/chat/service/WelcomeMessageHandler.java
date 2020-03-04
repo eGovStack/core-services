@@ -60,7 +60,7 @@ public class WelcomeMessageHandler {
 
         answerStore.saveAnswer(welcomeConfig, welcomeChatNode);
 
-        if(welcomeChatNode.getMessage().isValid() || isNewUser(welcomeChatNode)) {
+        if (welcomeChatNode.getMessage().isValid() || isNewUser(welcomeChatNode)) {
 
             LocalizationCode localizationCode =
                     LocalizationCode.builder().code(welcomeConfig.get("message").asText()).build();
@@ -95,8 +95,8 @@ public class WelcomeMessageHandler {
     private boolean isNewUser(EgovChat chatNode) {
 
         int numberOfConversations = conversationStateRepository.getConversationStateCountForUserId(
-                        chatNode.getUser().getUserId());
-        if(numberOfConversations == 1)
+                chatNode.getUser().getUserId());
+        if (numberOfConversations == 1)
             return true;
         return false;
     }
@@ -113,7 +113,7 @@ public class WelcomeMessageHandler {
 
             return false;
         } catch (Exception e) {
-            log.error("error in welcome keyword check",e);
+            log.error("error in welcome keyword check", e);
             return false;
         }
     }

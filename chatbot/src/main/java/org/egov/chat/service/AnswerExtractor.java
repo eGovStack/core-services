@@ -17,11 +17,9 @@ public class AnswerExtractor {
     private FixedSetValues fixedSetValues;
 
     public EgovChat extractAnswer(JsonNode config, EgovChat chatNode) throws IOException {
-
         if (config.get("typeOfValues") != null && config.get("typeOfValues").asText().equalsIgnoreCase("FixedSetValues")) {
             chatNode = fixedSetValues.extractAnswer(config, chatNode);
         }
-
         return chatNode;
     }
 

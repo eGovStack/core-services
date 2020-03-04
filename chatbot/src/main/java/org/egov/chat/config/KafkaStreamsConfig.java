@@ -35,9 +35,9 @@ public class KafkaStreamsConfig {
     }
 
     public Properties getDefaultStreamConfiguration() {
-        if(defaultStreamConfiguration == null)
+        if (defaultStreamConfiguration == null)
             initDefaultStreamConfiguration();
-        return (Properties) defaultStreamConfiguration.clone() ;
+        return (Properties) defaultStreamConfiguration.clone();
     }
 
     private void initDefaultStreamConfiguration() {
@@ -49,7 +49,7 @@ public class KafkaStreamsConfig {
     }
 
     public Serde<JsonNode> getJsonSerde() {
-        if(jsonSerde == null)
+        if (jsonSerde == null)
             initJsonSerde();
         return jsonSerde;
     }

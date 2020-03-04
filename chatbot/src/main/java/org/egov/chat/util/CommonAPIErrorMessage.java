@@ -23,18 +23,16 @@ public class CommonAPIErrorMessage {
     @Autowired
     private LocalizationService localizationService;
     private String commonApiErrorMessage = "chatbot.message.common.api.errormessage";
-    private String localizedTopic ="send-message-localized";
+    private String localizedTopic = "send-message-localized";
 
-    private Response getErrorMessageResponse()
-    {
+    private Response getErrorMessageResponse() {
         String localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage);
-        Response response =Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").text(localizedErrorMessage).build();
+        Response response = Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").text(localizedErrorMessage).build();
         return response;
     }
 
-    private void resetConversation(EgovChat chatNode){
+    private void resetConversation(EgovChat chatNode) {
         String conversationId = chatNode.getConversationState().getConversationId();
-
         ConversationState nextConversationState = chatNode.getConversationState().toBuilder().build();
         nextConversationState.setLastModifiedTime(System.currentTimeMillis());
         nextConversationState.setActiveNodeId("Error");
@@ -44,16 +42,14 @@ public class CommonAPIErrorMessage {
         conversationStateRepository.markConversationInactive(conversationId);
     }
 
-    public void resetFlowDuetoError(EgovChat chatNode)
-    {
-        try{
-            if(chatNode.getConversationState()!=null)
+    public void resetFlowDuetoError(EgovChat chatNode) {
+        try {
+            if (chatNode.getConversationState() != null)
                 resetConversation(chatNode);
             chatNode.setResponse(getErrorMessageResponse());
-            kafkaTemplate.send(localizedTopic,chatNode);
-        }
-        catch (Exception ex){
-            log.error("error occurred while sending user error response",ex);
+            kafkaTemplate.send(localizedTopic, chatNode);
+        } catch (Exception ex) {
+            log.error("error occurred while sending user error response", ex);
         }
     }
 }

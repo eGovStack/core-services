@@ -35,7 +35,7 @@ public class QuestionGenerator {
     public EgovChat fillQuestion(JsonNode config, EgovChat chatNode) throws IOException {
         List<LocalizationCode> localizationCodeArray = new ArrayList<>();
 
-        if(chatNode.getResponse() == null) {
+        if (chatNode.getResponse() == null) {
             Response response = Response.builder().timestamp(System.currentTimeMillis()).type("text").nodeId(config.get("name").asText())
                     .localizationCodes(localizationCodeArray).build();
             chatNode.setResponse(response);
@@ -81,28 +81,26 @@ public class QuestionGenerator {
                 ArrayNode values = (ArrayNode) questionDetails.get("askedValues");
                 String numberPrefixLocalizationCode = null;
                 String numberNameSeparatorLocalizationCode = null;
-                if(config.has("numberPrefixLocalizationCode"))
-                     numberPrefixLocalizationCode=config.get("numberPrefixLocalizationCode").asText();
-                if(config.has("numberPostfixLocalizationCode"))
-                     numberNameSeparatorLocalizationCode=config.get("numberPostfixLocalizationCode").asText();
+                if (config.has("numberPrefixLocalizationCode"))
+                    numberPrefixLocalizationCode = config.get("numberPrefixLocalizationCode").asText();
+                if (config.has("numberPostfixLocalizationCode"))
+                    numberNameSeparatorLocalizationCode = config.get("numberPostfixLocalizationCode").asText();
                 // TODO : Currently using * for Bold
                 for (int i = 0; i < values.size(); i++) {
-                    LocalizationCode newLineCode=LocalizationCode.builder().value("\n").build();
+                    LocalizationCode newLineCode = LocalizationCode.builder().value("\n").build();
                     localizationCodes.add(newLineCode);
-                    if(numberPrefixLocalizationCode!=null)
-                    {
-                        LocalizationCode prefixCode=LocalizationCode.builder().code(numberPrefixLocalizationCode).build();
+                    if (numberPrefixLocalizationCode != null) {
+                        LocalizationCode prefixCode = LocalizationCode.builder().code(numberPrefixLocalizationCode).build();
                         localizationCodes.add(prefixCode);
                     }
                     JsonNode value = values.get(i);
                     String tempString = value.get("index").asText();
                     localizationCodes.addAll(numeralLocalization.getLocalizationCodesForStringContainingNumbers(tempString));
-                    if(numberNameSeparatorLocalizationCode!=null)
-                    {
-                        LocalizationCode separatorCode=LocalizationCode.builder().code(numberNameSeparatorLocalizationCode).build();
+                    if (numberNameSeparatorLocalizationCode != null) {
+                        LocalizationCode separatorCode = LocalizationCode.builder().code(numberNameSeparatorLocalizationCode).build();
                         localizationCodes.add(separatorCode);
                     }
-                    LocalizationCode localizationCode=objectMapper.convertValue(value.get("value"), LocalizationCode.class);
+                    LocalizationCode localizationCode = objectMapper.convertValue(value.get("value"), LocalizationCode.class);
                     localizationCodes.add(localizationCode);
                 }
             } else {

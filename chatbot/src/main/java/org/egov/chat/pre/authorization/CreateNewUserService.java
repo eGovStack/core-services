@@ -41,7 +41,7 @@ public class CreateNewUserService {
                 restTemplate.postForEntity(applicationProperties.getUserServiceHost() + applicationProperties.getCitizenCreatePath(),
                         userCreateRequest, JsonNode.class);
 
-        if(createResponse.getStatusCode().is2xxSuccessful()) {
+        if (createResponse.getStatusCode().is2xxSuccessful()) {
             return createResponse.getBody();
         } else {
             throw new Exception("User Create Error");

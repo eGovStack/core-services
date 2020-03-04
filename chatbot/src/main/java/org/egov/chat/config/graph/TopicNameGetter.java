@@ -16,14 +16,14 @@ public class TopicNameGetter {
     }
 
     public String getAnswerInputTopicNameForNode(String nodeName) {
-        return nodeName + "-answer" ;
+        return nodeName + "-answer";
     }
 
     public String getAnswerOutputTopicNameForNode(String nodeName) {
         List<String> nextNodes = graphReader.getNextNodes(nodeName);
-        if(nextNodes.size() == 1)
+        if (nextNodes.size() == 1)
             return nextNodes.get(0) + "-question";
-        if(nextNodes.size() == 0)
+        if (nextNodes.size() == 0)
             return nodeName + "-end";
         return null;
     }

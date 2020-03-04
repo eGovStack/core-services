@@ -42,7 +42,7 @@ public class Validator {
             chatNode.getMessage().setValid(true);
             return true;
         } catch (Exception e) {
-            log.error("error in validator",e);
+            log.error("error in validator", e);
             chatNode.getMessage().setValid(false);
             return false;
         }

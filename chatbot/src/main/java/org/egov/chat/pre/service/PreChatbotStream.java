@@ -50,7 +50,7 @@ public class PreChatbotStream {
                 userService.addLoggedInUser(chatNode);
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error("error in pre-chatbot stream",e);
+                log.error("error in pre-chatbot stream", e);
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

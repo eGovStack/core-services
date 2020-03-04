@@ -24,7 +24,7 @@ public class AnswerStore {
         if (!typeValidator.isValid(config, chatNode))
             chatNode.getMessage().setValid(false);
 
-        if(chatNode.getMessage().getMessageContent() == null)
+        if (chatNode.getMessage().getMessageContent() == null)
             chatNode.getMessage().setMessageContent(chatNode.getMessage().getRawInput());
 
         chatNode.getMessage().setConversationId(conversationId);

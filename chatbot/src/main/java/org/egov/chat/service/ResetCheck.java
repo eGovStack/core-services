@@ -28,7 +28,7 @@ public class ResetCheck {
 
             return false;
         } catch (Exception e) {
-            log.error("error in reset check",e);
+            log.error("error in reset check", e);
             return false;
         }
     }

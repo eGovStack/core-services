@@ -17,7 +17,7 @@ public class EgovChatSerializer implements Serializer<EgovChat> {
 
     @Override
     public byte[] serialize(String s, EgovChat egovChat) {
-        if(egovChat == null)
+        if (egovChat == null)
             return null;
 
         try {

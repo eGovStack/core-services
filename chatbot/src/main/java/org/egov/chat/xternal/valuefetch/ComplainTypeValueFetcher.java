@@ -48,7 +48,7 @@ public class ComplainTypeValueFetcher implements ExternalValueFetcher {
                 ModuleDetail.builder().moduleName(moduleName).masterDetails(Collections.singletonList(masterDetail)).build();
         MdmsCriteria mdmsCriteria =
                 MdmsCriteria.builder().tenantId(tenantIdArg).moduleDetails(Collections.singletonList(moduleDetail)).build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()) .build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()).build();
 
         MdmsResponse mdmsResponse = restTemplate.postForObject(mdmsHost + mdmsSearchPath, mdmsCriteriaReq, MdmsResponse.class);
 
@@ -73,15 +73,15 @@ public class ComplainTypeValueFetcher implements ExternalValueFetcher {
 
     List<String> getActiveComplaintTypes(JSONArray mdmsResValues) {
         List<String> values = new ArrayList<>();
-        Map<Integer,String>entriesWithOrder=new HashMap<>();
-        for(Object mdmsResValue : mdmsResValues) {
+        Map<Integer, String> entriesWithOrder = new HashMap<>();
+        for (Object mdmsResValue : mdmsResValues) {
             HashMap mdmsValue = (HashMap) mdmsResValue;
-            if(mdmsValue.get("active").toString().equalsIgnoreCase("true")&&(mdmsValue.get("order")!=null)) {
-                entriesWithOrder.put(Integer.parseInt(mdmsValue.get("order").toString()),mdmsValue.get("serviceCode").toString());
+            if (mdmsValue.get("active").toString().equalsIgnoreCase("true") && (mdmsValue.get("order") != null)) {
+                entriesWithOrder.put(Integer.parseInt(mdmsValue.get("order").toString()), mdmsValue.get("serviceCode").toString());
             }
         }
-        TreeSet <Integer>sortedSet=new TreeSet<>(entriesWithOrder.keySet());
-        for(Integer key:sortedSet){
+        TreeSet<Integer> sortedSet = new TreeSet<>(entriesWithOrder.keySet());
+        for (Integer key : sortedSet) {
             values.add(entriesWithOrder.get(key));
         }
         return values;
@@ -90,7 +90,7 @@ public class ComplainTypeValueFetcher implements ExternalValueFetcher {
 
     private ArrayNode getLocalizedCodes(List<String> values) {
         ArrayNode localizationCodes = objectMapper.createArrayNode();
-        for(String value : values) {
+        for (String value : values) {
             ObjectNode localizationCode = objectMapper.createObjectNode();
             localizationCode.put("code", localizationPrefix + value);
             localizationCodes.add(localizationCode);

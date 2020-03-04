@@ -61,10 +61,10 @@ public class RestAPI {
             String nodeId = node.asText();
             Optional<Message> message =
                     messageList.stream().filter(message1 -> message1.getNodeId().equalsIgnoreCase(nodeId)).findFirst();
-            if(!message.isPresent()) {
+            if (!message.isPresent()) {
                 //If nodeId isn't found in previously saved messages in DB
                 //Check for nodeId in last received message
-                if(chatNode.at("/message/nodeId").asText().equalsIgnoreCase(nodeId)) {
+                if (chatNode.at("/message/nodeId").asText().equalsIgnoreCase(nodeId)) {
                     try {
                         message = Optional.ofNullable(objectMapper.treeToValue(chatNode.at("/message"), Message.class));
                     } catch (JsonProcessingException e) {

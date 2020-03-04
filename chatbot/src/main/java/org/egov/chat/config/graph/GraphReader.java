@@ -28,7 +28,7 @@ public class GraphReader {
 
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        csvImporter.importGraph(graph, getClass().getClassLoader().getResourceAsStream ("GRAPH_ADJACENCY_LIST.csv"));
+        csvImporter.importGraph(graph, getClass().getClassLoader().getResourceAsStream("GRAPH_ADJACENCY_LIST.csv"));
 
     }
 
@@ -38,7 +38,7 @@ public class GraphReader {
         Set<DefaultEdge> edges = graph.outgoingEdgesOf(node);
         Iterator<DefaultEdge> edgeIterator = edges.iterator();
 
-        while(edgeIterator.hasNext()) {
+        while (edgeIterator.hasNext()) {
             DefaultEdge edge = edgeIterator.next();
             String targetVertext = graph.getEdgeTarget(edge);
             nextNodes.add(targetVertext);

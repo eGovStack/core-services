@@ -37,14 +37,14 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
 
         ResponseEntity<JsonNode> loginResponse = restTemplate.postForEntity(applicationProperties.getUserServiceHost()
-                        + applicationProperties.getUserServiceOAuthPath(), request, JsonNode.class);
+                + applicationProperties.getUserServiceOAuthPath(), request, JsonNode.class);
 
         ObjectNode loginObjectNode = objectMapper.createObjectNode();
 
-        if(loginResponse.getStatusCode().is2xxSuccessful()) {
+        if (loginResponse.getStatusCode().is2xxSuccessful()) {
             JsonNode loginObject = loginResponse.getBody();
 
-            loginObjectNode.set("authToken" , loginObject.get("access_token"));
+            loginObjectNode.set("authToken", loginObject.get("access_token"));
             loginObjectNode.set("refreshToken", loginObject.get("refresh_token"));
             loginObjectNode.set("userInfo", loginObject.get("UserRequest"));
             loginObjectNode.set("expiresIn", loginObject.get("expires_in"));

@@ -21,7 +21,7 @@ public class MessageWebhook {
 
     public Object receiveMessage(JsonNode message) throws Exception {
 
-        if(requestFormatter.isValid(message)) {
+        if (requestFormatter.isValid(message)) {
             ((ObjectNode) message).put("timestamp", System.currentTimeMillis());
             message = requestFormatter.getTransformedRequest(message);
             String key = message.at("/user/mobileNumber").asText();

@@ -28,7 +28,7 @@ public class KafkaTopicCreater {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public void createTopic(String topicName){
+    public void createTopic(String topicName) {
         Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, applicationProperties.getKafkaHost());
 
@@ -40,7 +40,7 @@ public class KafkaTopicCreater {
         CreateTopicsResult createTopicsResult = adminClient.createTopics(newTopics);
 
         Map<String, KafkaFuture<Void>> kafkaFutures = createTopicsResult.values();
-        for(NewTopic newTopic : newTopics) {
+        for (NewTopic newTopic : newTopics) {
             try {
                 kafkaFutures.get(newTopic.name()).get();
                 log.info("Topic created : " + newTopic.name());
@@ -48,7 +48,7 @@ public class KafkaTopicCreater {
                 if (e.getCause() instanceof TopicExistsException) {
                     log.info("Topic already exists : " + newTopic.name());
                 } else {
-                    log.error("Error while creating topic : " + newTopic.name(),e);
+                    log.error("Error while creating topic : " + newTopic.name(), e);
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }

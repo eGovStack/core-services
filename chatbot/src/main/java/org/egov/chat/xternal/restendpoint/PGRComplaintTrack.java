@@ -44,8 +44,8 @@ public class PGRComplaintTrack implements RestEndpoint {
     private String trackComplaintHeaderLocalizationCode = "chatbot.message.pgrTrackComplaintEndHeader";
     private String complaintSummaryTemplateLocalizationCode = "chatbot.template.pgrTrackComplaintSummary";
     private String noComplaintFoundMessage = "chatbot.message.noComplaintFoundMessage";
-    private String  messageWhenComplaintsExistsCode= "chatbot.message.trackend.exist";
-    private String pgrShowComplaintForStatusArray [] = {"rejected","resolved","assigned","open","reassignrequested"};
+    private String messageWhenComplaintsExistsCode = "chatbot.message.trackend.exist";
+    private String pgrShowComplaintForStatusArray[] = {"rejected", "resolved", "assigned", "open", "reassignrequested"};
     @Value("${egov.external.host}")
     private String egovExternalHost;
     @Value("${pgr.service.host}")
@@ -76,9 +76,9 @@ public class PGRComplaintTrack implements RestEndpoint {
         JsonNode requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-            ResponseEntity<ObjectNode> response = restTemplate.postForEntity(uriComponents.buildAndExpand().toUri(),
-                    requestObject, ObjectNode.class);
-            responseMessage = makeMessageForResponse(response,mobileNumber);
+        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(uriComponents.buildAndExpand().toUri(),
+                requestObject, ObjectNode.class);
+        responseMessage = makeMessageForResponse(response, mobileNumber);
         responseMessage.put("timestamp", System.currentTimeMillis());
         return responseMessage;
     }
@@ -133,14 +133,14 @@ public class PGRComplaintTrack implements RestEndpoint {
 
                     String status = documentContext.read("$.services.[" + i + "].status");
                     param = objectMapper.createObjectNode();
-                    param.put("code", pgrStatusLocalisationPrefix+status);
+                    param.put("code", pgrStatusLocalisationPrefix + status);
                     params.set("status", param);
 
                     String encodedPath = URLEncoder.encode(documentContext.read("$.services.[" + i + "].serviceRequestId"), "UTF-8");
-                    String url = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
-                    String encodedURL=urlShorteningService.shortenURL(url);
+                    String url = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?";
+                    String encodedURL = urlShorteningService.shortenURL(url);
                     param = objectMapper.createObjectNode();
-                    param.put("value", "\n"+encodedURL);
+                    param.put("value", "\n" + encodedURL);
                     params.set("url", param);
 
                     template.set("params", params);
@@ -152,9 +152,9 @@ public class PGRComplaintTrack implements RestEndpoint {
                 localizationCodesArrayNode.add(localizationCode);
 
                 ObjectNode localizationCodeForLink = objectMapper.createObjectNode();
-                String complaintViewURL = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=my-complaints?";
-                String shortenedcomplaintViewURL=urlShorteningService.shortenURL(complaintViewURL);
-                localizationCodeForLink.put("value", shortenedcomplaintViewURL );
+                String complaintViewURL = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=my-complaints?";
+                String shortenedcomplaintViewURL = urlShorteningService.shortenURL(complaintViewURL);
+                localizationCodeForLink.put("value", shortenedcomplaintViewURL);
                 localizationCodesArrayNode.add(localizationCodeForLink);
                 responseMessage.set("localizationCodes", localizationCodesArrayNode);
             } else {
@@ -166,8 +166,8 @@ public class PGRComplaintTrack implements RestEndpoint {
 
 
         } else {
-            log.error("Exception in PGR search",responseEntity.toString());
-            throw new CustomException("PGR_SEARCH_ERROR","Exception while searching PGR complaint "+responseEntity.toString());
+            log.error("Exception in PGR search", responseEntity.toString());
+            throw new CustomException("PGR_SEARCH_ERROR", "Exception while searching PGR complaint " + responseEntity.toString());
         }
 
         return responseMessage;

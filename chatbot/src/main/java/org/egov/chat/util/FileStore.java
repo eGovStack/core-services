@@ -62,7 +62,7 @@ public class FileStore {
     }
 
     public String convertFromBase64AndStore(String imageInBase64String) throws IOException {
-        String tmpFileName = "pgr-whatsapp-"+System.currentTimeMillis()+".png";
+        String tmpFileName = "pgr-whatsapp-" + System.currentTimeMillis() + ".png";
         File tempFile = new File(tmpFileName);
         imageInBase64String = imageInBase64String.replaceAll(" ", "+");
         byte[] bytes = Base64.getDecoder().decode(imageInBase64String);
@@ -78,8 +78,8 @@ public class FileStore {
             String fileStoreId = saveToFileStore(tempFile, tenantId, module);
             tempFile.delete();
             return fileStoreId;
-        }catch (Exception e){
-            log.error("Get File failed",e);
+        } catch (Exception e) {
+            log.error("Get File failed", e);
         }
         return null;
     }
@@ -111,7 +111,7 @@ public class FileStore {
     }
 
     public File getFileForFileStoreId(String fileStoreId, String tenantId) throws IOException {
-        if(fileStoreId.length() > 40) {                     // TODO : Check if direct link provided (If length > 40 then direct link is provided)
+        if (fileStoreId.length() > 40) {                     // TODO : Check if direct link provided (If length > 40 then direct link is provided)
             String fileURL = fileStoreId;
             String refinedURL = getRefinedFileURL(fileURL);
             String filename = FilenameUtils.getName(refinedURL);
@@ -125,14 +125,14 @@ public class FileStore {
 
         ResponseEntity<ObjectNode> response = restTemplate.getForEntity(url, ObjectNode.class);
 
-        String fileURL = getRefinedFileURL( response.getBody().get(fileStoreId).asText() );
+        String fileURL = getRefinedFileURL(response.getBody().get(fileStoreId).asText());
         String filename = FilenameUtils.getName(fileURL);
         filename = filename.substring(13, filename.indexOf("?"));       // TODO : 13 characters set by fileStore service
         return getFileAt(fileURL, filename);
     }
 
     public String getRefinedFileURL(String fileURL) {
-        if(fileURL.contains(",")) {             // TODO : Because fileStore service returns , separated list of files
+        if (fileURL.contains(",")) {             // TODO : Because fileStore service returns , separated list of files
             return fileURL.substring(0, fileURL.indexOf(","));
         }
         return fileURL;

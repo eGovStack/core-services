@@ -50,10 +50,10 @@ public class GraphStreamGenerator {
 
             String nodeType = config.get("nodeType").asText();
 
-            if(nodeType.equalsIgnoreCase("step")) {
-                String answerInputTopicName=topicNameGetter.getAnswerInputTopicNameForNode(node);
-                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
-                String answerOutputTopicName=topicNameGetter.getAnswerOutputTopicNameForNode(node);
+            if (nodeType.equalsIgnoreCase("step")) {
+                String answerInputTopicName = topicNameGetter.getAnswerInputTopicNameForNode(node);
+                String questionTopicName = topicNameGetter.getQuestionTopicNameForNode(node);
+                String answerOutputTopicName = topicNameGetter.getAnswerOutputTopicNameForNode(node);
                 kafkaTopicCreater.createTopic(answerInputTopicName);
                 kafkaTopicCreater.createTopic(questionTopicName);
                 kafkaTopicCreater.createTopic(answerOutputTopicName);
@@ -66,9 +66,9 @@ public class GraphStreamGenerator {
                         topicNameGetter.getQuestionTopicNameForNode(node),
                         "send-message");
 
-            } else if(nodeType.equalsIgnoreCase("branch")) {
-                String answerInputTopicName=topicNameGetter.getAnswerInputTopicNameForNode(node);
-                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
+            } else if (nodeType.equalsIgnoreCase("branch")) {
+                String answerInputTopicName = topicNameGetter.getAnswerInputTopicNameForNode(node);
+                String questionTopicName = topicNameGetter.getQuestionTopicNameForNode(node);
                 kafkaTopicCreater.createTopic(questionTopicName);
                 kafkaTopicCreater.createTopic(answerInputTopicName);
 
@@ -79,9 +79,9 @@ public class GraphStreamGenerator {
                 createBranchStream.createQuestionStreamForConfig(config,
                         topicNameGetter.getQuestionTopicNameForNode(node),
                         "send-message");
-            } else if(nodeType.equalsIgnoreCase("endpoint")) {
+            } else if (nodeType.equalsIgnoreCase("endpoint")) {
 
-                String questionTopicName=topicNameGetter.getQuestionTopicNameForNode(node);
+                String questionTopicName = topicNameGetter.getQuestionTopicNameForNode(node);
                 kafkaTopicCreater.createTopic(questionTopicName);
                 createEndpointStream.createEndpointStream(config, questionTopicName,
                         "send-message");
@@ -93,7 +93,7 @@ public class GraphStreamGenerator {
         String path = "";
         path += rootFolder;
         String subFolders[] = node.split("\\.");
-        for(int i = 0; i < subFolders.length - 1; i++) {
+        for (int i = 0; i < subFolders.length - 1; i++) {
             path += subFolders[i] + "/";
         }
         path += node;

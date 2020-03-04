@@ -15,23 +15,14 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
-//import org.egov.chat.xternal.systeminitiated.WaterSewerageEventFormatter;
-
 @Controller
 public class PostChatController {
-    //
-//    @Autowired
-//    private WaterSewerageEventFormatter waterSewerageEventFormatter;
     @Autowired
     private PGRStatusUpdateEventFormatter pgrStatusUpdateEventFormatter;
     @Autowired
     private KafkaTopicCreater kafkaTopicCreater;
     @Autowired
     private LocalizationStream localizationStream;
-    // @Autowired
-    // private KarixResponseFormatter karixResponseFormatter;
-    // @Autowired
-    // private KarixRestCall karixRestCall;
     @Autowired
     private ValueFirstResponseFormatter valueFirstResponseFormatter;
     @Autowired
@@ -40,13 +31,10 @@ public class PostChatController {
 
     @PostConstruct
     public void init() {
-//        waterSewerageEventFormatter.startStream("water-sewerage-received-messages", "send-message");
         pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message-localized");
-
         kafkaTopicCreater.createTopic("send-message");
         kafkaTopicCreater.createTopic("send-message-localized");
         kafkaTopicCreater.createTopic("valuefirst-send-message");
-
         localizationStream.startStream("send-message", "send-message-localized");
     }
 

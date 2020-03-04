@@ -35,9 +35,9 @@ public class PreChatController {
         preChatbotStream.startPreChatbotStream("transformed-input-messages", "input-messages");
     }
 
-    @RequestMapping(value="/messages", method = RequestMethod.POST)
+    @RequestMapping(value = "/messages", method = RequestMethod.POST)
     public ResponseEntity<Object> receiveMessage(@RequestBody JsonNode message) throws Exception {
-        return new ResponseEntity<>(messageWebhook.receiveMessage(message), HttpStatus.OK );
+        return new ResponseEntity<>(messageWebhook.receiveMessage(message), HttpStatus.OK);
     }
 
 }

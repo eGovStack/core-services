@@ -18,6 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
 import java.net.URLEncoder;
 
 @PropertySource("classpath:xternal.properties")
@@ -109,7 +110,7 @@ public class PGRComplaintCreate implements RestEndpoint {
             ObjectNode pgrResponse = responseEntity.getBody();
             String complaintNumber = pgrResponse.get("services").get(0).get("serviceRequestId").asText();
             String encodedPath = URLEncoder.encode(complaintNumber, "UTF-8");
-            String url = egovExternalHost + "citizen/otpLogin?mobileNo="+mobileNumber+"&redirectTo=complaint-details/" + encodedPath+"?";
+            String url = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?";
             String shortenedURL = urlShorteningService.shortenURL(url);
             ObjectNode param;
 
@@ -132,8 +133,8 @@ public class PGRComplaintCreate implements RestEndpoint {
             localizationCodes.add(template);
             responseMessage.set("localizationCodes", localizationCodes);
         } else {
-            log.error("Exception in PGR create",responseEntity.toString());
-            throw new CustomException("PGR_CREATE_ERROR","Exception while creating PGR complaint "+responseEntity.toString());
+            log.error("Exception in PGR create", responseEntity.toString());
+            throw new CustomException("PGR_CREATE_ERROR", "Exception while creating PGR complaint " + responseEntity.toString());
         }
         return responseMessage;
     }

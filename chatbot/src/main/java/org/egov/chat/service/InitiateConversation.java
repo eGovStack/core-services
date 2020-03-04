@@ -17,26 +17,20 @@ public class InitiateConversation {
     private ConversationStateRepository conversationStateRepository;
 
     public EgovChat createOrContinueConversation(EgovChat chatNode) {
-
         String userId = chatNode.getUser().getUserId();
-
         ConversationState conversationState = conversationStateRepository.getActiveConversationStateForUserId(userId);
-
-        if(chatNode.isResetConversation() && conversationState != null) {
+        if (chatNode.isResetConversation() && conversationState != null) {
             String conversationId = conversationState.getConversationId();
             conversationState.setActiveNodeId(conversationState.getActiveNodeId() + "-reset");
             conversationStateRepository.updateConversationStateForId(conversationState);
             conversationStateRepository.markConversationInactive(conversationId);
             conversationState = null;
         }
-
         if (conversationState == null) {
             conversationState = createNewConversationForUser(userId);
             conversationStateRepository.insertNewConversation(conversationState);
         }
-
         chatNode.setConversationState(conversationState);
-
         return chatNode;
     }
 
@@ -44,5 +38,4 @@ public class InitiateConversation {
         String conversationId = UUID.randomUUID().toString();
         return ConversationState.builder().conversationId(conversationId).userId(userId).active(true).locale("en_IN").build();
     }
-
 }

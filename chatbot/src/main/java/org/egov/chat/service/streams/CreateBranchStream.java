@@ -77,7 +77,7 @@ public class CreateBranchStream extends CreateStream {
 
                     return Collections.singletonList(chatNode);
                 } catch (Exception e) {
-                    log.error("error in branch stream",e);
+                    log.error("error in branch stream", e);
                     commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                     return Collections.emptyList();
                 }

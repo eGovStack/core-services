@@ -45,7 +45,7 @@ public class MessageRepository {
     }
 
     public List<Message> getValidMessagesOfConversation(String conversationId) {
-        return jdbcTemplate.query(selectValidMessagesOfConversationQuery, new Object[] { conversationId },
+        return jdbcTemplate.query(selectValidMessagesOfConversationQuery, new Object[]{conversationId},
                 new BeanPropertyRowMapper<>(Message.class));
     }
 }

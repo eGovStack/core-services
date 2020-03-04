@@ -85,13 +85,13 @@ public class CreateEndpointStream extends CreateStream {
                 List<EgovChat> nodes = new ArrayList<>();
                 nodes.add(chatNode);
 
-                EgovChat contactMessageNode=createContactMessageNode(chatNode);
-                if(contactMessageNode!=null)
-                     nodes.add(contactMessageNode);
+                EgovChat contactMessageNode = createContactMessageNode(chatNode);
+                if (contactMessageNode != null)
+                    nodes.add(contactMessageNode);
 
                 return nodes;
             } catch (Exception e) {
-                log.error("error in create endpoint stream",e);
+                log.error("error in create endpoint stream", e);
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }
@@ -105,18 +105,18 @@ public class CreateEndpointStream extends CreateStream {
     private EgovChat createContactMessageNode(EgovChat chatNode) {
 
         int recordcount = conversationStateRepository.getConversationStateCountForUserId(chatNode.getUser().getUserId());
-        if(recordcount>1)
+        if (recordcount > 1)
             return null;
 
         EgovChat contactMessageNode = chatNode.toBuilder().build();
-        ObjectNode contactcard=objectMapper.createObjectNode();
-        contactcard.put("number",numberInContactCard);
-        contactcard.put("name",nameInContactCard);
+        ObjectNode contactcard = objectMapper.createObjectNode();
+        contactcard.put("number", numberInContactCard);
+        contactcard.put("name", nameInContactCard);
         LocalizationCode contactCardMessageCode = LocalizationCode.builder().code(contactMessageLocalizationCode).build();
         LocalizationCode contactCardContactName = LocalizationCode.builder().value(nameInContactCard).build();
         LocalizationCode mobNameSeparator = LocalizationCode.builder().value(" - ").build();
         LocalizationCode contactCardMobNo = LocalizationCode.builder().value(numberInContactCard).build();
-        List<LocalizationCode>localizationCodeList=new ArrayList<>();
+        List<LocalizationCode> localizationCodeList = new ArrayList<>();
         localizationCodeList.add(contactCardMessageCode);
         localizationCodeList.add(contactCardContactName);
         localizationCodeList.add(mobNameSeparator);

@@ -35,6 +35,7 @@ public class LocalizationStream {
     private LocalizationService localizationService;
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
+
     public String getStreamName() {
         return "localization-stream";
     }
@@ -50,7 +51,7 @@ public class LocalizationStream {
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {
-                log.error("error in localization stream",e);
+                log.error("error in localization stream", e);
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

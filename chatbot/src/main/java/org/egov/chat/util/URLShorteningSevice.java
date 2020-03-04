@@ -30,11 +30,10 @@ public class URLShorteningSevice {
     @Value("${egov.urlshortner.endpoint}")
     private String shortenURLendpoint;
 
-    public String shortenURL(String url)
-    {
-        ObjectNode requestbody=objectMapper.createObjectNode();
-        requestbody.put("url",url);
-        String shortenedURL = restTemplate.postForObject(urlShortnerServiceHost+shortenURLendpoint,
+    public String shortenURL(String url) {
+        ObjectNode requestbody = objectMapper.createObjectNode();
+        requestbody.put("url", url);
+        String shortenedURL = restTemplate.postForObject(urlShortnerServiceHost + shortenURLendpoint,
                 requestbody, String.class);
         return shortenedURL;
     }

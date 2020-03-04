@@ -17,7 +17,7 @@ public class EgovChatDesearilizer implements Deserializer<EgovChat> {
 
     @Override
     public EgovChat deserialize(String s, byte[] bytes) {
-        if(bytes == null)
+        if (bytes == null)
             return null;
         EgovChat egovChat;
 

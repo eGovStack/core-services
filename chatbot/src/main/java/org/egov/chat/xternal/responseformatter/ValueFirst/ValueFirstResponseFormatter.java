@@ -42,10 +42,10 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
     String valueFirstWelcomeTemplateMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]},{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}]}";
 
     @Value("${valuefirst.notification.welcome.templateid}")
-    private  String welcomeMessageTemplateId;
+    private String welcomeMessageTemplateId;
 
     @Value("${valuefirst.notification.root.templateid}")
-    private  String rootMessageTemplateId;
+    private String rootMessageTemplateId;
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
@@ -56,7 +56,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
     private FileStore fileStore;
 
     private Map<String, String> mimeTypeToAttachmentTypeMapping = new HashMap<String, String>() {{
-        put("application/pdf","document");
+        put("application/pdf", "document");
         put("image/jpeg", "image");
         put("image/png", "image");
     }};
@@ -104,8 +104,8 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         String templateId = response.at(ChatNodeJsonPointerConstants.templateId).asText();
         boolean missedCall = response.at(ChatNodeJsonPointerConstants.checkIfMissedCall).asBoolean();
         String activeNodeId = response.at(ChatNodeJsonPointerConstants.activeNodeId).asText();
-        if((fromMobileNumber==null)||(fromMobileNumber.equals("")))
-            throw new CustomException("INVALID_RECEIPIENT_NUMBER","Receipient number can not be empty");
+        if ((fromMobileNumber == null) || (fromMobileNumber.equals("")))
+            throw new CustomException("INVALID_RECEIPIENT_NUMBER", "Receipient number can not be empty");
         List<JsonNode> valueFirstRequests = new ArrayList<>();
 
         log.debug("Response Type : " + type);
@@ -116,8 +116,8 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //            request.set("$.message.content.template.templateId", welcomeMessageTemplateId);
 //        }
 //        else
-        if(missedCall){
-            if(StringUtils.equals(activeNodeId,"root")){
+        if (missedCall) {
+            if (StringUtils.equals(activeNodeId, "root")) {
                 request = JsonPath.parse(valueFirstWelcomeTemplateMessageRequestBody);
                 request.set("$.SMS[0].@TEMPLATEINFO", welcomeMessageTemplateId);
                 request.set("$.SMS[1].@TEMPLATEINFO", rootMessageTemplateId);
@@ -127,9 +127,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 request.set("$.SMS[1].ADDRESS[0].@FROM", fromMobileNumber);
                 valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
             }
-        }
-        else
-        {
+        } else {
             if (!StringUtils.isEmpty(templateId)) {
                 request = JsonPath.parse(valueFirstTemplateMessageRequestBody);
                 ArrayNode templateParams = (ArrayNode) response.at(ChatNodeJsonPointerConstants.templateParams);
@@ -174,7 +172,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //        return mimeTypeToAttachmentTypeMapping.get(mimeType);
 //    }
 
-//    private JsonNode createTextNodeForAttachment(JsonNode response) throws IOException {
+    //    private JsonNode createTextNodeForAttachment(JsonNode response) throws IOException {
 //        String tenantId = response.at(ChatNodeJsonPointerConstants.tenantId).asText();
 //        String userMobileNumber = response.at(ChatNodeJsonPointerConstants.toMobileNumber).asText();
 //
@@ -188,7 +186,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //
 //        return objectMapper.readTree(request.jsonString());
 //    }
-    public String fillCredentials(String requestBody){
+    public String fillCredentials(String requestBody) {
         DocumentContext request = JsonPath.parse(requestBody);
         request.set("$.USER.@USERNAME", valueFirstUsername);
         request.set("$.USER.@PASSWORD", valueFirstPassword);

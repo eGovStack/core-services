@@ -42,7 +42,7 @@ public class MdmsValueFetcher implements ExternalValueFetcher {
                 ModuleDetail.builder().moduleName(moduleNameArg).masterDetails(Collections.singletonList(masterDetail)).build();
         MdmsCriteria mdmsCriteria =
                 MdmsCriteria.builder().tenantId(tenantIdArg).moduleDetails(Collections.singletonList(moduleDetail)).build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()) .build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()).build();
 
         MdmsResponse mdmsResponse = restTemplate.postForObject(mdmsHost + mdmsSearchPath, mdmsCriteriaReq, MdmsResponse.class);
 
@@ -52,7 +52,7 @@ public class MdmsValueFetcher implements ExternalValueFetcher {
 
         ArrayNode values = objectMapper.createArrayNode();
 
-        for(Object mdmsResValue : mdmsResValues) {
+        for (Object mdmsResValue : mdmsResValues) {
             ObjectNode value = objectMapper.createObjectNode();
             value.put("value", (String) mdmsResValue);
             values.add(value);

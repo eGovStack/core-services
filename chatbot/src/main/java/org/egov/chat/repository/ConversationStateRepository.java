@@ -71,7 +71,7 @@ public class ConversationStateRepository {
 
     public ConversationState getActiveConversationStateForUserId(String userId) {
         try {
-            return jdbcTemplate.query(selectActiveConversationStateForUserIdQuery, new Object[]{ userId },
+            return jdbcTemplate.query(selectActiveConversationStateForUserIdQuery, new Object[]{userId},
                     conversationStateResultSetExtractor);
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -79,12 +79,12 @@ public class ConversationStateRepository {
     }
 
     public int getConversationStateCountForUserId(String userId) {
-        return  (jdbcTemplate.queryForObject(selectCountConversationStateForUserIdQuery, new Object[] { userId },
+        return (jdbcTemplate.queryForObject(selectCountConversationStateForUserIdQuery, new Object[]{userId},
                 Integer.class));
     }
 
     public ConversationState getConversationStateForId(String conversationId) {
-        return jdbcTemplate.query(selectConversationStateForIdQuery, new Object[] { conversationId },
+        return jdbcTemplate.query(selectConversationStateForIdQuery, new Object[]{conversationId},
                 conversationStateResultSetExtractor);
     }
 

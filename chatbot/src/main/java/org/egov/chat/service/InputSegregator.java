@@ -27,16 +27,16 @@ public class InputSegregator {
         try {
             String activeNodeId = chatNode.getConversationState().getActiveNodeId();
             log.debug("Active Node Id : " + activeNodeId);
-            if(activeNodeId == null) {
+            if (activeNodeId == null) {
                 chatNode = welcomeMessageHandler.welcomeUser(consumerRecordKey, chatNode);
-                if(chatNode == null)
+                if (chatNode == null)
                     return;
             }
             String topic = getOutputTopicName(activeNodeId);
             kafkaTemplate.send(topic, consumerRecordKey, chatNode);
         } catch (Exception e) {
-            log.error("error in input segregator",e);
-            if(chatNode!=null)
+            log.error("error in input segregator", e);
+            if (chatNode != null)
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
         }
     }

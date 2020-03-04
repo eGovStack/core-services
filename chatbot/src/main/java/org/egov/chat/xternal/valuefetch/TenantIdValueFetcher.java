@@ -55,7 +55,7 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
                 ModuleDetail.builder().moduleName(moduleName).masterDetails(Collections.singletonList(masterDetail)).build();
         MdmsCriteria mdmsCriteria =
                 MdmsCriteria.builder().tenantId(tenantId).moduleDetails(Collections.singletonList(moduleDetail)).build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()) .build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(RequestInfo.builder().build()).build();
 
         MdmsResponse mdmsResponse = restTemplate.postForObject(mdmsHost + mdmsSearchPath, mdmsCriteriaReq, MdmsResponse.class);
 
@@ -69,7 +69,7 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     ArrayNode getCityName(JSONArray mdmsResValues, String tenantId) {
         ArrayNode values = objectMapper.createArrayNode();
 
-        for(Object mdmsResValue : mdmsResValues) {
+        for (Object mdmsResValue : mdmsResValues) {
             ObjectNode value = objectMapper.createObjectNode();
             HashMap mdmsValue = (HashMap) mdmsResValue;
             value.put("code", mdmsValue.get("code").toString());
@@ -82,9 +82,9 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
 
     String getTenantIdCode(JSONArray mdmsResValues, String cityName) {
         String tenantIdCode = "";
-        for(Object mdmsResValue : mdmsResValues) {
+        for (Object mdmsResValue : mdmsResValues) {
             HashMap mdmsValue = (HashMap) mdmsResValue;
-            if(mdmsValue.get("name").toString().equalsIgnoreCase(cityName)) {
+            if (mdmsValue.get("name").toString().equalsIgnoreCase(cityName)) {
                 return mdmsValue.get("code").toString();
             }
         }
