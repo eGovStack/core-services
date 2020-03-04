@@ -101,7 +101,13 @@ public class IndexerService {
 		} else {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, false);
 		}
-		validateAndIndex(jsonToBeIndexed, url.toString(), index);
+
+		if(index.getName().contains("collection") || index.getName().contains("payment")) {
+			// this is already sent
+		} else {
+			validateAndIndex(jsonToBeIndexed, url.toString(), index);
+		}
+
 		log.info("Total time taken: " + ((new Date().getTime()) - startTime) + "ms");
 	}
 

@@ -170,11 +170,19 @@ public class LegacyIndexService {
 					offset = offset == null ? 0: offset;
 					Integer count = offset;
 					Integer presentCount = 0;
+					Integer maxRecords = legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxRecords();
 					Integer size = null != legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxPageSize()
 							? legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxPageSize()
 							: defaultPageSizeForLegacyindex;
 					Boolean isProccessDone = false;
+
 					while (!isProccessDone) {
+						if (maxRecords > 0 && presentCount >= maxRecords ) {
+							isProccessDone = true;
+							log.info("Stopping since maxRecords have been processed: ", maxRecords);
+							break;
+						}
+
 						String uri = indexerUtils.buildPagedUriForLegacyIndex(legacyIndexRequest.getApiDetails(),
 								offset, size);
 						Object request = null;

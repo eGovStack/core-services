@@ -675,7 +675,7 @@ public class IndexerUtils {
 				try{
 					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
 					producer.producer(dssTopicForCollection, enrichedObjectNode);
-
+					producer.producer(index + "-" + "enriched", enrichedObjectNode);
 				} catch (IOException e){
 					log.error("Failed pushing collections data to the DSS topic: "+dssTopicForCollection);
 
