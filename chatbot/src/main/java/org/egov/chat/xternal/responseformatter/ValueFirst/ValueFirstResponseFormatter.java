@@ -7,14 +7,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Produced;
 import org.egov.chat.config.KafkaStreamsConfig;
-import org.egov.chat.config.TenantIdWhatsAppNumberMapping;
 import org.egov.chat.post.formatter.ChatNodeJsonPointerConstants;
 import org.egov.chat.post.formatter.ResponseFormatter;
 import org.egov.chat.util.FileStore;
@@ -61,8 +54,6 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     @Autowired
     private FileStore fileStore;
-    @Autowired
-    private TenantIdWhatsAppNumberMapping tenantIdWhatsAppNumberMapping;
 
     private Map<String, String> mimeTypeToAttachmentTypeMapping = new HashMap<String, String>() {{
         put("application/pdf","document");
@@ -131,9 +122,9 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 request.set("$.SMS[0].@TEMPLATEINFO", welcomeMessageTemplateId);
                 request.set("$.SMS[1].@TEMPLATEINFO", rootMessageTemplateId);
                 request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
-                request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+                request.set("$.SMS[0].ADDRESS[0].@FROM", fromMobileNumber);
                 request.set("$.SMS[1].ADDRESS[0].@TO", "91" + userMobileNumber);
-                request.set("$.SMS[1].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+                request.set("$.SMS[1].ADDRESS[0].@FROM", fromMobileNumber);
                 valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
             }
         }
@@ -170,7 +161,7 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 request.set("$.SMS[0].@ID", uniqueImageMessageId);
             }
             request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
-            request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
+            request.set("$.SMS[0].ADDRESS[0].@FROM", fromMobileNumber);
             valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
         }
 
