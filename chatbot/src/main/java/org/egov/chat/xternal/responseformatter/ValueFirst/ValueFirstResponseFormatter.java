@@ -1,18 +1,13 @@
-package org.egov.chat.xternal.Responseformatter.ValueFirst;
+package org.egov.chat.xternal.responseformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.commons.lang.StringUtils;
 import org.egov.chat.config.KafkaStreamsConfig;
-import org.egov.chat.config.TenantIdWhatsAppNumberMapping;
 import org.egov.chat.post.formatter.ChatNodeJsonPointerConstants;
 import org.egov.chat.post.formatter.ResponseFormatter;
 import org.egov.chat.util.FileStore;
@@ -42,6 +37,16 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     String valueFirstImageMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"XXX\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"some clientside random data\"}]}]}";
 
+    String valueFirstTemplateMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}]}";
+
+    String valueFirstWelcomeTemplateMessageRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]},{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}]}";
+
+    @Value("${valuefirst.notification.welcome.templateid}")
+    private  String welcomeMessageTemplateId;
+
+    @Value("${valuefirst.notification.root.templateid}")
+    private  String rootMessageTemplateId;
+
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
     @Autowired
@@ -49,8 +54,6 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 
     @Autowired
     private FileStore fileStore;
-    @Autowired
-    private TenantIdWhatsAppNumberMapping tenantIdWhatsAppNumberMapping;
 
     private Map<String, String> mimeTypeToAttachmentTypeMapping = new HashMap<String, String>() {{
         put("application/pdf","document");
@@ -98,6 +101,9 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         String userMobileNumber = response.at(ChatNodeJsonPointerConstants.toMobileNumber).asText();
         String type = response.at(ChatNodeJsonPointerConstants.responseType).asText();
         String fromMobileNumber = response.at(ChatNodeJsonPointerConstants.fromMobileNumber).asText();
+        String templateId = response.at(ChatNodeJsonPointerConstants.templateId).asText();
+        boolean missedCall = response.at(ChatNodeJsonPointerConstants.checkIfMissedCall).asBoolean();
+        String activeNodeId = response.at(ChatNodeJsonPointerConstants.activeNodeId).asText();
         if((fromMobileNumber==null)||(fromMobileNumber.equals("")))
             throw new CustomException("INVALID_RECEIPIENT_NUMBER","Receipient number can not be empty");
         List<JsonNode> valueFirstRequests = new ArrayList<>();
@@ -110,19 +116,39 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
 //            request.set("$.message.content.template.templateId", welcomeMessageTemplateId);
 //        }
 //        else
-            if(type.equalsIgnoreCase("text")) {
+        if(missedCall){
+            if(StringUtils.equals(activeNodeId,"root")){
+                request = JsonPath.parse(valueFirstWelcomeTemplateMessageRequestBody);
+                request.set("$.SMS[0].@TEMPLATEINFO", welcomeMessageTemplateId);
+                request.set("$.SMS[1].@TEMPLATEINFO", rootMessageTemplateId);
+                request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
+                request.set("$.SMS[0].ADDRESS[0].@FROM", fromMobileNumber);
+                request.set("$.SMS[1].ADDRESS[0].@TO", "91" + userMobileNumber);
+                request.set("$.SMS[1].ADDRESS[0].@FROM", fromMobileNumber);
+                valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
+            }
+        }
+        else
+        {
+            if (!StringUtils.isEmpty(templateId)) {
+                request = JsonPath.parse(valueFirstTemplateMessageRequestBody);
+                ArrayNode templateParams = (ArrayNode) response.at(ChatNodeJsonPointerConstants.templateParams);
+                String combinedStringForTemplateInfo = templateId;
+                for (JsonNode param : templateParams) {
+                    combinedStringForTemplateInfo += "~" + param.asText();
+                }
+                request.set("$.SMS[0].@TEMPLATEINFO", combinedStringForTemplateInfo);
+            } else if (type.equalsIgnoreCase("text")) {
                 request = JsonPath.parse(valueFirstTextMessageRequestBody);
                 String message = response.at(ChatNodeJsonPointerConstants.responseText).asText();
-                String encodedMessage = URLEncoder.encode( message, "UTF-8" );
+                String encodedMessage = URLEncoder.encode(message, "UTF-8");
                 request.set("$.SMS[0].@TEXT", encodedMessage);
-            }
-            else if(type.equalsIgnoreCase("contactcard")) {
+            } else if (type.equalsIgnoreCase("contactcard")) {
                 request = JsonPath.parse(valueFirstTextMessageRequestBody);
                 String message = response.at(ChatNodeJsonPointerConstants.responseText).asText();
-                String encodedMessage = URLEncoder.encode( message, "UTF-8" );
+                String encodedMessage = URLEncoder.encode(message, "UTF-8");
                 request.set("$.SMS[0].@TEXT", encodedMessage);
-            }
-            else if(type.equalsIgnoreCase("image")) {
+            } else if (type.equalsIgnoreCase("image")) {
                 String fileStoreId = response.at(ChatNodeJsonPointerConstants.fileStoreId).asText();
                 File file = fileStore.getFileForFileStoreId(fileStoreId);
                 String base64Image = fileStore.getBase64EncodedStringOfFile(file);
@@ -134,48 +160,10 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
                 String uniqueImageMessageId = UUID.randomUUID().toString();
                 request.set("$.SMS[0].@ID", uniqueImageMessageId);
             }
-//            else if(response.has("missedCall") && response.get("missedCall").asBoolean()) {
-//                request = JsonPath.parse(karixTemplateMessageRequestBody);
-//                request.set("$.message.content.template.templateId", welcomeMessageTemplateId);
-//            }
-//        } else if(type.equalsIgnoreCase("attachment")) {
-//            request = JsonPath.parse(karixAttachmentMessageRequestBody);
-//            request.set("$.message.content.type", type);
-//
-//            String fileStoreId = response.at(ChatNodeJsonPointerConstants.attachmentFileStoreId).asText();
-//            File file = fileStore.getFileForFileStoreId(fileStoreId);
-//            String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-//            String attachmentType = getTypeFromMime(mimeType);
-//            String attachmentData = fileStore.getBase64EncodedStringOfFile(file);
-//            file.delete();
-//
-//            request.set("$.message.content.attachment.type", attachmentType);
-//            request.set("$.message.content.attachment.mimeType", mimeType);
-//            request.set("$.message.content.attachment.attachmentData", attachmentData);
-//
-//            if(attachmentType.equalsIgnoreCase("image")) {
-//                if(response.at(ChatNodeJsonPointerConstants.responseText) != null)
-//                    request.set("$.message.content.attachment.caption",
-//                            response.at(ChatNodeJsonPointerConstants.responseText).asText());
-//            } else if(attachmentType.equalsIgnoreCase("document")) {
-//                request.set("$.message.content.attachment.caption", file.getName());
-//
-//                if(response.at(ChatNodeJsonPointerConstants.responseText) != null)
-//                    valueFirstRequests.add(createTextNodeForAttachment(response));
-//            }
-//        } else if(type.equalsIgnoreCase("location")) {
-//            request = JsonPath.parse(karixLocationRequestBody);
-//            request.set("$.message.content.type", type);
-//
-//            DocumentContext location = JsonPath.parse(response.at(ChatNodeJsonPointerConstants.locationJson).toString());
-//
-//            request.set("$.message.content.location", location.json());
-//        }
-
-        request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
-        request.set("$.SMS[0].ADDRESS[0].@FROM", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
-
-        valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
+            request.set("$.SMS[0].ADDRESS[0].@TO", "91" + userMobileNumber);
+            request.set("$.SMS[0].ADDRESS[0].@FROM", fromMobileNumber);
+            valueFirstRequests.add(objectMapper.readTree(request.jsonString()));
+        }
 
         log.debug("ValueFirst Requests : " + valueFirstRequests.size());
 

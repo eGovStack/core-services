@@ -1,4 +1,4 @@
-package org.egov.chat.xternal.Responseformatter.ValueFirst;
+package org.egov.chat.xternal.responseformatter.ValueFirst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,6 @@ public class ValueFirstRestCall {
             HttpEntity<JsonNode> request = new HttpEntity<>(response, httpHeaders);
 
             ResponseEntity<JsonNode> valueFirstResponse = restTemplate.postForEntity(valueFirstSendMessageUrl, request, JsonNode.class);
-
-            // TODO : Remove delay after discussing with Karix
-
 
             log.info("ValueFirst Send Message Response : " + valueFirstResponse.toString());
         } catch (Exception e) {

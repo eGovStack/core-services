@@ -61,6 +61,7 @@ public class CreateStepStream extends CreateStream {
                 chatNode = answerExtractor.extractAnswer(config, chatNode);
 
                 if (chatNode.isAskForNextBatch()) {
+                    // TODO : send key with record
                     kafkaTemplate.send(questionTopic, chatNode);
                     return Collections.emptyList();
                 }
