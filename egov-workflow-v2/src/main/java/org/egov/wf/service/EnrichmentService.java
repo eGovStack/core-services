@@ -173,10 +173,14 @@ public class EnrichmentService {
 
     public List<ProcessStateAndAction> enrichNextActionForSearch(RequestInfo requestInfo,List<ProcessInstance> processInstances){
         List<ProcessStateAndAction> processStateAndActions = new LinkedList<>();
-        List<ProcessInstanceRequest> requests = getRequestByBusinessService(new ProcessInstanceRequest(requestInfo,processInstances));
-        requests.forEach(request -> {
-            processStateAndActions.addAll(transitionService.getProcessStateAndActions(new ProcessInstanceRequest(requestInfo,processInstances),false));
-        });
+        Map<String, List<ProcessInstance>> businessServiceToProcessInstance = getRequestByBusinessService(new ProcessInstanceRequest(requestInfo,processInstances));
+        for(Map.Entry<String, List<ProcessInstance>> entry : businessServiceToProcessInstance.entrySet()){
+            try{
+             processStateAndActions.addAll(transitionService.getProcessStateAndActions(entry.getValue(),false));}
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
         setNextActions(requestInfo,processStateAndActions,false);
         return processStateAndActions;
     }
@@ -320,28 +324,23 @@ public class EnrichmentService {
      * @param request The ProcessInstanceRequest containing processInstances across multiple BusinessServices
      * @return List of ProcessInstanceRequest
      */
-    private List<ProcessInstanceRequest> getRequestByBusinessService(ProcessInstanceRequest request){
+    private Map<String,List<ProcessInstance>> getRequestByBusinessService(ProcessInstanceRequest request){
         List<ProcessInstance> processInstances = request.getProcessInstances();
-        RequestInfo requestInfo = request.getRequestInfo();
 
-        Map<String,List<ProcessInstance>> tenantIdToProperties = new HashMap<>();
+        Map<String,List<ProcessInstance>> businessServiceToProcessInstance = new HashMap<>();
         if(!CollectionUtils.isEmpty(processInstances)){
             processInstances.forEach(processInstance -> {
-                if(tenantIdToProperties.containsKey(processInstance.getBusinessService()))
-                    tenantIdToProperties.get(processInstance.getBusinessService()).add(processInstance);
+                if(businessServiceToProcessInstance.containsKey(processInstance.getBusinessService()))
+                    businessServiceToProcessInstance.get(processInstance.getBusinessService()).add(processInstance);
                 else{
                     List<ProcessInstance> list = new ArrayList<>();
                     list.add(processInstance);
-                    tenantIdToProperties.put(processInstance.getBusinessService(),list);
+                    businessServiceToProcessInstance.put(processInstance.getBusinessService(),list);
                 }
             });
         }
-        List<ProcessInstanceRequest> requests = new LinkedList<>();
 
-        tenantIdToProperties.forEach((key,value)-> {
-            requests.add(new ProcessInstanceRequest(requestInfo,value));
-        });
-        return requests;
+        return businessServiceToProcessInstance;
     }
 
 
