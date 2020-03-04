@@ -72,19 +72,19 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     private String userServiceSearchRequest = "{\"RequestInfo\":{},\"tenantId\":\"\",\"id\":[\"\"]}";
 
     @Value("${valuefirst.notification.rejected.templateid}")
-    private String rejectTemplateId = "194785";
+    private String rejectTemplateId;
 
     @Value("${valuefirst.notification.reassigned.templateid}")
-    private String reassignAssignedTemplateId = "194787";
+    private String reassignAssignedTemplateId;
 
     @Value("${valuefirst.notification.assigned.templateid}")
-    private String assignedCitizenTemplateId = "194781";
+    private String assignedCitizenTemplateId;
 
     @Value("${valuefirst.notification.commented.templateid}")
-    private String commentTemplateId = "194789";
+    private String commentTemplateId;
 
     @Value("${valuefirst.notification.resolved.templateid}")
-    private String resolvedTemplateId = "194783";
+    private String resolvedTemplateId;
 
     @Override
     public String getStreamName() {
