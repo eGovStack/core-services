@@ -1,20 +1,22 @@
 package org.egov.chat.pre.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.pre.service.MessageWebhook;
 import org.egov.chat.pre.service.PreChatbotStream;
 import org.egov.chat.util.KafkaTopicCreater;
-import org.egov.chat.xternal.requestformatter.ValueFirst.ValueFirstRequestFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @RestController
 public class PreChatController {
 
@@ -36,8 +38,9 @@ public class PreChatController {
     }
 
     @RequestMapping(value = "/messages", method = RequestMethod.POST)
-    public ResponseEntity<Object> receiveMessage(@RequestBody JsonNode message) throws Exception {
-        return new ResponseEntity<>(messageWebhook.receiveMessage(message), HttpStatus.OK);
+    public ResponseEntity<Object> receiveMessage(@RequestBody JsonNode jsonBody,
+                                                 @RequestParam Map<String, String> queryParams) throws Exception {
+        return new ResponseEntity<>(messageWebhook.receiveMessage(jsonBody, queryParams), HttpStatus.OK );
     }
 
 }
