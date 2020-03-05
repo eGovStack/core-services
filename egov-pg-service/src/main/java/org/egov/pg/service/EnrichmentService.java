@@ -6,19 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.AuditDetails;
-import org.egov.pg.models.GatewayParams;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.GatewayMetadata;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.User;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.singletonMap;
@@ -35,16 +32,12 @@ public class EnrichmentService {
     EnrichmentService(IdGenService idGenService, ObjectMapper objectMapper, GatewayMetadata gatewayMetadata) {
         this.idGenService = idGenService;
         this.objectMapper = objectMapper;
-        this.gatewayMetadata= gatewayMetadata;
+        this.gatewayMetadata = gatewayMetadata;
     }
 
     void enrichCreateTransaction(TransactionRequest transactionRequest) throws Exception {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
-
-        /*if (gateway == null || tenantId == null || module == null) {
-            throw new CustomException("TRANSACTION_DETAIL_MISSING", "gateway or tenantId or module is missing");
-        }*/
 
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);

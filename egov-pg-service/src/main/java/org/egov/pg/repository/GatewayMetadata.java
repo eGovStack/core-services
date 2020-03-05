@@ -7,7 +7,8 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.pg.config.AppProperties;
-import org.egov.pg.models.*;
+import org.egov.pg.models.GatewayParams;
+import org.egov.pg.models.Transaction;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,7 @@ public class GatewayMetadata {
     private AppProperties appProperties;
     private RestTemplate restTemplate;
     private GatewayParams gatewayParams;
+
     @Autowired
     public GatewayMetadata(AppProperties appProperties, RestTemplate restTemplate, GatewayParams gatewayParams) {
         this.appProperties = appProperties;
@@ -47,7 +49,7 @@ public class GatewayMetadata {
         }
 
         Map metaData = metaData(requestInfo, gateway, tenantId, module);
-        Map gatewayParam = (Map)metaData.get(gateway);
+        Map gatewayParam = (Map) metaData.get(gateway);
         gatewayParams.setMetaData(gatewayParam);
         return gatewayParams;
     }
@@ -81,28 +83,28 @@ public class GatewayMetadata {
     }
 
     //Returns the default gateway which is enabled
-    public String  getDefaultGateway(RequestInfo requestInfo, String gateway, String tenantId, String module){
+    public String getDefaultGateway(RequestInfo requestInfo, String gateway, String tenantId) {
         Map gatewayData = mDMSCall(requestInfo, tenantId);
-        String defaultGateway=null;
+        String defaultGateway = null;
         List gatewayDetails = (List) ((HashMap) ((HashMap) gatewayData.get(MDMS_RESPONSE))
                 .get(MDMS_PAYMENT_GATEWAY_MODULE)).get(MDMS_GATEWAY_MASTER);
-        try{
+        try {
             for (int i = 0; i < gatewayDetails.size(); i++) {
 
                 if (gateway.equals(GATEWAY_DEFAULT) && ((HashMap) gatewayDetails.get(i)).get("default").equals(true)
-                        && ((HashMap) gatewayDetails.get(i)).get("default").equals(true)){
-                    defaultGateway=(String) ((HashMap) gatewayDetails.get(i)).get(GATEWAY_NAME);
+                        && ((HashMap) gatewayDetails.get(i)).get("default").equals(true)) {
+                    defaultGateway = (String) ((HashMap) gatewayDetails.get(i)).get(GATEWAY_NAME);
                     break;
                 }
             }
 
-            }catch(Exception e){
-            throw new CustomException("GATEWAY_CONFIG_ERROR","Error fetching default gateway");
+        } catch (Exception e) {
+            throw new CustomException("GATEWAY_CONFIG_ERROR", "Error fetching default gateway");
         }
-        if(defaultGateway==null){
-            throw new CustomException("GATEWAY_CONFIG_ERROR","No default gateway found");
+        if (defaultGateway == null) {
+            throw new CustomException("GATEWAY_CONFIG_ERROR", "No default gateway found");
         }
-        return  defaultGateway;
+        return defaultGateway;
     }
 
     //returns metData for gateway, tenant,module
@@ -113,7 +115,7 @@ public class GatewayMetadata {
         Map result = new HashMap();
         try {
             for (int i = 0; i < gatewayDetails.size(); i++) {
-                 if (((HashMap) gatewayDetails.get(i)).get(GATEWAY_NAME).equals(gateway) && ((HashMap) gatewayDetails.get(i)).get(GATEWAY_ENABLED).equals(true)) {
+                if (((HashMap) gatewayDetails.get(i)).get(GATEWAY_NAME).equals(gateway) && ((HashMap) gatewayDetails.get(i)).get(GATEWAY_ENABLED).equals(true)) {
                     if (!((HashMap) ((HashMap) gatewayDetails.get(i)).get(GATEWAY_DETAILS)).isEmpty()) {
                         result.put(gateway, ((HashMap) ((HashMap) gatewayDetails.get(i)).get(GATEWAY_DETAILS)).get("*"));
 

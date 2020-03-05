@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.pg.models.GatewayParams;
 import org.egov.pg.models.Transaction;
-import org.egov.pg.models.TransactionRequest;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
@@ -46,7 +44,6 @@ public class PayuGateway implements Gateway {
     private final String MERCHANT_PATH_PAY;
     private final String MERCHANT_PATH_STATUS;
     private final boolean ACTIVE;
-    private GatewayParams gatewayParams;
 
     private RestTemplate restTemplate;
     private ObjectMapper objectMapper;

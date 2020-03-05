@@ -3,7 +3,6 @@ package org.egov.pg.web.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.pg.models.GatewayParams;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.GatewayMetadata;
 import org.egov.pg.service.GatewayService;
@@ -55,9 +54,9 @@ public class TransactionsApiController {
 
         String gateway = transaction.getGateway();
         String tenantId = transaction.getTenantId();
-        String module = transaction.getModule();
-        if(gateway.equals("DEFAULT")){
-            String defaultGateway = gatewayMetadata.getDefaultGateway(requestInfo,gateway,tenantId,module);
+
+        if (gateway.equals("DEFAULT")) {
+            String defaultGateway = gatewayMetadata.getDefaultGateway(requestInfo, gateway, tenantId);
             transaction.setGateway(defaultGateway);
         }
         Transaction transactionResponse = transactionService.initiateTransaction(transactionRequest);
@@ -128,6 +127,8 @@ public class TransactionsApiController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    //Test Controller for metadata for local testing
   /*  @RequestMapping(value = "/gateway/v1/_getmeta", method = RequestMethod.POST)
     public ResponseEntity<Map> getmeta(@Valid @RequestBody TransactionRequest transactionRequest) throws Exception {
         Transaction transaction = transactionRequest.getTransaction();
@@ -136,11 +137,8 @@ public class TransactionsApiController {
                 .getRequestInfo(), true);
         String tenantId = transaction.getTenantId();
         GatewayParams metaData =  gatewayMetadata.getGatewayMetadata(transaction, requestInfo);
-  //      String res = gatewayMetadata.getDefaultGateway(requestInfo,transaction.getGateway(),transaction.getTenantId(),transaction.getModule());
-   //      LinkedList listOfGateway = gatewayMetadata.listOfGateways(requestInfo, tenantId);
-        //GatewayResponse response = new GatewayResponse(responseInfo, metaData);
+        GatewayResponse response = new GatewayResponse(responseInfo, metaData);
         return new ResponseEntity<>(metaData.getMetaData(), HttpStatus.OK);
-     //   return new ResponseEntity<>(res, HttpStatus.OK);
     }*/
 
 }
