@@ -26,8 +26,8 @@ public class MessageWebhook {
     private String outputTopicName = "transformed-input-messages";
 
     public Object receiveMessage(JsonNode jsonBody, Map<String, String> queryParams) throws Exception {
+        log.info("received message from provider, jsonbody:"+jsonBody+" queryparams: "+queryParams);
         JsonNode message = prepareMessage(jsonBody, queryParams);
-
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
             String key = message.at("/user/mobileNumber").asText();
