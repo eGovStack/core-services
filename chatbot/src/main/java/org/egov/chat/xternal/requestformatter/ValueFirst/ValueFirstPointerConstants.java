@@ -4,18 +4,18 @@ public class ValueFirstPointerConstants {
 
     public static String timestampPath = "/timestamp";
 
-    public static String missedCallFromMobileNumber = "/queryParams/mobile_number";
+    public static String missedCallFromMobileNumber = "/mobile_number";
 
-    public static String missedCallToNumber = "/queryParams/vmn_tollfree";
+    public static String missedCallToNumber = "/vmn_tollfree";
 
-    public static String recipientMobileNumber = "/body/to";
+    public static String recipientMobileNumber = "/to";
 
-    public static String userMobileNumber = "/body/from";
+    public static String userMobileNumber = "/from";
 
-    public static String mediaType = "/body/media_type";
+    public static String mediaType = "/media_type";
 
-    public static String textContent = "/body/text";
+    public static String textContent = "/text";
 
-    public static String mediaData = "/body/media_data";
+    public static String mediaData = "/media_data";
 
 }
