@@ -30,18 +30,18 @@ public class MessageRepository {
     private static final String selectValidMessagesOfConversationQuery = "SELECT * FROM eg_chat_message WHERE " +
             "conversation_id=? AND is_valid=true";
 
-    public void insertMessage(Message message) {
-        JsonNode jsonNode = objectMapper.convertValue(message, JsonNode.class);
-        kafkaTemplatePersister.send(messageInsertTopic, jsonNode);
+    public int insertMessage(Message message) {
+//        JsonNode jsonNode = objectMapper.convertValue(message, JsonNode.class);
+//        kafkaTemplatePersister.send(messageInsertTopic, jsonNode);
 
-//        return jdbcTemplate.update(insertMessageQuery,
-//                message.getMessageId(),
-//                message.getConversationId(),
-//                message.getNodeId(),
-//                message.getRawInput(),
-//                message.getMessageContent(),
-//                message.getContentType(),
-//                message.isValid());
+        return jdbcTemplate.update(insertMessageQuery,
+                message.getMessageId(),
+                message.getConversationId(),
+                message.getNodeId(),
+                message.getRawInput(),
+                message.getMessageContent(),
+                message.getContentType(),
+                message.isValid());
     }
 
     public List<Message> getValidMessagesOfConversation(String conversationId) {

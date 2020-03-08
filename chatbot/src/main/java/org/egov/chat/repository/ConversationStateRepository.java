@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.chat.models.ConversationState;
+import org.egov.chat.repository.querybuilder.ConversationStateQueryBuilder;
 import org.egov.chat.repository.rowmapper.ConversationStateResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,8 @@ public class ConversationStateRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Autowired
     private ConversationStateResultSetExtractor conversationStateResultSetExtractor;
 
@@ -44,29 +48,29 @@ public class ConversationStateRepository {
     private static final String selectCountConversationStateForUserIdQuery = "SELECT count(*) FROM eg_chat_conversation_state WHERE " +
             "user_id=?";
 
-    public void insertNewConversation(ConversationState conversationState) {
-        JsonNode jsonNode = objectMapper.convertValue(conversationState, JsonNode.class);
-        kafkaTemplatePersister.send(insertConversationStateTopic, jsonNode);
+    public int insertNewConversation(ConversationState conversationState) {
+//        JsonNode jsonNode = objectMapper.convertValue(conversationState, JsonNode.class);
+//        kafkaTemplatePersister.send(insertConversationStateTopic, jsonNode);
 
-//        return jdbcTemplate.update(insertNewConversationQuery,
-//                conversationState.getConversationId(),
-//                conversationState.getUserId(),
-//                conversationState.isActive(),
-//                conversationState.getLocale());
+        return jdbcTemplate.update(insertNewConversationQuery,
+                conversationState.getConversationId(),
+                conversationState.getUserId(),
+                conversationState.isActive(),
+                conversationState.getLocale());
     }
 
-    public void updateConversationStateForId(ConversationState conversationState) {
-        JsonNode jsonNode = objectMapper.convertValue(conversationState, JsonNode.class);
-        kafkaTemplatePersister.send(updateConversationStateTopic, jsonNode);
-//        return namedParameterJdbcTemplate.update(ConversationStateQueryBuilder.UPDATE_CONVERSATION_STATE_QUERY,
-//                ConversationStateQueryBuilder.getParametersForConversationStateUpdate(conversationState));
+    public int updateConversationStateForId(ConversationState conversationState) {
+//        JsonNode jsonNode = objectMapper.convertValue(conversationState, JsonNode.class);
+//        kafkaTemplatePersister.send(updateConversationStateTopic, jsonNode);
+        return namedParameterJdbcTemplate.update(ConversationStateQueryBuilder.UPDATE_CONVERSATION_STATE_QUERY,
+                ConversationStateQueryBuilder.getParametersForConversationStateUpdate(conversationState));
     }
 
-    public void markConversationInactive(String conversationId) {
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("conversationId", conversationId);
-        kafkaTemplatePersister.send(deactivateConversationStateTopic, objectNode);
-//        return jdbcTemplate.update(updateActiveStateForConversationQuery, conversationId);
+    public int markConversationInactive(String conversationId) {
+//        ObjectNode objectNode = objectMapper.createObjectNode();
+//        objectNode.put("conversationId", conversationId);
+//        kafkaTemplatePersister.send(deactivateConversationStateTopic, objectNode);
+        return jdbcTemplate.update(updateActiveStateForConversationQuery, conversationId);
     }
 
     public ConversationState getActiveConversationStateForUserId(String userId) {
