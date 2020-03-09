@@ -2,7 +2,6 @@ package org.egov.chat.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.tika.mime.MimeTypeException;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -79,51 +78,6 @@ public class FileStoreTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authentication", "Bearer s6iyrz5y8rPApBQ2gQ3oog==");
         return headers;
-    }
-
-
-    @Test
-    public void testGetFileFromKarix() {
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        File file = new File("download.jpeg");
-//        String fileLink = "https://rcmmedia.instaalerts.zone/services/media/download?filedata=h05OM%2Bxdf16s" +
-//                "%2FNzUqY5JoMWfPfloimADOeXOJIoaDaE5mceypXTzO4aZTV82Mvz7KmaA7kUC7SvtOm%2F6vYiNUg%3D%3D";
-//
-//        HttpHeaders httpHeaders = getDefaultHttpHeaders();
-//
-//        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
-//
-//        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(fileLink, HttpMethod.GET, httpEntity, byte[].class);
-//
-//        log.info(String.valueOf(responseEntity.getStatusCode()));
-    }
-
-    @Test
-    public void testDownloadFromKarixUsingBasicHttp() throws IOException, MimeTypeException {
-
-//        URL url = new URL("https://rcmmedia.instaalerts.zone/services/media/download?filedata=h05OM%2Bxdf16s%2FNzUqY5JoMWfPfloimADOeXOJIoaDaE5mceypXTzO4aZTV82Mvz7KmaA7kUC7SvtOm%2F6vYiNUg%3D%3D");
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setRequestMethod("GET");
-//        conn.setRequestProperty("Authentication", "Bearer s6iyrz5y8rPApBQ2gQ3oog==");
-//        conn.setDoOutput(true);
-//
-//        System.out.println( conn.getResponseCode() + " " + conn.getContentLength() + " " + conn.getContentType());
-//
-//        String ext = MimeTypes.getDefaultMimeTypes().forName(conn.getContentType()).getExtension();
-//
-//        InputStream inputStream = conn.getInputStream();
-//
-//        File file = File.createTempFile("chatbot", ext);
-//        FileOutputStream fileOutputStream = new FileOutputStream(file);
-//
-//        IOUtils.copy(inputStream, fileOutputStream);
-//
-//        System.out.println(file.length());
-//        System.out.println(file.getName());
-//        System.out.println(file.getAbsolutePath());
-//
-//        file.delete();
     }
 
     @Test

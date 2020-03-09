@@ -150,12 +150,6 @@
             <artifactId>fuzzywuzzy</artifactId>
             <version>1.2.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.22</version>
-        </dependency>
 
         <!-- Egov dependencies -->
         <dependency>
@@ -174,16 +168,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.11</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.1.11</version>
         </dependency>
 
 
