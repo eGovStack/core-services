@@ -54,6 +54,9 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
             if (mediaType.equalsIgnoreCase("text") || mediaType.equalsIgnoreCase("image")) {
                 return true;
             }
+            else if(!StringUtils.isEmpty(mediaType)){
+                return  true;
+            }
         } catch (Exception e) {
             log.error("Invalid request", e);
         }
@@ -103,12 +106,17 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         user.set("mobileNumber", TextNode.valueOf(mobileNumber));
 
         ObjectNode message = objectMapper.createObjectNode();
-        message.put("contentType", mediaType);
+
         if (mediaType.equalsIgnoreCase("text")) {
+            message.put("contentType", "text");
             message.set("rawInput", inputRequest.at(ValueFirstPointerConstants.textContent));
         } else if (mediaType.equalsIgnoreCase("image")) {
+            message.put("contentType", "image");
             String imageInBase64String = inputRequest.at(ValueFirstPointerConstants.mediaData).asText();
             message.put("rawInput", fileStore.convertFromBase64AndStore(imageInBase64String));
+        } else if (!StringUtils.isEmpty(mediaType)) {
+            message.put("contentType", "not_supported");
+            message.put("rawInput", "");
         }
 
         ObjectNode extraInfo = objectMapper.createObjectNode();
