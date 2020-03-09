@@ -38,9 +38,14 @@ public class PreChatController {
     }
 
     @RequestMapping(value = "/messages", method = RequestMethod.POST)
-    public ResponseEntity<Object> receiveMessage(@RequestBody JsonNode jsonBody,
-                                                 @RequestParam Map<String, String> queryParams) throws Exception {
-        return new ResponseEntity<>(messageWebhook.receiveMessage(jsonBody, queryParams), HttpStatus.OK );
+    public ResponseEntity<Object> receiveMessage(
+            @RequestParam Map<String, String> params) throws Exception {
+        return new ResponseEntity<>(messageWebhook.receiveMessage(params), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/messages", method = RequestMethod.GET)
+    public ResponseEntity<Object> getMessage(@RequestParam Map<String, String> queryParams) throws Exception {
+        return new ResponseEntity<>(messageWebhook.receiveMessage(queryParams), HttpStatus.OK );
     }
 
 }
