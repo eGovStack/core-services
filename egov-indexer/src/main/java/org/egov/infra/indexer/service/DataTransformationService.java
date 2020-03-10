@@ -1,8 +1,9 @@
 package org.egov.infra.indexer.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.indexer.util.IndexerConstants;
@@ -19,11 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -80,13 +78,15 @@ public class DataTransformationService {
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
 					if (isCustom) {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(), stringifiedObject);
-						indexerUtils.pushCollectionToDSSTopic(customIndexJson, index);
-						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, customIndexJson);
+						String id = indexerUtils.buildIndexId(index, stringifiedObject);
+						indexerUtils.pushToKafka(id, customIndexJson, index);
+						StringBuilder builder = appendIdToJson(id, jsonTobeIndexed, stringifiedObject, customIndexJson);
 						if (null != builder)
 							jsonTobeIndexed = builder;
 					} else {
-						indexerUtils.pushCollectionToDSSTopic(stringifiedObject, index);
-						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, null);
+						String id = indexerUtils.buildIndexId(index, stringifiedObject);
+						indexerUtils.pushToKafka(id, stringifiedObject, index);
+						StringBuilder builder = appendIdToJson(id, jsonTobeIndexed, stringifiedObject, null);
 						if (null != builder)
 							jsonTobeIndexed = builder;
 					}
@@ -106,14 +106,14 @@ public class DataTransformationService {
 	/**
 	 * Attaches Index Id to the json to be indexed on es.
 	 * 
-	 * @param index
+	 * @param id
 	 * @param jsonTobeIndexed
 	 * @param stringifiedObject
 	 * @param customIndexJson
 	 * @return
 	 */
-	public StringBuilder appendIdToJson(Index index, StringBuilder jsonTobeIndexed, String stringifiedObject, String customIndexJson) {
-		String id = indexerUtils.buildIndexId(index, stringifiedObject);
+	public StringBuilder appendIdToJson(String id, StringBuilder jsonTobeIndexed, String stringifiedObject,
+										String customIndexJson) {
 		if (StringUtils.isEmpty(id)) {
 			return null;
 		} else {

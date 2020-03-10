@@ -1,29 +1,16 @@
 package org.egov.infra.indexer.util;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.indexer.consumer.config.ReindexConsumerConfig;
 import org.egov.infra.indexer.models.AuditDetails;
 import org.egov.infra.indexer.producer.IndexerProducer;
-import org.egov.infra.indexer.web.contract.APIDetails;
-import org.egov.infra.indexer.web.contract.FilterMapping;
-import org.egov.infra.indexer.web.contract.Index;
-import org.egov.infra.indexer.web.contract.ReindexRequest;
-import org.egov.infra.indexer.web.contract.UriMapping;
+import org.egov.infra.indexer.web.contract.*;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -35,16 +22,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -74,11 +58,14 @@ public class IndexerUtils {
 	@Value("${egov.indexer.dss.collectionindex.topic}")
 	private String dssTopicForCollection;
 	
-	@Value("${dss.collectionindex.topic.push.enabled}")
-	private Boolean dssTopicPushEnabled;
+	@Value("${topic.push.enabled}")
+	private Boolean topicPushEnable;
 	
 	@Autowired
 	private IndexerProducer producer;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -309,7 +296,6 @@ public class IndexerUtils {
 	 */
 	public JSONArray constructArrayForBulkIndex(String kafkaJson, Index index, boolean isBulk) throws Exception {
 		JSONArray kafkaJsonArray = null;
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			if (isBulk) {
 				// Validating if the request is a valid json array.
@@ -507,7 +493,6 @@ public class IndexerUtils {
 	 */
 	public DocumentContext addTimeStamp(Index index, DocumentContext context) {
 		try {
-			ObjectMapper mapper = getObjectMapper();
 			String epochValue = mapper
 					.writeValueAsString(JsonPath.read(context.jsonString().toString(), index.getTimeStampField()));
 			if(null == epochValue) {
@@ -537,8 +522,6 @@ public class IndexerUtils {
 	public String encode(String stringToBeEncoded) {
 		String encodedString = null;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.getFactory().configure(Feature.ESCAPE_NON_ASCII, true);
 			encodedString = mapper.writeValueAsString(stringToBeEncoded);
 		} catch (Exception e) {
 			log.info("Exception while encoding non ascii characters ", e);
@@ -555,11 +538,6 @@ public class IndexerUtils {
 	 * @return ObjectMapper
 	 */
 	public ObjectMapper getObjectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
 		return mapper;
 	}
 
@@ -667,19 +645,16 @@ public class IndexerUtils {
 	 * @param enrichedObject
 	 * @param index
 	 */
-	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
-		if(dssTopicPushEnabled) {
-			if(index.getName().contains("collection") || index.getName().contains("payment")) {
-				log.info("Index name: "+ index.getName());
-				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
-				try{
-					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
-					producer.producer(dssTopicForCollection, enrichedObjectNode);
-					producer.producer(index + "-" + "enriched", enrichedObjectNode);
-				} catch (IOException e){
-					log.error("Failed pushing collections data to the DSS topic: "+dssTopicForCollection);
+	public void pushToKafka(String key, String enrichedObject, Index index) {
+		if(topicPushEnable) {
+			log.info("Index name: "+ index.getName());
+			String topicName = index.getName() + "-" + "enriched";
+			try{
+				JsonNode enrichedObjectNode = getObjectMapper().readTree(enrichedObject);
+				producer.producer(topicName, key, enrichedObjectNode);
+			} catch (IOException e){
+				log.error("Failed pushing data to the ES topic: "+topicName);
 
-				}
 			}
 		}
 	}

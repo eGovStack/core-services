@@ -1,6 +1,5 @@
 package org.egov.infra.indexer.producer;
 
-import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +23,9 @@ public class IndexerProducer {
     public void producer(String topicName, Object value) {
     	kafkaTemplate.send(topicName, value);
     }
+
+	public void producer(String topicName, String key, Object value) {
+		kafkaTemplate.send(topicName, key, value);
+	}
 
 }
