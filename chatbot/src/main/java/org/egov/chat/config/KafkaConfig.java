@@ -27,6 +27,8 @@ public class KafkaConfig {
 
     @Value(value = "${kafka.bootstrap.server}")
     private String bootstrapAddress;
+    @Value("${kafka.consumer.poll.ms}")
+    private Integer kafkaConsumerPollMs;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -41,6 +43,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, kafkaConsumerPollMs);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

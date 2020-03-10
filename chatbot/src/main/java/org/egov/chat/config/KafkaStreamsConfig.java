@@ -13,6 +13,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
@@ -22,6 +23,9 @@ public class KafkaStreamsConfig {
 
     @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Value("${kafka.consumer.poll.ms}")
+    private Integer kafkaConsumerPollMs;
 
     private static Properties defaultStreamConfiguration;
     private static Serde<JsonNode> jsonSerde;
@@ -46,6 +50,7 @@ public class KafkaStreamsConfig {
         defaultStreamConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         defaultStreamConfiguration.put(StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
                 LogAndContinueExceptionHandler.class.getName());
+        defaultStreamConfiguration.put(StreamsConfig.POLL_MS_CONFIG, kafkaConsumerPollMs);
     }
 
     public Serde<JsonNode> getJsonSerde() {
