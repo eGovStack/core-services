@@ -1,7 +1,9 @@
 package org.egov.infra.indexer.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -124,7 +127,7 @@ public class IndexerUtils {
 	/**
 	 * Helper method in data transformation
 	 * 
-	 * @param jsonString
+	 * @param object
 	 * @return
 	 */
 	public String buildString(Object object) {
@@ -206,45 +209,35 @@ public class IndexerUtils {
 		return serviceCallUri.toString();
 	}
 
-	/**
-	 * A common method that builds MDMS request for searching master data.
-	 * 
-	 * @param uri
-	 * @param tenantId
-	 * @param module
-	 * @param master
-	 * @param filter
-	 * @param requestInfo
-	 * @return
-	 */
-	public MdmsCriteriaReq prepareMDMSSearchReq(StringBuilder uri, RequestInfo requestInfo, String kafkaJson,
-			UriMapping mdmsMppings) {
-		if (uri.toString().length() < 1)
-			uri.append(mdmsHost).append(mdmsEndpoint);
-		String filter = buildFilter(mdmsMppings.getFilter(), mdmsMppings, kafkaJson);
-		MasterDetail masterDetail = org.egov.mdms.model.MasterDetail.builder().name(mdmsMppings.getMasterName())
+
+	@Cacheable(value = "masterData", sync = true)
+	public Object fetchMdmsData(String uri, String tenantId, String moduleName, String masterName, String filter) {
+		MasterDetail masterDetail = org.egov.mdms.model.MasterDetail.builder().name(masterName)
 				.filter(filter).build();
 		List<MasterDetail> masterDetails = new ArrayList<>();
 		masterDetails.add(masterDetail);
-		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(mdmsMppings.getModuleName())
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName)
 				.masterDetails(masterDetails).build();
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.add(moduleDetail);
-		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(mdmsMppings.getTenantId())
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId)
 				.moduleDetails(moduleDetails).build();
 
-		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+		RequestInfo requestInfo = new RequestInfo();
+		MdmsCriteriaReq req = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+
+		return restTemplate.postForObject(uri, req, Map.class);
 	}
+
 
 	/**
 	 * Method that builds filter for mdms.
-	 * 
-	 * @param filter
+	 *
 	 * @param mdmsMppings
 	 * @param kafkaJson
 	 * @return
 	 */
-	public String buildFilter(String filter, UriMapping mdmsMppings, String kafkaJson) {
+	public String buildFilter(UriMapping mdmsMppings, String kafkaJson) {
 		String modifiedFilter = mdmsMppings.getFilter();
 		log.debug("buildfilter, kafkaJson: " + kafkaJson);
 		for (FilterMapping mdmsMapping : mdmsMppings.getFilterMapping()) {
@@ -494,7 +487,7 @@ public class IndexerUtils {
 	public DocumentContext addTimeStamp(Index index, DocumentContext context) {
 		try {
 			String epochValue = mapper
-					.writeValueAsString(JsonPath.read(context.jsonString().toString(), index.getTimeStampField()));
+					.writeValueAsString(JsonPath.read(context.jsonString(), index.getTimeStampField()));
 			if(null == epochValue) {
 				log.info("NULL found in place of timestamp field.");
 				return context;
@@ -514,15 +507,13 @@ public class IndexerUtils {
 	
 	/**
 	 * Method to encode non ascii characters.
-	 * 
-	 * @param index
-	 * @param context
+	 *
 	 * @return
 	 */
 	public String encode(String stringToBeEncoded) {
 		String encodedString = null;
 		try {
-			encodedString = mapper.writeValueAsString(stringToBeEncoded);
+			encodedString = getObjectMapper().writeValueAsString(stringToBeEncoded);
 		} catch (Exception e) {
 			log.info("Exception while encoding non ascii characters ", e);
 			log.info("Data: " + stringToBeEncoded);
@@ -538,6 +529,12 @@ public class IndexerUtils {
 	 * @return ObjectMapper
 	 */
 	public ObjectMapper getObjectMapper() {
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
 		return mapper;
 	}
 
@@ -647,7 +644,6 @@ public class IndexerUtils {
 	 */
 	public void pushToKafka(String key, String enrichedObject, Index index) {
 		if(topicPushEnable) {
-			log.info("Index name: "+ index.getName());
 			String topicName = index.getName() + "-" + "enriched";
 			try{
 				JsonNode enrichedObjectNode = getObjectMapper().readTree(enrichedObject);

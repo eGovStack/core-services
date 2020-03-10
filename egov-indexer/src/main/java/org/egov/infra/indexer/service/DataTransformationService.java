@@ -5,7 +5,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.indexer.util.IndexerConstants;
 import org.egov.infra.indexer.util.IndexerUtils;
 import org.egov.infra.indexer.web.contract.CustomJsonMapping;
@@ -56,6 +55,15 @@ public class DataTransformationService {
 
 	@Value("${egov.infra.indexer.host}")
 	private String esHostUrl;
+
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	/**
 	 * Tranformation method that transforms the input data to match the es index as
@@ -179,7 +187,6 @@ public class DataTransformationService {
 	 * @return
 	 */
 	public DocumentContext enrichDataUsingExternalServices(DocumentContext documentContext, CustomJsonMapping customJsonMappings, String kafkaJson) {
-		ObjectMapper mapper = new ObjectMapper();
 		if (!CollectionUtils.isEmpty(customJsonMappings.getExternalUriMapping())) {
 			for (UriMapping uriMapping : customJsonMappings.getExternalUriMapping()) {
 				Object response = null;
@@ -228,12 +235,17 @@ public class DataTransformationService {
 		if (!CollectionUtils.isEmpty(customJsonMappings.getMdmsMapping())) {
 			for (UriMapping uriMapping : customJsonMappings.getMdmsMapping()) {
 				Object response = null;
-				StringBuilder uri = new StringBuilder();
-				uri.append(uriMapping.getPath());
+				String uri = uriMapping.getPath();
 				Object request = null;
 				try {
-					request = indexerUtils.prepareMDMSSearchReq(uri, new RequestInfo(), kafkaJson, uriMapping);
-					response = restTemplate.postForObject(uri.toString(), request, Map.class);
+
+					if (uri.length() < 1)
+						uri = uri + mdmsHost + mdmsEndpoint;
+
+					String filter = indexerUtils.buildFilter(uriMapping, kafkaJson);
+					response = indexerUtils.fetchMdmsData(uri, uriMapping.getTenantId(), uriMapping.getModuleName(),
+							uriMapping.getMasterName(), filter);
+
 					if (null == response)
 						continue;
 				} catch (Exception e) {

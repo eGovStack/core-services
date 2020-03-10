@@ -1,14 +1,8 @@
 package org.egov.infra.indexer.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.IndexerApplicationRunnerImpl;
 import org.egov.infra.indexer.custom.pgr.PGRCustomDecorator;
 import org.egov.infra.indexer.custom.pgr.PGRIndexObject;
@@ -32,10 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -219,7 +213,7 @@ public class LegacyIndexService {
 								} else {
 									if (count > size) {
 										count = (count - size) + presentCount;
-									}else if(count == size) {
+									}else if(count.equals(size)) {
 										count = presentCount;
 									}
 									log.info("Size Count FINAL: " + count);
