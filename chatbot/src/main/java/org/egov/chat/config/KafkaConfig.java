@@ -29,6 +29,8 @@ public class KafkaConfig {
     private String bootstrapAddress;
     @Value("${kafka.consumer.poll.ms}")
     private Integer kafkaConsumerPollMs;
+    @Value("${kafka.producer.linger.ms}")
+    private Integer kafkaProducerLingerMs;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -61,6 +63,7 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, EgovChatSerializer.class);
+        configProps.put(ProducerConfig.LINGER_MS_CONFIG, kafkaProducerLingerMs);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

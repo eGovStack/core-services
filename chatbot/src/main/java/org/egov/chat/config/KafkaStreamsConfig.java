@@ -2,6 +2,7 @@ package org.egov.chat.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -26,6 +27,8 @@ public class KafkaStreamsConfig {
 
     @Value("${kafka.consumer.poll.ms}")
     private Integer kafkaConsumerPollMs;
+    @Value("${kafka.producer.linger.ms}")
+    private Integer kafkaProducerLingerMs;
 
     private static Properties defaultStreamConfiguration;
     private static Serde<JsonNode> jsonSerde;
@@ -51,6 +54,7 @@ public class KafkaStreamsConfig {
         defaultStreamConfiguration.put(StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
                 LogAndContinueExceptionHandler.class.getName());
         defaultStreamConfiguration.put(StreamsConfig.POLL_MS_CONFIG, kafkaConsumerPollMs);
+        defaultStreamConfiguration.put(ProducerConfig.LINGER_MS_CONFIG, kafkaProducerLingerMs);
     }
 
     public Serde<JsonNode> getJsonSerde() {
