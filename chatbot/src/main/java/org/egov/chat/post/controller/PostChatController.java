@@ -34,7 +34,6 @@ public class PostChatController {
         pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message-localized");
         kafkaTopicCreater.createTopic("send-message");
         kafkaTopicCreater.createTopic("send-message-localized");
-        kafkaTopicCreater.createTopic("valuefirst-send-message");
         localizationStream.startStream("send-message", "send-message-localized");
     }
 

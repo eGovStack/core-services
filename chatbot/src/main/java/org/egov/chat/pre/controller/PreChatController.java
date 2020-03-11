@@ -29,7 +29,6 @@ public class PreChatController {
 
     @PostConstruct
     public void initPreChatbotStreams() {
-        kafkaTopicCreater.createTopic("whatsapp-received-messages");
         kafkaTopicCreater.createTopic("transformed-input-messages");
         kafkaTopicCreater.createTopic("chatbot-error-messages");
         kafkaTopicCreater.createTopic("input-messages");
