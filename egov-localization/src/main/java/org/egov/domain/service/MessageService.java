@@ -11,6 +11,7 @@ import org.egov.domain.model.MessageSearchCriteria;
 import org.egov.domain.model.Tenant;
 import org.egov.persistence.repository.MessageCacheRepository;
 import org.egov.persistence.repository.MessageRepository;
+import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -80,6 +81,10 @@ public class MessageService {
 	public List<Message> getFilteredMessages(MessageSearchCriteria searchCriteria) {
 		List<Message> messages = getMessages(searchCriteria);
 		if (searchCriteria.isModuleAbsent()) {
+
+		    if(!CollectionUtils.isEmpty(searchCriteria.getCodes()))
+		        throw new CustomException("INVALID_SEARCH_CRITERIA","ModuleName should be provided when searching on codes");
+
 			return messages.parallelStream()
 					.filter(e -> e.getLocale().equals(searchCriteria.getLocale())
 							&& e.getTenant().equals(searchCriteria.getTenantId().getTenantId()))
