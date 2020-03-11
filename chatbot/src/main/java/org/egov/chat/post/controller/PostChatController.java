@@ -8,6 +8,7 @@ import org.egov.chat.xternal.responseformatter.ValueFirst.ValueFirstResponseForm
 import org.egov.chat.xternal.responseformatter.ValueFirst.ValueFirstRestCall;
 import org.egov.chat.xternal.systeminitiated.PGRStatusUpdateEventFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
@@ -27,11 +28,12 @@ public class PostChatController {
     private ValueFirstResponseFormatter valueFirstResponseFormatter;
     @Autowired
     private ValueFirstRestCall valueFirstRestCall;
-
+    @Value("${update.pgr.service.topic}")
+    private String updatePGRServiceTopic;
 
     @PostConstruct
     public void init() {
-        pgrStatusUpdateEventFormatter.startStream("update-pgr-service", "send-message-localized");
+        pgrStatusUpdateEventFormatter.startStream(updatePGRServiceTopic, "send-message-localized");
         kafkaTopicCreater.createTopic("send-message");
         kafkaTopicCreater.createTopic("send-message-localized");
         localizationStream.startStream("send-message", "send-message-localized");

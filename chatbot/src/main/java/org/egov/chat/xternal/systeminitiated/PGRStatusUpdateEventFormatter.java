@@ -121,7 +121,9 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
             if ((source != null) && source.equals("whatsapp")) {
                 String status = event.at("/actionInfo/" + index + "/status").asText();
                 String action = event.at("/actionInfo/" + index + "/action").asText();
-                String comments = event.at("/actionInfo/" + index + "/comments").asText();
+                String comments = null;
+                if(StringUtils.isEmpty(status) && StringUtils.isEmpty(action))
+                        comments = event.at("/actionInfo/" + index + "/comments").asText();
                 String citizenName = event.at("/services/" + index + "/citizen/name").asText();
                 String mobileNumber = event.at("/services/" + index + "/citizen/mobileNumber").asText();
                 if (StringUtils.isEmpty(citizenName))
