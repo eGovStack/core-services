@@ -121,15 +121,13 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
             if ((source != null) && source.equals("whatsapp")) {
                 String status = event.at("/actionInfo/" + index + "/status").asText();
                 String action = event.at("/actionInfo/" + index + "/action").asText();
-                String comments = null;
-                if(StringUtils.isEmpty(status) && StringUtils.isEmpty(action))
-                        comments = event.at("/actionInfo/" + index + "/comments").asText();
+                String comments = event.at("/actionInfo/" + index + "/comments").asText();
                 String citizenName = event.at("/services/" + index + "/citizen/name").asText();
                 String mobileNumber = event.at("/services/" + index + "/citizen/mobileNumber").asText();
                 if (StringUtils.isEmpty(citizenName))
                     citizenName = localizationService.getMessageForCode(citizenKeywordLocalization);
                 ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event, index);
-                if (!StringUtils.isEmpty(comments)) {
+                if(StringUtils.isEmpty(status) && StringUtils.isEmpty(action) && !StringUtils.isEmpty(comments)) {
                     ObjectNode userChatNodeForComment = userChatNodeForStatusUpdate.deepCopy();
                     userChatNodeForComment.set("extraInfo", createResponseForComment(event, comments, citizenName, index));
                     chatNodes.add(userChatNodeForComment);
