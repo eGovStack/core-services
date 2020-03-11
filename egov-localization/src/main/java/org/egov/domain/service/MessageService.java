@@ -1,12 +1,6 @@
 package org.egov.domain.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,11 +86,23 @@ public class MessageService {
 					.collect(Collectors.toList());
 		} else {
 			List<String> modules = Arrays.asList(searchCriteria.getModule().split("[,]"));
-			messages = messages.stream()
-					.filter(message -> modules.contains(message.getModule())
-							&& message.getLocale().equals(searchCriteria.getLocale())
-							&& message.getTenant().equals(searchCriteria.getTenantId().getTenantId()))
-					.collect(Collectors.toList());
+
+			if(CollectionUtils.isEmpty(searchCriteria.getCodes()))
+                messages = messages.stream()
+                    .filter(message -> modules.contains(message.getModule())
+                        && message.getLocale().equals(searchCriteria.getLocale())
+                        && message.getTenant().equals(searchCriteria.getTenantId().getTenantId()))
+                    .collect(Collectors.toList());
+			else {
+			    Set<String> codes = searchCriteria.getCodes();
+                messages = messages.stream()
+                    .filter(message -> modules.contains(message.getModule())
+                        && codes.contains(message.getCode())
+                        && message.getLocale().equals(searchCriteria.getLocale())
+                        && message.getTenant().equals(searchCriteria.getTenantId().getTenantId()))
+                    .collect(Collectors.toList());
+            }
+
 		}
 		return messages;
 	}
@@ -177,8 +183,11 @@ public class MessageService {
 		final List<Message> messagesInEnglishForDefaultTenant = fetchMessageFromRepository(ENGLISH_INDIA,
 				new Tenant(Tenant.DEFAULT_TENANT));
 
-		Set<String> messageCodesInGivenLanguage = messagesForGivenLocale.stream().map(Message::getCode)
-				.collect(Collectors.toSet());
+        Set<String> messageCodesInGivenLanguage = new HashSet<>();
+
+        messagesForGivenLocale.forEach(message -> {
+            messageCodesInGivenLanguage.add(message.getModule()+message.getCode());
+        });
 
 		return getEnglishMessagesForCodesNotPresentInLocalLanguage(messageCodesInGivenLanguage,
 				messagesInEnglishForDefaultTenant);
@@ -193,10 +202,10 @@ public class MessageService {
 		messages.forEach(message -> {
 			final Message matchingMessage = codeToMessageMap.get(message.getCode());
 			if (matchingMessage == null) {
-				codeToMessageMap.put(message.getCode(), message);
+				codeToMessageMap.put(message.getModule()+message.getCode(), message);
 			} else {
 				if (message.isMoreSpecificComparedTo(matchingMessage)) {
-					codeToMessageMap.put(message.getCode(), message);
+					codeToMessageMap.put(message.getModule()+message.getCode(), message);
 				}
 			}
 		});
@@ -206,7 +215,7 @@ public class MessageService {
 
 	private List<Message> getEnglishMessagesForCodesNotPresentInLocalLanguage(Set<String> messageCodesForGivenLocale,
 			List<Message> messagesInEnglish) {
-		return messagesInEnglish.stream().filter(message -> !messageCodesForGivenLocale.contains(message.getCode()))
+		return messagesInEnglish.stream().filter(message -> !messageCodesForGivenLocale.contains(message.getModule()+message.getCode()))
 				.collect(Collectors.toList());
 	}
 
