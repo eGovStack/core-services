@@ -205,7 +205,7 @@ public class MessageService {
 				.collect(Collectors.toList());
 
 		messages.forEach(message -> {
-			final Message matchingMessage = codeToMessageMap.get(message.getCode());
+			final Message matchingMessage = codeToMessageMap.get(message.getModule()+message.getCode());
 			if (matchingMessage == null) {
 				codeToMessageMap.put(message.getModule()+message.getCode(), message);
 			} else {
