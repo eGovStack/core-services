@@ -41,7 +41,7 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
 
     @Override
     public String getStreamName() {
-        return "karix-request-transform";
+        return "valuefirst-request-transform";
     }
 
     @Override
