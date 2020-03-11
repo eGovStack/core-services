@@ -63,6 +63,9 @@ public class UserService {
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
+    @Value("${create.user.validate.name}")
+    private boolean createUserValidateName;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -156,7 +159,7 @@ public class UserService {
      */
     public User createUser(User user) {
         user.setUuid(UUID.randomUUID().toString());
-        user.validateNewUser();
+        user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
