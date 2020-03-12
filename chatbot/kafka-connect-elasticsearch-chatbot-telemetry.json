@@ -1,0 +1,34 @@
+{
+  "name": "chatbot-telemetry",
+  "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "connection.url": "http://elasticsearch-master.es-temp:9200",
+    "type.name": "_doc",
+    "topics": "chatbot-telemetry",
+    "key.ignore": "true",
+    "schema.ignore": true,
+    "value.converter.schemas.enable": false,
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+
+    "transforms": "TimestampRouter",
+
+    "transforms.TimestampRouter.topic.format": "${topic}-${timestamp}",
+    "transforms.TimestampRouter.timestamp.format": "yyyy.MM.dd",
+    "transforms.TimestampRouter.type": "org.apache.kafka.connect.transforms.TimestampRouter",
+
+    "batch.size": 500,
+    "max.buffered.records": 1000,
+    "flush.timeout.ms": 600000,
+
+    "retry.backoff.ms": 5000,
+    "read.timout.ms": 10000,
+    "linger.ms": 1000,
+
+    "max.in.flight.requests": 2,
+    "errors.log.enable": true,
+    "tasks.max": 1
+
+
+  }
+}
