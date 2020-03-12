@@ -14,6 +14,7 @@ import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.models.egovchatserdes.EgovChatSerdes;
 import org.egov.chat.util.CommonAPIErrorMessage;
 import org.egov.chat.util.LocalizationService;
+import org.egov.chat.util.Telemetry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,8 @@ public class LocalizationStream {
     private LocalizationService localizationService;
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
+    @Autowired
+    private Telemetry telemetry;
 
     public String getStreamName() {
         return "localization-stream";
@@ -48,6 +51,7 @@ public class LocalizationStream {
                 EgovChatSerdes.getSerde()));
 
         messagesKStream.flatMapValues(chatNode -> {
+            telemetry.recordEvent(chatNode);
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {

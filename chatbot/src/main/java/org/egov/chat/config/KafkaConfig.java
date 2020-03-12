@@ -73,7 +73,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, JsonNode> producerFactoryPersister() {
+    public ProducerFactory<String, JsonNode> producerFactoryJson() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -82,8 +82,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, JsonNode> kafkaTemplatePersister() {
-        return new KafkaTemplate<>(producerFactoryPersister());
+    public KafkaTemplate<String, JsonNode> kafkaTemplateJson() {
+        return new KafkaTemplate<>(producerFactoryJson());
     }
 
 }
