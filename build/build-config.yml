@@ -206,7 +206,13 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "egov-url-shortening/src/main/resources/db"
         image-name: "egov-url-shortening-db"
-  
+
+  - name: "builds/core-services/egov-notification-mail"
+    build:
+      - work-dir: "egov-notification-mail"
+        image-name: "egov-notification-mail"
+        dockerfile: "build/maven/Dockerfile"
+
   - name: "builds/core-services/chatbot"
     build:
       - work-dir: "chatbot"
