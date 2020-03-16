@@ -47,7 +47,7 @@ public class PGRComplaintCreate implements RestEndpoint {
     private String localizationTemplateCode = "chatbot.template.pgrCreateComplaintEndMessage";
 
     String pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\", \"userInfo\": {}}," +
-            "\"actionInfo\":[{\"media\":[]}],\"services\":[{\"addressDetail\":{\"city\":\"\",\"mohalla\": \"\"," +
+            "\"actionInfo\":[{\"media\":[]}],\"services\":[{\"addressDetail\":{\"city\":\"\",\"landmark\":\"\",\"mohalla\": \"\"," +
             "\"latitude\" : \"\",\"longitude\" : \"\"},\"city\":\"\",\"phone\":\"\",\"serviceCode\":\"\"," +
             "\"source\":\"whatsapp\",\"tenantId\":\"\",\"description\":\"\"}]}";
 
@@ -59,6 +59,7 @@ public class PGRComplaintCreate implements RestEndpoint {
         String city = params.get("pgr.create.tenantId").asText();
         String locality = params.get("pgr.create.locality").asText();
         String complaintDetails = params.get("pgr.create.complaintDetails").asText();
+        String landmark = params.get("pgr.create.landmark").asText();
         String photo = params.get("pgr.create.photo").asText();
         DocumentContext userInfo = JsonPath.parse(params.get("userInfo").asText());
         WriteContext request = JsonPath.parse(pgrCreateRequestBody);
@@ -72,6 +73,8 @@ public class PGRComplaintCreate implements RestEndpoint {
         request.set("$.services.[0].phone", mobileNumber);
         if (!complaintDetails.equalsIgnoreCase("No"))
             request.set("$.services.[0].description", complaintDetails);
+        if (!landmark.equalsIgnoreCase("No"))
+            request.set("$.services.[0].addressDetail.landmark", landmark);
 
         if (!photo.equalsIgnoreCase("null"))
             request.add("$.actionInfo.[0].media", photo);
