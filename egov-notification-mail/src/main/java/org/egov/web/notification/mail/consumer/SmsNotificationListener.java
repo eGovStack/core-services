@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class SmsNotificationListener {
@@ -40,8 +41,10 @@ public class SmsNotificationListener {
 	public void process(final HashMap<String, Object> record) {
 		List<String> emails = userRepository.getEmailsByMobileNo(config.getStateTenantId(),
 				(String) record.get(Constants.SMS_REQ_MOBILE_NO_KEY_NAME));
-		emailService
-				.sendEmail(getEmailReq(getValideEmails(emails), (String) record.get(Constants.SMS_REQ_MSG_KEY_NAME)));
+		if(!CollectionUtils.isEmpty(emails))
+			emailService
+					.sendEmail(getEmailReq(getValideEmails(emails), (String) record.get(Constants.SMS_REQ_MSG_KEY_NAME)));
+
 	}
 
 	private Email getEmailReq(Set<String> emails, String msg) {
