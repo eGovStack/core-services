@@ -124,7 +124,7 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
                 String comments = event.at("/actionInfo/" + index + "/comments").asText();
                 String citizenName = event.at("/services/" + index + "/citizen/name").asText();
                 String mobileNumber = event.at("/services/" + index + "/citizen/mobileNumber").asText();
-                if (StringUtils.isEmpty(citizenName))
+                if (StringUtils.isEmpty(citizenName) || StringUtils.equalsIgnoreCase(citizenName,"null"))
                     citizenName = localizationService.getMessageForCode(citizenKeywordLocalization);
                 ObjectNode userChatNodeForStatusUpdate = createChatNodeForUser(event, index);
                 if(StringUtils.isEmpty(status) && StringUtils.isEmpty(action) && !StringUtils.isEmpty(comments)) {
