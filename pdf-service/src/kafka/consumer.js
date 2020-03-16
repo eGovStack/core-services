@@ -3,14 +3,17 @@ import envVariables from "../EnvironmentVariables";
 import logger from "../config/logger";
 import { createAndSave } from "../index";
 
+
 export const listenConsumer = async(topic)=>{
 //let receiveJob = envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC;
 let receiveJob = topic;
+
 
 const Consumer = kafka.Consumer;
 let client = new kafka.KafkaClient({
   kafkaHost: envVariables.KAFKA_BROKER_HOST
 });
+
 
 var topicList = [];
 for (var i in receiveJob) {
@@ -18,6 +21,7 @@ for (var i in receiveJob) {
 }
 
 const consumer = new Consumer(client, topicList, {
+
   autoCommit: false
 });
 
@@ -59,3 +63,4 @@ consumer.on("offsetOutOfRange", function(err) {
 });
 
 }
+
