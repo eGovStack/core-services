@@ -53,6 +53,8 @@ public class CreateEndpointStream extends CreateStream {
 
     private String contactMessageLocalizationCode = "chatbot.messages.contactMessage";
 
+    private String contactAdditionalInfoLocalizationCode = "chatbot.messages.contactAdditionalInfo";
+
     public void createEndpointStream(JsonNode config, String inputTopic, String sendMessageTopic) {
 
         String streamName = config.get("name").asText() + "-answer";
@@ -116,11 +118,13 @@ public class CreateEndpointStream extends CreateStream {
         LocalizationCode contactCardContactName = LocalizationCode.builder().value(nameInContactCard).build();
         LocalizationCode mobNameSeparator = LocalizationCode.builder().value(" - ").build();
         LocalizationCode contactCardMobNo = LocalizationCode.builder().value(numberInContactCard).build();
+        LocalizationCode contactAdditionalInfo = LocalizationCode.builder().code(contactAdditionalInfoLocalizationCode).build();
         List<LocalizationCode> localizationCodeList = new ArrayList<>();
         localizationCodeList.add(contactCardMessageCode);
         localizationCodeList.add(contactCardContactName);
         localizationCodeList.add(mobNameSeparator);
         localizationCodeList.add(contactCardMobNo);
+        localizationCodeList.add(contactAdditionalInfo);
         Response response = Response.builder().timestamp(System.currentTimeMillis()).nodeId("contactcard").type("contactcard").contactCard(contactcard).localizationCodes(localizationCodeList).build();
         contactMessageNode.setResponse(response);
         return contactMessageNode;
