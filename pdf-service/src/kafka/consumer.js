@@ -6,7 +6,6 @@ import { createAndSave } from "../index";
 export const listenConsumer = async(topic)=>{
 //let receiveJob = envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC;
 let receiveJob = topic;
-console.log("Topic Array--->",topic);
 
 const Consumer = kafka.Consumer;
 let client = new kafka.KafkaClient({

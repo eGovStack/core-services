@@ -535,11 +535,9 @@ export const createAndSave = async (
   let key;
   if(topic!=null && topicKeyMap[topic] !=null){
     key = topicKeyMap[topic];
-    console.log("Topic Key--->"+key);
   }
   else{
     key = get(req.query || req, "key");
-    console.log("Normal Key--->"+key);
   }
   //let key = get(req.query || req, "key");
   let tenantId = get(req.query || req, "tenantId");
@@ -549,7 +547,6 @@ export const createAndSave = async (
   var dataconfig = dataConfigMap[key];
   var userid = get(req.body || req, "RequestInfo.userInfo.id");
   var requestInfo = get(req.body || req, "RequestInfo");
-  //
 
   var valid = validateRequest(req, res, key, tenantId, requestInfo);
   if (valid) {
