@@ -352,7 +352,7 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
     private String makeCitizenURLForComplaint(String serviceRequestId, String mobileNumber) throws UnsupportedEncodingException {
         String encodedPath = URLEncoder.encode(serviceRequestId, "UTF-8");
-        String url = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?";
+        String url = egovExternalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
         String shortenedURL = urlShorteningSevice.shortenURL(url);
         return shortenedURL;
     }
