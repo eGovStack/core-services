@@ -67,8 +67,7 @@ public class IndexerUtils {
 	@Autowired
 	private IndexerProducer producer;
 
-	@Autowired
-	private ObjectMapper mapper;
+	private ObjectMapper mapper = new ObjectMapper();
 
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 

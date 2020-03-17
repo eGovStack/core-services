@@ -61,9 +61,8 @@ public class DataTransformationService {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
-
-	@Autowired
-	private ObjectMapper mapper;
+	
+	private ObjectMapper mapper = new ObjectMapper();
 
 	/**
 	 * Tranformation method that transforms the input data to match the es index as
