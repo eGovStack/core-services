@@ -155,10 +155,12 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
 
     private ObjectNode createChatNodeForUser(JsonNode event, int index) throws Exception {
         String mobileNumber = event.at("/services/" + index + "/citizen/mobileNumber").asText();
+        String uuid = event.at("/services/" + index + "/citizen/uuid").asText();
         ObjectNode chatNode = objectMapper.createObjectNode();
         chatNode.put("tenantId", stateLevelTenantId);
         ObjectNode user = objectMapper.createObjectNode();
         user.put("mobileNumber", mobileNumber);
+        user.put("userId", uuid);
         chatNode.set("user", user);
         ObjectNode extraInfo = objectMapper.createObjectNode();
         extraInfo.put("recipient", sourceWhatsAppNumber);
