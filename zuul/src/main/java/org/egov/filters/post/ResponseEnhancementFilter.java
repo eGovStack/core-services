@@ -4,6 +4,7 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.CacheControl;
 import org.springframework.stereotype.Component;
 
 import static org.egov.constants.RequestContextConstants.CORRELATION_ID_KEY;
@@ -37,6 +38,11 @@ public class ResponseEnhancementFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.addZuulResponseHeader(CORRELATION_HEADER_NAME, getCorrelationId());
+        ctx.addZuulResponseHeader("Cache-Control", CacheControl
+            .noStore()
+            .mustRevalidate()
+            .getHeaderValue());
+
         return null;
     }
 
