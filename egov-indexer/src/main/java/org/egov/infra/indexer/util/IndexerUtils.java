@@ -59,7 +59,10 @@ public class IndexerUtils {
 	
 	@Value("${egov.indexer.dss.collectionindex.topic}")
 	private String dssTopicForCollection;
-	
+
+	@Value("${dss.collectionindex.topic.push.enabled}")
+	private Boolean dssTopicPushEnabled;
+
 	@Value("${topic.push.enabled}")
 	private Boolean topicPushEnable;
 	
@@ -632,7 +635,7 @@ public class IndexerUtils {
 		return df.format(Double.valueOf(value));
 	}
 	
-	
+
 	/**
 	 * For the sake of DSS, collections data is being used from a different index.
 	 * This method pushes only the collections data to a different topic, for the dss ingest to pick.
@@ -640,8 +643,29 @@ public class IndexerUtils {
 	 * @param enrichedObject
 	 * @param index
 	 */
+	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
+			if(index.getName().contains("collection") || index.getName().contains("payment")) {
+				log.info("Index name: "+ index.getName());
+				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
+				try{
+					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
+					producer.producer(dssTopicForCollection, enrichedObjectNode);
+
+				} catch (IOException e){
+					log.error("Failed pushing collections data to the DSS topic: "+dssTopicForCollection);
+
+				}
+			}
+	}
+
+
+
+
 	public void pushToKafka(String key, String enrichedObject, Index index) {
 		if(topicPushEnable) {
+			if(dssTopicPushEnabled){
+				pushCollectionToDSSTopic(enrichedObject, index);
+			}
 			String topicName = index.getName() + "-" + "enriched";
 			try{
 				JsonNode enrichedObjectNode = getObjectMapper().readTree(enrichedObject);
