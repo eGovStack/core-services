@@ -10,4 +10,8 @@ public interface RequestFormatter {
 
     public JsonNode getTransformedRequest(JsonNode inputRequest) throws Exception;
 
+    public JsonNode maskData(JsonNode inputRequest) throws Exception;
+
+    public String getEventTopicName();
+
 }

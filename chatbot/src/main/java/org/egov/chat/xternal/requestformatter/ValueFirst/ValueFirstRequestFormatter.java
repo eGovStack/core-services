@@ -3,6 +3,7 @@ package org.egov.chat.xternal.requestformatter.ValueFirst;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,33 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
             chatNode = getUserMessageChatNode(inputRequest);
         }
         return chatNode;
+    }
+
+    @Override
+    public JsonNode maskData(JsonNode inputRequest) throws Exception {
+        JsonNode maskedData = inputRequest.deepCopy();
+
+        if(! inputRequest.at(ValueFirstPointerConstants.missedCallFromMobileNumber).asText().isEmpty()) {
+            String mobileNumber = inputRequest.at(ValueFirstPointerConstants.missedCallFromMobileNumber).asText();
+            String maskedMobileNumber = "XXXXXX" + mobileNumber.substring(mobileNumber.length() - 4);
+            ( (ObjectNode) maskedData.get("queryParams")).put("mobile_number", maskedMobileNumber);
+        } else if(! inputRequest.at(ValueFirstPointerConstants.userMobileNumber).asText().isEmpty()) {
+            String mobileNumber = inputRequest.at(ValueFirstPointerConstants.userMobileNumber).asText();
+            String maskedMobileNumber = "XXXXXX" + mobileNumber.substring(mobileNumber.length() - 4);
+            ( (ObjectNode) maskedData.get("queryParams")).put("from", maskedMobileNumber);
+            if(! inputRequest.at(ValueFirstPointerConstants.textContent).asText().isEmpty()) {
+                ( (ObjectNode) maskedData.get("queryParams")).set("text", NullNode.getInstance());
+            } else if(! inputRequest.at(ValueFirstPointerConstants.mediaData).asText().isEmpty()) {
+                ( (ObjectNode) maskedData.get("queryParams")).set("media_data", NullNode.getInstance());
+            }
+        }
+
+        return maskedData;
+    }
+
+    @Override
+    public String getEventTopicName() {
+        return "valuefirst-event";
     }
 
     public JsonNode getMissedCallChatNode(JsonNode inputRequest) {

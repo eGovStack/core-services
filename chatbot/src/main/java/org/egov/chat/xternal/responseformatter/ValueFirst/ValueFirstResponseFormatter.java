@@ -170,6 +170,18 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         return valueFirstRequests;
     }
 
+    @Override
+    public String getEventTopicName() {
+        return "valuefirst-event";
+    }
+
+    @Override
+    public JsonNode maskData(JsonNode request) {
+        JsonNode maskedData = request.deepCopy();
+
+        return maskedData;
+    }
+
 //    private String getTypeFromMime(String mimeType) {
 //        return mimeTypeToAttachmentTypeMapping.get(mimeType);
 //    }

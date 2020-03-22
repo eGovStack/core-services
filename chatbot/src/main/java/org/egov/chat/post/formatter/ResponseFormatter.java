@@ -11,4 +11,7 @@ public interface ResponseFormatter {
 
     public List<JsonNode> getTransformedResponse(JsonNode response) throws IOException;
 
+    public String getEventTopicName();
+
+    public JsonNode maskData(JsonNode request);
 }

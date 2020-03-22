@@ -1,21 +1,21 @@
-package org.egov.chat.xternal.requestformatter.ValueFirst;//package org.egov.chat.pre.requestformatter.karix;
+package org.egov.chat.xternal.requestformatter.ValueFirst;
 
 public class ValueFirstPointerConstants {
 
     public static String timestampPath = "/timestamp";
 
-    public static String missedCallFromMobileNumber = "/mobile_number";
+    public static String missedCallFromMobileNumber = "/queryParams/mobile_number";
 
-    public static String missedCallToNumber = "/vmn_tollfree";
+    public static String missedCallToNumber = "/queryParams/vmn_tollfree";
 
-    public static String recipientMobileNumber = "/to";
+    public static String recipientMobileNumber = "/queryParams/to";
 
-    public static String userMobileNumber = "/from";
+    public static String userMobileNumber = "/queryParams/from";
 
-    public static String mediaType = "/media_type";
+    public static String mediaType = "/queryParams/media_type";
 
-    public static String textContent = "/text";
+    public static String textContent = "/queryParams/text";
 
-    public static String mediaData = "/media_data";
+    public static String mediaData = "/queryParams/media_data";
 
 }

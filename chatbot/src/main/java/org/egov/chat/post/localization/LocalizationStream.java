@@ -51,7 +51,6 @@ public class LocalizationStream {
                 EgovChatSerdes.getSerde()));
 
         messagesKStream.flatMapValues(chatNode -> {
-            telemetry.recordEvent(chatNode);
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {

@@ -24,7 +24,7 @@ public class ValueFirstRestCall {
     @Autowired
     private RestTemplate restTemplate;
 
-    public void sendMessage(JsonNode response) {
+    public ResponseEntity<JsonNode> sendMessage(JsonNode response) {
         try {
             HttpHeaders httpHeaders = getDefaultHttpHeaders();
 
@@ -33,16 +33,17 @@ public class ValueFirstRestCall {
             ResponseEntity<JsonNode> valueFirstResponse = restTemplate.postForEntity(valueFirstSendMessageUrl, request, JsonNode.class);
 
             log.info("ValueFirst Send Message Response : " + valueFirstResponse.toString());
+
+            return valueFirstResponse;
         } catch (Exception e) {
             log.error("error in value first rest call", e);
         }
-
+        return null;
     }
 
     HttpHeaders getDefaultHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.set("Authentication", karixAuthenticationToken);
         return headers;
     }
 
