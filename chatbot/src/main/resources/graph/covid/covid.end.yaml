@@ -1,0 +1,12 @@
+name : covid.end
+nodeType : endpoint
+
+class : org.egov.chat.xternal.restendpoint.CovidCreate
+
+nodes : [ covid.tenantId, covid.locality, covid.proxy ]
+
+params :
+  mobileNumber : /user/mobileNumber
+  authToken : /user/authToken
+  refreshToken : /user/refreshToken
+  userInfo : /user/userInfo

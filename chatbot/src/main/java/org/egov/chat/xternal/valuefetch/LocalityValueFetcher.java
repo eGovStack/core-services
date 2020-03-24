@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.service.valuefetch.ExternalValueFetcher;
 import org.egov.chat.util.URLShorteningSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @PropertySource("classpath:xternal.properties")
 @Component
+@Slf4j
 public class LocalityValueFetcher implements ExternalValueFetcher {
 
     @Autowired
@@ -88,6 +90,9 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        log.info(url);
+        log.info(requestBody.toString());
 
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);
 

@@ -8,6 +8,7 @@ import org.egov.chat.config.graph.GraphReader;
 import org.egov.chat.config.graph.TopicNameGetter;
 import org.egov.chat.service.streams.CreateBranchStream;
 import org.egov.chat.service.streams.CreateEndpointStream;
+import org.egov.chat.service.streams.CreateProxyBotStream;
 import org.egov.chat.service.streams.CreateStepStream;
 import org.egov.chat.util.KafkaTopicCreater;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class GraphStreamGenerator {
     private CreateBranchStream createBranchStream;
     @Autowired
     private CreateEndpointStream createEndpointStream;
+    @Autowired
+    private CreateProxyBotStream createProxyBotStream;
     @Autowired
     private GraphReader graphReader;
     @Autowired
@@ -85,6 +88,12 @@ public class GraphStreamGenerator {
                 kafkaTopicCreater.createTopic(questionTopicName);
                 createEndpointStream.createEndpointStream(config, questionTopicName,
                         "send-message");
+            } else if (nodeType.equalsIgnoreCase("proxy")) {
+                String inputTopicName = topicNameGetter.getAnswerInputTopicNameForNode(node);
+                String nextNodeTopic = topicNameGetter.getAnswerOutputTopicNameForNode(node);
+                kafkaTopicCreater.createTopic(inputTopicName);
+                kafkaTopicCreater.createTopic(nextNodeTopic);
+                createProxyBotStream.createProxyBotStream(config, inputTopicName, "send-message", nextNodeTopic);
             }
         }
     }

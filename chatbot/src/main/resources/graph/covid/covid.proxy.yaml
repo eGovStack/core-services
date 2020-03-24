@@ -1,0 +1,14 @@
+name: covid.proxy
+nodeType: proxy
+
+type : text
+
+class : org.egov.chat.xternal.proxybot.CovidProxyBot
+
+params :
+  mobileNumber : /user/mobileNumber
+  authToken : /user/authToken
+  refreshToken : /user/refreshToken
+  userInfo : /user/userInfo
+  message: /message/rawInput
+  contentType : /message/contentType

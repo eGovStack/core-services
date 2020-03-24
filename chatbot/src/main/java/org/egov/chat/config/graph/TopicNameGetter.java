@@ -21,8 +21,12 @@ public class TopicNameGetter {
 
     public String getAnswerOutputTopicNameForNode(String nodeName) {
         List<String> nextNodes = graphReader.getNextNodes(nodeName);
-        if (nextNodes.size() == 1)
+        if (nextNodes.size() == 1) {
+            if(nextNodes.get(0).contains(".proxy")) {
+                return getAnswerInputTopicNameForNode(nextNodes.get(0));
+            }
             return nextNodes.get(0) + "-question";
+        }
         if (nextNodes.size() == 0)
             return nodeName + "-end";
         return null;
