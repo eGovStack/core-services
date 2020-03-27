@@ -63,19 +63,23 @@ public class CreateProxyBotStream extends CreateStream {
 
                 ObjectNode proxyBotResponse = proxyBot.makeProxyCall(config, chatNode);
 
+                log.info("ProxyBotResponse : " + proxyBotResponse.toString());
+
                 boolean continueProxy = proxyBotResponse.get("continue").asBoolean();
 
                 if(continueProxy) {
                     JsonNode responseJson = proxyBotResponse.get("response");
-
                     Response response = objectMapper.convertValue(responseJson, Response.class);
-
+                    response.setNodeId(config.get("name").asText());
+                    response.setTimestamp(System.currentTimeMillis());
                     chatNode.setResponse(response);
+
+                    JsonNode questionDetails = proxyBotResponse.get("questionDetails");
 
                     ConversationState nextConversationState = chatNode.getConversationState().toBuilder().build();
                     nextConversationState.setLastModifiedTime(System.currentTimeMillis());
                     nextConversationState.setActiveNodeId(config.get("name").asText());
-                    nextConversationState.setQuestionDetails(null);
+                    nextConversationState.setQuestionDetails(questionDetails);
                     chatNode.setNextConversationState(nextConversationState);
 
                     conversationStateRepository.updateConversationStateForId(nextConversationState);

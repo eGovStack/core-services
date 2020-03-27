@@ -1,7 +1,7 @@
 name : covid.end
 nodeType : endpoint
 
-class : org.egov.chat.xternal.restendpoint.CovidCreate
+class : org.egov.chat.xternal.restendpoint.CovidUpdate
 
 nodes : [ covid.tenantId, covid.locality, covid.proxy ]
 

@@ -12,3 +12,6 @@ params :
   userInfo : /user/userInfo
   message: /message/rawInput
   contentType : /message/contentType
+  questionDetails : /conversationState/questionDetails
+  covid.tenantId : ~covid.tenantId
+  covid.locality : ~covid.locality

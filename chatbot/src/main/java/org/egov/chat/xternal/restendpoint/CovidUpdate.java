@@ -1,5 +1,6 @@
 package org.egov.chat.xternal.restendpoint;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,6 +9,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.WriteContext;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.chat.ChatBot;
 import org.egov.chat.service.restendpoint.RestEndpoint;
 import org.egov.chat.util.NumeralLocalization;
 import org.egov.chat.util.URLShorteningSevice;
@@ -19,12 +21,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.net.URLEncoder;
 
 @Slf4j
 @Component
 @PropertySource("classpath:xternal.properties")
-public class CovidCreate implements RestEndpoint {
+public class CovidUpdate implements RestEndpoint {
+
     @Autowired
     private URLShorteningSevice urlShorteningService;
     @Autowired
@@ -40,13 +45,14 @@ public class CovidCreate implements RestEndpoint {
 
     @Value("${pgr.service.host}")
     private String pgrHost;
-    @Value("${pgr.service.create.path}")
-    private String pgrCreateComplaintPath;
+    @Value("${pgr.service.update.path}")
+    private String pgrUpdateComplaintPath;
 
     private String localizationTemplateCode = "chatbot.template.pgrCreateComplaintEndMessage";
 
-    String pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\", \"userInfo\": {}}," +
-            "\"actionInfo\":[{\"media\":[]}],\"services\":[{\"addressDetail\":{\"city\":\"\",\"landmark\":\"\",\"mohalla\": \"\"," +
+    String pgrUpdateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\", \"userInfo\": {}}," +
+            "\"actionInfo\":[{\"media\":[]}],\"services\":[{\"serviceRequestId\": \"\", " +
+            "\"addressDetail\":{\"city\":\"\",\"landmark\":\"\",\"mohalla\": \"\"," +
             "\"latitude\" : \"\",\"longitude\" : \"\"},\"city\":\"\",\"phone\":\"\",\"serviceCode\":\"\"," +
             "\"source\":\"whatsapp\",\"tenantId\":\"\",\"description\":\"\", \"attributes\": {} }]}";
 
@@ -59,9 +65,14 @@ public class CovidCreate implements RestEndpoint {
         String locality = params.get("covid.locality").asText();
         String proxyBotData = params.get("covid.proxy").asText();
 
-        DocumentContext attributes = JsonPath.parse(proxyBotData);
+        JsonNode proxyBot = objectMapper.readTree(proxyBotData);
+        String serviceRequestId = proxyBot.get("serviceRequestId").asText();
+        JsonNode attributesJsonNode = proxyBot.get("attributes");
+
+
+        DocumentContext attributes = JsonPath.parse(attributesJsonNode.toString());
         DocumentContext userInfo = JsonPath.parse(params.get("userInfo").asText());
-        WriteContext request = JsonPath.parse(pgrCreateRequestBody);
+        WriteContext request = JsonPath.parse(pgrUpdateRequestBody);
         request.set("$.RequestInfo.authToken", authToken);
         request.set("$.RequestInfo.userInfo", userInfo.json());
         request.set("$.services.[0].city", city);
@@ -70,17 +81,19 @@ public class CovidCreate implements RestEndpoint {
         request.set("$.services.[0].addressDetail.mohalla", locality);
         request.set("$.services.[0].serviceCode", complaintType);
         request.set("$.services.[0].phone", mobileNumber);
+        request.set("$.services.[0].serviceRequestId", serviceRequestId);
+
         request.set("$.services.[0].attributes", attributes.json());
 
-        log.info("Covid Create request : " + request.jsonString());
+        log.info("Covid Update request : " + request.jsonString());
         JsonNode requestObject = null;
         requestObject = objectMapper.readTree(request.jsonString());
-        ObjectNode responseMessage = objectMapper.createObjectNode();
-        responseMessage.put("type", "text");
-        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
+        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrUpdateComplaintPath,
                 requestObject, ObjectNode.class);
-        responseMessage = makeMessageForResponse(response, mobileNumber);
+
+        ObjectNode responseMessage = (ObjectNode) proxyBot.get("finalResponse");
         responseMessage.put("timestamp", System.currentTimeMillis());
+
         return responseMessage;
     }
 

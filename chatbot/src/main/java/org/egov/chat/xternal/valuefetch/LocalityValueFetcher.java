@@ -91,9 +91,6 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
             e.printStackTrace();
         }
 
-        log.info(url);
-        log.info(requestBody.toString());
-
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);
 
         return locationData;
