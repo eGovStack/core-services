@@ -1,214 +1,139 @@
 package org.egov.infra.indexer.custom.pt;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Property
  */
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-05-11T14:12:44.497+05:30")
+
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Property extends PropertyInfo{
+@AllArgsConstructor
+public class Property extends PropertyInfo {
 
+	@JsonProperty("acknowldgementNumber")
+	private String acknowldgementNumber;
 
+	@JsonProperty("propertyType")
+	private String propertyType;
+
+	@JsonProperty("ownershipCategory")
+	private String ownershipCategory;
+
+	@JsonProperty("owners")
+	@Valid
+	private List<OwnerInfo> owners;
+
+	@JsonProperty("institution")
+	private Institution institution;
+
+	@JsonProperty("creationReason")
+	@NotNull(message="The value provided is either Invald or null")
+	private CreationReason creationReason;
+	
+	@JsonProperty("usageCategory")
+	private String usageCategory;
+
+	@Max(value = 500)
+	@JsonProperty("noOfFloors")
+	private Long noOfFloors;
+
+	@Digits(integer = 8, fraction = 2)
+	@JsonProperty("landArea")
+	private Double landArea;
+
+	@Digits(integer = 8, fraction = 2)
+	@JsonProperty("superBuiltUpArea")
+	private BigDecimal superBuiltUpArea;
+
+	@JsonProperty("source")
+	private Source source;
+
+	@JsonProperty("channel")
+	private Channel channel;
+
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents;
+
+	@JsonProperty("units")
+	@Valid
+	private List<Unit> units;
+
+	@JsonProperty("additionalDetails")
+	private JsonNode additionalDetails;
+	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
-
-	public enum CreationReasonEnum {
-		NEWPROPERTY("NEWPROPERTY"),
-
-		SUBDIVISION("SUBDIVISION");
-
-		private String value;
-
-		CreationReasonEnum(String value) {
-			this.value = value;
-		}
-
-		@Override
-		@JsonValue
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		@JsonCreator
-		public static CreationReasonEnum fromValue(String text) {
-			for (CreationReasonEnum b : CreationReasonEnum.values()) {
-				if (String.valueOf(b.value).equals(text)) {
-					return b;
-				}
-			}
-			return null;
-		}
+	@JsonProperty("workflow")
+	private ProcessInstance workflow;
+	
+	@Builder
+	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
+			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
+			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
+			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
+			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
+			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow) {
+		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
+		this.acknowldgementNumber = acknowldgementNumber;
+		this.propertyType = propertyType;
+		this.ownershipCategory = ownershipCategory;
+		this.owners = owners;
+		this.institution = institution;
+		this.creationReason = creationReason;
+		this.usageCategory = usageCategory;
+		this.noOfFloors = noOfFloors;
+		this.landArea = landArea;
+		this.superBuiltUpArea = superBuiltUpArea;
+		this.source = source;
+		this.channel = channel;
+		this.documents = documents;
+		this.units = units;
+		this.additionalDetails = additionalDetails;
+		this.auditDetails = auditDetails;
+		this.workflow = workflow;
 	}
 
-	@JsonProperty("creationReason")
-	private CreationReasonEnum creationReason;
-
-	@JsonProperty("occupancyDate")
-	private Long occupancyDate;
-
-	@Valid
-	@JsonProperty("propertyDetails")
-	private List<PropertyDetail> propertyDetails;
-	
-	@JsonProperty("consumerCodes")
-	private List<String> consumerCodes;
-
-
-	public Property addpropertyDetailsItem(PropertyDetail propertyDetailsItem) {
-		if (this.propertyDetails == null) {
-			this.propertyDetails = new ArrayList<>();
+	public Property addOwnersItem(OwnerInfo ownersItem) {
+		if (this.owners == null) {
+			this.owners = new ArrayList<>();
 		}
-		this.propertyDetails.add(propertyDetailsItem);
+
+		if (null != ownersItem)
+			this.owners.add(ownersItem);
+		return this;
+	}
+	
+	public Property addUnitsItem(Unit unit) {
+		if (this.units == null) {
+			this.units = new ArrayList<>();
+		}
+
+		if (null != unit)
+			this.units.add(unit);
 		return this;
 	}
 
-	@Builder
-	public Property(String propertyId, String tenantId, String acknowldgementNumber, String oldPropertyId, StatusEnum status, Address address, AuditDetails auditDetails, CreationReasonEnum creationReason, Long occupancyDate, List<PropertyDetail> propertyDetails) {
-		super(propertyId, tenantId, acknowldgementNumber, oldPropertyId, status, address);
-		this.auditDetails = auditDetails;
-		this.creationReason = creationReason;
-		this.occupancyDate = occupancyDate;
-		this.propertyDetails = propertyDetails;
-	}
+	public Property addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
 
+		if (null != documentsItem)
+			this.documents.add(documentsItem);
+		return this;
+	}
 }
-
-
-
-
-
-
-
-
-/*
-	public static PropertyBuilder builder(){
-		return new PropertyBuilder();
-	}
-
-    public static class PropertyBuilder{
-
-		private CreationReasonEnum creationReason;
-		private Long occupancyDate;
-		private List<PropertyDetail>  propertyDetails;
-		private AuditDetails auditDetails;
-		private String accountId;
-
-		private String propertyId;
-		private String tenantId;
-		private String acknowldgementNumber;
-		private String oldPropertyId;
-		private StatusEnum status;
-		private Address address;
-
-
-
-		public PropertyBuilder creationReason(CreationReasonEnum creationReason){
-			this.creationReason=creationReason;
-			return this;
-		}
-
-		public PropertyBuilder occupancyDate(Long occupancyDate){
-			this.occupancyDate=occupancyDate;
-			return this;
-		}
-
-		public PropertyBuilder propertyDetail( List<PropertyDetail> propertyDetails){
-			this.propertyDetails=propertyDetails;
-			return this;
-		}
-
-		public PropertyBuilder auditDetails(AuditDetails auditDetails){
-			this.auditDetails=auditDetails;
-			return this;
-		}
-
-		public PropertyBuilder propertyId(String propertyId){
-			this.propertyId =propertyId ;
-			return this;
-		}
-
-		public PropertyBuilder accountId(String accountId){
-			this.accountId =accountId ;
-			return this;
-		}
-
-		public PropertyBuilder tenantId(String tenantId){
-			this.tenantId =tenantId ;
-			return this;
-		}
-
-		public PropertyBuilder acknowldgementNumber(String acknowldgementNumber){
-			this.acknowldgementNumber =acknowldgementNumber ;
-			return this;
-		}
-
-		public PropertyBuilder oldPropertyId(String oldPropertyId){
-			this.oldPropertyId=oldPropertyId;
-			return this;
-		}
-
-		public PropertyBuilder status(StatusEnum status){
-			this.status = status;
-			return this;
-		}
-
-		public PropertyBuilder address(Address address){
-			this.address = address;
-			return this;
-		}
-
-		public Property build(){
-			return new Property(this);
-		}
-
-
-	}
-
-
-	public Property(PropertyBuilder builder) {
-		super(builder.propertyId,builder.tenantId,builder.acknowldgementNumber,builder.oldPropertyId,builder.status,builder.address);
-		this.auditDetails = builder.auditDetails;
-		this.creationReason = builder.creationReason;
-		this.occupancyDate = builder.occupancyDate;
-		this.propertyDetails = builder.propertyDetails;
-		this.accountId=builder.accountId;
-	}*/
-
-
-
-	/*public Property(AuditDetails auditDetails, String accountId, CreationReasonEnum creationReason, Long occupancyDate, List<PropertyDetail> propertyDetails) {
-		this.auditDetails = auditDetails;
-		this.accountId = accountId;
-		this.creationReason = creationReason;
-		this.occupancyDate = occupancyDate;
-		this.propertyDetails = propertyDetails;
-	}*/
-

@@ -24,15 +24,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PropertyRequest   {
-        @NotNull
-        @JsonProperty("RequestInfo")
-        private RequestInfo requestInfo;
+public class PropertyArrayRequest   {
+    @NotNull
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-        @JsonProperty("Property")
-        @Valid
-        @NotNull
-        private Property property;
+    @JsonProperty("Properties")
+    @Valid
+    @NotNull
+    @Size(min=1)
+    private List<Property> properties;
 
 }
 

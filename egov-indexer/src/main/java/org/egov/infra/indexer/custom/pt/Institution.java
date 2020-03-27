@@ -3,34 +3,36 @@ package org.egov.infra.indexer.custom.pt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.validation.constraints.Size;
+/**
+ * Institution
+ */
 
+@ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-
 public class Institution {
 
-  @Size(max=64)
-  @JsonProperty("id")
-  private String id;
+	@JsonProperty("id")
+	private String id;
 
-  @Size(max=256)
-  @JsonProperty("tenantId")
-  private String tenantId;
+	@JsonProperty("tenantId")
+	private String tenantId;
+	
+	@JsonProperty("name")	
+	private String name;
 
-  @Size(max=64)
-  @JsonProperty("name")
-  private String name;
+	@JsonProperty("type")
+	private String type;
 
-  @Size(max=64)
-  @JsonProperty("type")
-  private String type;
+	@JsonProperty("designation")
+	private String designation;
 
-  @Size(max=64)
-  @JsonProperty("designation")
-  private String designation;
+	@JsonProperty("nameOfAuthorizedPerson")
+	private String nameOfAuthorizedPerson;
 
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 }

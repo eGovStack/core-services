@@ -1,20 +1,17 @@
 package org.egov.infra.indexer.custom.pt;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+import org.egov.common.contract.request.Role;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * User
@@ -27,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @ToString
 
-public class User   {
+public class User {
+	
         @JsonProperty("id")
         private Long id;
 
@@ -55,7 +53,6 @@ public class User   {
         @JsonProperty("gender")
         private String gender;
 
-        @Pattern(regexp = "^[5-9]{1}[0-9]{9}$", message = "MobileNumber should be 10 digit number and should start with 5 or higher digit")
         @JsonProperty("mobileNumber")
         private String mobileNumber;
 
@@ -156,9 +153,6 @@ public class User   {
 
         @JsonProperty("lastModifiedDate")
         private Long lastModifiedDate;
-
-        @JsonProperty("otpReference")
-        private String otpReference;
 
         @Size(max=256)
         @JsonProperty("tenantId")

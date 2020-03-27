@@ -291,7 +291,7 @@ public class LegacyIndexService {
 					} else {
 						if(legacyIndexRequest.getLegacyIndexTopic().equals(ptLegacyTopic)) {
 							PropertyResponse propertyResponse = mapper.readValue(mapper.writeValueAsString(response), PropertyResponse.class);
-							propertyResponse.setProperties(ptCustomDecorator.transformData(propertyResponse.getProperties()));
+//							propertyResponse.setProperties(ptCustomDecorator.transformData(propertyResponse.getProperties()));
 							indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), propertyResponse);
 						}else {
 							indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), response);

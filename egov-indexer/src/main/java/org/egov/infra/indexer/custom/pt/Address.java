@@ -1,97 +1,66 @@
 package org.egov.infra.indexer.custom.pt;
 
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import lombok.*;
 
 /**
- * Address
+ * Representation of a address. Individual APIs may choose to extend from this
+ * using allOf if more details needed to be added in their case.
  */
-@Validated
+
+@ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Address   {
+public class Address {
 
-        @Size(max=64)
-        @JsonProperty("id")
-        private String id;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-        @Size(max=256)
-        @JsonProperty("tenantId")
-        private String tenantId;
+	@JsonProperty("doorNo")
+	private String doorNo;
 
-        @JsonProperty("latitude")
-        private Double latitude;
+	@JsonProperty("plotNo")
+	private String plotNo;
 
-        @JsonProperty("longitude")
-        private Double longitude;
+	@JsonProperty("id")
+	private String id;
 
-        @Size(max=64)
-        @JsonProperty("addressId")
-        private String addressId;
+	@JsonProperty("landmark")
+	private String landmark;
 
-        @Size(max=64)
-        @JsonProperty("addressNumber")
-        private String addressNumber;
+	@JsonProperty("city")
+	private String city;
 
-        @Size(max=64)
-        @JsonProperty("type")
-        private String type;
+	@JsonProperty("district")
+	private String district;
 
-        @Size(max=1024)
-        @JsonProperty("addressLine1")
-        private String addressLine1;
+	@JsonProperty("region")
+	private String region;
 
-        @Size(max=1024)
-        @JsonProperty("addressLine2")
-        private String addressLine2;
+	@JsonProperty("state")
+	private String state;
 
-        @Size(max=1024)
-        @JsonProperty("landmark")
-        private String landmark;
+	@JsonProperty("country")
+	private String country;
 
-        @Size(max=64)
-        @JsonProperty("doorNo")
-        private String doorNo;
+	@JsonProperty("pincode")
+	private String pincode;
 
-        @NotNull
-        @Size(max=1024)
-        @JsonProperty("city")
-        private String city;
+	@JsonProperty("buildingName")
+	private String buildingName;
 
-        @Size(max=6)
-        @JsonProperty("pincode")
-        private String pincode;
+	@JsonProperty("street")
+	private String street;
 
-        @Size(max=2048)
-        @JsonProperty("detail")
-        private String detail;
+	@JsonProperty("locality")
+	private Locality locality;
 
-        @Size(max=1024)
-        @JsonProperty("buildingName")
-        private String buildingName;
-
-        @Size(max=1024)
-        @JsonProperty("street")
-        private String street;
-
-        @Valid
-        @JsonProperty("locality")
-        private Boundary locality;
-
-
+	@JsonProperty("geoLocation")
+	private GeoLocation geoLocation;
+	
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 }
-

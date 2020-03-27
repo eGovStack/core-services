@@ -2,6 +2,7 @@ package org.egov.infra.indexer.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.infra.indexer.custom.pt.PTCustomDecorator;
+import org.egov.infra.indexer.custom.pt.PropertyArrayRequest;
 import org.egov.infra.indexer.custom.pt.PropertyRequest;
 import org.egov.infra.indexer.service.IndexerService;
 import org.egov.infra.indexer.util.IndexerUtils;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Service
 @Slf4j
@@ -42,10 +46,14 @@ public class PTCustomIndexMessageListener implements MessageListener<String, Str
 		ObjectMapper mapper = indexerUtils.getObjectMapper();
 		try {
 			PropertyRequest propertyRequest = mapper.readValue(data.value(), PropertyRequest.class);
+			PropertyArrayRequest propertyArrayRequest=null;
 			if (data.topic().equals(ptUpdateTopic))
-				propertyRequest = ptCustomDecorator.dataTransformForPTUpdate(propertyRequest);
-			propertyRequest.setProperties(ptCustomDecorator.transformData(propertyRequest.getProperties()));
-			indexerService.esIndexer(data.topic(), mapper.writeValueAsString(propertyRequest));
+				propertyArrayRequest = ptCustomDecorator.dataTransformForPTUpdate(propertyRequest);
+			else
+				propertyArrayRequest = PropertyArrayRequest.builder().requestInfo(propertyRequest.getRequestInfo())
+						.properties(Collections.singletonList(propertyRequest.getProperty())).build();
+//			propertyRequest.setProperties(ptCustomDecorator.transformData(propertyRequest.getProperties()));
+			indexerService.esIndexer(data.topic(), mapper.writeValueAsString(propertyArrayRequest));
 		} catch (Exception e) {
 			log.error("Couldn't parse ptindex request: ", e);
 		}
