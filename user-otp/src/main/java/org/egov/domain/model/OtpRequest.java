@@ -1,10 +1,15 @@
 package org.egov.domain.model;
 
-import lombok.*;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.domain.exception.InvalidOtpRequestException;
-
 import static org.springframework.util.StringUtils.isEmpty;
+
+import org.egov.domain.exception.InvalidOtpRequestException;
+import org.apache.commons.lang3.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -16,7 +21,6 @@ public class OtpRequest {
     private String mobileNumber;
     private String tenantId;
     private OtpRequestType type;
-    private String userType;
 
     public void validate() {
         if(isTenantIdAbsent()

@@ -1,5 +1,10 @@
 package org.egov.domain.service;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.egov.domain.exception.UserAlreadyExistInSystemException;
 import org.egov.domain.exception.UserMobileNumberNotFoundException;
 import org.egov.domain.exception.UserNotExistingInSystemException;
@@ -15,9 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OtpServiceTest {
@@ -50,7 +52,7 @@ public class OtpServiceTest {
 	public void test_should_validate_otp_request_for_user_login() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isLoginRequestType()).thenReturn(true);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
 		otpService.sendOtp(otpRequest);
 
 		verify(otpRequest).validate();
@@ -60,7 +62,7 @@ public class OtpServiceTest {
 	public void test_should_throwException_when_userAlreadyExist_IncaseOfRegister() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isRegistrationRequestType()).thenReturn(true);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
 		otpService.sendOtp(otpRequest);
 
 		verify(otpRequest).validate();
@@ -70,7 +72,7 @@ public class OtpServiceTest {
 	public void test_should_throwException_when_userNotExist_IncaseOfLogin() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isLoginRequestType()).thenReturn(true);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(null);
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(null);
 		otpService.sendOtp(otpRequest);
 
 		verify(otpRequest).validate();
@@ -80,7 +82,7 @@ public class OtpServiceTest {
 	public void test_should_validate_otp_request_for_password_reset() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isRegistrationRequestType()).thenReturn(false);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", "123"));
 
 		otpService.sendOtp(otpRequest);
 
@@ -91,7 +93,7 @@ public class OtpServiceTest {
 	public void test_should_throwException_whenmobilenumber_is_null() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isRegistrationRequestType()).thenReturn(false);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", null));
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", null));
 
 		otpService.sendOtp(otpRequest);
 
@@ -102,7 +104,7 @@ public class OtpServiceTest {
 	public void test_should_throwException_whenmobilenumber_is_empty() {
 		final OtpRequest otpRequest = mock(OtpRequest.class);
 		when(otpRequest.isRegistrationRequestType()).thenReturn(false);
-		when(userRepository.fetchUser(anyString(), anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", ""));
+		when(userRepository.fetchUser(anyString(), anyString())).thenReturn(new User(1L, "foo@bar.com", ""));
 
 		otpService.sendOtp(otpRequest);
 
@@ -124,11 +126,10 @@ public class OtpServiceTest {
 	@Test
 	public void test_should_send_sms_otp_for_password_reset() {
 		final OtpRequest otpRequest = OtpRequest.builder().tenantId("tenant").mobileNumber("1234567890")
-				.type(OtpRequestType.PASSWORD_RESET).userType("CITIZEN").build();
+				.type(OtpRequestType.PASSWORD_RESET).build();
 		final String otpNumber = "otpNumber";
 		when(otpRepository.fetchOtp(otpRequest)).thenReturn(otpNumber);
-		when(userRepository.fetchUser("1234567890", "tenant", "CITIZEN")).thenReturn(new User(1L, "foo@bar.com",
-				"1234"));
+		when(userRepository.fetchUser("1234567890", "tenant")).thenReturn(new User(1L, "foo@bar.com", "1234"));
 
 		otpService.sendOtp(otpRequest);
 
@@ -138,11 +139,10 @@ public class OtpServiceTest {
 	@Test
 	public void test_should_send_email_otp_for_password_reset() {
 		final OtpRequest otpRequest = OtpRequest.builder().tenantId("tenant").mobileNumber("1234567890")
-				.type(OtpRequestType.PASSWORD_RESET).userType("CITIZEN").build();
+				.type(OtpRequestType.PASSWORD_RESET).build();
 		final String otpNumber = "otpNumber";
 		when(otpRepository.fetchOtp(otpRequest)).thenReturn(otpNumber);
-		when(userRepository.fetchUser("1234567890", "tenant", "CITIZEN")).thenReturn(new User(1L, "foo@bar.com",
-				"123"));
+		when(userRepository.fetchUser("1234567890", "tenant")).thenReturn(new User(1L, "foo@bar.com", "123"));
 
 		otpService.sendOtp(otpRequest);
 

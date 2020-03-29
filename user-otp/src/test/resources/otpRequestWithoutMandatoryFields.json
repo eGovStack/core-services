@@ -2,7 +2,6 @@
   "otp": {
     "mobileNumber": "",
     "tenantId": "",
-    "type": "unknown",
-    "userType": "CITIZEN"
+    "type": "unknown"
   }
 }

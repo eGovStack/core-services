@@ -2,11 +2,10 @@ package org.egov.persistence.repository;
 
 import org.egov.domain.model.OtpRequest;
 import org.egov.domain.model.OtpRequestType;
+import org.egov.persistence.LogAwareKafkaTemplate;
 import org.egov.persistence.contract.SMSRequest;
-import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.hamcrest.CustomMatcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class OtpSMSRepositoryTest {
     private static final String SMS_TOPIC = "sms.topic";
     @Mock
-    private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
+    private LogAwareKafkaTemplate<String, SMSRequest> kafkaTemplate;
     private OtpSMSRepository otpSMSRepository;
 
     @Before
@@ -31,14 +30,13 @@ public class OtpSMSRepositoryTest {
     }
 
     @Test
-    @Ignore
     public void test_should_send_user_register_sms_request_to_topic() {
         final String mobileNumber = "mobileNumber";
         final String tenantId = "tenantId";
         final String otpNumber = "otpNumber";
         final OtpRequestType type = OtpRequestType.REGISTER;
-        final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type, "CITIZEN");
-        final String expectedMessage = "Dear Citizen, Welcome to mSeva Punjab. Your OTP to complete your mSeva Registration is otpNumber";
+        final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type);
+        final String expectedMessage = "Use OTP otpNumber for portal registration.";
         final SMSRequest expectedSmsRequest = new SMSRequest(mobileNumber, expectedMessage);
         final SendResult<String, SMSRequest> sendResult = new SendResult<>(null, null);
         when(kafkaTemplate.send(eq(SMS_TOPIC), argThat(new SmsRequestMatcher(expectedSmsRequest))))
@@ -55,7 +53,7 @@ public class OtpSMSRepositoryTest {
 		final String tenantId = "tenantId";
 		final String otpNumber = "otpNumber";
 		final OtpRequestType type = OtpRequestType.PASSWORD_RESET;
-		final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type, "CITIZEN");
+		final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type);
 		final String expectedMessage = "Your OTP for recovering password is otpNumber.";
 		final SMSRequest expectedSmsRequest = new SMSRequest(mobileNumber, expectedMessage);
 		final SendResult<String, SMSRequest> sendResult = new SendResult<>(null, null);
@@ -73,7 +71,7 @@ public class OtpSMSRepositoryTest {
         final String tenantId = "tenantId";
         final String otpNumber = "otpNumber";
 		final OtpRequestType type = OtpRequestType.REGISTER;
-		final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type, "CITIZEN");
+		final OtpRequest otpRequest = new OtpRequest(mobileNumber, tenantId, type);
         final String expectedMessage = "Use OTP otpNumber for portal registration.";
         final SMSRequest expectedSmsRequest = new SMSRequest(mobileNumber, expectedMessage);
         when(kafkaTemplate.send(eq(SMS_TOPIC), argThat(new SmsRequestMatcher(expectedSmsRequest))))

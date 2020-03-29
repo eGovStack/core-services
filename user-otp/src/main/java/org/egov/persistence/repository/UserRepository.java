@@ -1,10 +1,8 @@
 package org.egov.persistence.repository;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.domain.model.User;
 import org.egov.persistence.contract.UserSearchRequest;
 import org.egov.persistence.contract.UserSearchResponseContent;
@@ -13,8 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
@@ -29,8 +31,8 @@ public class UserRepository {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public User fetchUser(String mobileNumber, String tenantId, String userType) {
-		final UserSearchRequest request = new UserSearchRequest(mobileNumber, tenantId, userType);
+	public User fetchUser(String mobileNumber, String tenantId) {
+		final UserSearchRequest request = new UserSearchRequest(mobileNumber, tenantId);
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);

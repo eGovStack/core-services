@@ -20,7 +20,6 @@ public class OtpRequest {
                 .mobileNumber(getMobileNumber())
                 .tenantId(getTenantId())
 				.type(getType())
-                .userType(getUserType())
                 .build();
     }
 
@@ -32,9 +31,6 @@ public class OtpRequest {
         return otp != null ? otp.getMobileNumber() : null;
     }
 
-    private String getUserType() {
-        return otp != null ? otp.getUserType() : null;
-    }
 
     private String getTenantId() {
         return otp != null ? otp.getTenantId() : null;
