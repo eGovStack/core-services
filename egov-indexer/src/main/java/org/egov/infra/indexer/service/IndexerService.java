@@ -101,8 +101,10 @@ public class IndexerService {
 		} else {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, false);
 		}
-
-		if(index.getName().contains("collection") || index.getName().contains("payment")) {
+		//If index contains any of below, skipping to push to ES index. As we have huge data this will be processed using Kafka connect
+		if (index.getName().contains("collection") || index.getName().contains("payment")
+				|| index.getName().contains("pt") || index.getName().contains("tl")
+				|| index.getName().contains("pgr")) {
 			// this is already sent
 		} else {
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
