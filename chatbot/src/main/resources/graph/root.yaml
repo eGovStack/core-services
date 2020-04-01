@@ -5,7 +5,7 @@ message : chatbot.messages.rootMessage
 validationRequired: true
 typeOfValues: FixedSetValues
 
-values : [ "File a Complaint", "Track Complaint Status", "Covid-19 Screening" ]
+values : [ "File a Complaint", "Track Complaint Status", "Covid-19 Screening", "Issue Pass", "Verify Pass" ]
 displayValuesAsOptions : true
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
@@ -16,5 +16,7 @@ type : text
 File a Complaint : pgr.create.tenantId
 Track Complaint Status : pgr.track.end
 Covid-19 Screening : covid.tenantId
+Issue Pass : pass.issue.tenantId
+Verify Pass : pass.verify.id
 
 errorMessage: chatbot.messages.rootErrorMessage

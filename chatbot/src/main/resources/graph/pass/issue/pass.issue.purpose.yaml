@@ -1,0 +1,8 @@
+name: pass.issue.purpose
+description : "Purpose"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please provide the detailed purpose for the pass "

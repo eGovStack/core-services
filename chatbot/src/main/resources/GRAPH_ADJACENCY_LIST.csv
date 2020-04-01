@@ -1,4 +1,4 @@
-root,pgr.create.tenantId,pgr.track.end,covid.tenantId
+root,pgr.create.tenantId,pgr.track.end,covid.tenantId,pass.issue.tenantId,pass.verify.id
 pgr.create.tenantId,pgr.create.locality
 pgr.create.locality,pgr.create.landmark
 pgr.create.landmark,pgr.create.complaintType
@@ -11,3 +11,13 @@ covid.tenantId,covid.locality
 covid.locality,covid.proxy
 covid.proxy,covid.end
 covid.end
+pass.issue.tenantId,pass.issue.fromcity
+pass.issue.fromcity,pass.issue.name
+pass.issue.name,pass.issue.type
+pass.issue.type,pass.issue.personvehiclechoice
+pass.issue.personvehiclechoice,pass.issue.personvehiclenumber,pass.issue.purpose
+pass.issue.personvehiclenumber,pass.issue.purpose
+pass.issue.purpose,pass.issue.end
+pass.issue.end
+pass.verify.id,pass.verify.end
+pass.verify.end

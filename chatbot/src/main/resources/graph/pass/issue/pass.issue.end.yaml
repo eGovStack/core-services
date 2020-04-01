@@ -1,0 +1,13 @@
+name : pass.issue.end
+nodeType : endpoint
+
+class : org.egov.chat.xternal.restendpoint.PassIssue
+
+nodes : [ "pass.issue.tenantId", "pass.issue.name", "pass.issue.type",
+          "pass.issue.personvehiclechoice", "pass.issue.personvehiclenumber", "pass.issue.purpose" ]
+params :
+  tenantId : "in"
+  stateTenantId: "in.mp"
+  mobileNumber : /user/mobileNumber
+  authToken : /user/authToken
+  userInfo : /user/userInfo

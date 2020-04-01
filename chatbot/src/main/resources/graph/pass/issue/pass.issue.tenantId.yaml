@@ -1,0 +1,23 @@
+name: pass.issue.tenantId
+description : "City"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please enter your destination city or choose from this link : \n"
+
+validationRequired : true
+typeOfValues : FixedSetValues
+displayOptionsInExternalLink: true
+
+values :
+  class : org.egov.chat.xternal.valuefetch.PassTenantIdValueFetcher
+  params:
+    tenantId: "in"
+    recipient: /extraInfo/recipient
+
+
+matchAnswerThreshold: 80
+
+#errorMessage: chatbot.messages.pgrCreateTenantIdError

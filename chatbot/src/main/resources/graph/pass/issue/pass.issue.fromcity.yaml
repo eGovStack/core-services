@@ -1,0 +1,8 @@
+name: pass.issue.fromcity
+description : "From City"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please enter pincode of the city you will be travelling from."

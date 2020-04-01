@@ -1,0 +1,8 @@
+name: pass.issue.enddate
+description : "End Date"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please provide end date for the pass (DD/mm/yyyy)"

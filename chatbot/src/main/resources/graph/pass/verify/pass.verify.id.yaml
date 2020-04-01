@@ -1,0 +1,9 @@
+name: pass.verify.id
+description : "Pass id"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please enter your id of the pass"
+

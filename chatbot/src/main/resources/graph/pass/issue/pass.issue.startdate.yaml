@@ -1,0 +1,8 @@
+name: pass.issue.startdate
+description : "Start Date"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please provide Start date for the pass (DD/mm/yyyy)"

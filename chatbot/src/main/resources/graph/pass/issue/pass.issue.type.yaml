@@ -1,0 +1,24 @@
+name : pass.issue.type
+description : "Pass Type"
+nodeType : step
+optional : false
+
+type : text
+
+validationRequired: true
+typeOfValues: FixedSetValues
+
+message : "Please choose purpose of the pass from options below"
+displayValuesAsOptions: true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+
+values :
+  batchSize : 10
+  class : org.egov.chat.xternal.valuefetch.PassTypeValueFetcher
+  params :
+    tenantId : "in"
+
+matchAnswerThreshold: 70
+
+#errorMessage: chatbot.messages.pgrCreateComplaintTypeError

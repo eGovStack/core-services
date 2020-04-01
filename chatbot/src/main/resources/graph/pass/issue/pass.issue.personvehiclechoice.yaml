@@ -1,0 +1,17 @@
+name : pass.issue.personvehiclechoice
+nodeType : branch
+message : "Are you going to use any vehicle during this time?"
+
+validationRequired: true
+typeOfValues: FixedSetValues
+
+values : [ "Yes", "No" ]
+displayValuesAsOptions : true
+matchAnswerThreshold : 70
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+
+type : text
+
+Yes : pass.issue.personvehiclenumber
+No : pass.issue.purpose

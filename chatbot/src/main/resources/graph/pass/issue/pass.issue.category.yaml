@@ -1,0 +1,14 @@
+name : pass.issue.category
+nodeType : branch
+message : "Please choose pass category : "
+
+validationRequired: true
+typeOfValues: FixedSetValues
+
+values : [ "Person", "Vehicle" ]
+displayValuesAsOptions : true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+matchAnswerThreshold : 70
+
+type : text

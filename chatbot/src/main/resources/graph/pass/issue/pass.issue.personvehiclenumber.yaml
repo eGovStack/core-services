@@ -1,0 +1,8 @@
+name: pass.issue.personvehiclenumber
+description : "Person Vehicle Number"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please provide the vehicle number you will use"

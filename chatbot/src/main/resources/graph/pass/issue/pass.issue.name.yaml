@@ -1,0 +1,8 @@
+name: pass.issue.name
+description : "Name"
+nodeType : step
+optional : false
+
+type: text
+
+message: "Please enter your name"

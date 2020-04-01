@@ -1,0 +1,12 @@
+name : pass.verify.end
+nodeType : endpoint
+
+class : org.egov.chat.xternal.restendpoint.PassVerify
+
+nodes : [ "pass.verify.id" ]
+params :
+  tenantId: "in"
+  stateTenantId: "in.mp"
+  mobileNumber : /user/mobileNumber
+  authToken : /user/authToken
+  userInfo : /user/userInfo

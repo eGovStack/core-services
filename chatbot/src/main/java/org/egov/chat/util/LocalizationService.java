@@ -112,7 +112,11 @@ public class LocalizationService {
                 values.add(templateMessageService.getMessageForTemplate(code, locale));
             else {
                 log.debug("Fetching Localization for : " + code.toString());
-                values.add(codeToMessageMapping.get(code.getCode()));
+                String localizedValue = codeToMessageMapping.get(code.getCode());
+                if(localizedValue != null)
+                    values.add(localizedValue);
+                else
+                    values.add(code.getCode());
             }
         }
         log.debug("Localized values : " + values.toString());
@@ -128,7 +132,11 @@ public class LocalizationService {
     }
 
     public String getMessageForCode(String code, String locale) {
-        return codeToMessageMapping.get(locale).get(code);
+        String localizedValue = codeToMessageMapping.get(locale).get(code);
+        if(localizedValue == null)
+            return code;
+        else
+            return localizedValue;
     }
 
 }
