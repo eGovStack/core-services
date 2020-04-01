@@ -163,7 +163,14 @@ export const directMapping = async (
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               arrayOfItems.push(replaceValue);
             }
-          } else if (scema[k].type == "ordered-list") {
+          } 
+          /**
+           * This condition is for displaying the ordered list data 
+           * when data is coming as array of strings instead of key value pair.
+           * Provided new scema type (array-orderedlist) which we should mention at data-config
+           * to display the array of string in order list.
+           */
+          else if (scema[k].type == "array-orderedlist" && Array.isArray(fieldValue)) {
             if(fieldValue !== "NA") {
               for (var p = 0; p < fieldValue.length; p++) {
                 let orderedList = [];
