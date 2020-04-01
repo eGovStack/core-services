@@ -1,8 +1,6 @@
 package org.egov.infra.indexer.service;
 
-import java.util.Date;
-import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.IndexerApplicationRunnerImpl;
 import org.egov.infra.indexer.bulkindexer.BulkIndexer;
@@ -12,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -66,7 +65,7 @@ public class IndexerService {
 			log.debug("Mapping to be used: " + mapping);
 			try {
 				for (Index index : mapping.getIndexes()) {
-					indexProccessor(index, kafkaJson, (index.getIsBulk() == null || !index.getIsBulk()) ? false : true);
+					indexProccessor(index, mapping.getConfigKey(),kafkaJson, index.getIsBulk() != null && index.getIsBulk());
 				}
 			} catch (Exception e) {
 				log.error("Exception while indexing, Uncaught at the indexer level: ", e);
@@ -89,24 +88,20 @@ public class IndexerService {
 	 * @param isBulk
 	 * @throws Exception
 	 */
-	public void indexProccessor(Index index, String kafkaJson, boolean isBulk) throws Exception {
+	public void indexProccessor(Index index, Mapping.ConfigKeyEnum configkey, String kafkaJson, boolean isBulk) throws Exception {
 		Long startTime = null;
 		log.debug("index: " + index.getCustomJsonMapping());
 		StringBuilder url = new StringBuilder();
 		url.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/").append("_bulk");
 		startTime = new Date().getTime();
-		String jsonToBeIndexed = new String();
+		String jsonToBeIndexed;
 		if (null != index.getCustomJsonMapping()) {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, true);
 		} else {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, false);
 		}
 		//If index contains any of below, skipping to push to ES index. As we have huge data this will be processed using Kafka connect
-		if (index.getName().contains("collection") || index.getName().contains("payment")
-				|| index.getName().contains("pt") || index.getName().contains("tl")
-				|| index.getName().contains("pgr")) {
-			// this is already sent
-		} else {
+		if (!configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX) && !index.getName().contains("payment")) {
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
 		}
 
