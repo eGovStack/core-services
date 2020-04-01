@@ -143,6 +143,7 @@ export const directMapping = async (
     //setting value in pdf for array-column type direct mapping
     else if (directArr[i].type == "array-column") {
       let arrayOfBuiltUpDetails = [];
+      let isOrderedList = false;
       // let arrayOfFields=get(formatconfig, directArr[i].jPath+"[0]",[]);
       // arrayOfBuiltUpDetails.push(arrayOfFields);
 
@@ -161,6 +162,15 @@ export const directMapping = async (
               let replaceValue = getDateInRequiredFormat(fieldValue);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               arrayOfItems.push(replaceValue);
+            }
+          } else if (scema[k].type == "ordered-list") {
+            if(fieldValue !== "NA") {
+              for (var p = 0; p < fieldValue.length; p++) {
+                let orderedList = [];
+                orderedList.push(fieldValue[p]);
+                arrayOfBuiltUpDetails.push(orderedList);
+              }
+              isOrderedList = true;
             }
           } else {
             if (
@@ -185,8 +195,8 @@ export const directMapping = async (
             arrayOfItems.push(fieldValue);
           }
         }
-
-        arrayOfBuiltUpDetails.push(arrayOfItems);
+        if(isOrderedList === false)
+          arrayOfBuiltUpDetails.push(arrayOfItems);
       }
 
       // remove enclosing [ &  ]
