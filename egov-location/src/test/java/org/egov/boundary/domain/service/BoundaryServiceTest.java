@@ -1,12 +1,5 @@
 package org.egov.boundary.domain.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.boundary.domain.model.Boundary;
 import org.egov.boundary.persistence.repository.BoundaryRepository;
 import org.egov.boundary.web.contract.BoundaryType;
@@ -16,6 +9,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoundaryServiceTest {
@@ -48,19 +46,19 @@ public class BoundaryServiceTest {
 				"tenantId");
 	}
 
-	@Test
-	public void test_should_check_shapefileexist() {
+//	@Test
+//	public void test_should_check_shapefileexist() {
+//
+//		assertTrue(boundaryService.checkTenantShapeFileExistOrNot("ap.addanki"));
+//
+//	}
 
-		assertTrue(boundaryService.checkTenantShapeFileExistOrNot("ap.addanki"));
-
-	}
-
-	@Test
-	public void test_should_check_shapefileNotexist() {
-
-		assertFalse(boundaryService.checkTenantShapeFileExistOrNot("maharashtra.addanki"));
-
-	}
+//	@Test
+//	public void test_should_check_shapefileNotexist() {
+//
+//		assertFalse(boundaryService.checkTenantShapeFileExistOrNot("maharashtra.addanki"));
+//
+//	}
 
 	@Test
 	@Transactional

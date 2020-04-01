@@ -40,44 +40,23 @@
 
 package org.egov.boundary.domain.service;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.egov.boundary.domain.model.Boundary;
 import org.egov.boundary.domain.model.BoundarySearchRequest;
 import org.egov.boundary.exception.CustomException;
 import org.egov.boundary.persistence.repository.BoundaryRepository;
 import org.egov.boundary.util.BoundaryConstants;
-import org.egov.boundary.web.contract.BoundaryRequest;
 import org.egov.boundary.web.contract.BoundaryType;
 import org.egov.boundary.web.contract.MdmsTenantBoundary;
 import org.egov.common.contract.request.RequestInfo;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import java.util.*;
 
 @Service
 public class BoundaryService {
@@ -215,43 +194,6 @@ public class BoundaryService {
 		return mpath;
 	}
 
-	public Long getBoundaryIdFromShapefile(final Double latitude, final Double longitude, String tenantId) {
-		Optional<Boundary> boundary = getBoundary(latitude, longitude, tenantId);
-		return boundary.isPresent() ? boundary.get().getId() : 0;
-	}
-
-	public Optional<Boundary> getBoundary(final Double latitude, final Double longitude, String tenantId) {
-		try {
-			if (latitude != null && longitude != null) {
-				final Map<String, URL> map = new HashMap<>();
-				map.put("url", new ClassPathResource("/gis/" + tenantId.replace(".", "/") + "/wards.shp").getURL());
-				final DataStore dataStore = DataStoreFinder.getDataStore(map);
-				final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
-						.getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
-				final Iterator<SimpleFeature> iterator = collection.iterator();
-				final Point point = JTSFactoryFinder.getGeometryFactory(null)
-						.createPoint(new Coordinate(longitude, latitude));
-				LOG.debug("Fetching boundary data for coordinates lng {}, lat {}", longitude, latitude);
-				try {
-					while (iterator.hasNext()) {
-						final SimpleFeature feature = iterator.next();
-						final Geometry geom = (Geometry) feature.getDefaultGeometry();
-						if (geom.contains(point)) {
-							LOG.debug("Found coordinates in shape file");
-							return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"),
-									(String) feature.getAttribute("bndrytype"), tenantId);
-						}
-					}
-				} finally {
-					collection.close(iterator);
-				}
-			}
-			return Optional.empty();
-		} catch (final Exception e) {
-			throw new RuntimeException("Error occurred while fetching boundary from GIS data", e);
-		}
-	}
-
 	public Optional<Boundary> getBoundaryByNumberAndType(Long boundaryNum, String boundaryTypeName, String tenantId) {
 		if (boundaryNum != null && !StringUtils.isEmpty(boundaryTypeName)) {
 			final BoundaryType boundaryType = boundaryTypeService
@@ -274,36 +216,6 @@ public class BoundaryService {
 		return boundaryRepository.findByTenantIdAndId(tenantId, id);
 	}
 
-	public List<Boundary> getAllBoundary(BoundaryRequest boundaryRequest) {
-		List<Boundary> boundaries = new ArrayList<Boundary>();
-		if (boundaryRequest.getBoundary().getTenantId() != null
-				&& !boundaryRequest.getBoundary().getTenantId().isEmpty()) {
-			if (boundaryRequest.getBoundary().getId() != null) {
-				boundaries.add(getBoundariesByIdAndTenantId(boundaryRequest.getBoundary().getId(),
-						boundaryRequest.getBoundary().getTenantId()));
-			} else if (boundaryRequest.getBoundary().getCode() != null) {
-				boundaries.add(findByTenantIdAndCode(boundaryRequest.getBoundary().getTenantId(),
-						boundaryRequest.getBoundary().getCode()));
-			} else if (boundaryRequest.getBoundary().getCodes() != null && !boundaryRequest.getBoundary().getCodes().isEmpty()) {
-                            boundaries.addAll(findByTenantIdAndCodes(boundaryRequest.getBoundary().getTenantId(),
-                                    new ArrayList<>(Arrays.asList( boundaryRequest.getBoundary().getCodes().split(",")))));
-			} else {
-				if (!StringUtils.isEmpty(boundaryRequest.getBoundary().getLatitude())
-						&& !StringUtils.isEmpty(boundaryRequest.getBoundary().getLongitude())) {
-					Optional<Boundary> boundary = getBoundary(boundaryRequest.getBoundary().getLatitude().doubleValue(),
-							boundaryRequest.getBoundary().getLongitude().doubleValue(),
-							boundaryRequest.getBoundary().getTenantId());
-					if (boundary.isPresent())
-						boundaries.add(boundary.get());
-					else
-						boundaries = new ArrayList<Boundary>();
-				} else {
-					boundaries.addAll(boundaryRepository.findAllByTenantId(boundaryRequest.getBoundary().getTenantId()));
-				}
-			}
-		}
-		return boundaries;
-	}
 
 	// TODO: The internal logic of this API returns whether the shape file
 	// exists or not will be based on the resource exists in a directory
@@ -320,21 +232,6 @@ public class BoundaryService {
 		return false;
 	}
 
-	public Resource fetchShapeFile(String tenantId) throws IOException {
-		String path = tenantId.replace(".", "/");
-		Resource resource = new ClassPathResource("/gis/" + path + "/wards.kml");
-
-		if(resource.exists())
-			return resource;
-
-		return null;
-	}
-
-	public List<Boundary> getAllBoundariesByIdsAndTypeAndNumberAndCodeAndTenant(
-			BoundarySearchRequest boundarySearchRequest) {
-
-		return boundaryRepository.getAllBoundariesByIdsAndTypeAndNumberAndCodeAndTenant(boundarySearchRequest);
-	}
 	
 	public List<MdmsTenantBoundary> getBoundariesByTenantAndHierarchyType(BoundarySearchRequest boundarySearchRequest,RequestInfo requestInfo){
 		Long startTime = null;
