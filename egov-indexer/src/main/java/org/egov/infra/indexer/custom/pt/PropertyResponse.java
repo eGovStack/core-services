@@ -30,10 +30,10 @@ import lombok.ToString;
 @Builder
 @ToString
 public class PropertyResponse   {
-        @JsonProperty("ResponseInfo")
+        @JsonProperty("responseInfo")
         private ResponseInfo responseInfo;
 
-        @JsonProperty("Properties")
+        @JsonProperty("properties")
         @Valid
         private List<Property> properties;
 

@@ -33,18 +33,18 @@ public class PTCustomDecorator {
 	 * @param properties
 	 * @return
 	 */
-	public List<Property> transformData(List<Property> properties){
-		for(Property property: properties) {
-			List<String> consumerCodes = new ArrayList<String>();
-			for(PropertyDetail detail: property.getPropertyDetails()) {
-				StringBuilder consumerCode = new StringBuilder();
-				consumerCode.append(property.getPropertyId()).append(":").append(detail.getAssessmentNumber());
-				consumerCodes.add(consumerCode.toString());
-			}
-			property.setConsumerCodes(consumerCodes);
-		}
-		return properties;
-	}
+//	public List<Property> transformData(List<Property> properties){
+//		for(Property property: properties) {
+//			List<String> consumerCodes = new ArrayList<String>();
+//			for(PropertyDetail detail: property.getPropertyDetails()) {
+//				StringBuilder consumerCode = new StringBuilder();
+//				consumerCode.append(property.getPropertyId()).append(":").append(detail.getAssessmentNumber());
+//				consumerCodes.add(consumerCode.toString());
+//			}
+//			property.setConsumerCodes(consumerCodes);
+//		}
+//		return properties;
+//	}
 	
 	/**
 	 * Incase of update, this method fetched all previous assessments of that particular record and hands it over to indexer.
@@ -52,42 +52,35 @@ public class PTCustomDecorator {
 	 * @param request
 	 * @return
 	 */
-	public PropertyRequest dataTransformForPTUpdate(PropertyRequest request) {
-		for(Property property: request.getProperties()) {
-			StringBuilder uri = new StringBuilder();
-			uri.append(ptHost).append(ptSearchEndPoint).append("?tenantId=").append(property.getTenantId()).append("&ids=").append(property.getPropertyId());
-			Map<String, Object> apiRequest = new HashMap<>();
-			apiRequest.put("RequestInfo", request.getRequestInfo());
-			try {
-				PropertyResponse response = restTemplate.postForObject(uri.toString(), apiRequest, PropertyResponse.class);
-				if(null != response) {
-					if(!CollectionUtils.isEmpty(response.getProperties())) {
-						property.getPropertyDetails().addAll(response.getProperties().get(0).getPropertyDetails()); //for search on propertyId, always just one property is returned.
-						property.getAuditDetails().setCreatedTime(response.getProperties().get(0).getAuditDetails().getCreatedTime());
-						property.getAuditDetails().setCreatedBy((response.getProperties().get(0).getAuditDetails().getCreatedBy()));
-					}else {
-						log.info("Zero properties returned from the service!");
-						log.info("Request: "+apiRequest);
-						log.info("URI: "+uri);
-						return null;
-					}
-				}else {
-					log.info("NULL returned from service!");
-					log.info("Request: "+apiRequest);
-					log.info("URI: "+uri);
+	public PropertyResponse dataTransformForPTUpdate(PropertyAssessmentRequest request) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(ptHost).append(ptSearchEndPoint);
+		Map<String, Object> apiRequest = new HashMap<>();
+		apiRequest.put("RequestInfo", request.getRequestInfo());
+		apiRequest.put("Assessment", request.getAssessment());
+		PropertyResponse response = null;
+		try {
+			response = restTemplate.postForObject(uri.toString(), apiRequest, PropertyResponse.class);
+			if (null != response) {
+				if (CollectionUtils.isEmpty(response.getProperties())) {
+					log.info("Zero properties returned from the service!");
+					log.info("Request: " + apiRequest);
+					log.info("URI: " + uri);
 					return null;
 				}
-			}catch(Exception e) {
-				log.error("Exception while fetching properties: ",e);
-				log.info("Request: "+apiRequest);
-				log.info("URI: "+uri);
+			} else {
+				log.info("NULL returned from service!");
+				log.info("Request: " + apiRequest);
+				log.info("URI: " + uri);
 				return null;
 			}
-			
+		} catch (Exception e) {
+			log.error("Exception while fetching properties: ", e);
+			log.info("Request: " + apiRequest);
+			log.info("URI: " + uri);
+			return null;
 		}
 		log.info("Record updated with previous assessments");
-		return request;
-		
+		return response;
 	}
-
 }

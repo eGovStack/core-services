@@ -2,7 +2,9 @@ package org.egov.infra.indexer.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.infra.indexer.custom.pt.PTCustomDecorator;
+import org.egov.infra.indexer.custom.pt.PropertyAssessmentRequest;
 import org.egov.infra.indexer.custom.pt.PropertyRequest;
+import org.egov.infra.indexer.custom.pt.PropertyResponse;
 import org.egov.infra.indexer.service.IndexerService;
 import org.egov.infra.indexer.util.IndexerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +43,9 @@ public class PTCustomIndexMessageListener implements MessageListener<String, Str
 		log.info("Topic: " + data.topic());
 		ObjectMapper mapper = indexerUtils.getObjectMapper();
 		try {
-			PropertyRequest propertyRequest = mapper.readValue(data.value(), PropertyRequest.class);
-			if (data.topic().equals(ptUpdateTopic))
-				propertyRequest = ptCustomDecorator.dataTransformForPTUpdate(propertyRequest);
-			propertyRequest.setProperties(ptCustomDecorator.transformData(propertyRequest.getProperties()));
-			indexerService.esIndexer(data.topic(), mapper.writeValueAsString(propertyRequest));
+			PropertyAssessmentRequest propertyAssessmentRequest = mapper.readValue(data.value(), PropertyAssessmentRequest.class);
+			PropertyResponse propertyResponse = ptCustomDecorator.dataTransformForPTUpdate(propertyAssessmentRequest);
+			indexerService.esIndexer(data.topic(), mapper.writeValueAsString(propertyResponse));
 		} catch (Exception e) {
 			log.error("Couldn't parse ptindex request: ", e);
 		}
