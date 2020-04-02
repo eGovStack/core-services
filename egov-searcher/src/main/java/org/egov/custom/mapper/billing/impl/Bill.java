@@ -87,6 +87,8 @@ public class Bill {
 		CANCELLED("CANCELLED"),
 
 		PAID("PAID"),
+		
+		PARTIALLY_PAID("PARTIALLY_PAID"),
 
 		EXPIRED("EXPIRED");
 
