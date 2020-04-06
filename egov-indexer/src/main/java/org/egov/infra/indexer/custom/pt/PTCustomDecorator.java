@@ -33,18 +33,18 @@ public class PTCustomDecorator {
 	 * @param properties
 	 * @return
 	 */
-//	public List<Property> transformData(List<Property> properties){
-//		for(Property property: properties) {
-//			List<String> consumerCodes = new ArrayList<String>();
-//			for(PropertyDetail detail: property.getPropertyDetails()) {
-//				StringBuilder consumerCode = new StringBuilder();
-//				consumerCode.append(property.getPropertyId()).append(":").append(detail.getAssessmentNumber());
-//				consumerCodes.add(consumerCode.toString());
-//			}
-//			property.setConsumerCodes(consumerCodes);
-//		}
-//		return properties;
-//	}
+	public List<Property> transformData(List<Property> properties){
+		for(Property property: properties) {
+			List<String> consumerCodes = new ArrayList<String>();
+			for(PropertyDetail detail: property.getPropertyDetails()) {
+				StringBuilder consumerCode = new StringBuilder();
+				consumerCode.append(property.getPropertyId()).append(":").append(detail.getAssessmentNumber());
+				consumerCodes.add(consumerCode.toString());
+			}
+			property.setConsumerCodes(consumerCodes);
+		}
+		return properties;
+	}
 	
 	/**
 	 * Incase of update, this method fetched all previous assessments of that particular record and hands it over to indexer.
