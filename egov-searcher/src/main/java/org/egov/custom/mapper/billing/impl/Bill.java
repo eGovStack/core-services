@@ -74,6 +74,9 @@ public class Bill {
 	@JsonProperty("tenantId")
 	private String tenantId;
 
+	@JsonProperty("fileStoreId")
+	private String fileStoreId;
+
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 	
