@@ -78,6 +78,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.isAdvanceAllowed(rs.getBoolean("bd_isadvanceallowed"))
 					.additionalDetails(rs.getObject("b_additionalDetails"))
 					.auditDetails(auditDetails)
+					.fileStoreId(rs.getString("b_filestoreid"))
 					.address(address)
 					.user(user)
 					.build();
