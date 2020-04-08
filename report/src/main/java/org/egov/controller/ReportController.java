@@ -33,6 +33,9 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 	
+    @Autowired
+    ObjectMapper objectMapper;
+	
 	/*@Autowired
 	private ReportQueryBuilder reportQueryBuilder;*/
 
