@@ -23,7 +23,6 @@ public class MetaDataRequest {
 
     @NotNull
     @JsonProperty("RequestInfo")
-    @JsonIgnoreProperties(ignoreUnknown = true)
     private RequestInfo requestInfo;
 
     private String tenantId;
