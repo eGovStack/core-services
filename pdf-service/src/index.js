@@ -102,7 +102,9 @@ const createPdfBinary = async (
   tenantId,
   starttime,
   totalobjectcount,
-  userid
+  userid,
+  documentType,
+  moduleName
 ) => {
   try {
     let noOfDefinitions = listDocDefinition.length;
@@ -130,7 +132,9 @@ const createPdfBinary = async (
           errorCallback,
           tenantId,
           totalobjectcount,
-          userid
+          userid,
+          documentType,
+          moduleName
         ),
         uploadFiles(
           dbInsertSingleRecords,
@@ -147,7 +151,9 @@ const createPdfBinary = async (
           errorCallback,
           tenantId,
           totalobjectcount,
-          userid
+          userid,
+          documentType,
+          moduleName
         )
       ]);
     }
@@ -176,7 +182,9 @@ const uploadFiles = async (
   errorCallback,
   tenantId,
   totalobjectcount,
-  userid
+  userid,
+  documentType,
+  moduleName
 ) => {
   let convertedListDocDefinition = [];
   var formatobject = JSON.parse(JSON.stringify(formatconfig));
@@ -229,7 +237,10 @@ const uploadFiles = async (
               tenantId,
               createdtime: starttime,
               endtime: new Date().getTime(),
-              totalcount: 1
+              totalcount: 1,
+              key,
+              documentType,
+              moduleName
             });
 
             // insertStoreIds(jobid,entityIds[i],[result],tenantId,starttime,successCallback,errorCallback,1,false);
@@ -250,7 +261,10 @@ const uploadFiles = async (
               tenantId,
               createdtime: starttime,
               endtime: new Date().getTime(),
-              totalcount: totalobjectcount
+              totalcount: totalobjectcount,
+              key,
+              documentType,
+              moduleName
             });
           }
           if (
@@ -265,7 +279,10 @@ const uploadFiles = async (
               starttime,
               successCallback,
               errorCallback,
-              totalobjectcount
+              totalobjectcount,
+              key,
+              documentType,
+              moduleName
             );
           }
         })
@@ -303,7 +320,10 @@ app.post(
             createdtime: response.starttime,
             endtime: response.endtime,
             tenantid: response.tenantid,
-            totalcount: response.totalcount
+            totalcount: response.totalcount,
+            key: response.key,
+            documentType: response.documentType,
+            moduleName: response.moduleName
           });
         },
         error => {
@@ -548,12 +568,11 @@ export const createAndSave = async (
   let tenantId = get(req.query || req, "tenantId");
   var formatconfig = formatConfigMap[key];
   var dataconfig = dataConfigMap[key];
-  var dataconfig = dataConfigMap[key];
-  var dataconfig = dataConfigMap[key];
   var userid = get(req.body || req, "RequestInfo.userInfo.id");
   var requestInfo = get(req.body || req, "RequestInfo");
-
-
+  var documentType = get(dataconfig, "documentType","");
+  var moduleName = get(dataconfig, "DataConfigs.moduleName","");
+  
   var valid = validateRequest(req, res, key, tenantId, requestInfo);
   if (valid) {
     let [formatConfigByFile, totalobjectcount, entityIds] = await prepareBegin(
@@ -582,7 +601,9 @@ export const createAndSave = async (
       tenantId,
       starttime,
       totalobjectcount,
-      userid
+      userid,
+      documentType,
+      moduleName
     ).catch(err => {
       logger.error(err.stack || err);
       errorCallback({
