@@ -6,7 +6,7 @@ import get from "lodash/get";
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
 let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 let defaultTenant = envVariables.DEFAULT_LOCALISATION_TENANT;
-export const getTransformedLocale = label => {
+export const getTransformedLocale = (label) => {
   return label.toUpperCase().replace(/[.:-\s\/]/g, "_");
 };
 
@@ -65,12 +65,12 @@ export const findAndUpdateLocalisation = async (
       `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}&module=${moduleName}`,
       { RequestInfo: requestInfo }
     );
-    res.messages.map(item => {
+    res.messages.map((item) => {
       localisationMap[item.code] = item.message;
     });
     localisationModuleList.push(moduleName);
   }
-  keyArray.map(item => {
+  keyArray.map((item) => {
     let labelFromKey = "";
 
     // append main category in the beginning
@@ -127,11 +127,14 @@ const getLocalisationLabel = (key, localisationMap, prefix) => {
   }
 };
 
-export const getDateInRequiredFormat = et => {
+export const getDateInRequiredFormat = (et) => {
   if (!et) return "NA";
   var date = new Date(Math.round(Number(et)));
-  var formattedDate =
-    date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+  var day = date.getDate();
+  var month = date.getMonth() + 1;
+  if (day < 10) day = "0" + day;
+  if (month < 10) month = "0" + month;
+  var formattedDate = day + "/" + month + "/" + date.getFullYear();
   return formattedDate;
 };
 
