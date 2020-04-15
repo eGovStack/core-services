@@ -105,7 +105,7 @@ export const directMapping = async (
             if (isNaN(myDate) || fieldValue === 0) {
               ownerObject[scema[k].key] = "NA";
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue);
+              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               ownerObject[scema[k].key] = replaceValue;
             }
@@ -159,7 +159,7 @@ export const directMapping = async (
             if (isNaN(myDate) || fieldValue === 0) {
               arrayOfItems.push("NA");
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue);
+              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               arrayOfItems.push(replaceValue);
             }
@@ -238,7 +238,7 @@ export const directMapping = async (
       if (isNaN(myDate) || directArr[i].val[0] === 0) {
         variableTovalueMap[directArr[i].jPath] = "NA";
       } else {
-        let replaceValue = getDateInRequiredFormat(directArr[i].val[0]);
+        let replaceValue = getDateInRequiredFormat(directArr[i].val[0],directArr[i].format);
         variableTovalueMap[directArr[i].jPath] = replaceValue;
       }
     } else {

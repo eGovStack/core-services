@@ -207,7 +207,7 @@ export const externalAPIMapping = async function(
         if (isNaN(myDate) || replaceValue[0] === 0) {
           variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
         } else {
-          replaceValue = getDateInRequiredFormat(replaceValue[0]);
+          replaceValue = getDateInRequiredFormat(replaceValue[0],externalAPIArray[i].jPath[j].format);
           variableTovalueMap[
             externalAPIArray[i].jPath[j].variable
           ] = replaceValue;
@@ -233,7 +233,7 @@ export const externalAPIMapping = async function(
             if (isNaN(myDate) || fieldValue === 0) {
               ownerObject[scema[k].key] = "NA";
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue);
+              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               ownerObject[scema[k].key] = replaceValue;
             }

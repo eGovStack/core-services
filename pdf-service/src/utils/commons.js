@@ -2,7 +2,9 @@ import { httpRequest } from "../api/api";
 import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
+var moment = require('moment-timezone');
 
+let datetimezone = envVariables.DATE_TIMEZONE;
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
 let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 let defaultTenant = envVariables.DEFAULT_LOCALISATION_TENANT;
@@ -127,24 +129,11 @@ const getLocalisationLabel = (key, localisationMap, prefix) => {
   }
 };
 
-export const getDateInRequiredFormat = (et) => {
+export const getDateInRequiredFormat = (et,dateformat="DD/MM/YYYY") => {
   if (!et) return "NA";
-  var date = new Date(Math.round(Number(et)));
-  var day = date.getDate();
-  var month = date.getMonth() + 1;
-  if (day < 10) day = "0" + day;
-  if (month < 10) month = "0" + month;
-  var formattedDate = day + "/" + month + "/" + date.getFullYear();
-  return formattedDate;
+  // var date = new Date(Math.round(Number(et)));
+  return moment(et).tz(datetimezone).format(dateformat); 
 };
-
-// export const getDateInRequiredFormat=(date)=>{
-//     return date.toLocaleDateString('en-GB', {
-//       month : '2-digit',
-//       day : '2-digit',
-//       year : 'numeric'
-//   });
-//   }
 
 /**
  *
