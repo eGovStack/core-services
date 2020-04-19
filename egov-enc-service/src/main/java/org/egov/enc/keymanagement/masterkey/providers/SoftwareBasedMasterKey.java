@@ -5,6 +5,7 @@ import org.egov.enc.config.AppProperties;
 import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.egov.enc.utils.SymmetricEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,15 @@ import java.util.Base64;
 @ConditionalOnProperty( value = "master.password.provider", havingValue = "software")
 public class SoftwareBasedMasterKey implements MasterKeyProvider {
 
+    @Value("${master.password:}")
+    private String masterPassword;
+
+    @Value("${master.salt:}")
+    private String masterSalt;
+
+    @Value("${master.initialvector:}")
+    private String masterInitialVectorString;
+
     @Autowired
     private AppProperties appProperties;
 
@@ -34,15 +44,15 @@ public class SoftwareBasedMasterKey implements MasterKeyProvider {
     //Master Key will be used to decrypt the keys read from the database
     @PostConstruct
     private void initializeMasterKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String masterPassword = appProperties.getMasterPassword();
+        String masterPassword = this.masterPassword;
 
-        char[] masterSalt = appProperties.getMasterSalt().toCharArray();
+        char[] masterSalt = this.masterSalt.toCharArray();
         byte[] salt = new byte[8];
         for(int i = 0; i < salt.length; i++) {
             salt[i] = (byte) masterSalt[i];
         }
 
-        char[] masterIV = appProperties.getMasterInitialVector().toCharArray();
+        char[] masterIV = this.masterInitialVectorString.toCharArray();
         masterInitialVector = new byte[appProperties.getInitialVectorSize()];
         for(int i = 0; i < masterInitialVector.length; i++) {
             masterInitialVector[i] = (byte) masterIV[i];
