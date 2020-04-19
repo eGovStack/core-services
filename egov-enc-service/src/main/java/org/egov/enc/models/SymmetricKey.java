@@ -18,8 +18,6 @@ public class SymmetricKey {
 
     private String secretKey;
 
-    private String initialVector;
-
     private boolean active;
 
     private String tenantId;

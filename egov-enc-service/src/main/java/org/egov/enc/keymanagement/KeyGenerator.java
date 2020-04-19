@@ -57,13 +57,10 @@ public class KeyGenerator {
         for(int i = 0; i < tenantIds.size(); i++) {
             for(int j = 0; j < appProperties.getNumberOfSymmetricActiveKeysPerTenant(); j++) {
                 SecretKeySpec key = new SecretKeySpec(getRandomBytes(appProperties.getSymmetricKeySize()/8), "AES");
-                byte[] initialVector = getRandomBytes(appProperties.getInitialVectorSize());;
                 String keyAsString =
                         masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(key.getEncoded()));
-                String initialVectorAsString =
-                        masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(initialVector));
                 symmetricKeyArrayList.add(new SymmetricKey(i, keyIdGenerator.generateKeyId(), keyAsString,
-                        initialVectorAsString, true, tenantIds.get(i)));
+                        true, tenantIds.get(i)));
             }
         }
         return symmetricKeyArrayList;

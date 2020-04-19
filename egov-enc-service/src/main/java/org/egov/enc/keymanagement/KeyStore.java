@@ -41,8 +41,6 @@ import java.util.List;
 public class KeyStore implements ApplicationRunner {
 
     @Autowired
-    private AppProperties appProperties;
-    @Autowired
     private KeyRepository keyRepository;
     @Getter
     private ArrayList<String> tenantIds;
@@ -185,16 +183,10 @@ public class KeyStore implements ApplicationRunner {
         return keyFactory.generatePrivate(keySpec);
     }
 
-    //Generate Initial Vecctor to be used by AES from custom object SymmetricKey
-    public byte[] getInitialVector(SymmetricKey symmetricKey) {
-        return Base64.getDecoder().decode(symmetricKey.getInitialVector());
-    }
-
     //Decrypt all keys
     private void decryptAllKeys() throws Exception {
         for (SymmetricKey symmetricKey : symmetricKeys) {
             symmetricKey.setSecretKey(masterKeyProvider.decryptWithMasterPassword(symmetricKey.getSecretKey()));
-            symmetricKey.setInitialVector(masterKeyProvider.decryptWithMasterPassword(symmetricKey.getInitialVector()));
         }
         for (AsymmetricKey asymmetricKey : asymmetricKeys) {
             asymmetricKey.setPublicKey(masterKeyProvider.decryptWithMasterPassword(asymmetricKey.getPublicKey()));

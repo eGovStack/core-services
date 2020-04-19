@@ -18,7 +18,7 @@ public class KeyRepository {
     private static final String selectAsymmetricKeyQuery = "SELECT * FROM eg_enc_asymmetric_keys";
 
     private static final String insertSymmetricKeyQuery = "INSERT INTO eg_enc_symmetric_keys (key_id, secret_key, " +
-            "initial_vector, active, tenant_id) VALUES (? ,?, ?, ?, ?)";
+            "active, tenant_id) VALUES (? ,?, ?, ?)";
     private static final String insertAsymmetricKeyQuery = "INSERT INTO eg_enc_asymmetric_keys (key_id, public_key, " +
             "private_key, active, tenant_id) VALUES (? ,?, ?, ?, ?)";
 
@@ -42,7 +42,6 @@ public class KeyRepository {
         return jdbcTemplate.update(insertSymmetricKeyQuery,
                 symmetricKey.getKeyId(),
                 symmetricKey.getSecretKey(),
-                symmetricKey.getInitialVector(),
                 symmetricKey.isActive(),
                 symmetricKey.getTenantId()
         );
