@@ -1,8 +1,8 @@
-package org.egov.enc.keymanagement.masterpassword.providers;
+package org.egov.enc.keymanagement.masterkey.providers;
 
 
 import org.egov.enc.config.AppProperties;
-import org.egov.enc.keymanagement.masterpassword.MasterPasswordProvider;
+import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.egov.enc.utils.SymmetricEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +23,7 @@ import java.util.Base64;
 @Component
 @Order(1)
 @ConditionalOnProperty( value = "master.password.provider", havingValue = "software")
-public class SoftwareBasedMasterPassword implements MasterPasswordProvider {
+public class SoftwareBasedMasterKey implements MasterKeyProvider {
 
     @Autowired
     private AppProperties appProperties;

@@ -1,4 +1,4 @@
-package org.egov.enc.keymanagement.masterpassword.providers;
+package org.egov.enc.keymanagement.masterkey.providers;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -8,7 +8,7 @@ import com.amazonaws.services.kms.model.DecryptRequest;
 import com.amazonaws.services.kms.model.DecryptResult;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.kms.model.EncryptResult;
-import org.egov.enc.keymanagement.masterpassword.MasterPasswordProvider;
+import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
@@ -22,7 +22,7 @@ import java.util.Base64;
 @Component
 @Order(1)
 @ConditionalOnProperty( value = "master.password.provider", havingValue = "awskms")
-public class AwsKmsMasterPassword implements MasterPasswordProvider {
+public class AwsKmsMasterKey implements MasterKeyProvider {
 
 
     @Value("${aws.kms.access.key:}")

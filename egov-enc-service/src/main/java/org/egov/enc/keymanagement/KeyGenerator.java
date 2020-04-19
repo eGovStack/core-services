@@ -2,21 +2,17 @@ package org.egov.enc.keymanagement;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.egov.enc.config.AppProperties;
-import org.egov.enc.keymanagement.masterpassword.MasterPasswordProvider;
+import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.egov.enc.models.AsymmetricKey;
 import org.egov.enc.models.SymmetricKey;
-import org.egov.enc.utils.SymmetricEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -36,7 +32,7 @@ public class KeyGenerator {
     @Autowired
     private KeyIdGenerator keyIdGenerator;
     @Autowired
-    private MasterPasswordProvider masterPasswordProvider;
+    private MasterKeyProvider masterKeyProvider;
 
     @Autowired
     public KeyGenerator(AppProperties appProperties) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -69,9 +65,9 @@ public class KeyGenerator {
 
         for(int i = 0; i < keys.length; i++) {
             String keyAsString =
-                    masterPasswordProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getEncoded()));
+                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getEncoded()));
             String initialVectorAsString =
-                    masterPasswordProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(initialVectors[i]));
+                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(initialVectors[i]));
             symmetricKeyArrayList.add(new SymmetricKey(i, keyIdGenerator.generateKeyId(), keyAsString,
                     initialVectorAsString, true, tenantIds.get(i)));
         }
@@ -93,9 +89,9 @@ public class KeyGenerator {
 
         for(int i = 0; i < keys.length; i++) {
             String publicKey =
-                    masterPasswordProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getPublic().getEncoded()));
+                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getPublic().getEncoded()));
             String privateKey =
-                    masterPasswordProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getPrivate().getEncoded()));
+                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getPrivate().getEncoded()));
             asymmetricKeyArrayList.add(new AsymmetricKey(i, keyIdGenerator.generateKeyId(), publicKey, privateKey, true, tenantIds.get(i)));
         }
 

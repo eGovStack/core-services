@@ -1,6 +1,6 @@
-package org.egov.enc.keymanagement.masterpassword;
+package org.egov.enc.keymanagement.masterkey;
 
-public interface MasterPasswordProvider {
+public interface MasterKeyProvider {
 
     public String encryptWithMasterPassword(String key) throws Exception;
 

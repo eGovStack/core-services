@@ -3,12 +3,11 @@ package org.egov.enc.keymanagement;
 import lombok.Getter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.egov.enc.config.AppProperties;
-import org.egov.enc.keymanagement.masterpassword.MasterPasswordProvider;
+import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.egov.enc.models.AsymmetricKey;
 import org.egov.enc.models.MethodEnum;
 import org.egov.enc.models.SymmetricKey;
 import org.egov.enc.repository.KeyRepository;
-import org.egov.enc.utils.SymmetricEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,12 +15,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -50,7 +46,7 @@ public class KeyStore implements ApplicationRunner {
     private ArrayList<String> tenantIds;
 
     @Autowired
-    private MasterPasswordProvider masterPasswordProvider;
+    private MasterKeyProvider masterKeyProvider;
 
     private static ArrayList<SymmetricKey> symmetricKeys;
     private static ArrayList<AsymmetricKey> asymmetricKeys;
@@ -183,12 +179,12 @@ public class KeyStore implements ApplicationRunner {
     //Decrypt all keys
     private void decryptAllKeys() throws Exception {
         for (SymmetricKey symmetricKey : symmetricKeys) {
-            symmetricKey.setSecretKey(masterPasswordProvider.decryptWithMasterPassword(symmetricKey.getSecretKey()));
-            symmetricKey.setInitialVector(masterPasswordProvider.decryptWithMasterPassword(symmetricKey.getInitialVector()));
+            symmetricKey.setSecretKey(masterKeyProvider.decryptWithMasterPassword(symmetricKey.getSecretKey()));
+            symmetricKey.setInitialVector(masterKeyProvider.decryptWithMasterPassword(symmetricKey.getInitialVector()));
         }
         for (AsymmetricKey asymmetricKey : asymmetricKeys) {
-            asymmetricKey.setPublicKey(masterPasswordProvider.decryptWithMasterPassword(asymmetricKey.getPublicKey()));
-            asymmetricKey.setPrivateKey(masterPasswordProvider.decryptWithMasterPassword(asymmetricKey.getPrivateKey()));
+            asymmetricKey.setPublicKey(masterKeyProvider.decryptWithMasterPassword(asymmetricKey.getPublicKey()));
+            asymmetricKey.setPrivateKey(masterKeyProvider.decryptWithMasterPassword(asymmetricKey.getPrivateKey()));
         }
     }
 
