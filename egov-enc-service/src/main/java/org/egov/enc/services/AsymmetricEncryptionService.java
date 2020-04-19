@@ -28,8 +28,8 @@ public class AsymmetricEncryptionService implements EncryptionServiceInterface {
 
         byte[] cipherBytes = AsymmetricEncryptionUtil.encrypt(plaintext.getPlaintext().getBytes(StandardCharsets.UTF_8), publicKey);
 
-        Ciphertext ciphertext = new Ciphertext(asymmetricKey.getKeyId(), Base64.getEncoder().encodeToString
-                (cipherBytes));
+        Ciphertext ciphertext = new Ciphertext(asymmetricKey.getKeyId(), null,
+                Base64.getEncoder().encodeToString(cipherBytes));
 
         return ciphertext;
     }

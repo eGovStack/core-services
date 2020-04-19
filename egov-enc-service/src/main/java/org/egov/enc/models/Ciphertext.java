@@ -10,13 +10,16 @@ public class Ciphertext {
 
     private int keyId;
 
+    private String initialVector;
+
     private String ciphertext;
 
     public Ciphertext(String ciphertext) {
         try{
             String[] cipherArray = ciphertext.split("\\|");
             this.keyId = Integer.parseInt(cipherArray[0]);
-            this.ciphertext = cipherArray[1];
+            this.initialVector = cipherArray[1];
+            this.ciphertext = cipherArray[2];
         } catch (Exception e) {
             throw new CustomException(ciphertext + ": Invalid Ciphertext", ciphertext + ": Invalid Ciphertext");
         }
@@ -24,7 +27,7 @@ public class Ciphertext {
 
     @Override
     public String toString() {
-        return String.valueOf(keyId) + "|" + ciphertext;
+        return keyId + "|" + initialVector + "|" + ciphertext;
     }
 
 }
