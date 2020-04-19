@@ -6,6 +6,7 @@ import org.egov.enc.config.AppProperties;
 import org.egov.enc.keymanagement.masterkey.MasterKeyProvider;
 import org.egov.enc.models.AsymmetricKey;
 import org.egov.enc.models.MethodEnum;
+import org.egov.enc.models.Plaintext;
 import org.egov.enc.models.SymmetricKey;
 import org.egov.enc.repository.KeyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 
 
 
@@ -48,18 +50,21 @@ public class KeyStore implements ApplicationRunner {
     @Autowired
     private MasterKeyProvider masterKeyProvider;
 
+    private SecureRandom secureRandom;
+
     private static ArrayList<SymmetricKey> symmetricKeys;
     private static ArrayList<AsymmetricKey> asymmetricKeys;
 
     private static HashMap<Integer, SymmetricKey> symmetricKeyHashMap;
     private static HashMap<Integer, AsymmetricKey> asymmetricKeyHashMap;
 
-    private static HashMap<String, Integer> activeSymmetricKeys;
+    private static HashMap<String, List<Integer>> activeSymmetricKeys;
     private static HashMap<String, Integer> activeAsymmetricKeys;
 
     @Autowired
     public KeyStore()  {
         Security.addProvider(new BouncyCastleProvider());
+        secureRandom = new SecureRandom();
     }
 
     //Reset and Initialize all the keys and HashMaps from the database
@@ -99,8 +104,11 @@ public class KeyStore implements ApplicationRunner {
         for(String tenant : tenantIds) {
             for(SymmetricKey symmetricKey : symmetricKeys) {
                 if(symmetricKey.getTenantId().equalsIgnoreCase(tenant) && symmetricKey.isActive()) {
-                    activeSymmetricKeys.put(tenant, symmetricKey.getKeyId());
-                    break;
+                    if(!activeSymmetricKeys.containsKey(tenant)) {
+                        List<Integer> keyIds = new ArrayList<>();
+                        activeSymmetricKeys.put(tenant, keyIds);
+                    }
+                    activeSymmetricKeys.get(tenant).add(symmetricKey.getKeyId());
                 }
             }
 
@@ -113,12 +121,18 @@ public class KeyStore implements ApplicationRunner {
         }
     }
 
-    //Get currently active symmetric key for given tenanId
-    public SymmetricKey getSymmetricKey(String tenantId) {
-        return getSymmetricKey(activeSymmetricKeys.get(tenantId));
+    //Get currently active symmetric key for given tenantId
+    public SymmetricKey getSymmetricKeyToEncrypt(Plaintext plaintext) {
+        List<Integer> activeKeys = activeSymmetricKeys.get(plaintext.getTenantId());
+        return getSymmetricKey(chooseSymmetricKeyForEncryption(activeKeys, plaintext));
     }
 
-    //Get currently active asymmetric key for given tenanId
+    private Integer chooseSymmetricKeyForEncryption(List<Integer> activeKeys, Plaintext plaintext) {
+        Integer keyIdIndex = secureRandom.nextInt(activeKeys.size());
+        return activeKeys.get(keyIdIndex);
+    }
+
+    //Get currently active asymmetric key for given tenantId
     public AsymmetricKey getAsymmetricKey(String tenantId) {
         return getAsymmetricKey(activeAsymmetricKeys.get(tenantId));
     }

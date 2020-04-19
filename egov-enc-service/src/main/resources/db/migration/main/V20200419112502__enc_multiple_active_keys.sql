@@ -1,0 +1,2 @@
+DROP INDEX active_tenant_symmetric_keys;
+DROP INDEX active_tenant_asymmetric_keys;

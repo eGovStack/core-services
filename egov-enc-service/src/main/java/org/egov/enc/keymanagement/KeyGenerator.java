@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -53,23 +52,19 @@ public class KeyGenerator {
     //Returns a list of Symmetric Keys corresponding to the list of input tenants
     //The returned keys will be encrypted with the master password
     public ArrayList<SymmetricKey> generateSymmetricKeys(ArrayList<String> tenantIds) throws Exception {
-        int numberOfKeys = tenantIds.size();
-        SecretKey[] keys = new SecretKey[numberOfKeys];
-        byte[][] initialVectors = new byte[numberOfKeys][appProperties.getInitialVectorSize()];
-        for(int i = 0; i < numberOfKeys; i++) {
-            keys[i] = new SecretKeySpec(getRandomBytes(appProperties.getSymmetricKeySize()/8), "AES");
-            initialVectors[i] = getRandomBytes(appProperties.getInitialVectorSize());
-        }
-
         ArrayList<SymmetricKey> symmetricKeyArrayList = new ArrayList<>();
 
-        for(int i = 0; i < keys.length; i++) {
-            String keyAsString =
-                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(keys[i].getEncoded()));
-            String initialVectorAsString =
-                    masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(initialVectors[i]));
-            symmetricKeyArrayList.add(new SymmetricKey(i, keyIdGenerator.generateKeyId(), keyAsString,
-                    initialVectorAsString, true, tenantIds.get(i)));
+        for(int i = 0; i < tenantIds.size(); i++) {
+            for(int j = 0; j < appProperties.getNumberOfSymmetricActiveKeysPerTenant(); j++) {
+                SecretKeySpec key = new SecretKeySpec(getRandomBytes(appProperties.getSymmetricKeySize()/8), "AES");
+                byte[] initialVector = getRandomBytes(appProperties.getInitialVectorSize());;
+                String keyAsString =
+                        masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(key.getEncoded()));
+                String initialVectorAsString =
+                        masterKeyProvider.encryptWithMasterPassword(Base64.getEncoder().encodeToString(initialVector));
+                symmetricKeyArrayList.add(new SymmetricKey(i, keyIdGenerator.generateKeyId(), keyAsString,
+                        initialVectorAsString, true, tenantIds.get(i)));
+            }
         }
         return symmetricKeyArrayList;
     }

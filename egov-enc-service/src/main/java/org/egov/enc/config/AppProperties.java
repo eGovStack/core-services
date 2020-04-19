@@ -43,4 +43,7 @@ public class AppProperties {
     @Value("#{${type.to.method.map}}")
     private HashMap<String, String> typeToMethodMap;
 
+    @Value("${number.of.symmetric.active.keys.per.tenant}")
+    private Integer numberOfSymmetricActiveKeysPerTenant;
+
 }

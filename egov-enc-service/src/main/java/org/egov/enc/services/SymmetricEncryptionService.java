@@ -26,7 +26,7 @@ public class SymmetricEncryptionService implements EncryptionServiceInterface {
     private KeyStore keyStore;
 
     public Ciphertext encrypt(Plaintext plaintext) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-        SymmetricKey symmetricKey = keyStore.getSymmetricKey(plaintext.getTenantId());
+        SymmetricKey symmetricKey = keyStore.getSymmetricKeyToEncrypt(plaintext);
         SecretKey secretKey = keyStore.getSecretKey(symmetricKey);
 
         byte[] initialVectorsBytes = keyStore.getInitialVector(symmetricKey);
