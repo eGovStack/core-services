@@ -3,9 +3,11 @@ package org.egov.enc.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.enc.models.ModeEnum;
 import org.egov.enc.services.KeyManagementService;
 import org.egov.enc.services.EncryptionService;
 import org.egov.enc.services.SignatureService;
+import org.egov.enc.utils.ProcessJSONUtil;
 import org.egov.enc.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,8 @@ public class CryptoApiController{
     private SignatureService signatureService;
     @Autowired
     private KeyManagementService keyManagementService;
+    @Autowired
+    private ProcessJSONUtil processJSONUtil;
 
     @Autowired
     public CryptoApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -41,6 +45,11 @@ public class CryptoApiController{
     @RequestMapping(value="/crypto/v1/_encrypt", method = RequestMethod.POST)
     public ResponseEntity<Object> cryptoEncryptPost(@Valid @RequestBody EncryptionRequest encryptionRequest) throws Exception {
         return new ResponseEntity<>(encryptionService.encrypt(encryptionRequest), HttpStatus.OK );
+    }
+
+    @RequestMapping(value="/crypto/v1/_hash", method = RequestMethod.POST)
+    public ResponseEntity<Object> cryptoHashPost(@Valid @RequestBody Object hashRequest) throws Exception {
+        return new ResponseEntity<>(processJSONUtil.processJSON(hashRequest, ModeEnum.HASH, null, null), HttpStatus.OK );
     }
 
     @RequestMapping(value="/crypto/v1/_decrypt", method = RequestMethod.POST)

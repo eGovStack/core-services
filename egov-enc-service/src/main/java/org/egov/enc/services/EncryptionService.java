@@ -12,7 +12,9 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 @Slf4j
@@ -38,7 +40,12 @@ public class EncryptionService {
                 throw new CustomException(encReqObject.getType() + Constants.INVALD_DATA_TYPE,
                         encReqObject.getType() + Constants.INVALD_DATA_TYPE);
             }
-            outputList.add(processJSONUtil.processJSON(encReqObject.getValue(), ModeEnum.ENCRYPT, encryptionMethod, encReqObject.getTenantId()));
+            Map<String, Object> encryptAndHashOutput = new HashMap<>();
+            encryptAndHashOutput.put("encrypted", processJSONUtil.processJSON(encReqObject.getValue(),
+                    ModeEnum.ENCRYPT, encryptionMethod, encReqObject.getTenantId()));
+            encryptAndHashOutput.put("hashed", processJSONUtil.processJSON(encReqObject.getValue(),
+                    ModeEnum.HASH, encryptionMethod, encReqObject.getTenantId()));
+            outputList.add(encryptAndHashOutput);
         }
         return outputList;
     }

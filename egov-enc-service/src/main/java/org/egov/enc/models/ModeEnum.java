@@ -7,7 +7,9 @@ public enum ModeEnum {
 
     ENCRYPT("ENCRYPT"),
 
-    DECRYPT("DECRYPT");
+    DECRYPT("DECRYPT"),
+
+    HASH("HASH");
 
     private String value;
 

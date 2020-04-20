@@ -6,6 +6,7 @@ import org.egov.enc.models.Ciphertext;
 import org.egov.enc.models.MethodEnum;
 import org.egov.enc.models.ModeEnum;
 import org.egov.enc.models.Plaintext;
+import org.egov.enc.services.HashService;
 import org.egov.enc.services.SymmetricEncryptionService;
 import org.egov.enc.services.AsymmetricEncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class ProcessJSONUtil {
     private AsymmetricEncryptionService asymmetricEncryptionService;
     @Autowired
     private KeyStore keyStore;
+    @Autowired
+    private HashService hashService;
 
     //The input object may be JSON Object or a JSON Array
     public Object processJSON(Object inputObject, ModeEnum mode, MethodEnum method, String tenantId) throws Exception {
@@ -98,7 +101,7 @@ public class ProcessJSONUtil {
             }
             return ciphertext.toString();
         }
-        else {
+        else if(mode.equals(ModeEnum.DECRYPT)){
             Plaintext plaintext;
             Ciphertext ciphertext = new Ciphertext(value.toString());
             method = keyStore.getTypeOfKey(ciphertext.getKeyId());
@@ -108,6 +111,8 @@ public class ProcessJSONUtil {
                 plaintext = asymmetricEncryptionService.decrypt(ciphertext);
             }
             return plaintext.toString();
+        } else {
+            return hashService.getHashValue(value);
         }
     }
 
