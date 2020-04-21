@@ -183,6 +183,7 @@ public class LegacyIndexService {
 								request = map;
 							}
 							Object response = restTemplate.postForObject(uri, request, Map.class);
+							log.info("response-->"+mapper.writeValueAsString(response.toString()));
 							if (null == response) {
 								log.info("Request: " + request);
 								log.info("URI: " + uri);
@@ -268,10 +269,12 @@ public class LegacyIndexService {
 	 */
 	public void childThreadExecutor(LegacyIndexRequest legacyIndexRequest, ObjectMapper mapper, Object response) {
 		try {
+			log.info("childThreadExecutor + response----"+mapper.writeValueAsString(response));
 			if (legacyIndexRequest.getLegacyIndexTopic().equals(pgrLegacyTopic)) {
 				ServiceResponse serviceResponse = mapper.readValue(mapper.writeValueAsString(response),
 						ServiceResponse.class);
 				PGRIndexObject indexObject = pgrCustomDecorator.dataTransformationForPGR(serviceResponse);
+				log.info("childThreadExecutor + indexObject----"+mapper.writeValueAsString(indexObject));
 				indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), indexObject);
 			} else {
 				if (legacyIndexRequest.getLegacyIndexTopic().equals(ptLegacyTopic)) {
