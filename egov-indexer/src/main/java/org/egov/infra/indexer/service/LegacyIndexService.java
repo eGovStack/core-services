@@ -186,6 +186,7 @@ public class LegacyIndexService {
 								request = map;
 							}
 							Object response = restTemplate.postForObject(uri, request, Map.class);
+							log.info("response-->"+mapper.writeValueAsString(response.toString()));
 							if (null == response) {
 								log.info("Request: " + request);
 								log.info("URI: " + uri);
