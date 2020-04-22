@@ -24,7 +24,7 @@ import QRCode from "qrcode";
 import { getValue } from "./utils/commons";
 import { getFileStoreIds, insertStoreIds } from "./queries";
 import { listenConsumer } from "./kafka/consumer";
-import {convertFooterStringtoFunctionIfExist} from "./utils/commons";
+import { convertFooterStringtoFunctionIfExist } from "./utils/commons";
 
 var jp = require("jsonpath");
 //create binary
@@ -49,40 +49,39 @@ let topicKeyMap = {};
 var topic = [];
 var datafileLength = dataConfigUrls.split(",").length;
 
-
 var fontDescriptors = {
   Cambay: {
     normal: "src/fonts/Cambay-Regular.ttf",
     bold: "src/fonts/Cambay-Bold.ttf",
     italics: "src/fonts/Cambay-Italic.ttf",
-    bolditalics: "src/fonts/Cambay-BoldItalic.ttf"
+    bolditalics: "src/fonts/Cambay-BoldItalic.ttf",
   },
   Roboto: {
     bold: "src/fonts/Roboto-Bold.ttf",
-    normal: "src/fonts/Roboto-Regular.ttf"
-  }
+    normal: "src/fonts/Roboto-Regular.ttf",
+  },
 };
 
 const printer = new pdfMakePrinter(fontDescriptors);
 const uuidv4 = require("uuid/v4");
 
 let mustache = require("mustache");
-mustache.escape = function(text) {
+mustache.escape = function (text) {
   return text;
 };
 let borderLayout = {
-  hLineColor: function(i, node) {
+  hLineColor: function (i, node) {
     return "#979797";
   },
-  vLineColor: function(i, node) {
+  vLineColor: function (i, node) {
     return "#979797";
   },
-  hLineWidth: function(i, node) {
+  hLineWidth: function (i, node) {
     return 0.5;
   },
-  vLineWidth: function(i, node) {
+  vLineWidth: function (i, node) {
     return 0.5;
-  }
+  },
 };
 
 /**
@@ -155,7 +154,7 @@ const createPdfBinary = async (
           userid,
           documentType,
           moduleName
-        )
+        ),
       ]);
     }
   } catch (err) {
@@ -163,7 +162,7 @@ const createPdfBinary = async (
     errorCallback({
       message: ` error occured while creating pdf: ${
         typeof err === "string" ? err : err.message
-      }`
+      }`,
     });
   }
 };
@@ -188,12 +187,11 @@ const uploadFiles = async (
   moduleName
 ) => {
   let convertedListDocDefinition = [];
-  var formatobject = JSON.parse(JSON.stringify(formatconfig));
   let listOfFilestoreIds = [];
 
   if (!isconsolidated) {
-    listDocDefinition.forEach(docDefinition => {
-      docDefinition["content"].forEach(defn => {
+    listDocDefinition.forEach((docDefinition) => {
+      docDefinition["content"].forEach((defn) => {
         var formatobject = JSON.parse(JSON.stringify(formatconfig));
         formatobject["content"] = defn;
         convertedListDocDefinition.push(formatobject);
@@ -203,10 +201,15 @@ const uploadFiles = async (
     convertedListDocDefinition = [...listDocDefinition];
   }
 
-  convertedListDocDefinition.forEach(function(docDefinition, i) {
-    const doc = printer.createPdfKitDocument(
-      JSON.parse(JSON.stringify(docDefinition))
+  convertedListDocDefinition.forEach(function (docDefinition, i) {
+    // making copy because createPdfKitDocument function modifies passed object and this object is used
+    // in multiple places
+    var objectCopy = JSON.parse(JSON.stringify(docDefinition));
+    // restoring footer because JSON.stringify destroys function() values
+    objectCopy.footer = convertFooterStringtoFunctionIfExist(
+      formatconfig.footer
     );
+    const doc = printer.createPdfKitDocument(objectCopy);
     let fileNameAppend = "-" + new Date().getTime();
     // let filename="src/pdfs/"+key+" "+fileNameAppend+".pdf"
     let filename = key + "" + fileNameAppend + ".pdf";
@@ -217,14 +220,14 @@ const uploadFiles = async (
 
     var chunks = [];
 
-    doc.on("data", function(chunk) {
+    doc.on("data", function (chunk) {
       chunks.push(chunk);
     });
-    doc.on("end", function() {
+    doc.on("end", function () {
       // console.log("enddddd "+cr++);
       var data = Buffer.concat(chunks);
       fileStoreAPICall(filename, tenantId, data)
-        .then(result => {
+        .then((result) => {
           listOfFilestoreIds.push(result);
           if (!isconsolidated) {
             dbInsertSingleRecords.push({
@@ -241,7 +244,7 @@ const uploadFiles = async (
               totalcount: 1,
               key,
               documentType,
-              moduleName
+              moduleName,
             });
 
             // insertStoreIds(jobid,entityIds[i],[result],tenantId,starttime,successCallback,errorCallback,1,false);
@@ -287,13 +290,13 @@ const uploadFiles = async (
             );
           }
         })
-        .catch(err => {
+        .catch((err) => {
           logger.error(err.stack || err);
           errorCallback({
             message:
               "error occurred while uploading pdf: " + (typeof err === "string")
                 ? err
-                : err.message
+                : err.message,
           });
         });
     });
@@ -310,7 +313,7 @@ app.post(
       await createAndSave(
         req,
         res,
-        response => {
+        (response) => {
           // doc successfully created
           res.status(201);
           res.json({
@@ -324,15 +327,15 @@ app.post(
             totalcount: response.totalcount,
             key: response.key,
             documentType: response.documentType,
-            moduleName: response.moduleName
+            moduleName: response.moduleName,
           });
         },
-        error => {
+        (error) => {
           res.status(500);
           // doc creation error
           res.json({
             ResponseInfo: requestInfo,
-            message: "error in createPdfBinary " + error.message
+            message: "error in createPdfBinary " + error.message,
           });
         }
       );
@@ -342,7 +345,7 @@ app.post(
       res.status(500);
       res.json({
         ResponseInfo: requestInfo,
-        message: "some unknown error while creating: " + error.message
+        message: "some unknown error while creating: " + error.message,
       });
     }
   })
@@ -368,7 +371,7 @@ app.post(
         let [
           formatConfigByFile,
           totalobjectcount,
-          entityIds
+          entityIds,
         ] = await prepareBegin(
           key,
           req,
@@ -377,23 +380,27 @@ app.post(
           formatconfig,
           dataconfig
         );
+        // restoring footer function
+        formatConfigByFile[0].footer = convertFooterStringtoFunctionIfExist(formatconfig.footer);
         const doc = printer.createPdfKitDocument(formatConfigByFile[0]);
         let fileNameAppend = "-" + new Date().getTime();
         let filename = key + "" + fileNameAppend + ".pdf";
 
         var chunks = [];
-        doc.on("data", function(chunk) {
+        doc.on("data", function (chunk) {
           chunks.push(chunk);
         });
-        doc.on("end", function() {
+        doc.on("end", function () {
           // console.log("enddddd "+cr++);
           var data = Buffer.concat(chunks);
           res.writeHead(201, {
             // 'Content-Type': mimetype,
             "Content-disposition": "attachment;filename=" + filename,
-            "Content-Length": data.length
+            "Content-Length": data.length,
           });
-          logger.info(`createnosave success for pdf with key: ${key}, entityId ${entityIds}`);
+          logger.info(
+            `createnosave success for pdf with key: ${key}, entityId ${entityIds}`
+          );
           res.end(Buffer.from(data, "binary"));
         });
         doc.end();
@@ -402,7 +409,7 @@ app.post(
       logger.error(error.stack || error);
       res.status(500);
       res.json({
-        message: "some unknown error while creating: " + error.message
+        message: "some unknown error while creating: " + error.message,
       });
     }
   })
@@ -425,7 +432,7 @@ app.post(
         res.status(400);
         res.json({
           ResponseInfo: requestInfo,
-          message: "jobid and entityid both can not be empty"
+          message: "jobid and entityid both can not be empty",
         });
       } else {
         if (jobid) {
@@ -441,7 +448,7 @@ app.post(
           tenantid,
           isconsolidated,
           entityid,
-          responseBody => {
+          (responseBody) => {
             // doc successfully created
             res.status(responseBody.status);
             delete responseBody.status;
@@ -454,19 +461,19 @@ app.post(
       res.status(500);
       res.json({
         ResponseInfo: requestInfo,
-        message: "some unknown error while searching: " + error.message
+        message: "some unknown error while searching: " + error.message,
       });
     }
   })
 );
 
-var i=0;
+var i = 0;
 dataConfigUrls &&
-  dataConfigUrls.split(",").map(item => {
+  dataConfigUrls.split(",").map((item) => {
     item = item.trim();
     if (item.includes("file://")) {
       item = item.replace("file://", "");
-      fs.readFile(item, "utf8", function(err, data) {
+      fs.readFile(item, "utf8", function (err, data) {
         try {
           if (err) {
             logger.error(
@@ -476,12 +483,12 @@ dataConfigUrls &&
           } else {
             data = JSON.parse(data);
             dataConfigMap[data.key] = data;
-            if(data.fromTopic != null){
+            if (data.fromTopic != null) {
               topicKeyMap[data.fromTopic] = data.key;
               topic.push(data.fromTopic);
             }
             i++;
-            if(i==datafileLength){
+            if (i == datafileLength) {
               listenConsumer(topic);
             }
             logger.info("loaded dataconfig: file:///" + item);
@@ -506,11 +513,11 @@ dataConfigUrls &&
   });
 
 formatConfigUrls &&
-  formatConfigUrls.split(",").map(item => {
+  formatConfigUrls.split(",").map((item) => {
     item = item.trim();
     if (item.includes("file://")) {
       item = item.replace("file://", "");
-      fs.readFile(item, "utf8", function(err, data) {
+      fs.readFile(item, "utf8", function (err, data) {
         try {
           if (err) {
             logger.error(err.stack);
@@ -562,12 +569,11 @@ export const createAndSave = async (
 ) => {
   var starttime = new Date().getTime();
 
-  let topic = get(req,"topic");
+  let topic = get(req, "topic");
   let key;
-  if(topic!=null && topicKeyMap[topic] !=null){
+  if (topic != null && topicKeyMap[topic] != null) {
     key = topicKeyMap[topic];
-  }
-  else{
+  } else {
     key = get(req.query || req, "key");
   }
   //let key = get(req.query || req, "key");
@@ -576,9 +582,9 @@ export const createAndSave = async (
   var dataconfig = dataConfigMap[key];
   var userid = get(req.body || req, "RequestInfo.userInfo.id");
   var requestInfo = get(req.body || req, "RequestInfo");
-  var documentType = get(dataconfig, "documentType","");
-  var moduleName = get(dataconfig, "DataConfigs.moduleName","");
-  
+  var documentType = get(dataconfig, "documentType", "");
+  var moduleName = get(dataconfig, "DataConfigs.moduleName", "");
+
   var valid = validateRequest(req, res, key, tenantId, requestInfo);
   if (valid) {
     let [formatConfigByFile, totalobjectcount, entityIds] = await prepareBegin(
@@ -610,19 +616,19 @@ export const createAndSave = async (
       userid,
       documentType,
       moduleName
-    ).catch(err => {
+    ).catch((err) => {
       logger.error(err.stack || err);
       errorCallback({
         message:
           "error occurred in createPdfBinary call: " + (typeof err === "string")
             ? err
-            : err.message
+            : err.message,
       });
     });
   }
 };
-const updateBorderlayout = formatconfig => {
-  formatconfig.content = formatconfig.content.map(item => {
+const updateBorderlayout = (formatconfig) => {
+  formatconfig.content = formatconfig.content.map((item) => {
     if (
       item.hasOwnProperty("layout") &&
       typeof item.layout === "object" &&
@@ -725,7 +731,7 @@ const validateRequest = (req, res, key, tenantId, requestInfo) => {
     res.status(400);
     res.json({
       message: errorMessage,
-      ResponseInfo: requestInfo
+      ResponseInfo: requestInfo,
     });
     return false;
   } else {
@@ -789,7 +795,7 @@ const handlelogic = async (
       localisationMap,
       requestInfo,
       localisationModuleList
-    )
+    ),
   ]);
   await generateQRCodes(moduleObject, dataconfig, variableTovalueMap);
   handleDerivedMapping(dataconfig, variableTovalueMap);
@@ -866,7 +872,6 @@ const prepareBulk = async (
         i + 1 == len
       ) {
         let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
-        convertFooterStringtoFunctionIfExist(formatconfigCopy);
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];
@@ -879,7 +884,7 @@ const prepareBulk = async (
       `could not find property of type array in request body with name ${baseKeyPath}`
     );
     throw {
-      message: `could not find property of type array in request body with name ${baseKeyPath}`
+      message: `could not find property of type array in request body with name ${baseKeyPath}`,
     };
   }
 };

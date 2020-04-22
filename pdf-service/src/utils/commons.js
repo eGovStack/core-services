@@ -2,7 +2,7 @@ import { httpRequest } from "../api/api";
 import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
-var moment = require('moment-timezone');
+var moment = require("moment-timezone");
 
 let datetimezone = envVariables.DATE_TIMEZONE;
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
@@ -153,8 +153,9 @@ export const getValue = (value, defaultValue, path) => {
   } else return value;
 };
 
-export const convertFooterStringtoFunctionIfExist = (formatObject) => {
-  if (formatObject.footer) {
-    formatObject.footer = eval(formatObject.footer);
+export const convertFooterStringtoFunctionIfExist = (footer) => {
+  if (footer != undefined) {
+    footer = eval(footer);
   }
+  return footer;
 };
