@@ -129,10 +129,10 @@ const getLocalisationLabel = (key, localisationMap, prefix) => {
   }
 };
 
-export const getDateInRequiredFormat = (et,dateformat="DD/MM/YYYY") => {
+export const getDateInRequiredFormat = (et, dateformat = "DD/MM/YYYY") => {
   if (!et) return "NA";
   // var date = new Date(Math.round(Number(et)));
-  return moment(et).tz(datetimezone).format(dateformat); 
+  return moment(et).tz(datetimezone).format(dateformat);
 };
 
 /**
@@ -151,4 +151,10 @@ export const getValue = (value, defaultValue, path) => {
     // logger.error(`no value found for path: ${path}`);
     return defaultValue;
   } else return value;
+};
+
+export const convertFooterStringtoFunctionIfExist = (formatObject) => {
+  if (formatObject.footer) {
+    formatObject.footer = eval(formatObject.footer);
+  }
 };

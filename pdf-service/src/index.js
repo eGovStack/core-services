@@ -24,6 +24,7 @@ import QRCode from "qrcode";
 import { getValue } from "./utils/commons";
 import { getFileStoreIds, insertStoreIds } from "./queries";
 import { listenConsumer } from "./kafka/consumer";
+import {convertFooterStringtoFunctionIfExist} from "./utils/commons";
 
 var jp = require("jsonpath");
 //create binary
@@ -357,7 +358,7 @@ app.post(
       let tenantId = req.query.tenantId;
       var formatconfig = formatConfigMap[key];
       var dataconfig = dataConfigMap[key];
-
+      logger.info("received createnosave request on key: " + key);
       requestInfo = get(req.body, "RequestInfo");
       //
 
@@ -392,6 +393,7 @@ app.post(
             "Content-disposition": "attachment;filename=" + filename,
             "Content-Length": data.length
           });
+          logger.info(`createnosave success for pdf with key: ${key}, entityId ${entityIds}`);
           res.end(Buffer.from(data, "binary"));
         });
         doc.end();
@@ -547,6 +549,10 @@ app.listen(serverport, () => {
  *
  * @param {*} formatconfig - format config read from formatconfig file
  */
+
+// Create endpoint flow
+// createAndSave-> prepareBegin-->prepareBulk --> handlelogic-------------|
+// createPdfBinary<---prepareBegin <--createPdfBinary <------prepareBulk ---<
 
 export const createAndSave = async (
   req,
@@ -853,7 +859,6 @@ const prepareBulk = async (
       );
 
       formatObjectArrayObject.push(formatObject["content"]);
-      //putting formatconfig in a file to check docdefinition on pdfmake playground online
       countOfObjectsInCurrentFile++;
       if (
         (!returnFileInResponse &&
@@ -861,6 +866,7 @@ const prepareBulk = async (
         i + 1 == len
       ) {
         let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+        convertFooterStringtoFunctionIfExist(formatconfigCopy);
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];
