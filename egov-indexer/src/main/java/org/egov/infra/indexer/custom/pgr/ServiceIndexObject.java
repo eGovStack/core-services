@@ -1,8 +1,5 @@
 package org.egov.infra.indexer.custom.pgr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,9 +36,5 @@ public class ServiceIndexObject extends Service {
 	@JsonProperty("actionHistory")
 	@Valid
 	private ActionHistory actionHistory;
-	
-	@JsonProperty("services")
-	@Valid
-	public List<Service> services = new ArrayList<Service>();
 
 }
