@@ -273,9 +273,9 @@ public class LegacyIndexService {
 			if (legacyIndexRequest.getLegacyIndexTopic().equals(pgrLegacyTopic)) {
 				ServiceResponse serviceResponse = mapper.readValue(mapper.writeValueAsString(response),
 						ServiceResponse.class);
-				PGRIndexObject indexObject = pgrCustomDecorator.dataTransformationForPGR(serviceResponse);
-				log.info("childThreadExecutor + indexObject----"+mapper.writeValueAsString(indexObject));
-				indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), indexObject);
+				//PGRIndexObject indexObject = pgrCustomDecorator.dataTransformationForPGR(serviceResponse);
+				//log.info("childThreadExecutor + indexObject----"+mapper.writeValueAsString(indexObject));
+				indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), serviceResponse);
 			} else {
 				if (legacyIndexRequest.getLegacyIndexTopic().equals(ptLegacyTopic)) {
 					PropertyResponse propertyResponse = mapper.readValue(mapper.writeValueAsString(response), PropertyResponse.class);

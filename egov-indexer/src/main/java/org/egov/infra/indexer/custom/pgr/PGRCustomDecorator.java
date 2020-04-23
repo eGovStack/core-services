@@ -25,59 +25,54 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class PGRCustomDecorator {
-
+	
 	@Autowired
 	private IndexerUtils indexerUtils;
-
+	
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
-
+	
 	@Autowired
 	private RestTemplate restTemplate;
-
+	
 	/**
-	 * Builds a custom object for PGR that is common for core index and legacy
-	 * index,
+	 * Builds a custom object for PGR that is common for core index and legacy index,
 	 * 
 	 * @param serviceResponse
 	 * @return
 	 */
 	public PGRIndexObject dataTransformationForPGR(ServiceResponse serviceResponse) {
-		PGRIndexObject pGRIndexObject = new PGRIndexObject();
+		PGRIndexObject pgrIndexObject = new PGRIndexObject();
 		ObjectMapper mapper = indexerUtils.getObjectMapper();
 		List<ServiceIndexObject> serviceIndexObjects = new ArrayList<>();
-		for (int i = 0; i < serviceResponse.getServices().size(); i++) {
-			ServiceIndexObject serviceIndexObject = new ServiceIndexObject();
-			serviceIndexObject.getServices()
-					.add(mapper.convertValue(serviceResponse.getServices().get(i), Service.class));
-			serviceIndexObject.setActionHistory(serviceResponse.getActionHistory().get(i));
-			for (ActionInfo action : serviceResponse.getActionHistory().get(i).getActions()) {
-				if (!StringUtils.isEmpty(action.getBy())) {
-					if (action.getBy().contains("Grievance Routing Officer")
-							|| action.getBy().contains("Department Grievance Routing Officer")) {
-						serviceIndexObject.setGro(action.getBy().split(":")[0]);
-						if (!StringUtils.isEmpty(action.getAssignee())) {
-							serviceIndexObject.setAssignee(action.getAssignee());
+		for(int i = 0; i < serviceResponse.getServices().size(); i++) {
+			ServiceIndexObject object = new ServiceIndexObject();
+			object = mapper.convertValue(serviceResponse.getServices().get(i), ServiceIndexObject.class);
+			object.setActionHistory(serviceResponse.getActionHistory().get(i));
+			for(ActionInfo action: serviceResponse.getActionHistory().get(i).getActions()) {
+				if(!StringUtils.isEmpty(action.getBy())) {
+					if(action.getBy().contains("Grievance Routing Officer") || action.getBy().contains("Department Grievance Routing Officer")) {
+						object.setGro(action.getBy().split(":")[0]);
+						if(!StringUtils.isEmpty(action.getAssignee())) {
+							object.setAssignee(action.getAssignee());
 						}
 						break;
-					} else if (action.getBy().contains("Employee")) {
-						serviceIndexObject.setAssignee(action.getBy().split(":")[0]);
+					}else if(action.getBy().contains("Employee")) {
+						object.setAssignee(action.getBy().split(":")[0]);
 					}
 				}
 			}
-			serviceIndexObject.setDepartment(getDepartment(serviceResponse.getServices().get(i)));
-			serviceIndexObject.setComplaintCategory(
-					indexerUtils.splitCamelCase(serviceResponse.getServices().get(i).getServiceCode()));
-			serviceIndexObject.setTenantId((serviceResponse.getServices().get(i).getTenantId()));
-			serviceIndexObjects.add(serviceIndexObject);
+			object.setDepartment(getDepartment(serviceResponse.getServices().get(i)));
+			object.setComplaintCategory(indexerUtils.splitCamelCase(serviceResponse.getServices().get(i).getServiceCode()));
+			serviceIndexObjects.add(object);
 		}
-		pGRIndexObject.setServiceRequests(serviceIndexObjects);
-		return pGRIndexObject;
+		pgrIndexObject.setServiceRequests(serviceIndexObjects);
+		return pgrIndexObject;
 	}
-
+	
 	/**
 	 * Department is fetched from MDMS
 	 * 
@@ -90,16 +85,16 @@ public class PGRCustomDecorator {
 		try {
 			Object response = restTemplate.postForObject(uri.toString(), request, Map.class);
 			List<String> depts = JsonPath.read(response, "$.MdmsRes.RAINMAKER-PGR.ServiceDefs");
-			if (!CollectionUtils.isEmpty(depts)) {
+			if(!CollectionUtils.isEmpty(depts)) {
 				return depts.get(0);
-			} else
+			}else
 				return null;
-		} catch (Exception e) {
-			log.error("Exception while fetching dept: ", e);
+		}catch(Exception e) {
+			log.error("Exception while fetching dept: ",e);
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Prepares MDMS request for the service category search
 	 * 
@@ -109,15 +104,14 @@ public class PGRCustomDecorator {
 	 * @param requestInfo
 	 * @return
 	 */
-	public MdmsCriteriaReq prepareMdMsRequestForDept(StringBuilder uri, String tenantId, String category,
-			RequestInfo requestInfo) {
+	public MdmsCriteriaReq prepareMdMsRequestForDept(StringBuilder uri, String tenantId, String category, RequestInfo requestInfo) {
 		uri.append(mdmsHost).append(mdmsEndpoint);
-		MasterDetail masterDetail = org.egov.mdms.model.MasterDetail.builder().name("ServiceDefs")
-				.filter("[?((@.serviceCode IN [" + category + "]) && (@.active == true))].department").build();
+		MasterDetail masterDetail = org.egov.mdms.model.MasterDetail.builder()
+				.name("ServiceDefs").filter("[?((@.serviceCode IN ["+category+"]) && (@.active == true))].department").build();
 		List<MasterDetail> masterDetails = new ArrayList<>();
 		masterDetails.add(masterDetail);
-		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("RAINMAKER-PGR").masterDetails(masterDetails)
-				.build();
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("RAINMAKER-PGR")
+				.masterDetails(masterDetails).build();
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.add(moduleDetail);
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
