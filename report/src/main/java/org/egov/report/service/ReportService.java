@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.ReportApp;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -257,9 +258,15 @@ public class ReportService {
             Map<String, Object> map = maps.get(i);
             Map<String, Object> newMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             newMap.putAll(map);
+            // restore ['abc','xyz'] -> 'abc, xyz'  -- earlier the string had to be transformed to array to allow decryption incase of encrypted columns
             for (SourceColumn sourceColm : columns) {
-
-                objects.add(newMap.get(sourceColm.getName()));
+                if (sourceColm.getType().toString().equals("stringarray") && (newMap.get(sourceColm.getName()) != null)) {
+                    List<String> stringlist = (List<String>) newMap.get(sourceColm.getName());
+                    String value = StringUtils.join(stringlist, ", ");
+                    objects.add(value);
+                } else {
+                    objects.add(newMap.get(sourceColm.getName()));
+                }
             }
             lists.add(objects);
         }
