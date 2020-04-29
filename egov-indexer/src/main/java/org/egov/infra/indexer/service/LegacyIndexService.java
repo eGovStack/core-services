@@ -154,7 +154,7 @@ public class LegacyIndexService {
 	 * @param reindexRequest
 	 */
 	private void indexThread(LegacyIndexRequest legacyIndexRequest) {
-					log.info("JobStarted: " + legacyIndexRequest.getJobId());
+					//log.info("JobStarted: " + legacyIndexRequest.getJobId());
 					ObjectMapper mapper = indexerUtils.getObjectMapper();
 					Integer offset = legacyIndexRequest.getApiDetails().getPaginationDetails().getStartingOffset();
 					offset = offset == null ? 0: offset;
@@ -183,7 +183,7 @@ public class LegacyIndexService {
 								request = map;
 							}
 							Object response = restTemplate.postForObject(uri, request, Map.class);
-							log.info("response-->"+mapper.writeValueAsString(response.toString()));
+							//log.info("response-->"+mapper.writeValueAsString(response.toString()));
 							if (null == response) {
 								log.info("Request: " + request);
 								log.info("URI: " + uri);
@@ -269,7 +269,7 @@ public class LegacyIndexService {
 	 */
 	public void childThreadExecutor(LegacyIndexRequest legacyIndexRequest, ObjectMapper mapper, Object response) {
 		try {
-			log.info("childThreadExecutor + response----"+mapper.writeValueAsString(response));
+			//log.info("childThreadExecutor + response----"+mapper.writeValueAsString(response));
 			if (legacyIndexRequest.getLegacyIndexTopic().equals(pgrLegacyTopic)) {
 				ServiceResponse serviceResponse = mapper.readValue(mapper.writeValueAsString(response),
 						ServiceResponse.class);

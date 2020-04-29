@@ -58,7 +58,7 @@ public class IndexerService {
 	 * @throws Exception
 	 */
 	public void esIndexer(String topic, String kafkaJson) throws Exception {
-		log.debug("kafka Data: " + kafkaJson);
+		log.info("kafka Data: " + kafkaJson);
 		Map<String, Mapping> mappingsMap = runner.getMappingMaps();
 		if (null != mappingsMap.get(topic)) {
 			Mapping mapping = mappingsMap.get(topic);
@@ -95,6 +95,7 @@ public class IndexerService {
 		url.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/").append("_bulk");
 		startTime = new Date().getTime();
 		String jsonToBeIndexed;
+		log.info("kafkaJson: " + kafkaJson);
 		if (null != index.getCustomJsonMapping()) {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, true);
 		} else {
