@@ -15,6 +15,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.AbstractMessageListenerContainer;
+import org.springframework.kafka.listener.BatchMessageListener;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.config.ContainerProperties;
@@ -35,7 +37,7 @@ public class PersisterConsumerConfig {
     private StoppingErrorHandler stoppingErrorHandler;
     
     @Autowired
-    private PersisterMessageListener indexerMessageListener;
+    private BatchMessageListener indexerMessageListener;
     
     @Autowired
     private TopicMap topicMap;
@@ -60,7 +62,8 @@ public class PersisterConsumerConfig {
 
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
-        
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG,50);
+
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
@@ -71,6 +74,11 @@ public class PersisterConsumerConfig {
         factory.getContainerProperties().setErrorHandler(stoppingErrorHandler);
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(30000);
+        factory.getContainerProperties().setAckMode(AbstractMessageListenerContainer.AckMode.BATCH);
+
+
+        // BATCH PROPERTY
+        factory.setBatchListener(true);
         
         log.info("Custom KafkaListenerContainerFactory built...");
         return factory;
@@ -83,7 +91,7 @@ public class PersisterConsumerConfig {
     	 // set more properties
     	 properties.setPauseEnabled(true);
     	 properties.setPauseAfter(0);
-    	 properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
+    	// properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
     	 properties.setMessageListener(indexerMessageListener);
     	 
          log.info("Custom KafkaListenerContainer built...");
