@@ -1,6 +1,7 @@
 import get from "lodash/get";
 import logger from "../config/logger";
 import axios from "axios";
+import envVariables from "../EnvironmentVariables";
 import {
   findAndUpdateLocalisation,
   getDateInRequiredFormat,
@@ -9,6 +10,7 @@ import {
 
 var jp = require("jsonpath");
 
+let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 /**
  *
  * @param {*} req - current module object, picked from request body
@@ -67,7 +69,11 @@ export const directMapping = async (
         directArr[i].valJsonPath
       );
       variableTovalueMap[directArr[i].jPath] = directArr[i].val;
-    } else if (directArr[i].type == "function") {
+    } 
+    else if (directArr[i].type == "external_host") {
+      variableTovalueMap[directArr[i].jPath] = externalHost;
+    }
+    else if (directArr[i].type == "function") {
       var fun = Function("type", directArr[i].format);
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
