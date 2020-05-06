@@ -42,9 +42,6 @@ public class User {
 	private String salutation;
 	private String guardian;
 	private GuardianRelation guardianRelation;
-	
-	@Pattern(regexp="^[a-zA-Z. ]*$")
-	@Size(max=50)
 	private String name;
 	private Gender gender;
 	private String mobileNumber;
