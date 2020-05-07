@@ -86,7 +86,12 @@ public class URLConverterService {
     }
 
     public String getLongURLFromID(String uniqueID) throws Exception {
-        Long dictionaryKey = hashIdConverter.getIdForString(uniqueID);
+        Long dictionaryKey;
+        try {
+            dictionaryKey = hashIdConverter.getIdForString(uniqueID);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            dictionaryKey = IDConvertor.getDictionaryKeyFromUniqueID(uniqueID);
+        }
         String longUrl = urlRepository.getUrl(dictionaryKey);
         LOGGER.info("Converting shortened URL back to {}", longUrl);
         if(longUrl.isEmpty())
