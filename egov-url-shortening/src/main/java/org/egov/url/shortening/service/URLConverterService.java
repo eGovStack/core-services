@@ -87,11 +87,10 @@ public class URLConverterService {
 
     public String getLongURLFromID(String uniqueID) throws Exception {
         Long dictionaryKey;
-        try {
-            dictionaryKey = hashIdConverter.getIdForString(uniqueID);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        dictionaryKey = hashIdConverter.getIdForString(uniqueID);
+        // To support previously generated dictionary keys
+        if(dictionaryKey == null)
             dictionaryKey = IDConvertor.getDictionaryKeyFromUniqueID(uniqueID);
-        }
         String longUrl = urlRepository.getUrl(dictionaryKey);
         LOGGER.info("Converting shortened URL back to {}", longUrl);
         if(longUrl.isEmpty())

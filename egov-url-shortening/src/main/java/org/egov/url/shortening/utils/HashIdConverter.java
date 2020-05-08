@@ -26,7 +26,10 @@ public class HashIdConverter {
     }
 
     public Long getIdForString(String string) {
-        return hashids.decode(string)[0];
+        long[] ids = hashids.decode(string);
+        if(ids.length == 1)
+            return ids[0];
+        return null;
     }
 
 }
