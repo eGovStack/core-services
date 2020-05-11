@@ -26,7 +26,7 @@ public class MessageWebhook {
     private String outputTopicName = "transformed-input-messages";
 
     public Object receiveMessage(Map<String, String> params) throws Exception {
-        log.info("received message from provider: "+params);
+//        log.info("received message from provider: "+params);
         JsonNode message = prepareMessage(params);
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
