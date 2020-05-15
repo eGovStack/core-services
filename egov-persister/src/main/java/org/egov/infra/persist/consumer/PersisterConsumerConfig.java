@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 
-@Configuration
-@EnableKafka
-@PropertySource("classpath:application.properties")
+//@Configuration
+//@EnableKafka
+//@PropertySource("classpath:application.properties")
 @Slf4j
 public class PersisterConsumerConfig {
 

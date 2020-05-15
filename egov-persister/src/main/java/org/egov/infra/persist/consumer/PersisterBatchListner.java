@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.listener.BatchMessageListener;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -25,18 +27,29 @@ public class PersisterBatchListner implements BatchMessageListener<String, Objec
 
     @Override
     public void onMessage(List<ConsumerRecord<String, Object>> dataList) {
-        List<String> rcvDataList= new LinkedList<>();
+
+        Map<String,List<String>> topicTorcvDataList = new HashMap<>();
 
             dataList.forEach(data -> {
                 try {
-                    rcvDataList.add(objectMapper.writeValueAsString(data.value()));
+                    if(!topicTorcvDataList.containsKey(data.topic())){
+                        List<String> rcvDataList= new LinkedList<>();
+                        rcvDataList.add(objectMapper.writeValueAsString(data.value()));
+                        topicTorcvDataList.put(data.topic(),rcvDataList);
+                    }
+                    else {
+                        topicTorcvDataList.get(data.topic()).add(objectMapper.writeValueAsString(data.value()));
+                    }
                 }
                 catch (JsonProcessingException e) {
                     log.error("Failed to serialize incoming message", e);
                 }
             });
-        // FIX ME NEEDS TO GROUP BY TOPIC
-        persistService.persist(dataList.get(0).topic(),rcvDataList);
+
+        for(Map.Entry<String,List<String>> entry : topicTorcvDataList.entrySet()){
+            persistService.persist(entry.getKey(),entry.getValue());
+        }
+
     }
 
 
