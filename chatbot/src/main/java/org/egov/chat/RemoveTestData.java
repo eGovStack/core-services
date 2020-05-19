@@ -45,12 +45,13 @@ public class RemoveTestData {
     public ResponseEntity<Object> removeTestData(@RequestBody List<String> uuids) throws IOException {
         deleteDataFromDB(uuids);
         deleteDataFromElasticsearch(uuids);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(uuids, HttpStatus.OK);
     }
 
     private void deleteDataFromDB(List<String> uuids) {
         for(String userId : uuids) {
             jdbcTemplate.update(deleteConversationStateFromDBQuery, userId);
+            log.info("Test user's data deleted from database : " + userId);
         }
     }
 
@@ -64,6 +65,7 @@ public class RemoveTestData {
             JsonNode request = objectMapper.readTree(writeContext.jsonString());
 
             restTemplate.postForEntity(url, request, JsonNode.class);
+            log.info("Test user's data deleted from elasticsearch : " + userId);
         }
     }
 
