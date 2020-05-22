@@ -221,7 +221,7 @@ public class DataTransformationService {
 	// fill paths from input incase of json path contains filter which has another jsonpath inside
 	// ex:-  $.ward[?(@.code== $.tenant ))] -->  $.ward[?(@.code== 'pb.amritsar' ))]
 	public String checkAndfillIfJsonFilterWithPath(String inputJsonPath, String kafkaJson) {
-		Pattern pattern = Pattern.compile(".*(\\$.*?)\\).*");
+		Pattern pattern = Pattern.compile(".*'(\\$.*?)'.*?\\).*");
 		Matcher matcher = pattern.matcher(inputJsonPath);
 		if (matcher.matches()) {
 			String innerJsonPath = matcher.group(1).trim();
