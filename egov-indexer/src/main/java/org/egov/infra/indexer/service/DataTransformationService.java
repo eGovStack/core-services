@@ -2,6 +2,8 @@ package org.egov.infra.indexer.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -199,7 +201,9 @@ public class DataTransformationService {
 					String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 					String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
 					try {
-						Object value = JsonPath.read(mapper.writeValueAsString(response), fieldMapping.getInjsonpath());
+						String inputJsonPath = fieldMapping.getInjsonpath();
+						inputJsonPath = checkAndfillIfJsonFilterWithPath(inputJsonPath, kafkaJson);
+						Object value = JsonPath.read(mapper.writeValueAsString(response), inputJsonPath);
 						documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
 					} catch (Exception e) {
 						log.error("Value: " + fieldMapping.getInjsonpath() + " is not found!");
@@ -214,6 +218,18 @@ public class DataTransformationService {
 		return documentContext;
 	}
 
+	// fill paths from input incase of json path contains filter which has another jsonpath inside
+	// ex:-  $.ward[?(@.code== $.tenant ))] -->  $.ward[?(@.code== 'pb.amritsar' ))]
+	public String checkAndfillIfJsonFilterWithPath(String inputJsonPath, String kafkaJson) {
+		Pattern pattern = Pattern.compile(".*(\\$.*?)\\).*");
+		Matcher matcher = pattern.matcher(inputJsonPath);
+		if (matcher.matches()) {
+			String innerJsonPath = matcher.group(1).trim();
+			String pathValue = JsonPath.read(kafkaJson, innerJsonPath);
+			inputJsonPath=inputJsonPath.replace(innerJsonPath, pathValue);
+		}
+		return inputJsonPath;
+	}
 	/**
 	 * Performs denormalization of data by making MDMS calls as mentioned in the
 	 * config.
