@@ -288,7 +288,13 @@ public class IndexerUtils {
 				id.append(JsonPath.read(stringifiedObject, index.getId()).toString());
 			} else {
 				for (int j = 0; j < idFormat.length; j++) {
-					id.append(JsonPath.read(stringifiedObject, idFormat[j]).toString());
+					String fieldVaue = JsonPath.read(stringifiedObject, idFormat[j]);
+					if(fieldVaue !=null)
+						id.append(fieldVaue);
+				}
+				if(id.toString().equals("")){
+					log.error("No id found at the given jsonpath: all id fields returned empty");
+					return null;
 				}
 			}
 		} catch (Exception e) {

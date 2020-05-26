@@ -202,7 +202,11 @@ public class DataTransformationService {
 					String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
 					try {
 						String inputJsonPath = fieldMapping.getInjsonpath();
-						inputJsonPath = checkAndfillIfJsonFilterWithPath(inputJsonPath, kafkaJson);
+						// if input path contains filter, fill
+						if (!StringUtils.isEmpty(fieldMapping.getFilter()) && !CollectionUtils.isEmpty(fieldMapping.getFilterMapping())) {
+							UriMapping uriMappingForInput = UriMapping.builder().filter(fieldMapping.getFilter()).filterMapping(fieldMapping.getFilterMapping()).build();
+							inputJsonPath += indexerUtils.buildFilter(fieldMapping.getFilter(), uriMappingForInput, kafkaJson);
+						}
 						Object value = JsonPath.read(mapper.writeValueAsString(response), inputJsonPath);
 						documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
 					} catch (Exception e) {
@@ -212,24 +216,11 @@ public class DataTransformationService {
 						continue;
 					}
 				}
-
 			}
 		}
 		return documentContext;
 	}
 
-	// fill paths from input incase of json path contains filter which has another jsonpath inside
-	// ex:-  $.ward[?(@.code== $.tenant ))] -->  $.ward[?(@.code== 'pb.amritsar' ))]
-	public String checkAndfillIfJsonFilterWithPath(String inputJsonPath, String kafkaJson) {
-		Pattern pattern = Pattern.compile(".*'(\\$.*?)'.*?\\).*");
-		Matcher matcher = pattern.matcher(inputJsonPath);
-		if (matcher.matches()) {
-			String innerJsonPath = matcher.group(1).trim();
-			String pathValue = JsonPath.read(kafkaJson, innerJsonPath);
-			inputJsonPath=inputJsonPath.replace(innerJsonPath, pathValue);
-		}
-		return inputJsonPath;
-	}
 	/**
 	 * Performs denormalization of data by making MDMS calls as mentioned in the
 	 * config.
