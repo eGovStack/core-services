@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResetCheck {
 
-    private String streamName = "reset-check";
-
     @Value("${flow.reset.keywords}")
     private String resetKeywordsString;
 

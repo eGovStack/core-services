@@ -16,6 +16,7 @@ import org.egov.chat.service.AnswerStore;
 import org.egov.chat.service.validation.Validator;
 import org.egov.chat.util.CommonAPIErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -40,9 +41,12 @@ public class CreateStepStream extends CreateStream {
     @Autowired
     private CommonAPIErrorMessage commonAPIErrorMessage;
 
+    @Value("${consumer.group.id.prefix}")
+    private String consumerGroupIdPrefix;
+
     public void createEvaluateAnswerStreamForConfig(JsonNode config, String answerInputTopic, String answerOutputTopic, String questionTopic) {
 
-        String streamName = config.get("name").asText() + "-answer";
+        String streamName = consumerGroupIdPrefix + config.get("name").asText() + "-answer";
 
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);

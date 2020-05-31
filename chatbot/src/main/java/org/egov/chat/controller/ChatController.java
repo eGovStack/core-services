@@ -41,7 +41,7 @@ public class ChatController {
         graphStreamGenerator.generateGraphStreams();
     }
 
-    @KafkaListener(groupId = "input-segregator", topics = "input-messages")
+    @KafkaListener(groupId = "${consumer.group.id.prefix}" + "input-segregator", topics = "${topic.name.prefix}" + "input-messages")
     public void segregateInput(ConsumerRecord<String, JsonNode> consumerRecord) {
         EgovChat chatNode = objectMapper.convertValue(consumerRecord.value(), EgovChat.class);
         try {

@@ -16,6 +16,7 @@ import org.egov.chat.util.CommonAPIErrorMessage;
 import org.egov.chat.util.LocalizationService;
 import org.egov.chat.util.Telemetry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -39,8 +40,11 @@ public class LocalizationStream {
     @Autowired
     private Telemetry telemetry;
 
+    @Value("${consumer.group.id.prefix}")
+    private String consumerGroupIdPrefix;
+
     public String getStreamName() {
-        return "localization-stream";
+        return consumerGroupIdPrefix + "localization-stream";
     }
 
     public void startStream(String inputTopic, String outputTopic) {

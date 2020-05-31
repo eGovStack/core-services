@@ -23,7 +23,10 @@ public class MessageWebhook {
     @Autowired
     private KafkaTemplate<String, JsonNode> kafkaTemplate;
 
-    private String outputTopicName = "transformed-input-messages";
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
+    private String transformedInputMessages = "transformed-input-messages";
 
     public Object receiveMessage(Map<String, String> params) throws Exception {
 //        log.info("received message from provider: "+params);
@@ -31,7 +34,7 @@ public class MessageWebhook {
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
             String key = message.at("/user/mobileNumber").asText();
-            kafkaTemplate.send(outputTopicName, key, message);
+            kafkaTemplate.send(topicNamePrefix + transformedInputMessages, key, message);
         } else {
 
         }

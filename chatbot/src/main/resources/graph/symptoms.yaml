@@ -1,0 +1,19 @@
+name: symptoms
+nodeType: step
+type: text
+
+typeOfValues: FixedSetValues
+
+validationRequired: true
+
+multipleAnswers: true
+displayValuesAsOptions : true
+values: [ "Dry Cough", "Fever", "Difficulty in breathing", "None of the Above" ]
+
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+
+message: "Please type and send the appropriate number describing the symptoms that the citizen is currently
+experiencing: \n"
+
+errorMessage: "Sorry, I did not understand. \n"

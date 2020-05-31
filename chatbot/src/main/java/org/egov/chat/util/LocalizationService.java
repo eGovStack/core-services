@@ -112,7 +112,10 @@ public class LocalizationService {
                 values.add(templateMessageService.getMessageForTemplate(code, locale));
             else {
                 log.debug("Fetching Localization for : " + code.toString());
-                values.add(codeToMessageMapping.get(code.getCode()));
+                String localizedValue = codeToMessageMapping.get(code.getCode());
+                if(localizedValue == null)
+                    localizedValue = code.getCode();
+                values.add(localizedValue);
             }
         }
         log.debug("Localized values : " + values.toString());

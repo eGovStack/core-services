@@ -6,6 +6,7 @@ import org.egov.chat.pre.service.MessageWebhook;
 import org.egov.chat.pre.service.PreChatbotStream;
 import org.egov.chat.util.KafkaTopicCreater;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,13 +28,21 @@ public class PreChatController {
     @Autowired
     private KafkaTopicCreater kafkaTopicCreater;
 
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
+    private String transformedInputMessages = "transformed-input-messages";
+    private String chatbotErrorMessages = "chatbot-error-messages";
+    private String inputMessages = "input-messages";
+
     @PostConstruct
     public void initPreChatbotStreams() {
-        kafkaTopicCreater.createTopic("transformed-input-messages");
-        kafkaTopicCreater.createTopic("chatbot-error-messages");
-        kafkaTopicCreater.createTopic("input-messages");
+        kafkaTopicCreater.createTopic(topicNamePrefix + transformedInputMessages);
+        kafkaTopicCreater.createTopic(topicNamePrefix + chatbotErrorMessages);
+        kafkaTopicCreater.createTopic(topicNamePrefix + inputMessages);
 
-        preChatbotStream.startPreChatbotStream("transformed-input-messages", "input-messages");
+        preChatbotStream.startPreChatbotStream(topicNamePrefix + transformedInputMessages,
+                topicNamePrefix + inputMessages);
     }
 
     @RequestMapping(value = "/messages", method = RequestMethod.POST)

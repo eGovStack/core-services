@@ -51,13 +51,16 @@ public class CreateEndpointStream extends CreateStream {
     @Value("${contact.card.whatsapp.number}")
     private String numberInContactCard;
 
+    @Value("${consumer.group.id.prefix}")
+    private String consumerGroupIdPrefix;
+
     private String contactMessageLocalizationCode = "chatbot.messages.contactMessage";
 
     private String contactAdditionalInfoLocalizationCode = "chatbot.messages.contactAdditionalInfo";
 
     public void createEndpointStream(JsonNode config, String inputTopic, String sendMessageTopic) {
 
-        String streamName = config.get("name").asText() + "-answer";
+        String streamName = consumerGroupIdPrefix + config.get("name").asText() + "-answer";
 
         Properties streamConfiguration = kafkaStreamsConfig.getDefaultStreamConfiguration();
         streamConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, streamName);
@@ -87,9 +90,9 @@ public class CreateEndpointStream extends CreateStream {
                 List<EgovChat> nodes = new ArrayList<>();
                 nodes.add(chatNode);
 
-                EgovChat contactMessageNode = createContactMessageNode(chatNode);
-                if (contactMessageNode != null)
-                    nodes.add(contactMessageNode);
+//                EgovChat contactMessageNode = createContactMessageNode(chatNode);
+//                if (contactMessageNode != null)
+//                    nodes.add(contactMessageNode);
 
                 return nodes;
             } catch (Exception e) {

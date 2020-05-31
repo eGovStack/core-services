@@ -31,16 +31,22 @@ public class PostChatController {
     @Value("${update.pgr.service.topic}")
     private String updatePGRServiceTopic;
 
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
+    private String sendMessage = "send-message";
+    private String sendMessageLocalized = "send-message-localized";
+
     @PostConstruct
     public void init() {
-        pgrStatusUpdateEventFormatter.startStream(updatePGRServiceTopic, "send-message-localized");
-        kafkaTopicCreater.createTopic("send-message");
-        kafkaTopicCreater.createTopic("send-message-localized");
-        localizationStream.startStream("send-message", "send-message-localized");
+//        pgrStatusUpdateEventFormatter.startStream(updatePGRServiceTopic, topicNamePrefix + sendMessageLocalized);
+        kafkaTopicCreater.createTopic(topicNamePrefix + sendMessage);
+        kafkaTopicCreater.createTopic(topicNamePrefix + sendMessageLocalized);
+        localizationStream.startStream(topicNamePrefix + sendMessage, topicNamePrefix + sendMessageLocalized);
     }
 
-
-    @KafkaListener(groupId = "valuefirst-rest-call", topics = "send-message-localized")
+    @KafkaListener(groupId = "${consumer.group.id.prefix}" + "valuefirst-rest-call",
+            topics = "${topic.name.prefix}" + "send-message-localized")
     public void sendMessage(ConsumerRecord<String, JsonNode> consumerRecord) throws IOException {
         JsonNode jsonNode = consumerRecord.value();
         List<JsonNode> messages = valueFirstResponseFormatter.getTransformedResponse(jsonNode);

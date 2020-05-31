@@ -12,6 +12,7 @@ import org.egov.chat.models.LocalizationCode;
 import org.egov.chat.models.Response;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,9 @@ public class WelcomeMessageHandler {
     private JsonNode welcomeConfig;
     private List<String> welcomeTriggerKeywords;
     private int fuzzymatchScoreThreshold;
+
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
 
     private String sendMessageTopic = "send-message";
 
@@ -70,7 +74,7 @@ public class WelcomeMessageHandler {
 
             welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, welcomeChatNode);
+            kafkaTemplate.send(topicNamePrefix + sendMessageTopic, consumerRecordKey, welcomeChatNode);
 
             return chatNode;
 
@@ -83,7 +87,7 @@ public class WelcomeMessageHandler {
 
             welcomeChatNode.setResponse(response);
 
-            kafkaTemplate.send(sendMessageTopic, consumerRecordKey, welcomeChatNode);
+            kafkaTemplate.send(topicNamePrefix + sendMessageTopic, consumerRecordKey, welcomeChatNode);
 
             conversationStateRepository.updateConversationStateForId(welcomeChatNode.getConversationState());
             conversationStateRepository.markConversationInactive(welcomeChatNode.getConversationState().getConversationId());

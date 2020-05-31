@@ -121,6 +121,7 @@ public class FixedSetValues {
             List<String> answers = new ArrayList<>();
             List<Integer> indices = getMultipleAnswerIndices(answer);
             for(Integer index : indices) {
+                index -= 1;                     // Convert to 0 index
                 String value = "";
                 JsonNode answerLocalizationCode = validValues.get(index);
                 log.debug("answerLocalizationCode  : " + answerLocalizationCode);
@@ -221,7 +222,7 @@ public class FixedSetValues {
                 List<Integer> indices = getMultipleAnswerIndices(answer);
                 boolean isValid = true;
                 for (Integer index : indices) {
-                    if (index < 0 || index >= validValues.size()) {
+                    if (index < 1 || index > validValues.size()) {      // 1-indexed
                         isValid = false;
                     }
                 }

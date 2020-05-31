@@ -1,0 +1,10 @@
+name: end
+nodeType: endpoint
+
+class: org.egov.chat.xternal.restendpoint.HomeIsolationHealthDetails
+
+nodes : [ temperature, symptoms ]
+
+params :
+  tenantId: /tenantId
+  mobileNumber : /user/mobileNumber

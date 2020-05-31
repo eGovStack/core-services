@@ -7,6 +7,7 @@ import org.egov.chat.models.EgovChat;
 import org.egov.chat.models.Response;
 import org.egov.chat.repository.ConversationStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,10 @@ public class CommonAPIErrorMessage {
     @Autowired
     private LocalizationService localizationService;
     private String commonApiErrorMessage = "chatbot.message.common.api.errormessage";
+
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
     private String localizedTopic = "send-message-localized";
 
     private Response getErrorMessageResponse() {
@@ -47,7 +52,7 @@ public class CommonAPIErrorMessage {
             if (chatNode.getConversationState() != null)
                 resetConversation(chatNode);
             chatNode.setResponse(getErrorMessageResponse());
-            kafkaTemplate.send(localizedTopic, chatNode);
+            kafkaTemplate.send(topicNamePrefix + localizedTopic, chatNode);
         } catch (Exception ex) {
             log.error("error occurred while sending user error response", ex);
         }

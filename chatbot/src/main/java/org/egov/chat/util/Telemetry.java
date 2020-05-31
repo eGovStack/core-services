@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class Telemetry {
     @Autowired
     private KafkaTemplate<String, JsonNode> kafkaTemplate;
 
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
     private String telemetryTopicName = "chatbot-telemetry";
 
     public void recordEvent(EgovChat chatNode) {
@@ -31,7 +35,7 @@ public class Telemetry {
             EgovChat chatNodeForTelemetry = maskFields(chatNode);
             ObjectNode objectNode = objectMapper.convertValue(chatNodeForTelemetry, ObjectNode.class);
             objectNode = changeToElasticSearchCompatibleTimestamp(objectNode);
-            kafkaTemplate.send(telemetryTopicName, objectNode);
+            kafkaTemplate.send(topicNamePrefix + telemetryTopicName, objectNode);
         } catch (Exception e) {
             log.error("Error occurred while recording event", e);
         }

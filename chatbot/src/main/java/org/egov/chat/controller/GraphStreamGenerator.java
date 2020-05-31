@@ -11,6 +11,7 @@ import org.egov.chat.service.streams.CreateEndpointStream;
 import org.egov.chat.service.streams.CreateStepStream;
 import org.egov.chat.util.KafkaTopicCreater;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -33,9 +34,13 @@ public class GraphStreamGenerator {
     @Autowired
     private KafkaTopicCreater kafkaTopicCreater;
 
+    @Value("${topic.name.prefix}")
+    private String topicNamePrefix;
+
+    private String sendMessageTopic = "send-message";
+
     String rootFolder = "graph/";
     String fileExtension = ".yaml";
-
 
     public void generateGraphStreams() throws IOException {
         Set<String> vertices = graphReader.getAllVertices();
@@ -64,7 +69,7 @@ public class GraphStreamGenerator {
 
                 createStepStream.createQuestionStreamForConfig(config,
                         topicNameGetter.getQuestionTopicNameForNode(node),
-                        "send-message");
+                        topicNamePrefix + sendMessageTopic);
 
             } else if (nodeType.equalsIgnoreCase("branch")) {
                 String answerInputTopicName = topicNameGetter.getAnswerInputTopicNameForNode(node);
@@ -78,13 +83,13 @@ public class GraphStreamGenerator {
 
                 createBranchStream.createQuestionStreamForConfig(config,
                         topicNameGetter.getQuestionTopicNameForNode(node),
-                        "send-message");
+                        topicNamePrefix + sendMessageTopic);
             } else if (nodeType.equalsIgnoreCase("endpoint")) {
 
                 String questionTopicName = topicNameGetter.getQuestionTopicNameForNode(node);
                 kafkaTopicCreater.createTopic(questionTopicName);
                 createEndpointStream.createEndpointStream(config, questionTopicName,
-                        "send-message");
+                        topicNamePrefix + sendMessageTopic);
             }
         }
     }
