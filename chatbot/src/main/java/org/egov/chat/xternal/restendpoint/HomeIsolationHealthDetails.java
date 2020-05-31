@@ -65,10 +65,8 @@ public class HomeIsolationHealthDetails implements RestEndpoint {
 
         JsonNode requestJson = objectMapper.readTree(writeContext.jsonString());
 
-        log.info(requestJson.toString());
-
-//        JsonNode responseJson = restTemplate.postForObject(caseManagementServiceHost + healthDetailCreateEndpoint,
-//                requestJson, JsonNode.class);
+        JsonNode responseJson = restTemplate.postForObject(caseManagementServiceHost + healthDetailCreateEndpoint,
+                requestJson, JsonNode.class);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
