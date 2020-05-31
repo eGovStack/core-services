@@ -9,6 +9,7 @@ import com.netflix.zuul.exception.ZuulException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 
 @Component
+@ConditionalOnProperty( value = "home.isolation.chatbot.router.enabled", havingValue = "true")
 public class ChatbotRouter extends ZuulFilter {
 
     @Autowired
