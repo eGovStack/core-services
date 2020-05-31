@@ -51,8 +51,8 @@ public class ExternalEmailService implements EmailService {
 			helper.setTo(email.getEmailTo().toArray(new String[0]));
 			helper.setSubject(email.getSubject());
 			helper.setText(email.getBody(), email.isHTML());
-			if(email.getFileStoreId() != null) {
-				attachment = getFileFromFileStoreId(email.getFileStoreId());
+			if(email.getAttachment() != null) {
+				attachment = getFileFromFileStoreId(email.getAttachment().getFileStoreId(), email.getAttachment().getTenantId());
 				helper.addAttachment(attachment.getName(), attachment);
 				attachment.deleteOnExit();
 			}
@@ -65,10 +65,12 @@ public class ExternalEmailService implements EmailService {
 			attachment.delete();
     }
 
-	private File getFileFromFileStoreId(String fileStoreId) throws IOException {
+	private File getFileFromFileStoreId(String fileStoreId, String tenantId) throws IOException {
+    	if(tenantId == null)
+    		tenantId = applicationConfiguration.getStateTenantId();
 		UriComponentsBuilder uriComponents =
 				UriComponentsBuilder.fromUriString(applicationConfiguration.getFileStoreHost() + applicationConfiguration.getFileStoreGetEndpoint());
-		uriComponents.queryParam("tenantId", applicationConfiguration.getStateTenantId());
+		uriComponents.queryParam("tenantId", tenantId);
 		uriComponents.queryParam("fileStoreIds", fileStoreId);
 		String url = uriComponents.buildAndExpand().toUriString();
 

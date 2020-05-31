@@ -23,7 +23,7 @@ public class Email {
 	private String subject;
 	private String body;
 
-	private String fileStoreId;
+	private Attachment attachment;
 
 	@JsonProperty("isHTML")
 	private boolean isHTML;
