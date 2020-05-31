@@ -100,6 +100,14 @@ public class ApplicationConfiguration {
     @Value("${egov.user.state.tenant.id}")
     @Getter
     private String stateTenantId;
+
+    @Value("${filestore.service.host}")
+    @Getter
+    private String fileStoreHost;
+
+    @Value("${filestore.service.get.endpoint}")
+    @Getter
+    private String fileStoreGetEndpoint;
     
     
 }
