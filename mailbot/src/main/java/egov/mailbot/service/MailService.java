@@ -184,7 +184,7 @@ public class MailService {
 
     private EmailNotificationRequest getReplyMailNotification(RequestInfo requestInfo, Message message) throws MessagingException {
         Message replyMsg = message.reply(false);
-        Address[] toArray = message.getRecipients(Message.RecipientType.TO);
+        Address[] toArray = replyMsg.getRecipients(Message.RecipientType.TO);
         Set<String> toAddress = new HashSet<>();
         for (Address to : toArray)
             toAddress.add(((InternetAddress) to).getAddress());
