@@ -232,7 +232,7 @@ public class MailService {
 
                     if (disposition == null || Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
                         MimeBodyPart mbp = (MimeBodyPart) part;
-                        if (mbp.isMimeType("text/csv") || mbp.isMimeType("application/octet-stream")) {
+                        if (mbp.isMimeType("text/csv") || mbp.isMimeType("application/octet-stream") || mbp.isMimeType("application/vnd.ms-excel")) {
                             String filename = decodeName(part.getFileName());
 
                             if (filename.toLowerCase().endsWith(".csv")) {
