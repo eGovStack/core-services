@@ -1,5 +1,6 @@
 package org.egov.web.notification.mail.service;
 
+import javax.mail.Flags;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -55,6 +56,12 @@ public class ExternalEmailService implements EmailService {
 				attachment = getFileFromFileStoreId(email.getAttachment().getFileStoreId(), email.getAttachment().getTenantId());
 				helper.addAttachment(attachment.getName(), attachment);
 				attachment.deleteOnExit();
+			}
+			if(email.getInReplyTo() != null) {
+				message.setHeader("In-Reply-To", email.getInReplyTo().getMessageId());
+				message.setHeader("Subject", email.getSubject());
+				message.setHeader("References", email.getInReplyTo().getReferences());
+				message.setFlags(new Flags(Flags.Flag.ANSWERED), true);
 			}
 		} catch (MessagingException | IOException e) {
 			log.error(EXCEPTION_MESSAGE, e);

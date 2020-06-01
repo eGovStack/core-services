@@ -25,6 +25,8 @@ public class Email {
 
 	private Attachment attachment;
 
+	private InReplyTo inReplyTo;
+
 	@JsonProperty("isHTML")
 	private boolean isHTML;
 
