@@ -1,5 +1,6 @@
 package org.egov.web.controller;
 
+import org.egov.domain.model.MessageRequest;
 import org.egov.domain.model.MessageSearchCriteria;
 import org.egov.domain.model.Tenant;
 import org.egov.domain.service.MessageService;
@@ -37,6 +38,13 @@ public class MessageController {
 		final MessageSearchCriteria searchCriteria = MessageSearchCriteria.builder().locale(locale)
 				.tenantId(new Tenant(tenantId)).codes(codes).module(module).build();
 		List<org.egov.domain.model.Message> domainMessages = messageService.getFilteredMessages(searchCriteria);
+		return createResponse(domainMessages);
+	}
+	
+	@PostMapping("/v2/_search")
+	public MessagesResponse getMessages(@RequestBody MessageRequest messageRequest) {
+		
+		List<org.egov.domain.model.Message> domainMessages = messageService.getFilteredMessages(messageRequest.getMessageSearchCriteria());
 		return createResponse(domainMessages);
 	}
 
