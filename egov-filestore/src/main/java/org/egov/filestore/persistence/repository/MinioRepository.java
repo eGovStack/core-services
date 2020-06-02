@@ -140,7 +140,7 @@ public class MinioRepository implements CloudFilesManager {
 
 		} catch (MinioException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException
 				| IOException e) {
-			log.error("Error occurred: " + e);
+			log.error("Error occurred: " , e);
 			throw new RuntimeException(ERROR_IN_CONFIGURATION);
 		}
 
@@ -244,6 +244,8 @@ public class MinioRepository implements CloudFilesManager {
 			} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
 					| InternalException | InvalidBucketNameException | InvalidResponseException
 					| NoSuchAlgorithmException | XmlParserException | IOException | InvalidExpiresRangeException e) {
+				log.error("Error occurred: " , e);
+				throw new RuntimeException(ERROR_IN_CONFIGURATION);
 
 			}
 
