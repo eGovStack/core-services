@@ -92,7 +92,7 @@ public class ChatbotRouter extends ZuulFilter {
             JsonNode.class);
         JsonNode users = response.get("user");
 
-        if(users.size() == 1) {
+        if(users.size() > 0) {
             return true;
         }
         return false;
