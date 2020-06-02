@@ -38,6 +38,9 @@ public class StorageService {
 
 	@Value("${isNfsStorageEnabled}")
 	private Boolean isNfsStorageEnabled;
+	
+	@Value("${minio.enabled}")
+	private Boolean isMinioEnabled;
 
 	@Value("${isAzureStorageEnabled}")
 	private Boolean isAzureStorageEnabled;
@@ -126,6 +129,8 @@ public class StorageService {
 			src = awsS3Source;
 		if (isNfsStorageEnabled)
 			src = diskStorage;
+		if (isMinioEnabled)
+			src = "minio";
 		final String source = src;
 
 		Map<String, String> mapOfIdAndFile = artifactList.stream()

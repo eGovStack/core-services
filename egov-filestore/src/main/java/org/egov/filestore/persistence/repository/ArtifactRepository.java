@@ -116,6 +116,10 @@ public class ArtifactRepository {
 			 
 		//	AwsS3Repository s3Repository = (AwsS3Repository) cloudFilesManager;
 			resource = s3Repository.getObject(artifact.getFileLocation().getFileName());
+	}else if (artifact.getFileLocation().getFileSource().equals("minio")) {
+		// if only DiskFileStoreRepository use read else ignore
+		MinioRepository repo = (MinioRepository) cloudFilesManager;
+		resource = repo.read(artifact.getFileLocation());
 	}
 		 
       if(null!=resource)
