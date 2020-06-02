@@ -9,8 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.egov.tracer.config.TracerProperties;
 import org.egov.tracer.http.filters.MultiReadRequestWrapper;
 import org.egov.tracer.kafka.ErrorQueueProducer;
-import org.egov.tracer.model.*;
 import org.egov.tracer.model.Error;
+import org.egov.tracer.model.*;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,7 +72,7 @@ public class ExceptionAdvise {
         try {
             if(request instanceof MultiReadRequestWrapper) {
                 ServletInputStream stream = request.getInputStream();
-                body = IOUtils.toString(stream, "UTF-8");
+                body = IOUtils.toString(stream, StandardCharsets.UTF_8);
             } else
                 body = "Unable to retrieve request body";
 
@@ -97,7 +99,7 @@ public class ExceptionAdvise {
 	
 				if (ex.getCause() instanceof JsonMappingException) {
 					
-					Pattern pattern = Pattern.compile("(.+)Can not deserialize instance of ([a-z]+\\.){1,}(?<objecttype>[^ ]+).*\\[\"(?<objectname>[^\"]+)\"\\].*",
+					Pattern pattern = Pattern.compile("(.+)Can not deserialize instance of ([a-z]+\\.){1,}(?<objecttype>[^ ]+).*\\[\"(?<objectname>[^\"]+)\"].*",
 							Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 					Matcher match = pattern.matcher(message);
 					boolean matched = match.find();
@@ -187,8 +189,13 @@ public class ExceptionAdvise {
 		for (ObjectError objectError : objectErrors) {
 			Error error = new Error();
 			String[] codes = objectError.getCodes();
-			error.setCode(codes[0]);
-			error.setMessage(objectError.getDefaultMessage());
+			error.setCode(codes == null ? null : codes[0]);
+			if(objectError instanceof FieldError){
+				FieldError fieldError = ((FieldError)objectError);
+				error.setMessage(fieldError.getField() + " " +objectError.getDefaultMessage());
+			} else{
+				error.setMessage(codes == null ? null : codes[0]);
+			}
 			errors.add(error);
 		}
 
@@ -227,7 +234,7 @@ public class ExceptionAdvise {
                 }
             }
 
-            StackTraceElement elements[] = ex.getStackTrace();
+            StackTraceElement[] elements = ex.getStackTrace();
 
             ErrorQueueContract errorQueueContract = ErrorQueueContract.builder()
                 .id(UUID.randomUUID().toString())
