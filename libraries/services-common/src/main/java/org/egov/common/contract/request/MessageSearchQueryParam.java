@@ -4,13 +4,13 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString
 @EqualsAndHashCode
-public class Role {
-    private Long id;
-    private String name;
-    private String code;
-    private String tenantId;
+public class MessageSearchQueryParam {
+    String locale;
+    String module;
+    String tenantId;
 }
