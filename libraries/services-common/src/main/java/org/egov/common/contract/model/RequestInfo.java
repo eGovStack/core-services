@@ -1,4 +1,4 @@
-package org.egov.common.contract.request;
+package org.egov.common.contract.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
