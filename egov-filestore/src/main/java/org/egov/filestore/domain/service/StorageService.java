@@ -3,9 +3,12 @@ package org.egov.filestore.domain.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.egov.filestore.domain.exception.EmptyFileUploadRequestException;
@@ -115,8 +118,13 @@ public class StorageService {
 		Map<String, String> urlMap = getUrlMap(
 				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
 		if (isNfsStorageEnabled) {
-			for (String s : urlMap.keySet())
-				urlMap.put(s, urlMap.get(s).concat("&tenantId=").concat(tenantId));
+			Set<Entry<String, String>> entrySet = urlMap.entrySet();
+			Iterator<Entry<String, String>> iterator = entrySet.iterator();
+			while (iterator.hasNext())
+			{
+				String s=iterator.next().getKey();
+				urlMap.put(s, urlMap.get(s).concat("&tenantId=").concat(tenantId)); 
+			}
 		}
 		return urlMap;
 	}

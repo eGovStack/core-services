@@ -11,8 +11,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -140,7 +143,7 @@ public class MinioRepository implements CloudFilesManager {
 
 		} catch (MinioException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException
 				| IOException e) {
-			log.error("Error occurred: " + e);
+			log.error("Error occurred: " , e);
 			throw new RuntimeException(ERROR_IN_CONFIGURATION);
 		}
 
@@ -231,9 +234,11 @@ public class MinioRepository implements CloudFilesManager {
 	@Override
 	public Map<String, String> getFiles(Map<String, String> mapOfIdAndFilePath) {
 
+		Set<Entry<String, String>> entrySet = mapOfIdAndFilePath.entrySet();
+		Iterator<Entry<String, String>> iterator = entrySet.iterator();
 		Map<String, String> mapOfIdAndSASUrls = new HashMap<>();
-		for (String s : mapOfIdAndFilePath.keySet()) {
-
+		while (iterator.hasNext() ) {
+			String s=iterator.next().getKey();
 			String objectUrl;
 			try {
 				String name = mapOfIdAndFilePath.get(s);
@@ -244,6 +249,8 @@ public class MinioRepository implements CloudFilesManager {
 			} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
 					| InternalException | InvalidBucketNameException | InvalidResponseException
 					| NoSuchAlgorithmException | XmlParserException | IOException | InvalidExpiresRangeException e) {
+				log.error("Error occurred: " , e);
+				throw new RuntimeException(ERROR_IN_CONFIGURATION);
 
 			}
 
