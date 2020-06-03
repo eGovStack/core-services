@@ -6,6 +6,7 @@ import egov.mailbot.models.notification.EmailNotification;
 import egov.mailbot.models.notification.EmailNotificationRequest;
 import egov.mailbot.models.notification.InReplyTo;
 import egov.mailbot.producer.Producer;
+import egov.mailbot.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -179,7 +180,7 @@ public class MailService {
                     roleCodes(requestInfo.getUserInfo().getRoles()).toString());
 
             for (Mapping mapping : mappingsForUser) {
-                if (mapping.getSubject().contains(mailSubject.toLowerCase())) {
+                if (Utils.matchSubject(mapping.getSubject(), mailSubject)) {
                     log.info("Subject match found, processing!");
                     applicableMapping.setMapping(mapping);
                     break;

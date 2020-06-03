@@ -32,4 +32,11 @@ public class Utils {
     public static List<String> roleCodes(List<Role> roles){
         return roles.stream().map(Role::getCode).collect(Collectors.toList());
     }
+
+    public static boolean matchSubject(List<String> matchSubjects, String currSubject){
+        for(String sub : matchSubjects){
+            return sub.replaceAll("\\s+", "").equalsIgnoreCase(currSubject.replaceAll("\\s+", ""));
+        }
+        return false;
+    }
 }
