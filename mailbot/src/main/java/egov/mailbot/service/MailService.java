@@ -125,7 +125,7 @@ public class MailService {
                         } catch (AttachmentProcessingException e) {
                             // send error mail
                             notificationRequest.getEmail().setBody(applicableMapping.getMapping().getErrorResponse());
-                            folder.setFlags(new Message[]{message}, new Flags(Flags.Flag.SEEN), false);
+//                            folder.setFlags(new Message[]{message}, new Flags(Flags.Flag.SEEN), false);
                         }
 
                         producer.push(mainConfiguration.getNotificationMailTopic(),
@@ -162,6 +162,7 @@ public class MailService {
 
         RequestInfo requestInfo = new RequestInfo();
         ApplicableMapping applicableMapping = new ApplicableMapping();
+        applicableMapping.setRequestInfo(requestInfo);
         List<Mapping> mappingsForUser = new ArrayList<>();
 
         for (Mapping mapping : config.getMappings()) {
