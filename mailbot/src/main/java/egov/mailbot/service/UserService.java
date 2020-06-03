@@ -60,7 +60,20 @@ public class UserService {
                         log.error("Multiple users exist for the same employee! Skipping employee email: "+emailToUserMap.get(email));
                         emailToUserMap.put(email, null);
                     } else{
-                        emailToUserMap.put(email, user);
+                        String roleTenantId = null;
+                        boolean isValid = true;
+                        for (Role role : user.getRoles()) {
+                            if(roleTenantId != null) {
+                                if ( ! role.getTenantId().equalsIgnoreCase(roleTenantId)){
+                                    log.warn("Skipping user, cross tenant role access: "+user.getEmailId());
+                                    isValid = false;
+                                    break;
+                                }
+                            }
+                            roleTenantId = role.getTenantId();
+                        }
+                        if(isValid)
+                            emailToUserMap.put(email, user);
                     }
                 }
             }

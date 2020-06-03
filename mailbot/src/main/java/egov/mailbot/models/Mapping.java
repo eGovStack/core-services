@@ -25,8 +25,11 @@ public class Mapping {
     @JsonProperty("action")
     private Action action = null;
 
-    @JsonProperty("filters")
-    private List<Filter> filters = null;
+    @JsonProperty("roles")
+    private List<String> roles = null;
+
+    @JsonProperty("subject")
+    private List<String> subject = null;
 
     @JsonProperty("successResponse")
     private String successResponse = null;

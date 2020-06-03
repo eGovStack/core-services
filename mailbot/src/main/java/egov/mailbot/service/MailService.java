@@ -24,6 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static egov.mailbot.utils.Utils.*;
+
 @Service
 @Slf4j
 public class MailService {
@@ -101,14 +103,16 @@ public class MailService {
                     folder.setFlags(new Message[]{message}, new Flags(Flags.Flag.SEEN), true);
                     email.from = message.getFrom() == null ? null : ((InternetAddress) message.getFrom()[0]).getAddress();
                     email.subject = message.getSubject();
+                    email.rawMessage = message;
 
+                    log.info("Processing mail from {} with subject: {} ", maskEmail(email.from), email.subject);
                     ApplicableMapping applicableMapping = processMail(email, config);
                     if (applicableMapping.getMapping() != null) {
                         loadEmail(email, message, tempDirWithPrefix.toFile());
 
-
                         EmailNotificationRequest notificationRequest =
-                                getReplyMailNotification(applicableMapping.getRequestInfo(), message);
+                                new EmailNotificationRequest(applicableMapping.getRequestInfo(),
+                                        getReplyMailNotification(message));
                         try {
                             AttachmentProcessor dataUploadProcessor = attachmentProcessorMap.get(applicableMapping.getMapping().getAction());
 
@@ -151,38 +155,52 @@ public class MailService {
 
     }
 
-    private ApplicableMapping processMail(Email email, MailProcessorConfig config) {
+    private ApplicableMapping processMail(Email email, MailProcessorConfig config) throws MessagingException {
+        String userEmail = email.from.toLowerCase();
+        String mailSubject = email.subject.toLowerCase();
+
         RequestInfo requestInfo = new RequestInfo();
         ApplicableMapping applicableMapping = new ApplicableMapping();
-        for (Mapping mapping : config.getMappings()) {
-            boolean from = false, subject = false;
-            for (Filter filter : mapping.getFilters()) {
-                if (filter.getFilterType() == FilterType.USER_ROLE) {
-                    Map<String, User> userMap = userService.getUsers(filter.getValue(), config.getTenantIds());
-                    User user = userMap.get(email.from.toLowerCase());
-                    if (user != null) {
-                        from = userMap.containsKey(email.from.toLowerCase());
+        List<Mapping> mappingsForUser = new ArrayList<>();
 
-                        if (requestInfo.getUserInfo() == null)
-                            requestInfo.setUserInfo(user);
-                    }
-                }
-                if (filter.getFilterType() == FilterType.SUBJECT) {
-                    subject = filter.getValue().stream().anyMatch(v -> email.subject.toLowerCase().contains(v.toLowerCase()));
-                }
-            }
-            if (from && subject) {
-                applicableMapping.setMapping(mapping);
-                applicableMapping.setRequestInfo(requestInfo);
-                break;
+        for (Mapping mapping : config.getMappings()) {
+            Map<String, User> userMap = userService.getUsers(mapping.getRoles(), config.getTenantIds());
+            User user = userMap.get(userEmail);
+            if (user != null) {
+                mappingsForUser.add(mapping);
+
+                if (requestInfo.getUserInfo() == null)
+                    requestInfo.setUserInfo(user);
             }
         }
 
+        if(!mappingsForUser.isEmpty()) {
+            log.info("Found {} applicable mappings for user with roles {}", mappingsForUser.size(),
+                    roleCodes(requestInfo.getUserInfo().getRoles()).toString());
+
+            for (Mapping mapping : mappingsForUser) {
+                if (mapping.getSubject().contains(mailSubject.toLowerCase())) {
+                    log.info("Subject match found, processing!");
+                    applicableMapping.setMapping(mapping);
+                    break;
+                }
+            }
+
+            if (applicableMapping.getMapping() == null) {
+                EmailNotification notification = getReplyMailNotification(email.rawMessage);
+                notification.setBody(getErrorBody(mappingsForUser));
+                producer.push(mainConfiguration.getNotificationMailTopic(),
+                        notification.getEmailTo().toString(), new EmailNotificationRequest(requestInfo,
+                                notification));
+            }
+        }
+        else
+            log.info("No match found, skipping mail!");
 
         return applicableMapping;
     }
 
-    private EmailNotificationRequest getReplyMailNotification(RequestInfo requestInfo, Message message) throws MessagingException {
+    private EmailNotification getReplyMailNotification(Message message) throws MessagingException {
         Message replyMsg = message.reply(false);
         Address[] toArray = replyMsg.getRecipients(Message.RecipientType.TO);
         Set<String> toAddress = new HashSet<>();
@@ -193,8 +211,8 @@ public class MailService {
         String[] referencesHeader = replyMsg.getHeader("References");
 
         InReplyTo inReplyTo = InReplyTo.builder()
-                .messageId(messageIdHeader != null ? messageIdHeader[0]: null)
-                .references(referencesHeader != null? referencesHeader[0]: null)
+                .messageId(messageIdHeader != null ? messageIdHeader[0] : null)
+                .references(referencesHeader != null ? referencesHeader[0] : null)
                 .build();
         EmailNotification emailNotification = EmailNotification.builder()
                 .emailTo(toAddress)
@@ -202,7 +220,7 @@ public class MailService {
                 .inReplyTo(inReplyTo)
                 .build();
 
-        return new EmailNotificationRequest(requestInfo, emailNotification);
+        return emailNotification;
 
     }
 
