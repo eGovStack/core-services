@@ -38,7 +38,7 @@ public class Utils {
 
     public static boolean matchSubject(List<String> matchSubjects, String currSubject){
         for(String sub : matchSubjects){
-            if(sub.replaceAll("\\s+", "").equalsIgnoreCase(currSubject.replaceAll("\\s+", "")))
+            if(currSubject.toLowerCase().trim().contains(sub.trim().toLowerCase()))
                 return true;
         }
         return false;
