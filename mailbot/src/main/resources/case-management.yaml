@@ -6,7 +6,7 @@ mappings:
     action: "DATA_UPLOAD"
     additionalFields:
       uriPaths: /case-management/create-case/_upload
-    subject: ["On-boarding Isolation Case Manager"]
+    subject: ["Isolation Case Manager On-Boarding Details", "Create Home Isolation Cases"]
     roles: ["ISOLATION_CASE_ADMIN"]
     successResponse: |
       Greetings,
@@ -22,7 +22,7 @@ mappings:
     action: "DATA_UPLOAD"
     additionalFields:
       uriPaths: /case-management/health-details-collect/_upload
-    subject: ["Daily Report to Health Details Collector", "On-boarding Health Details Collector"]
+    subject: ["Health Details Collector On-Boarding Details", "Daily Report to Health Details Collector"]
     roles: ["ISOLATION_CASE_ADMIN"]
     successResponse: |
       Greetings,

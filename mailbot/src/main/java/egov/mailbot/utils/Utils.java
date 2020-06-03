@@ -3,6 +3,7 @@ package egov.mailbot.utils;
 import egov.mailbot.models.Mapping;
 import org.egov.common.contract.request.Role;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +31,15 @@ public class Utils {
     }
 
     public static List<String> roleCodes(List<Role> roles){
+        if(roles ==null )
+            return Collections.emptyList();
         return roles.stream().map(Role::getCode).collect(Collectors.toList());
     }
 
     public static boolean matchSubject(List<String> matchSubjects, String currSubject){
         for(String sub : matchSubjects){
-            return sub.replaceAll("\\s+", "").equalsIgnoreCase(currSubject.replaceAll("\\s+", ""));
+            if(sub.replaceAll("\\s+", "").equalsIgnoreCase(currSubject.replaceAll("\\s+", "")))
+                return true;
         }
         return false;
     }
