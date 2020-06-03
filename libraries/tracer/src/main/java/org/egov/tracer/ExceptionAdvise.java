@@ -192,7 +192,7 @@ public class ExceptionAdvise {
 			error.setCode(codes == null ? null : codes[0]);
 			if(objectError instanceof FieldError){
 				FieldError fieldError = ((FieldError)objectError);
-				error.setMessage(fieldError.getField() + " " +objectError.getDefaultMessage());
+				error.setMessage(fieldError.getDefaultMessage());
 			} else{
 				error.setMessage(codes == null ? null : codes[0]);
 			}
