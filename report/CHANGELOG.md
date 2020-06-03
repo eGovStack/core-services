@@ -8,5 +8,4 @@ All notable changes to this module will be documented in this file.
 - Upgraded to `tracer:2.0.0-SNAPSHOT`
 - Upgraded to spring boot `2.2.6-RELEASE`
 - Upgraded jackson version to `2.10.3`
-- Added functionality for decryption of encrypted user PII data
 - Increased version of this module to 1.1.0
