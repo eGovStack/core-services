@@ -33,6 +33,8 @@ public class MessageWebhook {
         JsonNode message = prepareMessage(params);
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
+            if(message == null)
+                return null;
             String key = message.at("/user/mobileNumber").asText();
             kafkaTemplate.send(topicNamePrefix + transformedInputMessages, key, message);
         } else {

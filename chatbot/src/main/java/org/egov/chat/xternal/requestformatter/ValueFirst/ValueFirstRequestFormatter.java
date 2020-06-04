@@ -18,6 +18,7 @@ import org.egov.chat.pre.formatter.RequestFormatter;
 import org.egov.chat.util.FileStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,12 +30,19 @@ import java.util.Properties;
 public class ValueFirstRequestFormatter implements RequestFormatter {
 
     @Autowired
+    private KafkaTemplate<String, JsonNode> kafkaTemplate;
+    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
 
     @Value("${valuefirst.whatsapp.number}")
     private String valueFirstWAMobNo;
+
+    @Value("${home.isolation.missed.call.sms}")
+    private String missedCallSmsNotification;
+    @Value("${send.sms.topic}")
+    private String sendSmsNotificationTopic;
 
     @Autowired
     private FileStore fileStore;
@@ -68,11 +76,25 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         boolean missedCall = checkForMissedCallNotification(inputRequest);
         JsonNode chatNode = null;
         if (missedCall) {
-            chatNode = getMissedCallChatNode(inputRequest);
+            sendMissedCallSmsNotification(inputRequest);
+            return null;
+//            chatNode = getMissedCallChatNode(inputRequest);
         } else {
             chatNode = getUserMessageChatNode(inputRequest);
         }
         return chatNode;
+    }
+
+    public void sendMissedCallSmsNotification(JsonNode inputRequest) {
+        String inputMobile = getValueFromNode(inputRequest.at(ValueFirstPointerConstants.missedCallFromMobileNumber));
+        String mobileNumber = inputMobile.substring(2, 2 + 10);
+
+        ObjectNode smsRequest = objectMapper.createObjectNode();
+
+        smsRequest.put("mobileNumber", mobileNumber);
+        smsRequest.put("message", missedCallSmsNotification);
+
+        kafkaTemplate.send(sendSmsNotificationTopic, null, smsRequest);
     }
 
     public JsonNode getMissedCallChatNode(JsonNode inputRequest) {
