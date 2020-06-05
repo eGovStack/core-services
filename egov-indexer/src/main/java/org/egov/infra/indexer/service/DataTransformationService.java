@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.indexer.util.IndexerConstants;
 import org.egov.infra.indexer.util.IndexerUtils;
 import org.egov.infra.indexer.web.contract.CustomJsonMapping;
@@ -21,11 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -61,6 +61,14 @@ public class DataTransformationService {
 	@Value("${egov.infra.indexer.host}")
 	private String esHostUrl;
 
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
+	
+	private ObjectMapper mapper = new ObjectMapper();
+
 	/**
 	 * Tranformation method that transforms the input data to match the es index as
 	 * per config
@@ -82,13 +90,15 @@ public class DataTransformationService {
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
 					if (isCustom) {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(), stringifiedObject);
-						indexerUtils.pushCollectionToDSSTopic(customIndexJson, index);
-						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, customIndexJson);
+						String id = indexerUtils.buildIndexId(index, stringifiedObject);
+						indexerUtils.pushToKafka(id, customIndexJson, index);
+						StringBuilder builder = appendIdToJson(id, jsonTobeIndexed, stringifiedObject, customIndexJson);
 						if (null != builder)
 							jsonTobeIndexed = builder;
 					} else {
-						indexerUtils.pushCollectionToDSSTopic(stringifiedObject, index);
-						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, null);
+						String id = indexerUtils.buildIndexId(index, stringifiedObject);
+						indexerUtils.pushToKafka(id, stringifiedObject, index);
+						StringBuilder builder = appendIdToJson(id, jsonTobeIndexed, stringifiedObject, null);
 						if (null != builder)
 							jsonTobeIndexed = builder;
 					}
@@ -108,14 +118,14 @@ public class DataTransformationService {
 	/**
 	 * Attaches Index Id to the json to be indexed on es.
 	 * 
-	 * @param index
+	 * @param id
 	 * @param jsonTobeIndexed
 	 * @param stringifiedObject
 	 * @param customIndexJson
 	 * @return
 	 */
-	public StringBuilder appendIdToJson(Index index, StringBuilder jsonTobeIndexed, String stringifiedObject, String customIndexJson) {
-		String id = indexerUtils.buildIndexId(index, stringifiedObject);
+	public StringBuilder appendIdToJson(String id, StringBuilder jsonTobeIndexed, String stringifiedObject,
+										String customIndexJson) {
 		if (StringUtils.isEmpty(id)) {
 			return null;
 		} else {
@@ -181,7 +191,6 @@ public class DataTransformationService {
 	 * @return
 	 */
 	public DocumentContext enrichDataUsingExternalServices(DocumentContext documentContext, CustomJsonMapping customJsonMappings, String kafkaJson) {
-		ObjectMapper mapper = new ObjectMapper();
 		if (!CollectionUtils.isEmpty(customJsonMappings.getExternalUriMapping())) {
 			for (UriMapping uriMapping : customJsonMappings.getExternalUriMapping()) {
 				Object response = null;
@@ -235,12 +244,17 @@ public class DataTransformationService {
 		if (!CollectionUtils.isEmpty(customJsonMappings.getMdmsMapping())) {
 			for (UriMapping uriMapping : customJsonMappings.getMdmsMapping()) {
 				Object response = null;
-				StringBuilder uri = new StringBuilder();
-				uri.append(uriMapping.getPath());
+				String uri = uriMapping.getPath();
 				Object request = null;
 				try {
-					request = indexerUtils.prepareMDMSSearchReq(uri, new RequestInfo(), kafkaJson, uriMapping);
-					response = restTemplate.postForObject(uri.toString(), request, Map.class);
+
+					if (uri.length() < 1)
+						uri = uri + mdmsHost + mdmsEndpoint;
+
+					String filter = indexerUtils.buildFilter(uriMapping, kafkaJson);
+					response = indexerUtils.fetchMdmsData(uri, uriMapping.getTenantId(), uriMapping.getModuleName(),
+							uriMapping.getMasterName(), filter);
+
 					if (null == response)
 						continue;
 				} catch (Exception e) {

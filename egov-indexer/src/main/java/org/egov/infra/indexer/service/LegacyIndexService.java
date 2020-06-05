@@ -1,14 +1,8 @@
 package org.egov.infra.indexer.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.IndexerApplicationRunnerImpl;
 import org.egov.infra.indexer.custom.pgr.PGRCustomDecorator;
 import org.egov.infra.indexer.custom.pgr.PGRIndexObject;
@@ -32,10 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 @Slf4j
@@ -129,8 +122,10 @@ public class LegacyIndexService {
 		legacyindexRequest.setStartTime(new Date().getTime());
 		IndexJobWrapper wrapper = IndexJobWrapper.builder().requestInfo(legacyindexRequest.getRequestInfo()).job(job)
 				.build();
-		indexerProducer.producer(legacyIndexTopic, legacyindexRequest);
+//		indexerProducer.producer(legacyIndexTopic, legacyindexRequest);
+		beginLegacyIndex(legacyindexRequest);
 		indexerProducer.producer(persisterCreate, wrapper);
+
 		legacyindexResponse.setJobId(job.getJobId());
 
 		return legacyindexResponse;
@@ -159,22 +154,24 @@ public class LegacyIndexService {
 	 * @param reindexRequest
 	 */
 	private void indexThread(LegacyIndexRequest legacyIndexRequest) {
-		final Runnable legacyIndexer = new Runnable() {
-			boolean threadRun = true;
-
-			public void run() {
-				if (threadRun) {
-					log.info("JobStarted: " + legacyIndexRequest.getJobId());
+					//log.info("JobStarted: " + legacyIndexRequest.getJobId());
 					ObjectMapper mapper = indexerUtils.getObjectMapper();
 					Integer offset = legacyIndexRequest.getApiDetails().getPaginationDetails().getStartingOffset();
 					offset = offset == null ? 0: offset;
 					Integer count = offset;
 					Integer presentCount = 0;
+					Integer maxRecords = legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxRecords();
 					Integer size = null != legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxPageSize()
 							? legacyIndexRequest.getApiDetails().getPaginationDetails().getMaxPageSize()
 							: defaultPageSizeForLegacyindex;
 					Boolean isProccessDone = false;
+
 					while (!isProccessDone) {
+						if (maxRecords > 0 && presentCount >= maxRecords ) {
+							log.info("Stopping since maxRecords have been processed: ", maxRecords);
+							break;
+						}
+
 						String uri = indexerUtils.buildPagedUriForLegacyIndex(legacyIndexRequest.getApiDetails(),
 								offset, size);
 						Object request = null;
@@ -186,6 +183,7 @@ public class LegacyIndexService {
 								request = map;
 							}
 							Object response = restTemplate.postForObject(uri, request, Map.class);
+							//log.info("response-->"+mapper.writeValueAsString(response.toString()));
 							if (null == response) {
 								log.info("Request: " + request);
 								log.info("URI: " + uri);
@@ -198,7 +196,6 @@ public class LegacyIndexService {
 								IndexJobWrapper wrapper = IndexJobWrapper.builder()
 										.requestInfo(legacyIndexRequest.getRequestInfo()).job(job).build();
 								indexerProducer.producer(persisterUpdate, wrapper);
-								threadRun = false;
 								break;
 							} else {
 								List<Object> searchResponse = JsonPath.read(response, legacyIndexRequest.getApiDetails().getResponseJsonPath());
@@ -211,12 +208,11 @@ public class LegacyIndexService {
 								} else {
 									if (count > size) {
 										count = (count - size) + presentCount;
-									}else if(count == size) {
+									}else if(count.equals(size)) {
 										count = presentCount;
 									}
 									log.info("Size Count FINAL: " + count);
 									isProccessDone = true;
-									threadRun = false;
 									break;
 								}
 							}
@@ -234,7 +230,6 @@ public class LegacyIndexService {
 							IndexJobWrapper wrapper = IndexJobWrapper.builder()
 									.requestInfo(legacyIndexRequest.getRequestInfo()).job(job).build();
 							indexerProducer.producer(persisterUpdate, wrapper);
-							threadRun = false;
 							break;
 						}
 
@@ -262,11 +257,6 @@ public class LegacyIndexService {
 					}
 
 				}
-				threadRun = false;
-			}
-		};
-		scheduler.schedule(legacyIndexer, indexThreadPollInterval, TimeUnit.MILLISECONDS);
-	}
 
 	/**
 	 * Child threads which perform the primary data transformation and pass it on to
@@ -278,34 +268,26 @@ public class LegacyIndexService {
 	 * @param resultSize
 	 */
 	public void childThreadExecutor(LegacyIndexRequest legacyIndexRequest, ObjectMapper mapper, Object response) {
-		final Runnable childThreadJob = new Runnable() {
-			boolean threadRun = true;
-			public void run() {
-				if (threadRun) {									
-					try {
-					if (legacyIndexRequest.getLegacyIndexTopic().equals(pgrLegacyTopic)) {
-						ServiceResponse serviceResponse = mapper.readValue(mapper.writeValueAsString(response),
-								ServiceResponse.class);
-						PGRIndexObject indexObject = pgrCustomDecorator.dataTransformationForPGR(serviceResponse);
-						indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), indexObject);
-					} else {
-						if(legacyIndexRequest.getLegacyIndexTopic().equals(ptLegacyTopic)) {
-							PropertyResponse propertyResponse = mapper.readValue(mapper.writeValueAsString(response), PropertyResponse.class);
-							propertyResponse.setProperties(ptCustomDecorator.transformData(propertyResponse.getProperties()));
-							indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), propertyResponse);
-						}else {
-							indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), response);
-						}
-					}
-				} catch (Exception e) {
-					threadRun = false;
+		try {
+			//log.info("childThreadExecutor + response----"+mapper.writeValueAsString(response));
+			if (legacyIndexRequest.getLegacyIndexTopic().equals(pgrLegacyTopic)) {
+				ServiceResponse serviceResponse = mapper.readValue(mapper.writeValueAsString(response),
+						ServiceResponse.class);
+				//PGRIndexObject indexObject = pgrCustomDecorator.dataTransformationForPGR(serviceResponse);
+				//log.info("childThreadExecutor + indexObject----"+mapper.writeValueAsString(indexObject));
+				indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), serviceResponse);
+			} else {
+				if (legacyIndexRequest.getLegacyIndexTopic().equals(ptLegacyTopic)) {
+					PropertyResponse propertyResponse = mapper.readValue(mapper.writeValueAsString(response), PropertyResponse.class);
+					propertyResponse.setProperties(ptCustomDecorator.transformData(propertyResponse.getProperties()));
+					indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), propertyResponse);
+				} else {
+					indexerProducer.producer(legacyIndexRequest.getLegacyIndexTopic(), response);
 				}
-				threadRun = false;
 			}
-				threadRun = false;
-			}
-		};
-		schedulerofChildThreads.scheduleAtFixedRate(childThreadJob, 0, indexThreadPollInterval + 50, TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			log.error("Error occurred while processing legacy index", e);
+		}
 	}
 
 }
