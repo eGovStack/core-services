@@ -1,6 +1,8 @@
 package egov.mailbot.utils;
 
+import com.jayway.jsonpath.JsonPath;
 import egov.mailbot.models.Mapping;
+import org.apache.logging.log4j.util.Strings;
 import org.egov.common.contract.request.Role;
 
 import java.util.Collections;
@@ -38,9 +40,25 @@ public class Utils {
 
     public static boolean matchSubject(List<String> matchSubjects, String currSubject){
         for(String sub : matchSubjects){
-            if(currSubject.toLowerCase().trim().contains(sub.trim().toLowerCase()))
+            if(currSubject.toLowerCase().replaceAll("\\s","").trim().contains(sub.toLowerCase().replaceAll("\\s","")))
                 return true;
         }
         return false;
+    }
+
+    public static String getErrorMessages(String json){
+        if(json == null)
+            return "";
+        List<String> messages = JsonPath.read(json, "$.Errors[*].message");
+        if(!messages.isEmpty()){
+            return Strings.join(messages, ';');
+        } else
+            return "";
+    }
+
+    public static String enrichNotificationMessage(String errorTemplate, String error){
+        if(error == null)
+            return error;
+        return errorTemplate.replace("${error}", error);
     }
 }

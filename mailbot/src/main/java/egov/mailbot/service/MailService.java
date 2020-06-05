@@ -124,7 +124,7 @@ public class MailService {
                             notificationRequest.getEmail().setBody(applicableMapping.getMapping().getSuccessResponse());
                         } catch (AttachmentProcessingException e) {
                             // send error mail
-                            notificationRequest.getEmail().setBody(applicableMapping.getMapping().getErrorResponse());
+                            notificationRequest.getEmail().setBody(enrichNotificationMessage(applicableMapping.getMapping().getErrorResponse(), e.getMessage()));
 //                            folder.setFlags(new Message[]{message}, new Flags(Flags.Flag.SEEN), false);
                         }
 
@@ -161,11 +161,13 @@ public class MailService {
         String mailSubject = email.subject.toLowerCase();
 
         RequestInfo requestInfo = new RequestInfo();
+//        requestInfo.setUserInfo(User.builder().name("DATA_UPLOAD").uuid("DATA_UPLOAD").tenantId("pb.amritsar").build());
         ApplicableMapping applicableMapping = new ApplicableMapping();
         applicableMapping.setRequestInfo(requestInfo);
         List<Mapping> mappingsForUser = new ArrayList<>();
 
         for (Mapping mapping : config.getMappings()) {
+//            mappingsForUser.add(mapping);
             Map<String, User> userMap = userService.getUsers(mapping.getRoles(), config.getTenantIds());
             User user = userMap.get(userEmail);
             if (user != null) {

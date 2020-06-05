@@ -9,6 +9,7 @@ import egov.mailbot.models.AttachmentProcessingException;
 import egov.mailbot.models.Mapping;
 import egov.mailbot.models.notification.Attachment;
 import egov.mailbot.models.notification.EmailNotificationRequest;
+import egov.mailbot.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class DataUploadAttachmentProcessor implements AttachmentProcessor{
                     log.info("Data upload completed with response code: "+result.getStatusCode());
                 }catch (HttpClientErrorException e) {
                     log.error("Unable to process file!", e);
-                    throw new AttachmentProcessingException("Failed to process attachment, invalid format or data");
+                    throw new AttachmentProcessingException(Utils.getErrorMessages(e.getResponseBodyAsString()));
                 } catch (Exception e) {
                     log.error("Failed to process file!", e);
                     throw new AttachmentProcessingException("Failed to process attachment due to an unexpected error " +
@@ -88,8 +89,9 @@ public class DataUploadAttachmentProcessor implements AttachmentProcessor{
         String json = null;
         try {
             json = mapper.writeValueAsString(requestInfo);
+            return new String(Base64.getEncoder().encode(json.getBytes()));
         } catch (JsonProcessingException ignore) {
         }
-        return new String(Base64.getEncoder().encode(json.getBytes()));
+        return "";
     }
 }

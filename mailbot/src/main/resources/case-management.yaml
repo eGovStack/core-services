@@ -14,7 +14,9 @@ mappings:
       Thanks.
     errorResponse: |
       Greetings,
-      Thank you for submitting the details of the home isolated citizens, unfortunately there was a server error and the process has FAILED, the process will be retried.
+      Thank you for submitting the details of the home isolated citizens, unfortunately there was a server error and the process has FAILED.
+      Error occured was as follows,
+      ${error}
       Thanks.
 
   - version: 1.0
@@ -30,7 +32,9 @@ mappings:
       Thanks.
     errorResponse: |
       Greetings,
-      Thank you for submitting the health details of the home isolated citizens, unfortunately there was a server error and the process has FAILED, the process will be retried.
+      Thank you for submitting the health details of the home isolated citizens, unfortunately there was a server error and the process has FAILED.
+      Error occured was as follows,
+      ${error}
       Thanks.
 
   - version: 1.0
@@ -46,7 +50,9 @@ mappings:
       Thanks.
     errorResponse: |
       Greetings,
-      Thank you for submitting the details for creation of isolation case managers, unfortunately there was a server error and the process has FAILED, the process will be retried.
+      Thank you for submitting the details for creation of isolation case managers, unfortunately there was a server error and the process has FAILED.
+      Error occured was as follows,
+      ${error}
       Thanks.
 
   - version: 1.0
@@ -62,5 +68,7 @@ mappings:
       Thanks.
     errorResponse: |
       Greetings,
-      Thank you for submitting the details for creation of health detail collectors, unfortunately there was a server error and the process has FAILED, the process will be retried.
+      Thank you for submitting the details for creation of health detail collectors, unfortunately there was a server error and the process has FAILED.
+      Error occured was as follows,
+      ${error}
       Thanks.
