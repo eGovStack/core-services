@@ -8,12 +8,13 @@ validationRequired: true
 
 multipleAnswers: true
 displayValuesAsOptions : true
-values: [ "Dry Cough", "Fever", "Difficulty in breathing", "None of the Above" ]
+values: [ "home.isolation.symptom.dry.cough", "home.isolation.symptom.fever", "home.isolation.symptom.breathing.difficulty", "home.isolation.symptom.none" ]
 
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
 
-message: "Please type and send the appropriate number describing the symptoms that the citizen is currently
-experiencing: \n"
+matchAnswerThreshold: 70
 
-errorMessage: "Sorry, I did not understand. \n"
+message: chatbot.home.isolation.symptom
+
+errorMessage: chatbot.home.isolation.error.message

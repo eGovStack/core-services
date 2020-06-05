@@ -30,8 +30,13 @@ public class CommonAPIErrorMessage {
 
     private String localizedTopic = "send-message-localized";
 
-    private Response getErrorMessageResponse() {
-        String localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage);
+    private Response getErrorMessageResponse(String locale) {
+        String localizedErrorMessage;
+        if (locale != null) {
+            localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage, locale);
+        } else {
+            localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage);
+        }
         Response response = Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").text(localizedErrorMessage).build();
         return response;
     }
@@ -51,7 +56,7 @@ public class CommonAPIErrorMessage {
         try {
             if (chatNode.getConversationState() != null)
                 resetConversation(chatNode);
-            chatNode.setResponse(getErrorMessageResponse());
+            chatNode.setResponse(getErrorMessageResponse(chatNode.getConversationState().getLocale()));
             kafkaTemplate.send(topicNamePrefix + localizedTopic, chatNode);
         } catch (Exception ex) {
             log.error("error occurred while sending user error response", ex);

@@ -17,6 +17,10 @@ public class InputSegregator {
     private String topicNamePrefix;
     @Value("${root.question.topic}")
     private String rootQuestionTopic;
+    @Value("${multilingual.support}")
+    private boolean multilingualSupport;
+
+    private String languageNode = "language";
 
     @Autowired
     private TopicNameGetter topicNameGetter;
@@ -26,17 +30,29 @@ public class InputSegregator {
     private CommonAPIErrorMessage commonAPIErrorMessage;
     @Autowired
     private WelcomeMessageHandler welcomeMessageHandler;
+    @Autowired
+    private MultiLanguageService multiLanguageService;
 
     public void segregateAnswer(String consumerRecordKey, EgovChat chatNode) {
         try {
             String activeNodeId = chatNode.getConversationState().getActiveNodeId();
             log.debug("Active Node Id : " + activeNodeId);
-            if (activeNodeId == null) {
+            String topic = getOutputTopicName(activeNodeId);
+            if(activeNodeId == null && multilingualSupport && multiLanguageService.askForLanguage(chatNode)) {
+                    topic = topicNamePrefix + "language-question";
+            } else if(languageNode.equalsIgnoreCase(activeNodeId)) {
+                if(multiLanguageService.isValidInput(chatNode)) {
+                    multiLanguageService.updateLocale(chatNode);
+                }
+            }
+
+            if((multilingualSupport && languageNode.equalsIgnoreCase(activeNodeId))
+                || (!multilingualSupport && activeNodeId == null)) {
                 chatNode = welcomeMessageHandler.welcomeUser(consumerRecordKey, chatNode);
                 if (chatNode == null)
                     return;
             }
-            String topic = getOutputTopicName(activeNodeId);
+
             kafkaTemplate.send(topic, consumerRecordKey, chatNode);
         } catch (Exception e) {
             log.error("error in input segregator", e);

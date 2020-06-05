@@ -13,7 +13,7 @@ public class ConversationStateQueryBuilder {
 
     public static final String UPDATE_CONVERSATION_STATE_QUERY = "UPDATE eg_chat_conversation_state SET " +
             "active_node_id = :active_node_id , question_details = :question_details , " +
-            "last_modified_time = :last_modified_time " +
+            "locale = :locale , last_modified_time = :last_modified_time " +
             "WHERE conversation_id = :conversation_id";
 
     public static MapSqlParameterSource getParametersForConversationStateUpdate(ConversationState conversationState) {
@@ -22,6 +22,7 @@ public class ConversationStateQueryBuilder {
         sqlParameterSource.addValue("conversation_id", conversationState.getConversationId());
         sqlParameterSource.addValue("active_node_id", conversationState.getActiveNodeId());
         sqlParameterSource.addValue("question_details", getJsonb(conversationState.getQuestionDetails()));
+        sqlParameterSource.addValue("locale", conversationState.getLocale());
         sqlParameterSource.addValue("last_modified_time", conversationState.getLastModifiedTime());
 
         return sqlParameterSource;

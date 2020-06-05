@@ -1,9 +1,7 @@
 name: "welcome"
 description: "Define configuration for reset and welcome messages and keywords"
 type: "text"
-message : Welcome to mSeva Punjab.
-  Please answer the following questions to assess and update your health details for today.
-  In case you make any error, type and send “mseva” to reassess your health details by answering the questions again.
+message : chatbot.home.isolation.welcome
 
 errorMessage: chatbot.messages.welcomeError
 

@@ -1,0 +1,16 @@
+name: language
+nodeType: step
+message : Please choose your preferred language
+type: text
+
+validationRequired: true
+
+typeOfValues: FixedSetValues
+
+displayValuesAsOptions : true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+
+
+values: [ "en_IN", "pa_IN" ]
+

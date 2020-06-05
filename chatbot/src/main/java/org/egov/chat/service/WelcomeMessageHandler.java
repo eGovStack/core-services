@@ -60,7 +60,8 @@ public class WelcomeMessageHandler {
         EgovChat welcomeChatNode = chatNode.toBuilder().build();
 
         welcomeChatNode.getMessage().setNodeId(welcomeConfig.get("name").asText());
-        welcomeChatNode.getMessage().setValid(isWelcomeTriggerKeyword(welcomeChatNode));
+//        welcomeChatNode.getMessage().setValid(isWelcomeTriggerKeyword(welcomeChatNode));
+        welcomeChatNode.getMessage().setValid(true);
 
         answerStore.saveAnswer(welcomeConfig, welcomeChatNode);
 

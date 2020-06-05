@@ -2,8 +2,7 @@ name: temperature
 nodeType: step
 type: text
 
-message: "Please type and send your current body temperature:\n(For example, if your current body temperature is 99°F,
- type and send 99 as a response)"
+message: chatbot.home.isolation.temperature
 
 validationRequired: true
 
@@ -14,4 +13,4 @@ customValidator:
     max: 106
     rawInput: /message/rawInput
 
-errorMessage: Sorry, I did not understand. Valid body temperature range is from 96.0 to 106.0.
+errorMessage: chatbot.home.isolation.error.message

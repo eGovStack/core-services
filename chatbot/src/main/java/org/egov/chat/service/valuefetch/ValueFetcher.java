@@ -62,7 +62,7 @@ public class ValueFetcher {
         ArrayNode validValues = objectMapper.createArrayNode();
         for (JsonNode jsonNode : config.get("values")) {
             ObjectNode value = objectMapper.createObjectNode();
-            value.put("value", jsonNode.asText());
+            value.put("code", jsonNode.asText());
             validValues.add(value);
         }
         return validValues;
