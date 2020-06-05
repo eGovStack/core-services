@@ -214,7 +214,7 @@ public class DataTransformationService {
 						// if input path contains filter, fill
 						if (!StringUtils.isEmpty(fieldMapping.getFilter()) && !CollectionUtils.isEmpty(fieldMapping.getFilterMapping())) {
 							UriMapping uriMappingForInput = UriMapping.builder().filter(fieldMapping.getFilter()).filterMapping(fieldMapping.getFilterMapping()).build();
-							inputJsonPath += indexerUtils.buildFilter(fieldMapping.getFilter(), uriMappingForInput, kafkaJson);
+							inputJsonPath += indexerUtils.buildFilter(uriMappingForInput, kafkaJson);
 						}
 						Object value = JsonPath.read(mapper.writeValueAsString(response), inputJsonPath);
 						documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
