@@ -109,11 +109,11 @@ export const directMapping = async (
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
-              ownerObject[scema[k].key] = "NA";
+              ownerObject[scema[k].variable] = "NA";
             } else {
               let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
-              ownerObject[scema[k].key] = replaceValue;
+              ownerObject[scema[k].variable] = replaceValue;
             }
           } else {
             if (
