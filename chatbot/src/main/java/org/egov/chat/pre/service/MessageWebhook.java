@@ -26,7 +26,6 @@ public class MessageWebhook {
     private String outputTopicName = "transformed-input-messages";
 
     public Object receiveMessage(Map<String, String> params) throws Exception {
-//        log.info("received message from provider: "+params);
         JsonNode message = prepareMessage(params);
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
@@ -40,10 +39,7 @@ public class MessageWebhook {
     }
 
     private JsonNode prepareMessage(Map<String, String> bodyParams) {
-//        ObjectNode message = objectMapper.createObjectNode();
-//        message.set("body", body);
         ObjectNode message = (ObjectNode) objectMapper.convertValue(bodyParams, JsonNode.class);
-//        message.set("querParams", params);
         message.put("timestamp", System.currentTimeMillis());
         return message;
     }
