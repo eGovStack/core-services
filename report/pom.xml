@@ -170,7 +170,6 @@
                         <customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
                     </customTypeMappings>
                     <namespace>Digit</namespace>
-                    <debug>true</debug>
                     <outputKind>module</outputKind>
                 </configuration>
             </plugin>
