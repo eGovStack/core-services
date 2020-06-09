@@ -58,8 +58,10 @@ public class PersisterBatchConsumerConfig {
     @PostConstruct
     public void setTopics() {
         topicMap.getTopicMap().keySet().forEach(topic -> {
-            if(topic.contains("-batch"))
+            if(topic.contains("-batch")){
                 topics.add(topic);
+                System.out.println("topics added in batch: "+topic);
+            }
         });
         log.info("Topics subscribed!");
     }
