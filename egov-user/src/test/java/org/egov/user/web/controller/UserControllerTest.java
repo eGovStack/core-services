@@ -127,10 +127,10 @@ public class UserControllerTest {
 		when(userService.searchUsers(argThat(new UserSearchActiveFlagMatcher(expectedSearchCriteria)), anyBoolean()))
 				.thenReturn(getUserModels());
 
-		mockMvc.perform(post("/v1/_search/").contentType(MediaType.APPLICATION_JSON_UTF8)
+		mockMvc.perform(post("/v1/_search/").contentType(MediaType.APPLICATION_JSON)
 				.content(getFileContents("getAllInActiveUsersForGivenTenantV1.json")))
 				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(getFileContents("userSearchResponse.json")));
 	}
 
@@ -143,10 +143,10 @@ public class UserControllerTest {
 		when(userService.searchUsers(argThat(new UserSearchActiveFlagMatcher(expectedSearchCriteria)), anyBoolean()))
 				.thenReturn(getUserModels());
 
-		mockMvc.perform(post("/v1/_search/").contentType(MediaType.APPLICATION_JSON_UTF8)
+		mockMvc.perform(post("/v1/_search/").contentType(MediaType.APPLICATION_JSON)
 				.content(getFileContents("getAllActiveUsersForGivenTenantV1.json")))
 				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(getFileContents("userSearchResponse.json")));
 	}
 
@@ -362,7 +362,7 @@ public class UserControllerTest {
 		}
 	}
 
-	class UserSearchMatcher extends ArgumentMatcher<UserSearchCriteria> {
+	class UserSearchMatcher implements ArgumentMatcher<UserSearchCriteria> {
 
 		private UserSearchCriteria expectedUserSearch;
 
@@ -371,8 +371,7 @@ public class UserControllerTest {
 		}
 
 		@Override
-		public boolean matches(Object o) {
-			UserSearchCriteria userSearch = (UserSearchCriteria) o;
+		public boolean matches(UserSearchCriteria userSearch) {
 			return userSearch.getId().equals(expectedUserSearch.getId()) &&
 					userSearch.getUserName().equals(expectedUserSearch.getUserName()) &&
 					userSearch.getName().equals(expectedUserSearch.getName()) &&
@@ -390,7 +389,7 @@ public class UserControllerTest {
 		}
 	}
 
-	class UserSearchActiveFlagMatcher extends ArgumentMatcher<UserSearchCriteria> {
+	class UserSearchActiveFlagMatcher implements ArgumentMatcher<UserSearchCriteria> {
 
 		private UserSearchCriteria expectedUserSearch;
 
@@ -399,9 +398,8 @@ public class UserControllerTest {
 		}
 
 		@Override
-		public boolean matches(Object o) {
-			UserSearchCriteria userSearch = (UserSearchCriteria) o;
-			return userSearch.getActive() == expectedUserSearch.getActive();
+		public boolean matches(UserSearchCriteria userSearchCriteria) {
+			return userSearchCriteria.getActive() == expectedUserSearch.getActive();
 		}
 	}
 
