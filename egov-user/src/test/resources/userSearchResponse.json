@@ -25,7 +25,6 @@
       "correspondenceAddress": "sub district",
       "correspondenceCity": "city2",
       "correspondencePinCode": "pincode 2",
-      "addresses": null,
       "active": true,
       "locale": "en_IN",
       "type": "CITIZEN",
@@ -44,7 +43,7 @@
           "name": "name of the role 1"
         }
       ],
-      "dob": "04-08-1986",
+      "dob": "1986-08-04",
       "lastModifiedDate" : "01-07-1990 11:11:11",
       "createdDate" : "01-07-1990 11:11:11"
       

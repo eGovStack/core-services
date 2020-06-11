@@ -17,12 +17,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
@@ -31,6 +31,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -89,7 +90,7 @@ public class UserServiceTest {
 	public void test_should_validate_search_critieria() {
 		UserSearchCriteria userSearch = mock(UserSearchCriteria.class);
 		List<org.egov.user.domain.model.User> expectedListOfUsers = new ArrayList<org.egov.user.domain.model.User>();
-		when(userRepository.findAll(userSearch)).thenReturn(expectedListOfUsers);
+		lenient().when(userRepository.findAll(userSearch)).thenReturn(expectedListOfUsers);
 		when(encryptionDecryptionUtil.decryptObject(expectedListOfUsers,"UserList",User.class,getValidRequestInfo())).thenReturn(expectedListOfUsers);
 		userService.searchUsers(userSearch, true,getValidRequestInfo());
 
@@ -324,7 +325,7 @@ public class UserServiceTest {
 		when(encryptionDecryptionUtil.encryptObject(user,"User",User.class)).thenReturn(user);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
 		when(encryptionDecryptionUtil.encryptObject(user,"User",User.class)).thenReturn(user);
-		when(encryptionDecryptionUtil.decryptObject(user, "User",User.class,getValidRequestInfo())).thenReturn(user);
+		lenient().when(encryptionDecryptionUtil.decryptObject(user, "User",User.class,getValidRequestInfo())).thenReturn(user);
 		userService.partialUpdate(user,getValidRequestInfo());
 	}
 
@@ -354,6 +355,7 @@ public class UserServiceTest {
 				true,isEmployeeLoginOtpBased);
 		User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
                 .tenantId("default")
@@ -372,6 +374,7 @@ public class UserServiceTest {
 				false,true);
         User user = User.builder().username("xyz").tenantId("default").type(UserType.EMPLOYEE).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
                 .tenantId("default")
@@ -402,7 +405,8 @@ public class UserServiceTest {
                 .existingPassword("existingPassword")
                 .build();
         User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
-		lenient().when(passwordEncoder.matches("wrongPassword", "existingPasswordEncoded")).thenReturn(false);
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
+        lenient().when(passwordEncoder.matches("wrongPassword", "existingPasswordEncoded")).thenReturn(false);
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
 
 		userService.updatePasswordForLoggedInUser(updatePasswordRequest);
@@ -418,6 +422,7 @@ public class UserServiceTest {
                 .existingPassword("existingPassword")
                 .build();
         User domainUser = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
 		when(passwordEncoder.matches("existingPassword", "existingPasswordEncoded")).thenReturn(true);
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
 
@@ -439,6 +444,7 @@ public class UserServiceTest {
 		lenient().when(otpRepository.isOtpValidationComplete(any())).thenReturn(true);
 		final User domainUser = User.builder().type(UserType.SYSTEM).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
 		when(encryptionDecryptionUtil.encryptObject(domainUser,"User", User.class)).thenReturn(domainUser);
 		when(encryptionDecryptionUtil.decryptObject(domainUser, "User",User.class,getValidRequestInfo())).thenReturn(domainUser);
 		userService.updatePasswordForNonLoggedInUser(request,getValidRequestInfo());
@@ -468,6 +474,7 @@ public class UserServiceTest {
 		lenient().when(domainUser.getPassword()).thenReturn("newPassword");
 		when(domainUser.getType()).thenReturn(UserType.SYSTEM);
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
 		when(encryptionDecryptionUtil.decryptObject(domainUser,"User",User.class,getValidRequestInfo())).thenReturn(domainUser);
         when(userService.encryptPwd(anyString())).thenReturn("newPassword");
 		userService.updatePasswordForNonLoggedInUser(request,getValidRequestInfo());
@@ -510,6 +517,7 @@ public class UserServiceTest {
 		lenient().when(otpRepository.validateOtp(any())).thenThrow(InvalidUpdatePasswordRequestException.class);
 		final User domainUser = mock(User.class);
 		when(domainUser.getType()).thenReturn(UserType.CITIZEN);
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
 		userService.updatePasswordForNonLoggedInUser(request,getValidRequestInfo());
 	}
@@ -571,6 +579,7 @@ public class UserServiceTest {
 		final User domainUser =User.builder().type(UserType.SYSTEM).build();
 		when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
 		when(encryptionDecryptionUtil.decryptObject(domainUser,"User",User.class,getValidRequestInfo())).thenReturn(domainUser);
+		when(encryptionDecryptionUtil.encryptObject(any(),eq("UserSearchCriteria"),eq(UserSearchCriteria.class))).then(AdditionalAnswers.returnsFirstArg());
 		when(encryptionDecryptionUtil.encryptObject(domainUser,"User",User.class)).thenReturn(domainUser);
 		userService.updatePasswordForNonLoggedInUser(request,getValidRequestInfo());
 
