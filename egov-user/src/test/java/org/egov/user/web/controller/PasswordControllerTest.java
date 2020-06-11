@@ -57,10 +57,10 @@ public class PasswordControllerTest {
 	@WithMockUser
 	public void test_should_update_password_for_logged_in_user() throws Exception {
 		mockMvc.perform(post("/password/_update")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(resources.getFileContents("loggedInUserUpdatePasswordRequest.json")))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.getFileContents("updatePasswordResponse.json")));
 
 //		final LoggedInUserUpdatePasswordRequest expectedRequest = LoggedInUserUpdatePasswordRequest.builder()
@@ -77,10 +77,10 @@ public class PasswordControllerTest {
 	@WithMockUser
 	public void test_should_update_password_for_non_logged_in_user() throws Exception {
 		mockMvc.perform(post("/password/nologin/_update")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(resources.getFileContents("nonLoggedInUserUpdatePasswordRequest.json")))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.getFileContents("updatePasswordResponse.json")));
 
 		final NonLoggedInUserUpdatePasswordRequest expectedRequest = NonLoggedInUserUpdatePasswordRequest.builder()

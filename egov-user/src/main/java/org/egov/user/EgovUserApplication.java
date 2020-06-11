@@ -22,6 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -30,8 +31,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import redis.clients.jedis.JedisShardInfo;
 
 import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
@@ -51,6 +52,9 @@ public class EgovUserApplication {
 
 	@Value("${spring.redis.host}")
 	private String host;
+
+	@Value("${spring.redis.port}")
+	private Integer port;
 	
 	@Autowired
 	private CustomAuthenticationKeyGenerator customAuthenticationKeyGenerator;
@@ -62,12 +66,11 @@ public class EgovUserApplication {
 	}
 
 	@Bean
-	public WebMvcConfigurerAdapter webMvcConfigurerAdapter() {
-		return new WebMvcConfigurerAdapter() {
-
+	public WebMvcConfigurer webMvcConfigurerAdapter() {
+		return new WebMvcConfigurer(){
 			@Override
 			public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-				configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
+				configurer.defaultContentType(MediaType.APPLICATION_JSON);
 			}
 		};
 	}
@@ -106,7 +109,8 @@ public class EgovUserApplication {
 
 	@Bean
 	public JedisConnectionFactory connectionFactory() {
-		return new JedisConnectionFactory(new JedisShardInfo(host));
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host,port);
+		return new JedisConnectionFactory(redisStandaloneConfiguration);
 	}
 
 	public static void main(String[] args) {

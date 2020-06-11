@@ -79,7 +79,7 @@ public class UserRepositoryTest {
 		server.expect(once(), requestTo("http://localhost:8094/egov-mdms-service/v1/_search"))
 				.andExpect(method(HttpMethod.POST))
 				.andRespond(withSuccess(new Resources().getFileContents("roleSearchValidatedResponse.json"),
-						MediaType.APPLICATION_JSON_UTF8));
+						MediaType.APPLICATION_JSON));
 
 		userRepository = new UserRepository(roleRepository, userTypeQueryBuilder,  addressRepository,
                 userResultSetExtractor,

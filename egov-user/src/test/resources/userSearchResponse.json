@@ -43,7 +43,10 @@
           "code": "roleCode",
           "name": "name of the role 1"
         }
-      ]
+      ],
+      "dob": "04-08-1986",
+      "lastModifiedDate" : "01-07-1990 11:11:11",
+      "createdDate" : "01-07-1990 11:11:11"
       
     }
   ]
