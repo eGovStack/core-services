@@ -3,12 +3,18 @@ package org.egov.filestore.web.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
+import org.egov.filestore.config.FileStoreConfig;
 import org.egov.filestore.domain.model.FileInfo;
 import org.egov.filestore.domain.service.StorageService;
 import org.egov.filestore.web.contract.File;
@@ -16,6 +22,8 @@ import org.egov.filestore.web.contract.FileStoreResponse;
 import org.egov.filestore.web.contract.GetFilesByTagResponse;
 import org.egov.filestore.web.contract.ResponseFactory;
 import org.egov.filestore.web.contract.StorageResponse;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,16 +37,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/v1/files")
+@Slf4j
 public class StorageController {
 
 	private StorageService storageService;
 	private ResponseFactory responseFactory;
+	private FileStoreConfig fileStoreConfig;
 
-	public StorageController(StorageService storageService, ResponseFactory responseFactory) {
+	@Autowired
+	public StorageController(StorageService storageService, ResponseFactory responseFactory, FileStoreConfig fileStoreConfig) {
 		this.storageService = storageService;
 		this.responseFactory = responseFactory;
+		this.fileStoreConfig = fileStoreConfig;
 	}
 
 	@GetMapping("/id")
@@ -52,8 +66,9 @@ public class StorageController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String fileName=resource.getFileName().substring(resource.getFileName().lastIndexOf('/')+1,resource.getFileName().length());
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFileName() + "\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +fileName  + "\"")
 				.header(HttpHeaders.CONTENT_TYPE, resource.getContentType()).body(resource.getResource());
 	}
 
@@ -88,7 +103,38 @@ public class StorageController {
 			@RequestParam(value = "module", required = true) String module,
 			@RequestParam(value = "tag", required = false) String tag) {
 		
-		final List<String> fileStoreIds = storageService.save(files, module, tag, tenantId);
+		Map<String, List<String>> allowedFormatsMap = fileStoreConfig.getAllowedFormatsMap();
+		Set<String> keySet = fileStoreConfig.getAllowedKeySet();
+		String inputStreamAsString = null;
+		String inputFormat = null;
+		for(MultipartFile file : files) {
+			
+			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+			if(!allowedFormatsMap.containsKey(extension)) {
+				throw new CustomException("EG_FILESTORE_INVALID_INPUT","Inalvid input provided for file : " + extension + ", please upload any of the allowed formats : " + keySet);
+			}
+			Tika tika = new Tika();
+			
+			try {
+				
+				inputStreamAsString = IOUtils.toString(file.getInputStream(), fileStoreConfig.getImageCharsetType());
+				InputStream ipStreamForValidation = IOUtils.toInputStream(inputStreamAsString, fileStoreConfig.getImageCharsetType());
+				inputFormat = tika.detect(ipStreamForValidation);
+				log.info(" the file format is : " + inputFormat);
+				ipStreamForValidation.close();
+			} catch (IOException e) {
+				throw new CustomException("EG_FILESTORE_PARSING_ERROR","not able to parse the input please upload a proper file of allowed type : " + e.getMessage());
+			}
+			
+			
+			
+			if (!allowedFormatsMap.get(extension).contains(inputFormat)) {
+				throw new CustomException("EG_FILESTORE_INVALID_INPUT", "Inalvid input provided for file, the extension does not match the file format. Please upload any of the allowed formats : "
+								+ keySet);
+			}
+		}
+
+		final List<String> fileStoreIds = storageService.save(files, module, tag, tenantId, inputStreamAsString);
 		return getStorageResponse(fileStoreIds, tenantId);
 	}
 
