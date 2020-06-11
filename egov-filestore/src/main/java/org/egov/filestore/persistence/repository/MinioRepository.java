@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,10 +24,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.egov.filestore.domain.model.FileLocation;
 import org.egov.filestore.persistence.entity.Artifact;
 import org.egov.filestore.repository.CloudFilesManager;
+import org.egov.filestore.repository.impl.CloudFileMgrUtils;
 import org.egov.tracer.model.CustomException;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.FileSystemResource;
@@ -57,6 +60,10 @@ public class MinioRepository implements CloudFilesManager {
 	private static final String ERROR_IN_CONFIGURATION = "Error in Configuration";
 
 	MinioClient minioClient;
+	
+	@Autowired
+	private CloudFileMgrUtils util;
+
 
 	@Value("${minio.url}")
 	private String endPoint;
@@ -78,6 +85,15 @@ public class MinioRepository implements CloudFilesManager {
 
 	@Value("${image.large.width}")
 	private Integer largeWidth;
+	
+	@Value("${image.small}")
+	private String _small;
+
+	@Value("${image.medium}")
+	private String _medium;
+
+	@Value("${image.large}")
+	private String _large;
 
 	private static String sourceType = "minio";
 
@@ -179,7 +195,7 @@ public class MinioRepository implements CloudFilesManager {
 				throw new CustomException(map);
 			}
 
-			BufferedImage largeImage = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
+			BufferedImage largeImage = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, largeWidth, null,
 					Scalr.OP_ANTIALIAS);
 			BufferedImage mediumImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
 					Scalr.OP_ANTIALIAS);
@@ -245,7 +261,24 @@ public class MinioRepository implements CloudFilesManager {
 				String fileName=name.substring(name.indexOf('/')+1,name.length());
 				objectUrl = getMinioClient().getPresignedObjectUrl(io.minio.http.Method.GET,bucketName, fileName, 60*60*30,new HashMap<String,String>());
 				StringBuilder url = new StringBuilder(objectUrl);
+				
+				
+				if (util.isFileAnImage(mapOfIdAndFilePath.get(s))) { //Don't change the order of images within this if, it is index-based and UI will break.
+					 
+					String[] imageFormats = {_large, _medium, _small}; 
+					for (String format : Arrays.asList(imageFormats)) {
+						url.append(",");
+						String replaceString = fileName.substring(fileName.lastIndexOf('.'),
+								fileName.length());
+						String path = fileName.replaceAll(replaceString, format + replaceString);
+						objectUrl = getMinioClient().getPresignedObjectUrl(io.minio.http.Method.GET,bucketName, path, 60*60*30,new HashMap<String,String>());
+						url.append(objectUrl);
+					}
+					 
+				}
 				mapOfIdAndSASUrls.put(s, url.toString());
+				
+				
 			} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
 					| InternalException | InvalidBucketNameException | InvalidResponseException
 					| NoSuchAlgorithmException | XmlParserException | IOException | InvalidExpiresRangeException e) {
