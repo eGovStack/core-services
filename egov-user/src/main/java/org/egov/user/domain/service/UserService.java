@@ -71,9 +71,6 @@ public class UserService {
     @Value("${max.invalid.login.attempts.period.minutes}")
     private Long maxInvalidLoginAttemptsPeriod;
 
-    @Value("${create.user.validate.name}")
-    private boolean createUserValidateName;
-
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
