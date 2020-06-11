@@ -1,11 +1,9 @@
 package org.egov.user.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 @EqualsAndHashCode

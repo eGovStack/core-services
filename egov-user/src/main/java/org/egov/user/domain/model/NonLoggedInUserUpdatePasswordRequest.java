@@ -1,9 +1,6 @@
 package org.egov.user.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import org.egov.user.domain.exception.InvalidNonLoggedInUserUpdatePasswordRequestException;
 import org.egov.user.domain.model.enums.UserType;
 
@@ -11,6 +8,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 @EqualsAndHashCode

@@ -20,6 +20,7 @@ import java.util.*;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
