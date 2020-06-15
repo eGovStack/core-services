@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 
-//@Configuration
-//@EnableKafka
-//@PropertySource("classpath:application.properties")
+@Configuration
+@EnableKafka
+@PropertySource("classpath:application.properties")
 @Slf4j
 public class PersisterConsumerConfig {
 
@@ -51,10 +51,11 @@ public class PersisterConsumerConfig {
     @PostConstruct
     public void setTopics(){
         topicMap.getTopicMap().keySet().forEach(topic -> {
-            if(!topic.contains("-batch"))
+            if(!topic.contains("-batch")){
                 topics.add(topic);
+            }
         });
-        log.info("Topics subscribed!");
+        log.info("Topics subscribed for single listner: "+topics.toString());
     }
 
     @Bean
