@@ -18,9 +18,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,6 +42,8 @@ public class HierarchyTypeControllerTest {
 	@MockBean
 	private ResponseInfoFactory responseInfoFactory;
 
+	private MediaType contentType = new MediaType("application", "json", Charset.forName("UTF-8"));
+
 	@Test
 	public void testShouldCreateHierarchyType() throws Exception {
 		ResponseInfo responseInfo = ResponseInfo.builder().build();
@@ -48,9 +52,9 @@ public class HierarchyTypeControllerTest {
 		when(hierarchyTypeService.createHierarchyType(any(HierarchyType.class))).thenReturn(getHierarchyType());
 		when(hierarchyTypeService.findByCodeAndTenantId(any(String.class), any(String.class)))
 				.thenReturn(null);
-		mockMvc.perform(post("/hierarchytypes").contentType(MediaType.APPLICATION_JSON_UTF8)
+		mockMvc.perform(post("/hierarchytypes").contentType(contentType)
 				.content(getFileContents("hierarchyTypeCreateRequest.json"))).andExpect(status().isCreated())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentType(contentType))
 				.andExpect(content().json(getFileContents("hierarchyTypeCreateResponse.json")));
 	}
 	
@@ -60,23 +64,23 @@ public class HierarchyTypeControllerTest {
 		when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
 				.thenReturn(responseInfo);
 		when(hierarchyTypeService.updateHierarchyType(any(HierarchyType.class))).thenReturn(getHierarchyType());
-		mockMvc.perform(put("/hierarchytypes/Revenue").contentType(MediaType.APPLICATION_JSON_UTF8).param("tenantId", "default")
+		mockMvc.perform(put("/hierarchytypes/Revenue").contentType(contentType).param("tenantId", "default")
 				.content(getFileContents("hierarchyTypeCreateRequest.json"))).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(content().contentType(contentType))
 				.andExpect(content().json(getFileContents("hierarchyTypeUpdateResponse.json")));
 	}
 	
 	@Test
 	public void testShouldGetBadRequestWhenUpdatingWithoutCode() throws Exception {
 		when(hierarchyTypeService.updateHierarchyType(any(HierarchyType.class))).thenReturn(getHierarchyType());
-		mockMvc.perform(put("/hierarchytypes").contentType(MediaType.APPLICATION_JSON_UTF8).param("tenantId",
+		mockMvc.perform(put("/hierarchytypes").contentType(MediaType.APPLICATION_JSON_VALUE).param("tenantId",
 				"default")).andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void testShouldGetBadRequestWhenUpdatingWithoutTenant() throws Exception {
 		when(hierarchyTypeService.updateHierarchyType(any(HierarchyType.class))).thenReturn(getHierarchyType());
-		mockMvc.perform(put("/hierarchytypes/Revenue").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest());
+		mockMvc.perform(put("/hierarchytypes/Revenue").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
 	}
 	
 	private HierarchyType getHierarchyType(){
