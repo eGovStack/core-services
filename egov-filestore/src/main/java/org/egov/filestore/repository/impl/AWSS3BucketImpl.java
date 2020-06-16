@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.egov.filestore.config.FileStoreConfig;
 import org.egov.filestore.domain.model.Artifact;
 import org.egov.filestore.repository.AWSClientFacade;
 import org.egov.filestore.repository.CloudFilesManager;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
@@ -36,6 +37,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @ConditionalOnProperty(value = "isS3Enabled", havingValue = "true", matchIfMissing = true)
 public class AWSS3BucketImpl implements CloudFilesManager {
+	
+	@Autowired
+	private FileStoreConfig configs;
+	
+	private AmazonS3 s3Client;
+
+	@Autowired
+	private AWSClientFacade awsFacade;
+
+	@Autowired
+	private CloudFileMgrUtils util;
 
 	@Value("${aws.key}")
 	private String key;
@@ -60,35 +72,44 @@ public class AWSS3BucketImpl implements CloudFilesManager {
 
 	@Value("${presigned.url.expiry.time.in.secs}")
 	private Long presignedUrlExpirytime;
-
-	private AmazonS3 s3Client;
-
-	@Autowired
-	private AWSClientFacade awsFacade;
-
-	@Autowired
-	private CloudFileMgrUtils util;
-
+	
+	private List<String> scalableImageTypes = Arrays.asList("jpg","png","jpeg");
+	
 	@Override
 	public void saveFiles(List<Artifact> artifacts) {
 		if (null == s3Client)
 			s3Client = awsFacade.getS3Client();
 
 		artifacts.forEach(artifact -> {
+			
 			String completeName = artifact.getFileLocation().getFileName();
 			int index = completeName.indexOf('/');
 			String bucketName = completeName.substring(0, index);
 			String fileNameWithPath = completeName.substring(index + 1, completeName.length());
 			if (!isBucketFixed && !s3Client.doesBucketExistV2(bucketName))
 				s3Client.createBucket(bucketName);
-			if (artifact.getMultipartFile().getContentType().startsWith("image/")) {
-				String extension = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());
-				Map<String, BufferedImage> mapOfImagesAndPaths = util.createVersionsOfImage(artifact.getMultipartFile(),
-						fileNameWithPath);
-				writeImage(mapOfImagesAndPaths, bucketName, extension);
-			} else {
-				writeFile(artifact.getMultipartFile(), bucketName, fileNameWithPath);
+			Long contentLength = artifact.getMultipartFile().getSize();
+
+			try {
+				
+				String imagetype = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());
+				String inputStreamAsString = artifact.getFileContentInString(); 
+				InputStream inputStreamForUpload = IOUtils.toInputStream(inputStreamAsString, configs.getImageCharsetType());
+				if (scalableImageTypes.contains(imagetype)) {
+
+					InputStream ipStreamForImg = IOUtils.toInputStream(inputStreamAsString, configs.getImageCharsetType());
+					String extension = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());
+					Map<String, BufferedImage> mapOfImagesAndPaths = util.createVersionsOfImage(ipStreamForImg, fileNameWithPath);
+					writeImage(mapOfImagesAndPaths, bucketName, extension);
+				}
+				writeFile(inputStreamForUpload, bucketName, fileNameWithPath, contentLength);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				log.error("EG_FILESTORE_INPUT_ERROR", e);
+				throw new CustomException("EG_FILESTORE_INPUT_ERROR",
+						"Failed to read input stream from multipart file");
 			}
+
 		});
 	}
 
@@ -160,19 +181,11 @@ public class AWSS3BucketImpl implements CloudFilesManager {
 	 * @param bucketName
 	 * @param fileName
 	 */
-	private void writeFile(MultipartFile file, String bucketName, String fileName) {
-		InputStream is = null;
-		long contentLength = file.getSize();
-		try {
-			is = file.getInputStream();
-		} catch (IOException e) {
-			log.error(" exception occured while reading input stream from file {}", e);
-			throw new RuntimeException(e);
-		}
+	private void writeFile(InputStream content, String bucketName, String fileName, Long contentLength) {
+		
 		ObjectMetadata objMd = new ObjectMetadata();
 		objMd.setContentLength(contentLength);
-
-		s3Client.putObject(bucketName, fileName, is, objMd);
+		s3Client.putObject(bucketName, fileName, content, objMd);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package org.egov.filestore.repository.impl;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 
 import org.egov.tracer.model.CustomException;
 import org.imgscalr.Scalr;
@@ -18,7 +20,6 @@ import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
@@ -61,15 +62,20 @@ public class CloudFileMgrUtils {
 	 * @param fileName
 	 * @return
 	 */
-	public Map<String, BufferedImage> createVersionsOfImage(MultipartFile file, String fileName) {
+	public Map<String, BufferedImage> createVersionsOfImage(InputStream inputStream, String fileName) {
+		
 		Map<String, BufferedImage> mapOfImagesAndPaths = new HashMap<>();
 		try {
-			BufferedImage originalImage = ImageIO.read(file.getInputStream());
+			
+			BufferedImage originalImage = ImageIO.read(inputStream);
+			
 			if (null == originalImage) {
+				
 				Map<String, String> map = new HashMap<>();
 				map.put("Image Source Unavailable", "Image File present in upload request is Invalid/Not Readable");
 				throw new CustomException(map);
 			}
+			
 			BufferedImage largeImage = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
 					Scalr.OP_ANTIALIAS);
 			BufferedImage mediumImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
@@ -80,7 +86,6 @@ public class CloudFileMgrUtils {
 			int lastIndex = fileName.length();
 			String replaceString = fileName.substring(fileName.lastIndexOf('.'), lastIndex);
 
-			mapOfImagesAndPaths.put(fileName, originalImage);
 			mapOfImagesAndPaths.put(fileName.replace(replaceString, _large + replaceString), largeImage);
 			mapOfImagesAndPaths.put(fileName.replace(replaceString, _medium + replaceString), mediumImg);
 			mapOfImagesAndPaths.put(fileName.replace(replaceString, _small + replaceString), smallImg);
