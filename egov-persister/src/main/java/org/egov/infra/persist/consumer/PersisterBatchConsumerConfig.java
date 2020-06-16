@@ -65,7 +65,7 @@ public class PersisterBatchConsumerConfig {
         log.info("Topics subscribed for batch listner: "+topics.toString());
     }
 
-    @Bean
+    @Bean("consumerFactoryBatch")
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
 
@@ -73,10 +73,11 @@ public class PersisterBatchConsumerConfig {
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, batchSize);
 
+
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
-    @Bean
+    @Bean("kafkaListenerContainerFactoryBatch")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
@@ -94,7 +95,7 @@ public class PersisterBatchConsumerConfig {
 
     }
 
-    @Bean
+    @Bean("batchContainer")
     public KafkaMessageListenerContainer<String, String> container() throws Exception {
         ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
         // set more properties
@@ -108,7 +109,7 @@ public class PersisterBatchConsumerConfig {
         return new KafkaMessageListenerContainer<>(consumerFactory(), properties);
     }
 
-    @Bean
+    @Bean("startBatchContainer")
     public boolean startContainer() {
         KafkaMessageListenerContainer<String, String> container = null;
         try {
