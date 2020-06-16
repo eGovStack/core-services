@@ -11,6 +11,7 @@ import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.User;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @Import(TestConfiguration.class)
+@Ignore
 public class TransactionsApiControllerTest {
 
     private User user;

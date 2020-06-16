@@ -12,41 +12,41 @@ import java.util.Date;
 @ToString
 
 public class BusinessDetails {
-	private Long id;
+    private Long id;
 
-	private String code;
+    private String code;
 
-	private String name;
+    private String name;
 
-	private Boolean active;
+    private Boolean active;
 
-	private Long businessCategory;
+    private Long businessCategory;
 
-	private String businessType;
+    private String businessType;
 
-	private String businessUrl;
+    private String businessUrl;
 
-	private Boolean voucherCreation;
+    private Boolean voucherCreation;
 
-	private Boolean isVoucherApproved;
-	
-	private Boolean callBackForApportioning;
+    private Boolean isVoucherApproved;
 
-	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "UTC")
-	private Date voucherCutoffDate;
+    private Boolean callBackForApportioning;
 
-	private Integer ordernumber;
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "UTC")
+    private Date voucherCutoffDate;
 
-	private String fund;
+    private Integer ordernumber;
 
-	private String function;
+    private String fund;
 
-	private String tenantId;
+    private String function;
 
-	private String department;
+    private String tenantId;
 
-	private String fundSource;
+    private String department;
 
-	private String functionary;
+    private String fundSource;
+
+    private String functionary;
 
 }

@@ -2,7 +2,9 @@ package org.egov.pg.web.controllers;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.GatewayMetadata;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.service.TransactionService;
 import org.egov.pg.utils.ResponseInfoFactory;
@@ -14,9 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Endpoints to deal with all payment related operations
@@ -28,13 +30,14 @@ public class TransactionsApiController {
 
     private final TransactionService transactionService;
     private final GatewayService gatewayService;
-
+    private final GatewayMetadata gatewayMetadata;
 
     @Autowired
     public TransactionsApiController(TransactionService transactionService, GatewayService
-            gatewayService) {
+            gatewayService, GatewayMetadata gatewayMetadata) {
         this.transactionService = transactionService;
         this.gatewayService = gatewayService;
+        this.gatewayMetadata = gatewayMetadata;
     }
 
 
@@ -45,12 +48,21 @@ public class TransactionsApiController {
      * @return Transaction that has been created
      */
     @RequestMapping(value = "/transaction/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) throws Exception {
+        Transaction transaction = transactionRequest.getTransaction();
+        RequestInfo requestInfo = transactionRequest.getRequestInfo();
 
-        Transaction transaction = transactionService.initiateTransaction(transactionRequest);
+        String gateway = transaction.getGateway();
+        String tenantId = transaction.getTenantId();
+
+        if (gateway.equals("DEFAULT")) {
+            String defaultGateway = gatewayMetadata.getDefaultGateway(requestInfo, gateway, tenantId);
+            transaction.setGateway(defaultGateway);
+        }
+        Transaction transactionResponse = transactionService.initiateTransaction(transactionRequest);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
                 .getRequestInfo(), true);
-        TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transaction);
+        TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transactionResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -82,7 +94,7 @@ public class TransactionsApiController {
     /**
      * Updates the status of the transaction from the gateway
      *
-     * @param params             Parameters posted by the gateway
+     * @param params Parameters posted by the gateway
      * @return The current transaction status of the transaction
      */
     @RequestMapping(value = "/transaction/v1/_update", method = {RequestMethod.POST, RequestMethod.GET})
@@ -104,11 +116,29 @@ public class TransactionsApiController {
      * @return list of active gateways that can be used for payments
      */
     @RequestMapping(value = "/gateway/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<Set<String>> transactionsV1AvailableGatewaysPost() {
-
-        Set<String> gateways = gatewayService.getActiveGateways();
-        log.debug("Available gateways : " + gateways);
-        return new ResponseEntity<>(gateways, HttpStatus.OK);
+    public ResponseEntity<GatewayResponse> transactionsV1AvailableGatewaysPost(@Valid @RequestBody TransactionRequest transactionRequest) throws Exception {
+        Transaction transaction = transactionRequest.getTransaction();
+        RequestInfo requestInfo = transactionRequest.getRequestInfo();
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
+                .getRequestInfo(), true);
+        String tenantId = transaction.getTenantId();
+        LinkedList listOfGateway = gatewayMetadata.listOfGateways(requestInfo, tenantId);
+        GatewayResponse response = new GatewayResponse(responseInfo, listOfGateway);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    //Test Controller for metadata for local testing
+  /*  @RequestMapping(value = "/gateway/v1/_getmeta", method = RequestMethod.POST)
+    public ResponseEntity<Map> getmeta(@Valid @RequestBody TransactionRequest transactionRequest) throws Exception {
+        Transaction transaction = transactionRequest.getTransaction();
+        RequestInfo requestInfo = transactionRequest.getRequestInfo();
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
+                .getRequestInfo(), true);
+        String tenantId = transaction.getTenantId();
+        GatewayParams metaData =  gatewayMetadata.getGatewayMetadata(transaction, requestInfo);
+        GatewayResponse response = new GatewayResponse(responseInfo, metaData);
+        return new ResponseEntity<>(metaData.getMetaData(), HttpStatus.OK);
+    }*/
 
 }

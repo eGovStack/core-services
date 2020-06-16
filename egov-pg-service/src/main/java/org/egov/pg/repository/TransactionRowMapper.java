@@ -23,7 +23,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static ObjectReader taxAndPaymentsReader =
             objectMapper.readerFor(objectMapper.getTypeFactory().constructCollectionType(List.class,
-            TaxAndPayment.class));
+                    TaxAndPayment.class));
 
     @Override
     public Transaction mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -46,12 +46,12 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
         JsonNode additionalDetails = null;
         List<TaxAndPayment> taxAndPayments = null;
 
-        if( ! isNull(resultSet.getObject("additional_details"))){
+        if (!isNull(resultSet.getObject("additional_details"))) {
             String additionalDetailsJson = ((PGobject) resultSet.getObject("additional_details")).getValue();
             try {
                 additionalDetails = objectMapper.readTree(additionalDetailsJson);
 
-                if(additionalDetails.hasNonNull("taxAndPayments")){
+                if (additionalDetails.hasNonNull("taxAndPayments")) {
                     taxAndPayments = taxAndPaymentsReader.readValue(additionalDetails.get("taxAndPayments"));
                 }
             } catch (IOException e) {

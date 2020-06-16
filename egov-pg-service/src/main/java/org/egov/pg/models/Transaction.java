@@ -92,7 +92,6 @@ public class Transaction {
 
     /**
      * Callback URL to which control has to be redirected to by payment gateway
-     *
      */
     @JsonProperty("callbackUrl")
     @NotNull
@@ -168,6 +167,10 @@ public class Transaction {
 
     @JsonIgnore
     private Map<TransactionAdditionalFields, Object> additionalFields;
+
+    //Metdata for payment gateway
+    @JsonIgnore
+    private Map metaData;
 
 
     /**

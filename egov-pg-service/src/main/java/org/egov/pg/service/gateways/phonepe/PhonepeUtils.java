@@ -14,9 +14,9 @@ class PhonepeUtils {
     }
 
     static String buildHash(String payload) throws NoSuchAlgorithmException {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(payload.getBytes(StandardCharsets.UTF_8));
-            return DatatypeConverter.printHexBinary(hash);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(payload.getBytes(StandardCharsets.UTF_8));
+        return DatatypeConverter.printHexBinary(hash);
     }
 
 }

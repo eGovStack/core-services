@@ -11,14 +11,14 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class BusinessAccountSubLedger {
 
-	private Long id;
+    private Long id;
 
-	private Long detailType;
+    private Long detailType;
 
-	private Long detailKey;
+    private Long detailKey;
 
-	private Double amount;
+    private Double amount;
 
-	private Long businessAccountDetails;
+    private Long businessAccountDetails;
 
 }

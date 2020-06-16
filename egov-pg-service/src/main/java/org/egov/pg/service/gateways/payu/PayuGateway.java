@@ -3,6 +3,7 @@ package org.egov.pg.service.gateways.payu;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -61,7 +62,7 @@ public class PayuGateway implements Gateway {
     }
 
     @Override
-    public URI generateRedirectURI(Transaction transaction) {
+    public URI generateRedirectURI(Transaction transaction, RequestInfo requestInfo) {
 
         String hashSequence = "key|txnid|amount|productinfo|firstname|email|||||||||||";
         hashSequence = hashSequence.concat(MERCHANT_SALT);
@@ -99,22 +100,22 @@ public class PayuGateway implements Gateway {
                     uriComponents.toUriString(), entity
             );
 
-            if(isNull(redirectUri))
+            if (isNull(redirectUri))
                 throw new CustomException("PAYU_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
             else
                 return redirectUri;
 
-        } catch (RestClientException e){
+        } catch (RestClientException e) {
             log.error("Unable to retrieve redirect URI from gateway", e);
-            throw new ServiceCallException( "Redirect URI generation failed, invalid response received from gateway");
+            throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
         }
     }
 
     @Override
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
         PayuResponse resp = objectMapper.convertValue(params, PayuResponse.class);
-        if( ! isNull(resp.getHash()) && ! isNull(resp.getStatus()) && ! isNull(resp.getTxnid()) && ! isNull(resp.getAmount())
-            && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname()) ){
+        if (!isNull(resp.getHash()) && !isNull(resp.getStatus()) && !isNull(resp.getTxnid()) && !isNull(resp.getAmount())
+                && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname())) {
             resp.setTransaction_amount(resp.getAmount());
             String checksum = resp.getHash();
 
@@ -134,7 +135,7 @@ public class PayuGateway implements Gateway {
             hashSequence = hashSequence.replace("txnid", resp.getTxnid());
             String hash = hashCal(hashSequence);
 
-            if(checksum.equalsIgnoreCase(hash)){
+            if (checksum.equalsIgnoreCase(hash)) {
                 Transaction txn = transformRawResponse(resp, currentStatus);
                 if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING) || txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
                     return txn;
@@ -229,15 +230,15 @@ public class PayuGateway implements Gateway {
             JsonNode payuRawResponse = objectMapper.readTree(response.getBody());
             JsonNode status = payuRawResponse.path("transaction_details").path(txnRef);
 
-            if(status.isNull())
+            if (status.isNull())
                 throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
-                        "Unable to fetch status from payment gateway for txnid: "+ currentStatus.getTxnId());
+                        "Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
             PayuResponse payuResponse = objectMapper.treeToValue(status, PayuResponse.class);
 
             return transformRawResponse(payuResponse, currentStatus);
 
-        }catch (RestClientException | IOException e){
-            log.error("Unable to fetch status from payment gateway for txnid: "+ currentStatus.getTxnId(), e);
+        } catch (RestClientException | IOException e) {
+            log.error("Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId(), e);
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
     }
@@ -259,7 +260,7 @@ public class PayuGateway implements Gateway {
             }
 
         } catch (NoSuchAlgorithmException nsae) {
-            log.error("Error occurred while generating hash "+str, nsae);
+            log.error("Error occurred while generating hash " + str, nsae);
             throw new CustomException("CHECKSUM_GEN_FAILED", "Hash generation failed, gateway redirect URI " +
                     "cannot be generated");
         }

@@ -14,40 +14,40 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class BillAccountDetail {
-	
-	@JsonProperty("id")
-	private String id = null;
 
-	@JsonProperty("tenantId")
-	private String tenantId = null;
+    @JsonProperty("id")
+    private String id = null;
 
-	@JsonProperty("billDetail")
-	private String billDetail = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-	@JsonProperty("demandDetailId")
-	private String demandDetailId = null;
+    @JsonProperty("billDetail")
+    private String billDetail = null;
 
-	@JsonProperty("order")
-	private Integer order = null;
+    @JsonProperty("demandDetailId")
+    private String demandDetailId = null;
 
-	@JsonProperty("amount")
-	private BigDecimal amount = null;
+    @JsonProperty("order")
+    private Integer order = null;
 
-	@JsonProperty("adjustedAmount")
-	private BigDecimal adjustedAmount = null;
+    @JsonProperty("amount")
+    private BigDecimal amount = null;
 
-	@JsonProperty("isActualDemand")
-	private Boolean isActualDemand = null;
+    @JsonProperty("adjustedAmount")
+    private BigDecimal adjustedAmount = null;
 
-	@JsonProperty("glcode")
-	private String glcode = null;
-	
-	@JsonProperty("taxHeadCode")
-	private String taxHeadCode = null;
+    @JsonProperty("isActualDemand")
+    private Boolean isActualDemand = null;
 
-	@JsonProperty("additionalDetails")
-	private JsonNode additionalDetails = null;
+    @JsonProperty("glcode")
+    private String glcode = null;
 
-	@JsonProperty("purpose")
-	private Purpose purpose = null;
+    @JsonProperty("taxHeadCode")
+    private String taxHeadCode = null;
+
+    @JsonProperty("additionalDetails")
+    private JsonNode additionalDetails = null;
+
+    @JsonProperty("purpose")
+    private Purpose purpose = null;
 }

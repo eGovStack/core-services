@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
-import org.egov.pg.constants.TransactionAdditionalFields;
 import org.egov.pg.models.AuditDetails;
-import org.egov.pg.models.BankAccount;
 import org.egov.pg.models.Transaction;
-import org.egov.pg.repository.BankAccountRepository;
+import org.egov.pg.repository.GatewayMetadata;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +25,19 @@ import static java.util.Collections.singletonMap;
 public class EnrichmentService {
 
     private IdGenService idGenService;
-    private BankAccountRepository bankAccountRepository;
     private ObjectMapper objectMapper;
+    private GatewayMetadata gatewayMetadata;
 
     @Autowired
-    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper) {
+    EnrichmentService(IdGenService idGenService, ObjectMapper objectMapper, GatewayMetadata gatewayMetadata) {
         this.idGenService = idGenService;
-        this.bankAccountRepository = bankAccountRepository;
         this.objectMapper = objectMapper;
+        this.gatewayMetadata = gatewayMetadata;
     }
 
-    void enrichCreateTransaction(TransactionRequest transactionRequest) {
+    void enrichCreateTransaction(TransactionRequest transactionRequest) throws Exception {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
-
-        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId());
-        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, bankAccount.getAccountNumber()));
 
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
@@ -51,7 +46,7 @@ public class EnrichmentService {
         transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
 
-        if(Objects.isNull(transaction.getAdditionalDetails()))
+        if (Objects.isNull(transaction.getAdditionalDetails()))
             transaction.setAdditionalDetails(objectMapper.createObjectNode());
 
         ((ObjectNode) transaction.getAdditionalDetails()).set("taxAndPayments",

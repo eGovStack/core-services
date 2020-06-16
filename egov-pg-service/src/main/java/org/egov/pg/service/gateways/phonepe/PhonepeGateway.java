@@ -3,6 +3,8 @@ package org.egov.pg.service.gateways.phonepe;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.pg.models.GatewayParams;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -38,6 +40,7 @@ public class PhonepeGateway implements Gateway {
     private final String CALLBACK_SERVER_URL = "http://2a91377b.ngrok.io/egov-pay/payments/v1/_update";
     private final boolean ACTIVE;
     private ObjectMapper objectMapper;
+    private GatewayParams gatewayParams;
 
     private RestTemplate restTemplate;
 
@@ -57,7 +60,8 @@ public class PhonepeGateway implements Gateway {
 
 
     @Override
-    public URI generateRedirectURI(Transaction transaction) {
+    public URI generateRedirectURI(Transaction transaction, RequestInfo requestInfo) {
+
         Map<String, Object> map = new TreeMap<>();
         map.put("merchantId", MERCHANT_ID);
         map.put("transactionId", transaction.getTxnId());
@@ -98,9 +102,9 @@ public class PhonepeGateway implements Gateway {
         } catch (JsonProcessingException | URISyntaxException | NoSuchAlgorithmException e) {
             log.error("Phonepe Checksum generation failed", e);
             throw new CustomException("CHECKSUM_GEN_FAILED", "Hash generation failed, gateway redirect URI cannot be generated");
-        } catch (RestClientException e){
+        } catch (RestClientException e) {
             log.error("Phonepe fetching redirect URI from gateway failed", e);
-            throw new ServiceCallException( "Redirect URI generation failed, invalid response received from gateway");
+            throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
         }
 
     }
@@ -133,8 +137,8 @@ public class PhonepeGateway implements Gateway {
         } catch (NoSuchAlgorithmException e) {
             log.error("Phonepe Checksum generation failed", e);
             throw new CustomException("CHECKSUM_GEN_FAILED", "Hash generation failed, unable to fetch status");
-        } catch (RestClientException e){
-            log.error("Unable to fetch status from payment gateway for txnid: "+ currentStatus.getTxnId(), e);
+        } catch (RestClientException e) {
+            log.error("Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId(), e);
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
     }

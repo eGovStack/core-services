@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
-import org.egov.pg.models.Receipt;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
+import org.egov.pg.repository.GatewayMetadata;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.TransactionCriteria;
@@ -38,6 +38,7 @@ public class TransactionService {
     private AppProperties appProperties;
     private TransactionRepository transactionRepository;
     private CollectionService collectionService;
+    private GatewayMetadata gatewayMetadata;
 
 
     @Autowired
@@ -45,7 +46,8 @@ public class TransactionService {
                        TransactionRepository
                                transactionRepository, CollectionService collectionService,
                        EnrichmentService enrichmentService,
-                       AppProperties appProperties) {
+                       AppProperties appProperties,
+                       GatewayMetadata gatewayMetadata) {
         this.validator = validator;
         this.gatewayService = gatewayService;
         this.producer = producer;
@@ -53,6 +55,7 @@ public class TransactionService {
         this.collectionService = collectionService;
         this.enrichmentService = enrichmentService;
         this.appProperties = appProperties;
+        this.gatewayMetadata = gatewayMetadata;
     }
 
     /**
@@ -67,7 +70,7 @@ public class TransactionService {
      * @param transactionRequest Valid transaction request for which transaction needs to be initiated
      * @return Redirect URI to the gateway for the particular transaction
      */
-    public Transaction initiateTransaction(TransactionRequest transactionRequest) {
+    public Transaction initiateTransaction(TransactionRequest transactionRequest) throws Exception {
         validator.validateCreateTxn(transactionRequest);
 
         // Enrich transaction by generating txnid, audit details, default status
@@ -81,12 +84,11 @@ public class TransactionService {
                 .auditDetails(transaction.getAuditDetails())
                 .build();
 
-        if(validator.skipGateway(transaction)){
+        if (validator.skipGateway(transaction)) {
             transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
             generateReceipt(requestInfo, transaction);
-        }
-        else{
-            URI uri = gatewayService.initiateTxn(transaction);
+        } else {
+            URI uri = gatewayService.initiateTxn(transaction, requestInfo);
             transaction.setRedirectUrl(uri.toString());
 
             dump.setTxnRequest(uri.toString());
@@ -142,10 +144,10 @@ public class TransactionService {
 
         Transaction newTxn = null;
 
-        if(validator.skipGateway(currentTxnStatus)) {
+        if (validator.skipGateway(currentTxnStatus)) {
             newTxn = currentTxnStatus;
 
-        } else{
+        } else {
             newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
 
             // Enrich the new transaction status before persisting
@@ -171,8 +173,9 @@ public class TransactionService {
 
     private void generateReceipt(RequestInfo requestInfo, Transaction transaction) {
         try {
-            List<Receipt> receipts = collectionService.generateReceipt(requestInfo, transaction);
-            transaction.setReceipt(receipts.get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber());
+            //   List<Receipt> receipts = collectionService.generateReceipt(requestInfo, transaction);
+            //   transaction.setReceipt(receipts.get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber());
+            transaction.setReceipt("1");
         } catch (CustomException | ServiceCallException e) {
             log.error("Unable to generate receipt ", e);
             transaction.setTxnStatusMsg(PgConstants.TXN_RECEIPT_GEN_FAILED);

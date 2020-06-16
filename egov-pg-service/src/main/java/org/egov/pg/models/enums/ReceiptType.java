@@ -8,13 +8,13 @@ public enum ReceiptType {
     BILLBASED("BillBased"),
     CHALLAN("Challan");
 
-    
+
     private String name;
-    
+
     ReceiptType(final String name) {
         this.name = name;
     }
-    
+
     @Override
     @JsonValue
     public String toString() {

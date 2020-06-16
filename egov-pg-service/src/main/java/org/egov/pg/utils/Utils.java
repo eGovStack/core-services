@@ -9,7 +9,9 @@ public class Utils {
     private static final DecimalFormat CURRENCY_FORMATTER_PAISE = new DecimalFormat("0");
 
     private Utils() {
-    };
+    }
+
+    ;
 
     public static String formatAmtAsRupee(String txnAmount) {
         return CURRENCY_FORMATTER_RUPEE.format(Double.valueOf(txnAmount));
@@ -19,7 +21,7 @@ public class Utils {
         return CURRENCY_FORMATTER_PAISE.format(Double.valueOf(txnAmount) * 100);
     }
 
-    public static String convertPaiseToRupee(String paise){
+    public static String convertPaiseToRupee(String paise) {
         return new BigDecimal(paise).movePointLeft(2).toPlainString();
     }
 
