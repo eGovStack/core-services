@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,7 +49,7 @@ public class TokenServiceTest {
     @Before
     public void before() {
         now = LocalDateTime.now(ZoneId.of("UTC"));
-        when(localDateTimeFactory.now()).thenReturn(now);
+        lenient().when(localDateTimeFactory.now()).thenReturn(now);
         this.tokenService = new TokenService(
                 tokenRepository,
                 new BCryptPasswordEncoder(),
@@ -64,7 +65,7 @@ public class TokenServiceTest {
         when(tokenRepository.save(any(Token.class))).thenReturn(savedToken);
 
         final Tokens tokens = mock(Tokens.class);
-        when(tokenRepository.findByIdentityAndTenantId(validateRequest)).thenReturn(tokens);
+        lenient().when(tokenRepository.findByIdentityAndTenantId(validateRequest)).thenReturn(tokens);
         final Token actualToken = tokenService.create(tokenRequest);
 
         assertEquals(savedToken, actualToken);
@@ -85,7 +86,7 @@ public class TokenServiceTest {
     public void test_should_throw_exception_when_no_matching_non_expired_token_is_present() {
         final ValidateRequest validateRequest = new ValidateRequest("tenant", "otpNumber", "identity");
         final Tokens tokens = mock(Tokens.class);
-        when(tokens.hasSingleNonExpiredToken(now)).thenReturn(false);
+        lenient().when(tokens.hasSingleNonExpiredToken(now)).thenReturn(false);
         when(tokenRepository.findByIdentityAndTenantId(validateRequest)).thenReturn(tokens);
         //when(tokenRepository.findByNumberAndIdentityAndTenantIdLike(validateRequest)).thenReturn(tokens);
 
