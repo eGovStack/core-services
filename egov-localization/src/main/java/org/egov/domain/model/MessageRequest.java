@@ -11,7 +11,7 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class MessageRequest {
 
-	private RequestInfo requestInfo;
+	private RequestInfo RequestInfo;
 
 	private MessageSearchCriteria messageSearchCriteria;
 }
