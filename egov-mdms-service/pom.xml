@@ -6,7 +6,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.2.6.RELEASE</version>
-        <relativePath></relativePath>
+    <relativePath></relativePath>
   </parent>
   <groupId>org.egov.mdms</groupId>
   <artifactId>egov-mdms-service-test</artifactId>
@@ -21,72 +21,18 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.egov.services</groupId>
-      <artifactId>services-common</artifactId>
-      <version>0.9.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka</artifactId>
-      <version>2.3.7.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
-      <version>2.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.10.0</version>
+      <version>2.4.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.10.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20170516</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.integration</groupId>
-      <artifactId>spring-integration-kafka</artifactId>
-      <version>3.2.0.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
+      <version>2.10.3</version>
     </dependency>
     <dependency>
       <groupId>org.egov.services</groupId>
@@ -146,14 +92,10 @@
         <configuration>
           <jsonLibrary>jackson2</jsonLibrary>
           <classes>
-            <class>org.egov.infra.mdms.model.MdmsUpdateRequest</class>
+            <class>org.egov.mdms.model.MdmsCriteriaReq</class>
+            <class>org.egov.mdms.model.MdmsResponse</class>
           </classes>
           <customTypeMappings>
-            <customTypeMapping>org.egov.mdms.model.MasterDetail:MasterDetail</customTypeMapping>
-            <customTypeMapping>org.egov.mdms.model.MdmsCriteria:MdmsCriteria</customTypeMapping>
-            <customTypeMapping>org.egov.mdms.model.MdmsCriteriaReq:MdmsCriteriaReq</customTypeMapping>
-            <customTypeMapping>org.egov.mdms.model.MdmsResponse:MdmsResponse</customTypeMapping>
-            <customTypeMapping>org.egov.mdms.model.ModuleDetail:ModuleDetail</customTypeMapping>
             <customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
             <customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
           </customTypeMappings>
@@ -165,3 +107,4 @@
     </plugins>
   </build>
 </project>
+
