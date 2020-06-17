@@ -71,6 +71,7 @@ public class UserService {
         try{
             LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap,dobFormat);
+            System.out.println("\n\nresponseMap---->"+responseMap+"\n\n");
             UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
             return userDetailResponse;
         }
