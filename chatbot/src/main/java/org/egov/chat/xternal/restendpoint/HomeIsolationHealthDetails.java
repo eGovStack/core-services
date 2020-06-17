@@ -2,7 +2,6 @@ package org.egov.chat.xternal.restendpoint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -43,7 +42,7 @@ public class HomeIsolationHealthDetails implements RestEndpoint {
     @Value("${case.management.health.detail.create.endpoint}")
     private String healthDetailCreateEndpoint;
 
-    private String healthDetailsCreateRequest = "{\"RequestInfo\":{\"userInfo\":{}},\"tenantId\":\"\",\"mobileNumber\":\"\",\"healthDetails\":[{\"temperature\":98.6,\"symptoms\":\"\"}]}";
+    private String healthDetailsCreateRequest = "{\"RequestInfo\":{\"userInfo\":{}},\"tenantId\":\"\",\"mobileNumber\":\"\",\"healthDetails\":[{\"temperature\":98.6,\"symptoms\":\"\",\"breathingIssues\":false,\"fever\":false,\"dryCough\":false}]}";
 
     private String responseMessageTemplateId = "chatbot.home.isolation.health.detail.create.message";
 
@@ -66,10 +65,12 @@ public class HomeIsolationHealthDetails implements RestEndpoint {
         writeContext.set("$.healthDetails.[0].temperature", temperature);
         writeContext.set("$.healthDetails.[0].symptoms", symptoms);
 
+        writeContext = addSymptomsAsBoolean(symptoms, writeContext);
+
         JsonNode requestJson = objectMapper.readTree(writeContext.jsonString());
 
-//        JsonNode responseJson = restTemplate.postForObject(caseManagementServiceHost + healthDetailCreateEndpoint,
-//                requestJson, JsonNode.class);
+        JsonNode responseJson = restTemplate.postForObject(caseManagementServiceHost + healthDetailCreateEndpoint,
+                requestJson, JsonNode.class);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -89,6 +90,16 @@ public class HomeIsolationHealthDetails implements RestEndpoint {
         ObjectNode objectNode = objectMapper.convertValue(response, ObjectNode.class);
 
         return objectNode;
+    }
+
+    WriteContext addSymptomsAsBoolean(String symptoms, WriteContext writeContext) {
+        if(symptoms.contains("fever"))
+            writeContext.set("$.healthDetails.[0].fever", true);
+        if(symptoms.contains("dry.cough"))
+            writeContext.set("$.healthDetails.[0].dryCough", true);
+        if(symptoms.contains("breathing.difficulty"))
+            writeContext.set("$.healthDetails.[0].breathingIssues", true);
+        return writeContext;
     }
 
     JsonNode getUserInfo(String tenantId, String mobileNumber) throws IOException {
