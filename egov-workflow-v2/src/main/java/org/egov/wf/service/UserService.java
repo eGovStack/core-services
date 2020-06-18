@@ -3,6 +3,7 @@ package org.egov.wf.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.repository.ServiceRequestRepository;
@@ -71,8 +72,10 @@ public class UserService {
         try{
             LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap,dobFormat);
-            System.out.println("\n\nresponseMap---->"+responseMap+"\n\n");
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
+            //UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
+            ResponseInfo responseInfo = (ResponseInfo) responseMap.get("responseInfo");
+            List<User> user = (List<User>) responseMap.get("user");
+            UserDetailResponse userDetailResponse = UserDetailResponse.builder().responseInfo(responseInfo).user(user).build();
             return userDetailResponse;
         }
         catch(IllegalArgumentException  e)
