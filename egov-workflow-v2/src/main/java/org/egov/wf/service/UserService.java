@@ -72,10 +72,7 @@ public class UserService {
         try{
             LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap,dobFormat);
-            //UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
-            ResponseInfo responseInfo = (ResponseInfo) responseMap.get("responseInfo");
-            List<User> user = (List<User>) responseMap.get("user");
-            UserDetailResponse userDetailResponse = UserDetailResponse.builder().responseInfo(responseInfo).user(user).build();
+            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
             return userDetailResponse;
         }
         catch(IllegalArgumentException  e)
