@@ -125,15 +125,8 @@
         <configuration>
           <jsonLibrary>jackson2</jsonLibrary>
           <classes>
-            <class>org.egov.id.model.IdGenerationRequest</class>
-            <class>org.egov.id.model.IdGenerationResponse</class>
             <class>org.egov.id.model.IdRequest</class>
             <class>org.egov.id.model.IdResponse</class>
-            <class>org.egov.id.model.RequestInfo</class>
-            <class>org.egov.id.model.ResponseInfo</class>
-            <class>org.egov.id.model.Role</class>
-            <class>org.egov.id.model.UserInfo</class>
-            <class>org.egov.id.model.IdGenerationRequest</class>
           </classes>
           <customTypeNaming>
             <typeNaming>org.egov.id.model.ResponseStatusEnum$ResponseStatusEnum:ResponseStatus</typeNaming>
