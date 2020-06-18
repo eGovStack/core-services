@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.egov</groupId>
   <artifactId>egov-idgen</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <name>egov-idgen</name>
   <description>Id generation service</description>
   <properties>
@@ -141,7 +141,7 @@
           <customTypeMappings>
             <customTypeMapping>org.egov.id.model.Error:Error</customTypeMapping>
             <customTypeMapping>org.egov.id.model.ErrorRes:ErrorRes</customTypeMapping>
-            <customTypeMapping>org.egov.id.model.Role:IdGenRole</customTypeMapping>
+            <customTypeMapping>org.egov.id.model.Role:Role</customTypeMapping>
             <customTypeMapping>org.egov.id.model.UserInfo:UserInfo</customTypeMapping>
           </customTypeMappings>
           <namespace>Digit</namespace>
