@@ -80,9 +80,6 @@ public class UserService {
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
-    @Value("${create.user.validate.name}")
-    private boolean createUserValidateName;
-
     
     @Value("${egov.user.pwd.pattern}")
     private String pwdRegex;
