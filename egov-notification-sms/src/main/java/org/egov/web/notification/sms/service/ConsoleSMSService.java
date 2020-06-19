@@ -2,9 +2,11 @@ package org.egov.web.notification.sms.service;
 
 import org.egov.web.notification.sms.models.Sms;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @ConditionalOnProperty(value = "sms.enabled", havingValue = "false", matchIfMissing = true)
 public class ConsoleSMSService implements SMSService {
 
