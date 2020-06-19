@@ -67,7 +67,7 @@
     "pdfmake": "^0.1.62"
   },
   "bugs": {
-    "url": "https://github.com/developit/express-es6-rest-api/issues"
+    "url": "https://github.com/egovernments/core-services/issues"
   },
-  "homepage": "https://github.com/developit/express-es6-rest-api#readme"
+  "homepage": "https://github.com/egovernments/core-services/blob/master/README.md"
 }
