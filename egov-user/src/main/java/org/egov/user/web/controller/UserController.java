@@ -4,6 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
+import org.egov.user.domain.model.User;
+import org.egov.user.domain.model.UserDetail;
+import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.*;
@@ -13,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -20,8 +28,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -60,7 +74,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/citizen/_create")
-	public Object createCitizen(@RequestBody CreateUserRequest createUserRequest) {
+	public Object createCitizen(@RequestBody @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Citizen Registration Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(true);
 		user.setOtpValidationMandatory(IsValidationMandatory);
@@ -80,7 +94,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/users/_createnovalidate")
-	public UserDetailResponse createUserWithoutValidation(@RequestBody CreateUserRequest createUserRequest,
+	public UserDetailResponse createUserWithoutValidation(@RequestBody @Valid CreateUserRequest createUserRequest,
 			@RequestHeader HttpHeaders headers) {
 
 		User user = createUserRequest.toDomain(true);
@@ -98,9 +112,9 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/_search")
-	public UserSearchResponse get(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers){
+	public UserSearchResponse get(@RequestBody @Valid UserSearchRequest request, @RequestHeader HttpHeaders headers){
 
-		log.debug("Received User search Request  " +  request);
+		log.info("Received User search Request  " +  request);
 		if (request.getActive() == null) {
 			request.setActive(true);
 		}
@@ -141,8 +155,8 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/users/_updatenovalidate")
-	public UpdateResponse updateUserWithoutValidation(@RequestBody final CreateUserRequest createUserRequest,
-													  @RequestHeader HttpHeaders headers) {
+	public UserDetailResponse updateUserWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
+														  @RequestHeader HttpHeaders headers) {
 		User user = createUserRequest.toDomain(false);
 		user.setMobileValidationMandatory(isMobileValidationRequired(headers));
 		final User updatedUser = userService.updateWithoutOtpValidation( user,createUserRequest.getRequestInfo());
@@ -156,7 +170,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/profile/_update")
-	public UpdateResponse patch(@RequestBody final CreateUserRequest createUserRequest) {
+	public UserDetailResponse patch(@RequestBody final @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Profile Update Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(false);
 		final User updatedUser = userService.partialUpdate(user,createUserRequest.getRequestInfo());
@@ -178,7 +192,7 @@ public class UserController {
 	private UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
 
         UserSearchCriteria searchCriteria = request.toDomain();
-
+       
         if(!isInterServiceCall(headers)){
             if((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
                     || searchCriteria.getLimit() == 0))
@@ -200,4 +214,5 @@ public class UserController {
 		}
 		return true;
 	}
+	
 }

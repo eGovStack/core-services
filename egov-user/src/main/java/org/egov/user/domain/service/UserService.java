@@ -34,6 +34,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -41,6 +42,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -77,6 +80,19 @@ public class UserService {
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
+    @Value("${create.user.validate.name}")
+    private boolean createUserValidateName;
+
+    
+    @Value("${egov.user.pwd.pattern}")
+    private String pwdRegex;
+    
+    @Value("${egov.user.pwd.pattern.min.length}")
+    private Integer pwdMinLength;
+    
+    @Value("${egov.user.pwd.pattern.max.length}")
+    private Integer pwdMaxLength;
+    
     @Autowired
     private RestTemplate restTemplate;
 
@@ -84,7 +100,10 @@ public class UserService {
                        PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil,TokenStore tokenStore,
                        @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
                        @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased) {
+                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
+                       @Value("${egov.user.pwd.pattern}") String pwdRegex,
+                       @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
+                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
         this.userRepository = userRepository;
         this.otpRepository = otpRepository;
         this.passwordEncoder = passwordEncoder;
@@ -94,6 +113,10 @@ public class UserService {
         this.fileRepository = fileRepository;
         this.encryptionDecryptionUtil=encryptionDecryptionUtil;
         this.tokenStore = tokenStore;
+        this.pwdRegex = pwdRegex;
+        this.pwdMaxLength = pwdMaxLength;
+        this.pwdMinLength = pwdMinLength;
+
     }
 
     /**
@@ -191,6 +214,8 @@ public class UserService {
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
+        }else {
+            validatePassword(user.getPassword());
         }
         user.setPassword(encryptPwd(user.getPassword()));
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
@@ -234,7 +259,8 @@ public class UserService {
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
             user.setMobileNumber(user.getUsername());
-
+        if(!isCitizenLoginOtpBased)
+            validatePassword(user.getPassword());
         user.setRoleToCitizen();
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
     }
@@ -320,11 +346,11 @@ public class UserService {
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         validateUserRoles(user);
         user.validateUserModification();
+        validatePassword(user.getPassword());
         user.setPassword(encryptPwd(user.getPassword()));
         /* encrypt */
         user= encryptionDecryptionUtil.encryptObject(user,"User",User.class);
         userRepository.update(user, existingUser);
-
 
         // If user is being unlocked via update, reset failed login attempts
         if(user.getAccountLocked()!=null && !user.getAccountLocked() && existingUser.getAccountLocked())
@@ -379,6 +405,7 @@ public class UserService {
         final User existingUser = getUserByUuid(user.getUuid());
         validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
         user.nullifySensitiveFields();
+        validatePassword(user.getPassword());
         userRepository.update(user, existingUser);
         User updatedUser = getUserByUuid(user.getUuid());
         /* decrypt here */
@@ -405,6 +432,7 @@ public class UserService {
             throw new InvalidUpdatePasswordRequestException();
 
         validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
+        validatePassword(updatePasswordRequest.getNewPassword());
         user.updatePassword(encryptPwd(updatePasswordRequest.getNewPassword()));
         userRepository.update(user, user);
     }
@@ -431,6 +459,7 @@ public class UserService {
         user= encryptionDecryptionUtil.decryptObject(user,"User",User.class,requestInfo);
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
+        validatePassword(request.getNewPassword());
         user.updatePassword(encryptPwd(request.getNewPassword()));
         /* encrypt here */
         /* encrypted value is stored in DB*/
@@ -591,4 +620,23 @@ public class UserService {
             }
         }
     }
+    
+    
+    public void validatePassword(String password) {
+    	Map<String, String> errorMap = new HashMap<>();
+    	if(!StringUtils.isEmpty(password)) {
+        	if(password.length() < pwdMinLength || password.length() > pwdMaxLength)
+    			errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: "+pwdMinLength+" and maximum: "+pwdMaxLength+" characters.");
+    		Pattern p = Pattern.compile(pwdRegex);
+    		Matcher m = p.matcher(password);
+    		if (!m.find()) {
+    			errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character (@#$%) and MUST NOT contain any spaces");
+    		}
+    	}
+		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+			throw new CustomException(errorMap);
+		}
+    }
+
+
 }
