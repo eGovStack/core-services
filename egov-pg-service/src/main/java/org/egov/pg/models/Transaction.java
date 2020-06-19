@@ -24,6 +24,11 @@ import java.util.Map;
 @Builder
 @ToString
 public class Transaction {
+	
+	@JsonProperty("businessDetail")
+	@NotNull
+	@Size(min = 1)
+	private String businessDetail;
 
     @JsonProperty("tenantId")
     @NotNull
