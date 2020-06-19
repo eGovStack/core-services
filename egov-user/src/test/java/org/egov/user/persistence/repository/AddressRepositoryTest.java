@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 @Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@Ignore
 public class AddressRepositoryTest {
 
 	@Autowired

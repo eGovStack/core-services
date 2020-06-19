@@ -140,7 +140,7 @@ public class ReportService {
         reportDataResponse.setResponseInfo(responseInfo);
         reportDataResponse.setTenantId(tenantId);
         reportDataResponse.setReportResponses(reportResponse);
-        return new ResponseEntity<>(reportDataResponse, HttpStatus.OK);
+        return new ResponseEntity<>(reportResponse.get(0), HttpStatus.OK);
 
     }
 
