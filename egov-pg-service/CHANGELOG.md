@@ -10,4 +10,6 @@ All notable changes to this module will be documented in this file.
 - Upgraded to flyway-core `5.2.3`
 - Deleted Dockerfile and start.sh as it is no longer in use
 
+## 1.0.0
 
+- Base version
