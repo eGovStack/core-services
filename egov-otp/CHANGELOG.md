@@ -11,6 +11,7 @@ All notable changes to this module will be documented in this file.
 ## 1.1.0
 
 - Added encryption of generated OTP
+- `egov.otp.encrypt` can be used to disable encryption. Default and recommended value is `true`
 - OTP validation will validate any valid OTP
 
 ## 1.0.0
