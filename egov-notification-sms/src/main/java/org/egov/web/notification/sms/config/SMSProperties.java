@@ -10,23 +10,23 @@ import lombok.Data;
 @Configuration
 @Data
 public class SMSProperties {
-	
-	@Value("${sms.provider.url}")
-	public String url;
-	
-	@Value("${sms.sender.username}")
-	public String username;
 
-	@Value("${sms.sender.password}")
-	public String password;
-	
-	@Value("${sms.sender}")
-	public String senderid;
+    @Value("${sms.provider.url}")
+    public String url;
 
-	@Value("${sms.sender.secure.key}")
-	public String secureKey;
-	
-	@Value("#{${sms.config.map}}")
-	Map<String, String> configMap;
+    @Value("${sms.sender.username}")
+    public String username;
+
+    @Value("${sms.sender.password}")
+    public String password;
+
+    @Value("${sms.sender}")
+    public String senderid;
+
+    @Value("${sms.sender.secure.key}")
+    public String secureKey;
+
+    @Value("#{${sms.config.map}}")
+    Map<String, String> configMap;
 
 }
