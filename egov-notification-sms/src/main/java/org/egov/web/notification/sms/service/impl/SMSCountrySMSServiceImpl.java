@@ -1,7 +1,5 @@
 package org.egov.web.notification.sms.service.impl;
 
-import java.net.URI;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
@@ -17,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @Service
 @ConditionalOnProperty(value = "sms.gateway.to.use", havingValue = "SMS_COUNTRY")
