@@ -37,17 +37,6 @@ public class IndexerInfraApplication {
 	    return new RestTemplate();
 	}
 
-//	@Bean
-//	public ObjectMapper objectMapper() {
-//		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-//		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-//		mapper.setSerializationInclusion(Include.NON_NULL);
-//		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//		mapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-//		return mapper;
-//	}
-
 	@Bean
 	@Profile("!test")
 	public CacheManager cacheManager() {
