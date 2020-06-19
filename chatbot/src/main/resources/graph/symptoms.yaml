@@ -8,7 +8,7 @@ validationRequired: true
 
 multipleAnswers: true
 displayValuesAsOptions : true
-values: [ "home.isolation.symptom.dry.cough", "home.isolation.symptom.fever", "home.isolation.symptom.breathing.difficulty", "home.isolation.symptom.none" ]
+values: [ "home.isolation.symptom.fever", "home.isolation.symptom.dry.cough", "home.isolation.symptom.breathing.difficulty", "home.isolation.symptom.none" ]
 
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
