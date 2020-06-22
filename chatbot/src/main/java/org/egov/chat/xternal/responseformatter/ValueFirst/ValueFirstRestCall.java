@@ -42,7 +42,7 @@ public class ValueFirstRestCall {
     HttpHeaders getDefaultHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.set("Authentication", karixAuthenticationToken);
+
         return headers;
     }
 

@@ -170,24 +170,6 @@ public class ValueFirstResponseFormatter implements ResponseFormatter {
         return valueFirstRequests;
     }
 
-//    private String getTypeFromMime(String mimeType) {
-//        return mimeTypeToAttachmentTypeMapping.get(mimeType);
-//    }
-
-    //    private JsonNode createTextNodeForAttachment(JsonNode response) throws IOException {
-//        String tenantId = response.at(ChatNodeJsonPointerConstants.tenantId).asText();
-//        String userMobileNumber = response.at(ChatNodeJsonPointerConstants.toMobileNumber).asText();
-//
-//        DocumentContext request = null;
-//        request = JsonPath.parse(valueFirstTextMessageRequestBody);
-//        request.set("$.message.content.type", "text");
-//        request.set("$.message.content.text", response.at(ChatNodeJsonPointerConstants.responseText).asText());
-//
-//        request.set("$.message.recipient.to", "91" + userMobileNumber);
-//        request.set("$.message.sender.from", tenantIdWhatsAppNumberMapping.getNumberForTenantId(tenantId));
-//
-//        return objectMapper.readTree(request.jsonString());
-//    }
     public String fillCredentials(String requestBody) {
         DocumentContext request = JsonPath.parse(requestBody);
         request.set("$.USER.@USERNAME", valueFirstUsername);

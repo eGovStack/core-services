@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.chat.config.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,6 +27,9 @@ public class LoginService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${user.login.authorization.header}")
+    private String userAuthHeader;
 
     public JsonNode getLoggedInUser(String mobileNumber, String tenantId) {
         HttpHeaders headers = getDefaultHttpHeaders();
@@ -56,7 +60,7 @@ public class LoginService {
     HttpHeaders getDefaultHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0");
+        headers.set("Authorization", userAuthHeader);
         return headers;
     }
 
