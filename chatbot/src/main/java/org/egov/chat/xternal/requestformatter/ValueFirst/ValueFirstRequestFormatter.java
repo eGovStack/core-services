@@ -131,22 +131,6 @@ public class ValueFirstRequestFormatter implements RequestFormatter {
         return chatNode;
     }
 
-    // TODO : set actual recipient number in input request not missed call number
-//    private JsonNode makeNodeForMissedCallRequest(JsonNode inputRequest) throws IOException {
-//        JsonNode body = inputRequest.get("body");
-//        String recipientNumber = body.get("Callernumber").asText();
-//        String userNumber = body.get("UserNumber").asText();
-//
-//        DocumentContext documentContext = JsonPath.parse("{\"channel\":\"WABA\",\"appDetails\":{\"type\":\"LIVE\"},\"events\":{\"eventType\":\"User initiated\",\"timestamp\":\"1561722407\",\"date\":\"2019-6-28\"},\"eventContent\":{\"message\":{\"from\":\"919428010077\",\"id\":\"ABEGkZQoAQB3Ago6kHmalneqdAmp\",\"text\":{\"body\":\"Hi\"},\"to\":\"919845315868\",\"contentType\":\"text\"}}}");
-//        documentContext.set("$.eventContent.message.to", recipientNumber);
-//        documentContext.set("$.eventContent.message.from", userNumber);
-//
-//        JsonNode inputRequestBody = objectMapper.readTree(documentContext.jsonString());
-//        ( (ObjectNode) inputRequest).set("body", inputRequestBody);
-//
-//        return inputRequest;
-//    }
-//
     private boolean checkForMissedCallNotification(JsonNode inputRequest) {
         if (!StringUtils.isEmpty(inputRequest.at(ValueFirstPointerConstants.missedCallToNumber).asText())) {
             return true;
