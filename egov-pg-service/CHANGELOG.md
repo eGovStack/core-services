@@ -9,6 +9,7 @@ All notable changes to this module will be documented in this file.
 - Upgraded to spring boot `2.2.6-RELEASE`
 - Upgraded to flyway-core `5.2.3`
 - Deleted `Dockerfile` and `start.sh` as it is no longer in use
+- Integration with new collection service
 
 ## 1.0.0
 
