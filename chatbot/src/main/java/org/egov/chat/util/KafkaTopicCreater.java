@@ -48,7 +48,7 @@ public class KafkaTopicCreater {
                 if (e.getCause() instanceof TopicExistsException) {
                     log.info("Topic already exists : " + newTopic.name());
                 } else {
-                    log.error("Error while creating topic : " + newTopic.name(), e);
+                    log.error("Error while creating topic : " + newTopic.name() + " " + e.getLocalizedMessage());
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }

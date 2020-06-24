@@ -96,7 +96,7 @@ public class CreateEndpointStream extends CreateStream {
 
                 return nodes;
             } catch (Exception e) {
-                log.error("error in create endpoint stream", e);
+                log.error("error in create endpoint stream" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

@@ -68,7 +68,7 @@ public class RestAPI {
                     try {
                         message = Optional.ofNullable(objectMapper.treeToValue(chatNode.at("/message"), Message.class));
                     } catch (JsonProcessingException e) {
-                        log.error("Error in make Params for Rest API call", e);
+                        log.error("Error in make Params for Rest API call" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                     }
                 }
             }

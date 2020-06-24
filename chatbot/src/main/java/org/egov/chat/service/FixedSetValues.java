@@ -241,7 +241,7 @@ public class FixedSetValues {
                 return fuzzyMatchAnswerWithValidValues(answer, localizedValidValues, config);
             }
         } catch (Exception e) {
-            log.error("Error when checking validity : ", e);
+            log.error("Error when checking validity : " + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
             return false;
         }
     }

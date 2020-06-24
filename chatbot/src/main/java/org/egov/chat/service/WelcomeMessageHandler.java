@@ -118,7 +118,7 @@ public class WelcomeMessageHandler {
 
             return false;
         } catch (Exception e) {
-            log.error("error in welcome keyword check", e);
+            log.error("error in welcome keyword check" + e.getLocalizedMessage());
             return false;
         }
     }

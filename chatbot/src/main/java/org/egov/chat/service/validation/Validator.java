@@ -71,7 +71,7 @@ public class Validator {
             chatNode.getMessage().setValid(true);
             return true;
         } catch (Exception e) {
-            log.error("error in validator", e);
+            log.error("Error in validator" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
             chatNode.getMessage().setValid(false);
             return false;
         }

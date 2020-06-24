@@ -37,7 +37,7 @@ public class Telemetry {
             objectNode = changeToElasticSearchCompatibleTimestamp(objectNode);
             kafkaTemplate.send(topicNamePrefix + telemetryTopicName, objectNode);
         } catch (Exception e) {
-            log.error("Error occurred while recording event", e);
+            log.error("Error occurred while recording event : " + e.getLocalizedMessage());
         }
     }
 

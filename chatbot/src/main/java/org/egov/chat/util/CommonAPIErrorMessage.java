@@ -58,8 +58,8 @@ public class CommonAPIErrorMessage {
                 resetConversation(chatNode);
             chatNode.setResponse(getErrorMessageResponse(chatNode.getConversationState().getLocale()));
             kafkaTemplate.send(topicNamePrefix + localizedTopic, chatNode);
-        } catch (Exception ex) {
-            log.error("error occurred while sending user error response", ex);
+        } catch (Exception e) {
+            log.error("error occurred while sending user error response : " + e.getLocalizedMessage());
         }
     }
 }

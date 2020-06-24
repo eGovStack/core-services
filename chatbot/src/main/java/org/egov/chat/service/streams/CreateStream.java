@@ -78,7 +78,7 @@ public class CreateStream {
 
                 return responseNodes;
             } catch (Exception e) {
-                log.error("error in create stream", e);
+                log.error("error in create stream" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

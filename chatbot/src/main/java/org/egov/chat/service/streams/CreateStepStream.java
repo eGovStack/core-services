@@ -74,7 +74,7 @@ public class CreateStepStream extends CreateStream {
 
                 return Collections.singletonList(chatNode);
             } catch (Exception e) {
-                log.error("step stream error", e);
+                log.error("step stream error" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

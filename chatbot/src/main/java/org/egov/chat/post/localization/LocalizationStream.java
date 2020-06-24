@@ -59,7 +59,7 @@ public class LocalizationStream {
             try {
                 return Collections.singletonList(localizeMessage(chatNode));
             } catch (Exception e) {
-                log.error("error in localization stream", e);
+                log.error("error in localization stream : " + e.getLocalizedMessage());
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                 return Collections.emptyList();
             }

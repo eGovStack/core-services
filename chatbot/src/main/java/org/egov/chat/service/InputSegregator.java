@@ -55,7 +55,7 @@ public class InputSegregator {
 
             kafkaTemplate.send(topic, consumerRecordKey, chatNode);
         } catch (Exception e) {
-            log.error("error in input segregator", e);
+            log.error("error in input segregator" + e.getLocalizedMessage());
             if (chatNode != null)
                 commonAPIErrorMessage.resetFlowDuetoError(chatNode);
         }

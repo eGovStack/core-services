@@ -81,7 +81,7 @@ public class CreateBranchStream extends CreateStream {
 
                     return Collections.singletonList(chatNode);
                 } catch (Exception e) {
-                    log.error("error in branch stream", e);
+                    log.error("error in branch stream" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                     commonAPIErrorMessage.resetFlowDuetoError(chatNode);
                     return Collections.emptyList();
                 }
@@ -112,8 +112,8 @@ public class CreateBranchStream extends CreateStream {
                     if (answer.equalsIgnoreCase(branchName)) {
                         return true;
                     }
-                } catch (Exception ex) {
-                    log.error("error in createbranch stream", ex);
+                } catch (Exception e) {
+                    log.error("error in createbranch stream" + e.getLocalizedMessage() + " for Node : " + config.get("name").asText());
                 }
                 return false;
             };
