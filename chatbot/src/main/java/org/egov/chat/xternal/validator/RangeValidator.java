@@ -10,12 +10,12 @@ public class RangeValidator implements CustomValidator {
     @Override
     public boolean isValid(ObjectNode params) throws Exception {
 
-        double min = Double.parseDouble(params.get("min").asText());
-        double max = Double.parseDouble(params.get("max").asText());
+        double min = Double.parseDouble(params.get("min").asText().trim());
+        double max = Double.parseDouble(params.get("max").asText().trim());
 
         String rawInput = params.get("rawInput").asText();
 
-        double inputNumber = Double.parseDouble(rawInput);
+        double inputNumber = Double.parseDouble(rawInput.trim());
 
         if(inputNumber >= min && inputNumber <= max)
             return true;
