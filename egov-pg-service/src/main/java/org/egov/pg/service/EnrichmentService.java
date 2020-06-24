@@ -41,7 +41,7 @@ public class EnrichmentService {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
 
-        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId(), transaction.getBusinessDetail());
+        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId(), transaction.getBusinessService());
         transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, bankAccount.getAccountNumber()));
 
         // Generate ID from ID Gen service and assign to txn object
@@ -94,7 +94,7 @@ public class EnrichmentService {
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
-        newTxn.setBusinessDetail(currentTxnStatus.getBusinessDetail());
+        newTxn.setBusinessService(currentTxnStatus.getBusinessService());
 
     }
 

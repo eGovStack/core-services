@@ -26,10 +26,10 @@ import java.util.Map;
 @ToString
 public class Transaction {
 	
-	@JsonProperty("businessDetail")
+	@JsonProperty("businessService")
 	@NotNull
 	@Size(min = 1)
-	private String businessDetail;
+	private String businessService;
 
     @JsonProperty("tenantId")
     @NotNull
