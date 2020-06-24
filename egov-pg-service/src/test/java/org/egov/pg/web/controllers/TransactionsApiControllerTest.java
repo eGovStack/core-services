@@ -83,6 +83,7 @@ public class TransactionsApiControllerTest {
                 .gateway("AXIS")
                 .module("PT")
                 .tenantId("pb")
+                .businessService("pg")
                 .consumerCode("PT-21055")
                 .taxAndPayments(Collections.singletonList(taxAndPayment))
                 .callbackUrl("http://2a91377b.ngrok.io/pg-service/payments/v1/_update")
@@ -106,6 +107,7 @@ public class TransactionsApiControllerTest {
                 .gateway("AXIS")
                 .module("PT")
                 .tenantId("pb")
+                .businessService("pg")
                 .callbackUrl("http://2a91377b.ngrok.io/pg-service/payments/v1/_update")
                 .user(user).build();
         when(transactionService.initiateTransaction(any(TransactionRequest.class))).thenReturn(transaction);
