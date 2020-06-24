@@ -29,10 +29,10 @@ public class BankAccountRepository {
         this.appProperties = appProperties;
     }
 
-    public BankAccount getBankAccountsById( RequestInfo requestInfo, String tenantId, String businessDetail) {
+    public BankAccount getBankAccountsById( RequestInfo requestInfo, String tenantId, String businessService) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("tenantId", tenantId);
-        queryParams.add("businessDetail", businessDetail);
+        queryParams.add("businessService", businessService);
 
         String uri = UriComponentsBuilder
                 .fromHttpUrl(appProperties.getBankAccountHost())
