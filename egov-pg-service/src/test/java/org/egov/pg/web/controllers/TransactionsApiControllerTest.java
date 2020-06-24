@@ -56,8 +56,8 @@ public class TransactionsApiControllerTest {
     @Before
     public void setUp() {
         user = User.builder().userName("USER001").mobileNumber("9XXXXXXXXX").name("XYZ").tenantId("pb").emailId("").build();
-        requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", null);
-
+        //requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", null);
+        requestInfo = new RequestInfo("apiId", "ver", 0L, "action", "did", "key", "msgId", "authToken", "correlationId", null);
     }
 
 
@@ -125,7 +125,7 @@ public class TransactionsApiControllerTest {
         mockMvc.perform(post("/transaction/v1/_search").param("txnId", "PT_001").contentType
                 (MediaType
                         .APPLICATION_JSON_UTF8).content(mapper.writeValueAsString(requestInfo)))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TransactionsApiControllerTest {
 
         mockMvc.perform(post("/transaction/v1/_update").contentType(MediaType
                 .APPLICATION_JSON_UTF8).content(mapper.writeValueAsString(requestInfo)))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError());
     }
 
 }
