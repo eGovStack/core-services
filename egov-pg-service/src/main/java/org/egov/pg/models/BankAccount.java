@@ -39,6 +39,8 @@
  */
 package org.egov.pg.models;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -59,5 +61,7 @@ public class BankAccount {
     private ChartOfAccount chartOfAccount;
 
     private BankBranch bankBranch;
+    
+	private String businessService;
 
 }

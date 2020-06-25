@@ -24,7 +24,7 @@ import java.util.Map;
 @Builder
 @ToString
 public class Transaction {
-	
+
 	@JsonProperty("businessService")
 	@NotNull
 	@Size(min = 1)
