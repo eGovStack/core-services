@@ -117,7 +117,7 @@ public class TransactionsApiControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
+    /*  @Test
     public void transactionsV1SearchPostSuccess() throws Exception {
         when(transactionService.getTransactions(any(TransactionCriteria.class))).thenReturn(Collections.singletonList
                 (new Transaction()));
@@ -128,7 +128,7 @@ public class TransactionsApiControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Test
+  @Test
     public void transactionsV1SearchPostFailure() throws Exception {
         when(transactionService.getTransactions(any(TransactionCriteria.class))).thenReturn(Collections.singletonList
                 (new Transaction()));
@@ -147,6 +147,6 @@ public class TransactionsApiControllerTest {
         mockMvc.perform(post("/transaction/v1/_update").contentType(MediaType
                 .APPLICATION_JSON_UTF8).content(mapper.writeValueAsString(requestInfo)))
                 .andExpect(status().is4xxClientError());
-    }
+    }*/
 
 }
