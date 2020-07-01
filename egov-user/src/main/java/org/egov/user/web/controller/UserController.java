@@ -155,12 +155,12 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/users/_updatenovalidate")
-	public UserDetailResponse updateUserWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
+	public UpdateResponse updateUserWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
 														  @RequestHeader HttpHeaders headers) {
 		User user = createUserRequest.toDomain(false);
 		user.setMobileValidationMandatory(isMobileValidationRequired(headers));
 		final User updatedUser = userService.updateWithoutOtpValidation( user,createUserRequest.getRequestInfo());
-		return createResponse(updatedUser);
+		return createResponseforUpdate(updatedUser);
 	}
 
 	/**
@@ -170,11 +170,11 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/profile/_update")
-	public UserDetailResponse patch(@RequestBody final @Valid CreateUserRequest createUserRequest) {
+	public UpdateResponse patch(@RequestBody final @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Profile Update Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(false);
 		final User updatedUser = userService.partialUpdate(user,createUserRequest.getRequestInfo());
-		return createResponse(updatedUser);
+		return createResponseforUpdate(updatedUser);
 	}
 
 	private UserDetailResponse createResponse(User newUser) {
