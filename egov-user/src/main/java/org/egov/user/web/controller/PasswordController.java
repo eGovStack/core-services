@@ -20,33 +20,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PasswordController {
 
-    private UserService userService;
+	private UserService userService;
 
-    public PasswordController(UserService userService) {
-        this.userService = userService;
-    }
+	public PasswordController(UserService userService) {
+		this.userService = userService;
+	}
 
-    /**
-     * end-point to update the password for loggedInUser
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping("/_update")
-    public UpdatePasswordResponse updatePassword(@RequestBody @Valid LoggedInUserUpdatePasswordRequest request) {
-        userService.updatePasswordForLoggedInUser(request.toDomain());
-        return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
-    }
+	/**
+	 * end-point to update the password for loggedInUser
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/_update")
+	public UpdatePasswordResponse updatePassword(@RequestBody @Valid LoggedInUserUpdatePasswordRequest request) {
+		userService.updatePasswordForLoggedInUser(request.toDomain());
+		return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
+	}
 
-    /**
-     * end-point to update the password for non logged in user
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping("/nologin/_update")
-    public UpdatePasswordResponse updatePasswordForNonLoggedInUser(@RequestBody @Valid NonLoggedInUserUpdatePasswordRequest request) {
-        userService.updatePasswordForNonLoggedInUser(request.toDomain());
-        return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
-    }
+	/**
+	 * end-point to update the password for non logged in user
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/nologin/_update")
+	public UpdatePasswordResponse updatePasswordForNonLoggedInUser(@RequestBody @Valid NonLoggedInUserUpdatePasswordRequest request) {
+		userService.updatePasswordForNonLoggedInUser(request.toDomain(),request.getRequestInfo());
+
+		return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
+	}
 }

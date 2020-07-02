@@ -1,6 +1,8 @@
 package org.egov.user.web.errorhandlers;
 
 
+
+
 import org.egov.user.web.contract.factory.ResponseInfoFactory;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ErrorField;
@@ -14,72 +16,72 @@ import org.springframework.validation.FieldError;
 
 @Component
 public class ErrorHandler {
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
-    public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getErrorResponseEntityForMissingRequestInfo(BindingResult bindingResult,
-                                                                                                                       RequestInfo requestInfo) {
-        org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
-        error.setCode(400);
-        error.setMessage("Missing RequestBody Fields");
-        error.setDescription("Error While Binding RequestBody");
+	public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getErrorResponseEntityForMissingRequestInfo(BindingResult bindingResult,
+			RequestInfo requestInfo) {
+		org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
+		error.setCode(400);
+		error.setMessage("Missing RequestBody Fields");
+		error.setDescription("Error While Binding RequestBody");
+	
+		if (bindingResult.hasFieldErrors()) {
+			for (FieldError fieldError : bindingResult.getFieldErrors()) {
+				ErrorField errorField=new ErrorField();
+				errorField.setCode("400");
+				errorField.setMessage("Missing RequestBody Fields");
+				errorField.setField(fieldError.getField());
+				error.getFields().add(errorField);
+			}
+		}
 
-        if (bindingResult.hasFieldErrors()) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                ErrorField errorField = new ErrorField();
-                errorField.setCode("400");
-                errorField.setMessage("Missing RequestBody Fields");
-                errorField.setField(fieldError.getField());
-                error.getFields().add(errorField);
-            }
-        }
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
+		org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
+		errorResponse.setResponseInfo(responseInfo);
+		errorResponse.setError(error);
 
-        org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
-        errorResponse.setResponseInfo(responseInfo);
-        errorResponse.setError(error);
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+	public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getErrorResponseEntityForMissingParameters(BindingResult bindingResult,
+			RequestInfo requestInfo) {
+		org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
+		error.setCode(400);
+		error.setMessage("Missing Required Query Parameter");
+		error.setDescription("Error While Binding ModelAttribute");
+		if (bindingResult.hasFieldErrors()) {
+			for (FieldError fieldError : bindingResult.getFieldErrors()) {
+				ErrorField errorField=new ErrorField();
+				errorField.setCode("400");
+				errorField.setMessage("Missing RequestBody Fields");
+				errorField.setField(fieldError.getField());
+				error.getFields().add(errorField);
+			}
+		}
 
-    public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getErrorResponseEntityForMissingParameters(BindingResult bindingResult,
-                                                                                                                      RequestInfo requestInfo) {
-        org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
-        error.setCode(400);
-        error.setMessage("Missing Required Query Parameter");
-        error.setDescription("Error While Binding ModelAttribute");
-        if (bindingResult.hasFieldErrors()) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                ErrorField errorField = new ErrorField();
-                errorField.setCode("400");
-                errorField.setMessage("Missing RequestBody Fields");
-                errorField.setField(fieldError.getField());
-                error.getFields().add(errorField);
-            }
-        }
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
+		org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
+		errorResponse.setResponseInfo(responseInfo);
+		errorResponse.setError(error);
 
-        org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
-        errorResponse.setResponseInfo(responseInfo);
-        errorResponse.setError(error);
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+	public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getResponseEntityForUnexpectedErrors(RequestInfo requestInfo) {
+		org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
+		error.setCode(500);
+		error.setMessage("Internal Server Error");
+		error.setDescription("Unexpected Error Occurred");
 
-    public ResponseEntity<org.egov.common.contract.response.ErrorResponse> getResponseEntityForUnexpectedErrors(RequestInfo requestInfo) {
-        org.egov.common.contract.response.Error error = new org.egov.common.contract.response.Error();
-        error.setCode(500);
-        error.setMessage("Internal Server Error");
-        error.setDescription("Unexpected Error Occurred");
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
+		org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
+		errorResponse.setResponseInfo(responseInfo);
+		errorResponse.setError(error);
 
-        org.egov.common.contract.response.ErrorResponse errorResponse = new org.egov.common.contract.response.ErrorResponse();
-        errorResponse.setResponseInfo(responseInfo);
-        errorResponse.setError(error);
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }
