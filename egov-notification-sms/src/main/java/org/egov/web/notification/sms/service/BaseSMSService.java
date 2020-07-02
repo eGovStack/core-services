@@ -43,6 +43,8 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
     @PostConstruct
     public void init() {
         List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
+        for(HttpMessageConverter<?> cc:converters)
+            System.out.println(cc.getClass()+"    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         converters.remove(converters.stream().filter(c -> c.getClass().equals(MappingJackson2HttpMessageConverter.class)).findFirst().get());
         converters.add(new MappingJackson2HttpMessageConverter() {
             @Override
