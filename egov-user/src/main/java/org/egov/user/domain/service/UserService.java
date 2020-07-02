@@ -211,7 +211,7 @@ public class UserService {
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
-        }else {
+        } else {
             validatePassword(user.getPassword());
         }
         user.setPassword(encryptPwd(user.getPassword()));
@@ -256,7 +256,7 @@ public class UserService {
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
             user.setMobileNumber(user.getUsername());
-        if(!isCitizenLoginOtpBased)
+        if (!isCitizenLoginOtpBased)
             validatePassword(user.getPassword());
         user.setRoleToCitizen();
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
@@ -633,6 +633,23 @@ public class UserService {
 		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
 			throw new CustomException(errorMap);
 		}
+    }
+
+
+    public void validatePassword(String password) {
+        Map<String, String> errorMap = new HashMap<>();
+        if (!StringUtils.isEmpty(password)) {
+            if (password.length() < pwdMinLength || password.length() > pwdMaxLength)
+                errorMap.put("INVALID_PWD_LENGTH", "Password must be of minimum: " + pwdMinLength + " and maximum: " + pwdMaxLength + " characters.");
+            Pattern p = Pattern.compile(pwdRegex);
+            Matcher m = p.matcher(password);
+            if (!m.find()) {
+                errorMap.put("INVALID_PWD_PATTERN", "Password MUST HAVE: Atleast one digit, one upper case, one lower case, one special character (@#$%) and MUST NOT contain any spaces");
+            }
+        }
+        if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+            throw new CustomException(errorMap);
+        }
     }
 
 

@@ -16,6 +16,10 @@ import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.*;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.apache.commons.lang3.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.config.TracerConfiguration;
+import org.egov.tracer.model.CustomException;
 import org.egov.user.security.CustomAuthenticationKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
