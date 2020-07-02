@@ -42,9 +42,8 @@
     "otpReference": null,
     "tenantId": null,
     "roles": [
-      {
-        "code": "EMPLOYEE"
-      }
+    {"code" : "EMPLOYEE"}
+    
     ]
   }
 }

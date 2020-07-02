@@ -16,75 +16,75 @@ import java.util.List;
 @ToString
 public class UserSearchRequest {
 
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
 
-    @JsonProperty("id")
-    private List<Long> id;
+	@JsonProperty("id")
+	private List<Long> id;
+	
+	@JsonProperty("uuid")
+	private List<String> uuid;
 
-    @JsonProperty("uuid")
-    private List<String> uuid;
+	@JsonProperty("userName")
+	private String userName;
 
-    @JsonProperty("userName")
-    private String userName;
+	@JsonProperty("name")
+	private String name;
 
-    @JsonProperty("name")
-    private String name;
+	@JsonProperty("mobileNumber")
+	private String mobileNumber;
 
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
+	@JsonProperty("aadhaarNumber")
+	private String aadhaarNumber;
 
-    @JsonProperty("aadhaarNumber")
-    private String aadhaarNumber;
+	@JsonProperty("pan")
+	private String pan;
 
-    @JsonProperty("pan")
-    private String pan;
+	@JsonProperty("emailId")
+	private String emailId;
 
-    @JsonProperty("emailId")
-    private String emailId;
+	@JsonProperty("fuzzyLogic")
+	private boolean fuzzyLogic;
 
-    @JsonProperty("fuzzyLogic")
-    private boolean fuzzyLogic;
+	@JsonProperty("active")
+	@Setter
+	private Boolean active;
 
-    @JsonProperty("active")
-    @Setter
-    private Boolean active;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @JsonProperty("tenantId")
-    private String tenantId;
+	@JsonProperty("pageSize")
+	private int pageSize;
 
-    @JsonProperty("pageSize")
-    private int pageSize;
+	@JsonProperty("pageNumber")
+	private int pageNumber = 0;
 
-    @JsonProperty("pageNumber")
-    private int pageNumber = 0;
+	@JsonProperty("sort")
+	private List<String> sort = Collections.singletonList("name");
 
-    @JsonProperty("sort")
-    private List<String> sort = Collections.singletonList("name");
+	@JsonProperty("userType")
+	private String userType;
 
-    @JsonProperty("userType")
-    private String userType;
+	@JsonProperty("roleCodes")
+	private List<String> roleCodes;
 
-    @JsonProperty("roleCodes")
-    private List<String> roleCodes;
-
-    public UserSearchCriteria toDomain() {
-        return UserSearchCriteria.builder()
-                .id(id)
-                .userName(userName)
-                .name(name)
-                .mobileNumber(mobileNumber)
+	public UserSearchCriteria toDomain() {
+		return UserSearchCriteria.builder()
+				.id(id)
+				.userName(userName)
+				.name(name)
+				.mobileNumber(mobileNumber)
 //				.pan(pan)
-                .emailId(emailId)
-                .fuzzyLogic(fuzzyLogic)
-                .active(active)
-                .limit(pageSize)
-                .offset(pageNumber)
-                .sort(sort)
-                .type(UserType.fromValue(userType))
-                .tenantId(tenantId)
-                .roleCodes(roleCodes)
-                .uuid(uuid)
-                .build();
-    }
+				.emailId(emailId)
+				.fuzzyLogic(fuzzyLogic)
+				.active(active)
+				.limit(pageSize)
+				.offset(pageNumber)
+				.sort(sort)
+				.type(UserType.fromValue(userType))
+				.tenantId(tenantId)
+				.roleCodes(roleCodes)
+				.uuid(uuid)
+				.build();
+	}
 }
