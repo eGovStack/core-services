@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class EncryptionDecryptionUtil
-{
+public class EncryptionDecryptionUtil {
     private EncryptionService encryptionService;
     @Autowired
     private AuditService auditService;
@@ -45,99 +44,90 @@ public class EncryptionDecryptionUtil
         this.encryptionService = encryptionService;
     }
 
-    public <T>T encryptObject(Object objectToEncrypt, String key,Class<T> classType)
-    {
+    public <T> T encryptObject(Object objectToEncrypt, String key, Class<T> classType) {
         try {
-            if(objectToEncrypt==null)
-            {
+            if (objectToEncrypt == null) {
                 return null;
             }
-            T encryptedObject= encryptionService.encryptJson(objectToEncrypt,key,stateLevelTenantId,classType);
-            if(encryptedObject==null)
-            {
-                throw new CustomException("ENCRYPTION_NULL_ERROR","Null object found on performing encryption");
+            T encryptedObject = encryptionService.encryptJson(objectToEncrypt, key, stateLevelTenantId, classType);
+            if (encryptedObject == null) {
+                throw new CustomException("ENCRYPTION_NULL_ERROR", "Null object found on performing encryption");
             }
             return encryptedObject;
         } catch (IOException | HttpClientErrorException | HttpServerErrorException | ResourceAccessException e) {
-            log.error("Error occurred while encrypting",e);
-            throw new CustomException("ENCRYPTION_ERROR","Error occurred in encryption process");
-        }catch (Exception e){
-            log.error("Unknown Error occurred while encrypting",e);
-            throw new CustomException("UNKNOWN_ERROR","Unknown error occurred in encryption process");
+            log.error("Error occurred while encrypting", e);
+            throw new CustomException("ENCRYPTION_ERROR", "Error occurred in encryption process");
+        } catch (Exception e) {
+            log.error("Unknown Error occurred while encrypting", e);
+            throw new CustomException("UNKNOWN_ERROR", "Unknown error occurred in encryption process");
         }
     }
 
-    public <E,P>P decryptObject(Object objectToDecrypt, String key, Class<E> classType, RequestInfo requestInfo)
-    {
+    public <E, P> P decryptObject(Object objectToDecrypt, String key, Class<E> classType, RequestInfo requestInfo) {
 
         try {
-            boolean objectToDecryptNotList=false;
-            if(objectToDecrypt==null)
-            {
+            boolean objectToDecryptNotList = false;
+            if (objectToDecrypt == null) {
                 return null;
+            } else if (requestInfo == null || requestInfo.getUserInfo() == null) {
+                User userInfo = User.builder().uuid("no uuid").type("EMPLOYEE").build();
+                requestInfo = RequestInfo.builder().userInfo(userInfo).build();
             }
-            else if(requestInfo==null || requestInfo.getUserInfo()==null) {
-                User userInfo=User.builder().uuid("no uuid").type("EMPLOYEE").build();
-                requestInfo=RequestInfo.builder().userInfo(userInfo).build();
+            if (!(objectToDecrypt instanceof List)) {
+                objectToDecryptNotList = true;
+                objectToDecrypt = Collections.singletonList(objectToDecrypt);
             }
-            if(!(objectToDecrypt instanceof List))
-            {
-                objectToDecryptNotList=true;
-                objectToDecrypt= Collections.singletonList(objectToDecrypt);
-            }
-            final User encrichedUserInfo=getEncrichedandCopiedUserInfo(requestInfo.getUserInfo());
+            final User encrichedUserInfo = getEncrichedandCopiedUserInfo(requestInfo.getUserInfo());
             key = getKeyToDecrypt(objectToDecrypt, encrichedUserInfo);
-            P decryptedObject =  (P)encryptionService.decryptJson(objectToDecrypt,key,encrichedUserInfo,classType);
-            if(decryptedObject==null)
-            {
-                throw new CustomException("DECRYPTION_NULL_ERROR","Null object found on performing decryption");
+            P decryptedObject = (P) encryptionService.decryptJson(objectToDecrypt, key, encrichedUserInfo, classType);
+            if (decryptedObject == null) {
+                throw new CustomException("DECRYPTION_NULL_ERROR", "Null object found on performing decryption");
             }
             auditTheDecryptRequest(objectToDecrypt, key, encrichedUserInfo);
-            if(objectToDecryptNotList)
-            {
-                decryptedObject=(P)((List<E>)decryptedObject).get(0);
+            if (objectToDecryptNotList) {
+                decryptedObject = (P) ((List<E>) decryptedObject).get(0);
             }
             return decryptedObject;
         } catch (IOException | HttpClientErrorException | HttpServerErrorException | ResourceAccessException e) {
-            log.error("Error occurred while decrypting",e);
-            throw new CustomException("DECRYPTION_SERVICE_ERROR","Error occurred in decryption process");
-        } catch (Exception e){
-            log.error("Unknown Error occurred while decrypting",e);
-            throw new CustomException("UNKNOWN_ERROR","Unknown error occurred in decryption process");
+            log.error("Error occurred while decrypting", e);
+            throw new CustomException("DECRYPTION_SERVICE_ERROR", "Error occurred in decryption process");
+        } catch (Exception e) {
+            log.error("Unknown Error occurred while decrypting", e);
+            throw new CustomException("UNKNOWN_ERROR", "Unknown error occurred in decryption process");
         }
     }
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
         org.egov.user.domain.model.User userToDecrypt = null;
-        if(objectToDecrypt instanceof List) {
-            if(((List) objectToDecrypt).isEmpty())
+        if (objectToDecrypt instanceof List) {
+            if (((List) objectToDecrypt).isEmpty())
                 return false;
-            if(((List) objectToDecrypt).size() > 1)
+            if (((List) objectToDecrypt).size() > 1)
                 return false;
             userToDecrypt = (org.egov.user.domain.model.User) ((List) objectToDecrypt).get(0);
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of User");
         }
 
-        if((userToDecrypt.getUuid()!=null) && userToDecrypt.getUuid().equalsIgnoreCase(userInfo.getUuid()))
+        if ((userToDecrypt.getUuid() != null) && userToDecrypt.getUuid().equalsIgnoreCase(userInfo.getUuid()))
             return true;
         else
             return false;
     }
 
     private boolean isDecryptionForIndividualUser(Object objectToDecrypt) {
-        if(((List) objectToDecrypt).size() == 1)
+        if (((List) objectToDecrypt).size() == 1)
             return true;
         else
             return false;
     }
 
     public String getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
-        if(!abacEnabled)
+        if (!abacEnabled)
             return "ALL_ACCESS";
-        else if(isUserDecryptingForSelf(objectToDecrypt, userInfo))
+        else if (isUserDecryptingForSelf(objectToDecrypt, userInfo))
             return "UserListSelf";
-        else if(isDecryptionForIndividualUser(objectToDecrypt))
+        else if (isDecryptionForIndividualUser(objectToDecrypt))
             return "UserListOtherIndividual";
         else
             return "UserListOtherBulk";
@@ -145,11 +135,11 @@ public class EncryptionDecryptionUtil
 
     public void auditTheDecryptRequest(Object objectToDecrypt, String key, User userInfo) {
         String purpose;
-        if(!abacEnabled)
-            purpose="AbacDisabled";
-        else if(isUserDecryptingForSelf(objectToDecrypt, userInfo))
+        if (!abacEnabled)
+            purpose = "AbacDisabled";
+        else if (isUserDecryptingForSelf(objectToDecrypt, userInfo))
             purpose = "Self";
-        else if(isDecryptionForIndividualUser(objectToDecrypt))
+        else if (isDecryptionForIndividualUser(objectToDecrypt))
             purpose = "SingleSearchResult";
         else
             purpose = "BulkSearchResult";
@@ -157,7 +147,7 @@ public class EncryptionDecryptionUtil
         ObjectNode abacParams = objectMapper.createObjectNode();
         abacParams.set("key", TextNode.valueOf(key));
 
-        List<String> decryptedUserUuid =  (List<String>) ((List) objectToDecrypt).stream()
+        List<String> decryptedUserUuid = (List<String>) ((List) objectToDecrypt).stream()
                 .map(user -> ((org.egov.user.domain.model.User) user).getUuid()).collect(Collectors.toList());
 
         ObjectNode auditData = objectMapper.createObjectNode();
@@ -166,27 +156,23 @@ public class EncryptionDecryptionUtil
         auditService.audit(userInfo.getUuid(), System.currentTimeMillis(), purpose, abacParams, auditData);
     }
 
-    private User getEncrichedandCopiedUserInfo(User userInfo)
-    {
-        List<Role>newRoleList=new ArrayList<>();
-        if(userInfo.getRoles()!=null)
-        {
-            for(Role role:userInfo.getRoles())
-            {
-                Role newRole=Role.builder().code(role.getCode()).name(role.getName()).id(role.getId()).build();
+    private User getEncrichedandCopiedUserInfo(User userInfo) {
+        List<Role> newRoleList = new ArrayList<>();
+        if (userInfo.getRoles() != null) {
+            for (Role role : userInfo.getRoles()) {
+                Role newRole = Role.builder().code(role.getCode()).name(role.getName()).id(role.getId()).build();
                 newRoleList.add(newRole);
             }
         }
 
-        if(newRoleList.stream().filter(role -> (role.getCode()!=null)&&(userInfo.getType()!=null) && role.getCode().equalsIgnoreCase(userInfo.getType())).count()==0)
-        {
-            Role roleFromtype=Role.builder().code(userInfo.getType()).name(userInfo.getType()).build();
+        if (newRoleList.stream().filter(role -> (role.getCode() != null) && (userInfo.getType() != null) && role.getCode().equalsIgnoreCase(userInfo.getType())).count() == 0) {
+            Role roleFromtype = Role.builder().code(userInfo.getType()).name(userInfo.getType()).build();
             newRoleList.add(roleFromtype);
         }
 
-        User newuserInfo=User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
-                        .type(userInfo.getType()).mobileNumber(userInfo.getMobileNumber()).emailId(userInfo.getEmailId())
-                        .roles(newRoleList).tenantId(userInfo.getTenantId()).uuid(userInfo.getUuid()).build();
-        return  newuserInfo;
+        User newuserInfo = User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
+                .type(userInfo.getType()).mobileNumber(userInfo.getMobileNumber()).emailId(userInfo.getEmailId())
+                .roles(newRoleList).tenantId(userInfo.getTenantId()).uuid(userInfo.getUuid()).build();
+        return newuserInfo;
     }
 }

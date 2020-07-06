@@ -1,4 +1,5 @@
 package org.egov.user.domain.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
