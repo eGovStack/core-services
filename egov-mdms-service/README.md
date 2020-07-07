@@ -22,7 +22,7 @@ The config JSON files to be written should follow the listed rules
 
 ```json
 {
-  "tenantId": "pb",
+  "tenantId": "test",
   "moduleName": "BillingService",
   "{$MasterName}":[ ]
 }
@@ -33,7 +33,7 @@ Example Config JSON for “Billing Service”
 
 ```json
 {
-  "tenantId": "pb",
+  "tenantId": "test",
   "moduleName": "BillingService",
  "BusinessService": 
  [
@@ -54,7 +54,7 @@ Example Config JSON for “Billing Service”
 1. Data folder parallel to docs (https://github.com/egovernments/egov-mdms-data/tree/master/data/pb). 
 2. Under data folder there will be a folder `<state>` which is a state specific master folder.
 3. Under `<state>` folder there will `<tenant>` folders where ulb specific master data will be checked in. for example `pb.testing`
-4. Each module will have one file each for statewide and ulb wise master data. Keep the file name as module name itself.
+4. Each module will have one file each for state wise and ulb wise master data. Keep the file name as module name itself.
 
 
 #### Query Construction

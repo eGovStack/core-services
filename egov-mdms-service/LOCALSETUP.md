@@ -18,7 +18,7 @@ Each master has three key parameters `tenantId`, `moduleName`, `masterName`. A s
 
 ```json
 {
-  "tenantId": "pb",
+  "tenantId": "test",
   "moduleName": "common-masters",
   "OwnerType": [
     {
@@ -37,4 +37,4 @@ Each master has three key parameters `tenantId`, `moduleName`, `masterName`. A s
 }
 ```
 
-Here `tenantId=pb`, `moduleName=common-masters`, `masterName=OwnerType`
+Here `tenantId=test`, `moduleName=common-masters`, `masterName=OwnerType`
