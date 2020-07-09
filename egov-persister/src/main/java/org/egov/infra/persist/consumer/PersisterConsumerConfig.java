@@ -17,7 +17,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.kafka.listener.config.ContainerProperties;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -72,7 +72,7 @@ public class PersisterConsumerConfig {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties().setErrorHandler(stoppingErrorHandler);
+        factory.setErrorHandler(stoppingErrorHandler);
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(30000);
 
@@ -81,18 +81,19 @@ public class PersisterConsumerConfig {
 
     }
 
-    @Bean
-    public KafkaMessageListenerContainer<String, String> container() throws Exception {
-        ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
-        // set more properties
-        properties.setPauseEnabled(true);
-        properties.setPauseAfter(0);
-        properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
-        properties.setMessageListener(indexerMessageListener);
 
-        log.info("Custom KafkaListenerContainer built...");
+    @Bean 
+    public KafkaMessageListenerContainer<String, String> container() throws Exception { 
+    	 ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
+    	 // set more properties
+//    	 properties.setPauseEnabled(true);
+//    	 properties.setPauseAfter(0);
+//    	 properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
+    	 properties.setMessageListener(indexerMessageListener);
+    	 
+         log.info("Custom KafkaListenerContainer built...");
 
-        return new KafkaMessageListenerContainer<>(consumerFactory(), properties);
+         return new KafkaMessageListenerContainer<>(consumerFactory(), properties); 
     }
 
     @Bean
