@@ -102,6 +102,8 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 
     protected boolean isResponseValidated(ResponseEntity<?> response) {
         String responseString = response.getBody().toString();
+        System.out.println("\n\nresponseString:"+responseString+"\n\n");
+        System.out.println("\n\nsmsProperties.isVerifyResponse():"+smsProperties.isVerifyResponse()+"\n\n");
         if (smsProperties.isVerifyResponse() && !responseString.contains(smsProperties.getVerifyResponseContains())) {
             return false;
         }
