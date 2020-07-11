@@ -53,10 +53,10 @@ public class SMSProperties {
     @Value("#{'${sms.success.codes}'.split(',')}")
     protected List<String> smsSuccessCodes;
 
-    @Value("${sms.verify.response:false}")
+    @Value("${sms.verify.response}")
     private boolean verifyResponse;
 
-    @Value("${sms.verify.responseContains:}")
+    @Value("${sms.verify.responseContains}")
     private String verifyResponseContains;
 
 
