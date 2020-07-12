@@ -3,10 +3,10 @@
 The egov-user service is core service used to store and retrieve user data information and provide authentication.
 
 ### Functionality
-- store, update and search user data
-- provide authentication
-- provide login,logout functionality into DIGIT platform
-- store user data PIIs in encrypted form
+- Store, update and search user data
+- Provide authentication
+- Provide login,logout functionality into DIGIT platform
+- Store user data PIIs in encrypted form
 
 
 ### Project Structure 
@@ -32,4 +32,5 @@ The egov-user service is core service used to store and retrieve user data infor
  - /_logout - for logout and expire access token
  
  ### Resources
+- Granular details about the API's can be found in the [swagger api definition](https://github.com/egovernments/egov-services/blob/master/docs/egov-user/contracts/v1-1-0.yml) 
 - Postman collection for all the API's can be found in the [postman collection](https://www.getpostman.com/collections/d20800f5f085c9653482)
