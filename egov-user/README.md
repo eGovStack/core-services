@@ -8,6 +8,15 @@ The egov-user service is core service used to store and retrieve user data infor
 - Provide login,logout functionality into DIGIT platform
 - Store user data PIIs in encrypted form
 
+#### Requirements
+1. Prior Knowledge of Java/J2EE.
+2. Prior Knowledge of Spring Boot.
+3. Prior Knowledge of Spring Oauth2.
+4. Prior Knowledge of Radis cache.
+5. Prior Knowledge of REST APIs and related concepts like path parameters, headers, JSON etc.
+6. Prior knowledge of Git.
+7. Prior knowledge of Postgres.
+8. Advanced knowledge on how to operate JSON data would be an added advantage to understand the service.
 
 ### Project Structure 
 *Packages*
