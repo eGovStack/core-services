@@ -30,3 +30,6 @@ The egov-user service is core service used to store and retrieve user data infor
  - /password/nologin/_update- used to update password for non logged in users 
  - /oauth/token - provide access token for authentication
  - /_logout - for logout and expire access token
+ 
+ ### Resources
+- Postman collection for all the API's can be found in the [postman collection](https://www.getpostman.com/collections/d20800f5f085c9653482)
