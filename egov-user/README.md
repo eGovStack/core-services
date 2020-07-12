@@ -19,17 +19,17 @@ The egov-user service is core service used to store and retrieve user data infor
 
 
 ### Endpoints
- - /citizen/_create - specifically used for citizen account creation
- - /users/_createnovalidate - used for storing new user data
- - /_search - used to search active users based on search criteria
- - /v1/_search - used to search users based on search criteria
- - /_details - used to get user details from access_token
- - /users/_updatenovalidate - used to update existing user details
- - /profile/_update - used to let user update only his partial account details ex:- name, email and not sensitive fields ex:- roles, username
- - /password/_update - used to update password for logged in users
- - /password/nologin/_update- used to update password for non logged in users 
- - /oauth/token - provide access token for authentication
- - /_logout - for logout and expire access token
+ - `/citizen/_create` - specifically used for citizen account creation
+ - `/users/_createnovalidate` - used for storing new user data
+ - `/_search` - used to search active users based on search criteria
+ - `/v1/_search` - used to search users based on search criteria
+ - `/_details` - used to get user details from access_token
+ - `/users/_updatenovalidate` - used to update existing user details
+ - `/profile/_update` - used to let user update only his partial account details ex:- name, email and not sensitive fields ex:- roles, username
+ - `/password/_update` - used to update password for logged in users
+ - `/password/nologin/_update` - used to update password for non logged in users 
+ - `/oauth/token` - provide access token for authentication
+ - `/_logout` - for logout and expire access token
  
  ### Resources
 - Granular details about the API's can be found in the [swagger api definition](https://github.com/egovernments/egov-services/blob/master/docs/egov-user/contracts/v1-1-0.yml) 
