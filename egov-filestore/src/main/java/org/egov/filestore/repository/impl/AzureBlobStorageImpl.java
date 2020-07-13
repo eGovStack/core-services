@@ -123,7 +123,7 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 	 * list of strings. We aren't taking this up because this will cause high impact on UI.
 	 * TODO: Change comma separated string to list of strings and test it with UI once their changes are done.
 	 */
-	@Override
+	
 	public Map<String, String> getFiles(Map<String, String> mapOfIdAndFilePath) {
 		if(null == azureBlobClient)
 			azureBlobClient = azureFacade.getAzureClient();
@@ -191,6 +191,12 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 		}catch(Exception e) {
 			log.error("Exception while uploading the file: ",e);
 		}
+	}
+
+	@Override
+	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

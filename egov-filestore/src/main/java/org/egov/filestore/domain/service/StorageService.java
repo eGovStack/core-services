@@ -1,27 +1,30 @@
 package org.egov.filestore.domain.service;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
-import org.egov.filestore.domain.exception.EmptyFileUploadRequestException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.filestore.config.FileStoreConfig;
 import org.egov.filestore.domain.model.Artifact;
 import org.egov.filestore.domain.model.FileInfo;
 import org.egov.filestore.domain.model.FileLocation;
 import org.egov.filestore.domain.model.Resource;
 import org.egov.filestore.persistence.repository.ArtifactRepository;
 import org.egov.filestore.repository.CloudFilesManager;
+import org.egov.filestore.repository.impl.CloudFileMgrUtils;
+import org.egov.filestore.repository.impl.minio.MinioConfig;
+import org.egov.filestore.validator.StorageValidator;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,32 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StorageService {
 
-	@Value("${is.bucket.fixed}")
-	private Boolean isBucketFixed;
-
-	@Value("${fixed.bucketname}")
-	private String fixedBucketName;
-
-	@Value("${isS3Enabled}")
-	private Boolean isS3Enabled;
-
-	@Value("${isNfsStorageEnabled}")
-	private Boolean isNfsStorageEnabled;
+	@Autowired
+	private CloudFileMgrUtils util;
 	
-	@Value("${minio.enabled}")
-	private Boolean isMinioEnabled;
-
-	@Value("${isAzureStorageEnabled}")
-	private Boolean isAzureStorageEnabled;
-
-	@Value("${source.disk}")
-	private String diskStorage;
-
-	@Value("${source.s3}")
-	private String awsS3Source;
-
-	@Value("${source.azure.blob}")
-	private String azureBlobSource;
+	private FileStoreConfig configs;
 
 	@Autowired
 	private CloudFilesManager cloudFilesManager;
@@ -66,43 +47,92 @@ public class StorageService {
 	private ArtifactRepository artifactRepository;
 	private IdGeneratorService idGeneratorService;
 
+	private FileStoreConfig fileStoreConfig;
+
+	private StorageValidator storageValidator;
+	
+	private MinioConfig minioConfig;
+	
+	
+
 	@Autowired
-	public StorageService(ArtifactRepository artifactRepository, IdGeneratorService idGeneratorService) {
+	public StorageService(ArtifactRepository artifactRepository, IdGeneratorService idGeneratorService,
+			FileStoreConfig fileStoreConfig, StorageValidator storageValidator, FileStoreConfig configs, MinioConfig minioConfig) {
 		this.artifactRepository = artifactRepository;
 		this.idGeneratorService = idGeneratorService;
+		this.fileStoreConfig = fileStoreConfig;
+		this.storageValidator = storageValidator;
+		this.minioConfig = minioConfig;
+		this.configs = configs;
 	}
 
-	public List<String> save(List<MultipartFile> filesToStore, String module, String tag, String tenantId,
-			String inputStreamAsString) {
-		validateFilesToUpload(filesToStore, module, tag, tenantId);
+	public List<String> save(List<MultipartFile> filesToStore, String module, String tag, String tenantId, RequestInfo requestInfo) {
+
 		log.info(UPLOAD_MESSAGE, module, tag, filesToStore.size());
-		List<Artifact> artifacts = mapFilesToArtifacts(filesToStore, module, tag, tenantId, inputStreamAsString);
-		return this.artifactRepository.save(artifacts);
+		List<Artifact> artifacts = mapFilesToArtifact(filesToStore, module, tag, tenantId);
+		return this.artifactRepository.save(artifacts, requestInfo);
 	}
 
-	private void validateFilesToUpload(List<MultipartFile> filesToStore, String module, String tag, String tenantId) {
-		if (CollectionUtils.isEmpty(filesToStore)) {
-			throw new EmptyFileUploadRequestException(module, tag, tenantId);
-		}
-	}
-
-	private List<Artifact> mapFilesToArtifacts(List<MultipartFile> files, String module, String tag, String tenantId,
-			String inputStreamAsString) {
+	private List<Artifact> mapFilesToArtifact(List<MultipartFile> files, String module, String tag, String tenantId) {
 
 		final String folderName = getFolderName(module, tenantId);
-		return files.stream().map(file -> {
+		String inputStreamAsString = null;
+		List<Artifact> artifacts = new ArrayList<>();
+		Artifact artifact = null;
+		for (MultipartFile file : files) {
 			String fileName = folderName + System.currentTimeMillis() + file.getOriginalFilename();
-			//String fileName = file.getOriginalFilename();
+			// String fileName = file.getOriginalFilename();
 			String id = this.idGeneratorService.getId();
 			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, null);
-			return new Artifact(inputStreamAsString, file, fileLocation);
-		}).collect(Collectors.toList());
+			try {
+				inputStreamAsString = IOUtils.toString(file.getInputStream(), fileStoreConfig.getImageCharsetType());
+				artifact = Artifact.builder().fileContentInString(inputStreamAsString).multipartFile(file)
+						.fileLocation(fileLocation).build();
+				artifacts.add(artifact);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			storageValidator.validate(artifact);
+			
+			if (fileStoreConfig.getImageFormats().contains(FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename())))
+				setThumbnailImages(artifact);
+		}
+
+		return artifacts;
+	}
+
+	private void setThumbnailImages(Artifact artifact) {
+		
+		String completeName = artifact.getFileLocation().getFileName();
+		int index = completeName.indexOf('/');
+		String fileNameWithPath = completeName.substring(index + 1, completeName.length());
+
+		try {
+
+			String imagetype = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());
+			String inputStreamAsString = artifact.getFileContentInString();
+			if (fileStoreConfig.getImageFormats().contains(imagetype)) {
+
+				InputStream ipStreamForImg = IOUtils.toInputStream(inputStreamAsString, configs.getImageCharsetType());
+				Map<String, BufferedImage> mapOfImagesAndPaths = util.createVersionsOfImage(ipStreamForImg,
+						fileNameWithPath);
+				artifact.setThumbnailImages(mapOfImagesAndPaths);
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			log.error("EG_FILESTORE_INPUT_ERROR", e);
+			throw new CustomException("EG_FILESTORE_INPUT_ERROR", "Failed to read input stream from multipart file");
+		}
+
 	}
 
 	private String getFolderName(String module, String tenantId) {
 
 		Calendar calendar = Calendar.getInstance();
-		return getBucketName(tenantId, calendar) + "/" + getFolderName(module, tenantId, calendar);
+		return minioConfig.getBucketName() + "/" + getFolderName(module, tenantId, calendar);
 	}
 
 	public Resource retrieve(String fileStoreId, String tenantId) throws IOException {
@@ -114,38 +144,13 @@ public class StorageService {
 	}
 
 	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds) {
-
 		Map<String, String> urlMap = getUrlMap(
 				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
-		if (isNfsStorageEnabled) {
-			Set<Entry<String, String>> entrySet = urlMap.entrySet();
-			Iterator<Entry<String, String>> iterator = entrySet.iterator();
-			while (iterator.hasNext())
-			{
-				String s=iterator.next().getKey();
-				urlMap.put(s, urlMap.get(s).concat("&tenantId=").concat(tenantId)); 
-			}
-		}
 		return urlMap;
 	}
 
 	private Map<String, String> getUrlMap(List<org.egov.filestore.persistence.entity.Artifact> artifactList) {
-		String src = null;
-		if (isAzureStorageEnabled)
-			src = azureBlobSource;
-		if (isS3Enabled)
-			src = awsS3Source;
-		if (isNfsStorageEnabled)
-			src = diskStorage;
-		if (isMinioEnabled)
-			src = "minio";
-		final String source = src;
-
-		Map<String, String> mapOfIdAndFile = artifactList.stream()
-				.filter(a -> (null != a.getFileSource() && a.getFileSource().equals(source)))
-				.collect(Collectors.toMap(org.egov.filestore.persistence.entity.Artifact::getFileStoreId,
-						org.egov.filestore.persistence.entity.Artifact::getFileName));
-		return cloudFilesManager.getFiles(mapOfIdAndFile);
+		return cloudFilesManager.getFiles(artifactList);
 	}
 
 	private String getFolderName(String module, String tenantId, Calendar calendar) {
@@ -153,11 +158,5 @@ public class StorageService {
 				+ "/" + calendar.get(Calendar.DATE) + "/";
 	}
 
-	private String getBucketName(String tenantId, Calendar calendar) {
-		// FIXME TODO add config filter logic to create bucket name for qa
-		if (isBucketFixed)
-			return fixedBucketName;
-		else
-			return tenantId.split("\\.")[0] + calendar.get(Calendar.YEAR);
-	}
+	
 }

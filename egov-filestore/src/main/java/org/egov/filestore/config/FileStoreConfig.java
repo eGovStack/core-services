@@ -23,6 +23,30 @@ public class FileStoreConfig {
 	
 	private Set<String> allowedKeySet;
 	
+	@Value("${image.small}")
+	private String _small;
+
+	@Value("${image.medium}")
+	private String _medium;
+
+	@Value("${image.large}")
+	private String _large;
+	
+	@Value("${image.small.width}")
+	private Integer smallWidth;
+
+	@Value("${image.medium.width}")
+	private Integer mediumWidth;
+
+	@Value("${image.large.width}")
+	private Integer largeWidth;
+	
+	@Value("${presigned.url.expiry.time.in.secs}")
+	private Integer preSignedUrlTimeOut;
+	
+	@Value("#{'${image.formats}'.split(',')}") 
+	private List<String> imageFormats;
+	
 	@PostConstruct
 	private void enrichKeysetForFormats() {
 		allowedKeySet = allowedFormatsMap.keySet();

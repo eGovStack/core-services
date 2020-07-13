@@ -12,12 +12,13 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 
+import org.egov.filestore.config.FileStoreConfig;
 import org.egov.tracer.model.CustomException;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -32,23 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CloudFileMgrUtils {
 
-	@Value("${image.small}")
-	private String _small;
-
-	@Value("${image.medium}")
-	private String _medium;
-
-	@Value("${image.large}")
-	private String _large;
-
-	@Value("${image.small.width}")
-	private Integer smallWidth;
-
-	@Value("${image.medium.width}")
-	private Integer mediumWidth;
-
-	@Value("${image.large.width}")
-	private Integer largeWidth;
+	@Autowired
+	private FileStoreConfig fileStoreConfig;
 
 	@Value("${azure.sas.expiry.time.in.secs}")
 	private Integer azureSASExpiryinSecs;
@@ -65,6 +51,9 @@ public class CloudFileMgrUtils {
 	public Map<String, BufferedImage> createVersionsOfImage(InputStream inputStream, String fileName) {
 		
 		Map<String, BufferedImage> mapOfImagesAndPaths = new HashMap<>();
+		BufferedImage largeImage = null;
+		BufferedImage mediumImg = null;
+		BufferedImage smallImg = null;
 		try {
 			
 			BufferedImage originalImage = ImageIO.read(inputStream);
@@ -76,23 +65,27 @@ public class CloudFileMgrUtils {
 				throw new CustomException(map);
 			}
 			
-			BufferedImage largeImage = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
+			 largeImage = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, fileStoreConfig.getLargeWidth(), null,
 					Scalr.OP_ANTIALIAS);
-			BufferedImage mediumImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, mediumWidth, null,
+			 mediumImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, fileStoreConfig.getMediumWidth(), null,
 					Scalr.OP_ANTIALIAS);
-			BufferedImage smallImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, smallWidth, null,
+			 smallImg = Scalr.resize(originalImage, Method.QUALITY, Mode.AUTOMATIC, fileStoreConfig.getSmallWidth(), null,
 					Scalr.OP_ANTIALIAS);
 
 			int lastIndex = fileName.length();
 			String replaceString = fileName.substring(fileName.lastIndexOf('.'), lastIndex);
 
-			mapOfImagesAndPaths.put(fileName.replace(replaceString, _large + replaceString), largeImage);
-			mapOfImagesAndPaths.put(fileName.replace(replaceString, _medium + replaceString), mediumImg);
-			mapOfImagesAndPaths.put(fileName.replace(replaceString, _small + replaceString), smallImg);
+			mapOfImagesAndPaths.put(fileName.replace(replaceString, fileStoreConfig.get_large() + replaceString), largeImage);
+			mapOfImagesAndPaths.put(fileName.replace(replaceString, fileStoreConfig.get_medium() + replaceString), mediumImg);
+			mapOfImagesAndPaths.put(fileName.replace(replaceString, fileStoreConfig.get_small() + replaceString), smallImg);
 
 			log.info("Different versions of the image created!");
 		} catch (Exception e) {
 			log.error("Error while creating different versions of the image: ", e);
+		} finally {
+			largeImage.flush();
+			mediumImg.flush();
+			smallImg.flush();
 		}
 
 		return mapOfImagesAndPaths;
@@ -168,10 +161,9 @@ public class CloudFileMgrUtils {
 	 */
 	public Boolean isFileAnImage(String filePath) {
 		Boolean isFileAnImage = false;
-		String[] imageFormats = { "png", "jpeg", "jpg" };
 		if (filePath.split("[\\.]").length > 1) {
 			String extension = filePath.substring(filePath.lastIndexOf('.') + 1, filePath.length());
-			if (Arrays.asList(imageFormats).contains(extension))
+			if (fileStoreConfig.getImageFormats().contains(extension))
 				isFileAnImage = true;
 		}
 		return isFileAnImage;

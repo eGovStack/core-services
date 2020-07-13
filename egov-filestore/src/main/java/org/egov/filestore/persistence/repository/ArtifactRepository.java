@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.egov.filestore.domain.exception.ArtifactNotFoundException;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.filestore.domain.model.FileInfo;
 import org.egov.filestore.domain.model.FileLocation;
 import org.egov.filestore.domain.model.Resource;
 import org.egov.filestore.persistence.entity.Artifact;
 import org.egov.filestore.repository.CloudFilesManager;
+import org.egov.filestore.repository.impl.minio.MinioRepository;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,37 +21,28 @@ import org.springframework.stereotype.Service;
 public class ArtifactRepository {
 
 	private FileStoreJpaRepository fileStoreJpaRepository;
-	@Autowired
-	private AwsS3Repository s3Repository;
-
+	
 	@Autowired
 	private CloudFilesManager cloudFilesManager;
-
-	@Value("${isS3Enabled}")
-	private Boolean isS3Enabled;
 
 	@Value("${isAzureStorageEnabled}")
 	private Boolean isAzureStorageEnabled;
 
-	@Value("${source.s3}")
-	private String awsS3Source;
-
 	@Value("${source.azure.blob}")
 	private String azureBlobSource;
 
-	@Value("${source.disk}")
-	private String diskFileStorage;
+	
 
 	public ArtifactRepository(FileStoreJpaRepository fileStoreJpaRepository) {
 
 		this.fileStoreJpaRepository = fileStoreJpaRepository;
 	}
 
-	public List<String> save(List<org.egov.filestore.domain.model.Artifact> artifacts) {
+	public List<String> save(List<org.egov.filestore.domain.model.Artifact> artifacts, RequestInfo requestInfo) {
 		cloudFilesManager.saveFiles(artifacts);
 		List<Artifact> artifactEntities = new ArrayList<>();
 		artifacts.forEach(artifact -> {
-			artifactEntities.add(mapToEntity(artifact));
+			artifactEntities.add(mapToEntity(artifact, requestInfo));
 		});
 		return fileStoreJpaRepository.save(artifactEntities).stream().map(Artifact::getFileStoreId)
 				.collect(Collectors.toList());
@@ -61,17 +54,19 @@ public class ArtifactRepository {
 	 * @param artifact
 	 * @return
 	 */
-	private Artifact mapToEntity(org.egov.filestore.domain.model.Artifact artifact) {
+	private Artifact mapToEntity(org.egov.filestore.domain.model.Artifact artifact, RequestInfo requestInfo) {
 
 		FileLocation fileLocation = artifact.getFileLocation();
 		Artifact entityArtifact = Artifact.builder().fileStoreId(fileLocation.getFileStoreId())
 				.fileName(fileLocation.getFileName()).contentType(artifact.getMultipartFile().getContentType())
 				.module(fileLocation.getModule()).tag(fileLocation.getTag()).tenantId(fileLocation.getTenantId())
-				.fileSource(fileLocation.getFileSource()).build();
+				.fileSource(fileLocation.getFileSource())
+				.createdBy(requestInfo.getUserInfo().getUuid()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
+				.createdTime(System.currentTimeMillis())
+				.lastModifiedTime(System.currentTimeMillis()).build();
 		if (isAzureStorageEnabled)
 			entityArtifact.setFileSource(azureBlobSource);
-		if (isS3Enabled)
-			entityArtifact.setFileSource(awsS3Source);
+	
 
 		return entityArtifact;
 	}
@@ -105,18 +100,11 @@ public class ArtifactRepository {
 	public Resource find(String fileStoreId, String tenantId) throws IOException {
 		Artifact artifact = fileStoreJpaRepository.findByFileStoreIdAndTenantId(fileStoreId, tenantId);
 		if (artifact == null)
-			throw new ArtifactNotFoundException(fileStoreId);
+			throw new CustomException("NOT_FOUND", "Invalid filestoreid or tenantid");
 
 		org.springframework.core.io.Resource resource = null;
-	if (artifact.getFileLocation().getFileSource().equals(diskFileStorage)) {
-			// if only DiskFileStoreRepository use read else ignore
-			DiskFileStoreRepository diskfileStore = (DiskFileStoreRepository) cloudFilesManager;
-			resource = diskfileStore.read(artifact.getFileLocation());
-		} else if (artifact.getFileLocation().getFileSource().equals(awsS3Source)) {
-			 
-		//	AwsS3Repository s3Repository = (AwsS3Repository) cloudFilesManager;
-			resource = s3Repository.getObject(artifact.getFileLocation().getFileName());
-	}else if (artifact.getFileLocation().getFileSource().equals("minio")) {
+	
+		if (artifact.getFileLocation().getFileSource().equals("minio")) {
 		// if only DiskFileStoreRepository use read else ignore
 		MinioRepository repo = (MinioRepository) cloudFilesManager;
 		resource = repo.read(artifact.getFileLocation());
