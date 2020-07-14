@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@ConditionalOnProperty(value = "minio.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "isS3Enabled", havingValue = "true")
 public class MinioRepository implements CloudFilesManager {
 
 	private static final String ERROR_IN_CONFIGURATION = "Error in Configuration";

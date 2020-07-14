@@ -12,13 +12,13 @@ public class MinioConfig {
 	@Value("${minio.url}")
 	private String endPoint;
 
-	@Value("${minio.secret.key}")
+	@Value("${aws.secretkey}")
 	private String secretKey;
 
-	@Value("${minio.access.key}")
+	@Value("${aws.key}")
 	private String accessKey;
 	
-	@Value("${minio.bucket.name}")
+	@Value("${fixed.bucketname}")
 	private String bucketName;
 	
 	@Value("${minio.source}")
