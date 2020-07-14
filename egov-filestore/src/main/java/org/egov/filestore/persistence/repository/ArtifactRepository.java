@@ -61,9 +61,11 @@ public class ArtifactRepository {
 				.fileName(fileLocation.getFileName()).contentType(artifact.getMultipartFile().getContentType())
 				.module(fileLocation.getModule()).tag(fileLocation.getTag()).tenantId(fileLocation.getTenantId())
 				.fileSource(fileLocation.getFileSource())
-				.createdBy(requestInfo.getUserInfo().getUuid()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
-				.createdTime(System.currentTimeMillis())
-				.lastModifiedTime(System.currentTimeMillis()).build();
+				//.createdBy(requestInfo.getUserInfo().getUuid())
+				//.lastModifiedBy(requestInfo.getUserInfo().getUuid())
+				//.createdTime(System.currentTimeMillis())
+				//.lastModifiedTime(System.currentTimeMillis())
+				.build();
 		if (isAzureStorageEnabled)
 			entityArtifact.setFileSource(azureBlobSource);
 	

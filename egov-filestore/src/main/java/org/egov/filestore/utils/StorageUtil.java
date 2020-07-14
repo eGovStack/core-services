@@ -26,8 +26,10 @@ public class StorageUtil {
 		RequestInfo requestInfo = null;
 		try {
 			//String decoded = new String(Base64.getDecoder().decode(requestInfoBase64));
+			if(requestInfoBase64 != null)
 			requestInfo = objectMapper.readValue(requestInfoBase64, RequestInfo.class);
-
+			else
+				return new RequestInfo();
 		} catch (IOException e) {
 
 			log.error(e.getMessage());

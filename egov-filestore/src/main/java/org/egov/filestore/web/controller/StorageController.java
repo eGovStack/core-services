@@ -96,7 +96,8 @@ public class StorageController {
 			@RequestParam(value = "tenantId") String tenantId,
 			@RequestParam(value = "module", required = true) String module,
 			@RequestParam(value = "tag", required = false) String tag,
-			@RequestParam(value = "requestInfo", required = true) String requestInfo) {
+			@RequestParam(value = "requestInfo", required = false) String requestInfo
+			) {
 		RequestInfo reqInfo = storageUtil.getRequestInfo(requestInfo);
 		final List<String> fileStoreIds = storageService.save(files, module, tag, tenantId, reqInfo);
 		return getStorageResponse(fileStoreIds, tenantId);
