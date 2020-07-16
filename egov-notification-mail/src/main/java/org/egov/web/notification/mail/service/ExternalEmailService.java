@@ -35,10 +35,16 @@ public class ExternalEmailService implements EmailService {
 
 	private void sendTextEmail(Email email) {
 		final SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(email.getEmailTo().toArray(new String[0]));
-		mailMessage.setSubject(email.getSubject());
-		mailMessage.setText(email.getBody());
-		mailSender.send(mailMessage);
+		try{
+			mailMessage.setTo(email.getEmailTo().toArray(new String[0]));
+			mailMessage.setSubject(email.getSubject());
+			mailMessage.setText(email.getBody());
+			mailSender.send(mailMessage);
+		}
+		catch (Exception e){
+			System.out.println("\n\nError  "+e.toString()+"\n\n");
+		}
+
 	}
 
 	private void sendHTMLEmail(Email email) {
