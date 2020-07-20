@@ -646,14 +646,17 @@ public class IndexerUtils {
 	 * @param enrichedObject
 	 * @param index
 	 */
-	public void pushToKafka(String key, String enrichedObject, Index index) {
-		if(topicPushEnable) {
-			String topicName = index.getName() + "-" + "enriched";
-			try{
-				JsonNode enrichedObjectNode = getObjectMapper().readTree(enrichedObject);
-				producer.producer(topicName, key, enrichedObjectNode);
-			} catch (IOException e){
-				log.error("Failed pushing data to the ES topic: "+topicName);
+	public void pushCollectionToDSSTopic(String enrichedObject, Index index) {
+		if(dssTopicPushEnabled) {
+			if(index.getName().contains("collection") || index.getName().contains("payment")) {
+				log.info("Index name: "+ index.getName());
+				log.info("Pushing collections data to the DSS topic: "+dssTopicForCollection);
+				try{
+					JsonNode enrichedObjectNode = new ObjectMapper().readTree(enrichedObject);
+					producer.producer(dssTopicForCollection, enrichedObjectNode);
+					producer.producer(index + "-" + "enriched", enrichedObjectNode);
+				} catch (IOException e){
+					log.error("Failed pushing collections data to the DSS topic: "+dssTopicForCollection);
 
 			}
 		}

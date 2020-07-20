@@ -98,8 +98,10 @@ public class IndexerService {
 		} else {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, false);
 		}
-		//If index contains any of below, skipping to push to ES index. As we have huge data this will be processed using Kafka connect
-		if (!configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX) && !index.getName().contains("payment")) {
+
+		if(index.getName().contains("collection") || index.getName().contains("payment")) {
+			// this is already sent
+		} else {
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
 		}
 
