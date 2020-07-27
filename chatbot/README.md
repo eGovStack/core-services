@@ -43,7 +43,32 @@ Chatbot facilitates conversational integration of a Rest based microservice appl
 #### Configurations 
 
 There are two types of configurations for chatbot states:-
-- Configuration for each state in chatbot
+- Configuration for each state in chatbot, ex:- 
+
+   ```name : pgr.create.locality
+   description : "Locality"
+   nodeType : step
+   optional : false
+
+   type : text
+
+   validationRequired : true
+   typeOfValues : FixedSetValues
+   displayOptionsInExternalLink: true
+
+   message : chatbot.messages.pgrCreateLocality
+
+   values :
+     class : org.egov.chat.xternal.valuefetch.LocalityValueFetcher
+     params :
+       tenantId : ~pgr.create.tenantId
+       authToken : /user/authToken
+       recipient: /extraInfo/recipient
+
+   matchAnswerThreshold: 70
+
+   errorMessage: chatbot.messages.pgrCreateLocalityError```
+   
 - Graph adjacency list configuration:- to define flow between chatbot states,ex:-
   
       root,pgr.create.tenantId,pgr.track.end
