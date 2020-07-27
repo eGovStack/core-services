@@ -48,7 +48,7 @@ There are two types of configurations for chatbot states:-
 
   ex:-
   
-     ```root,pgr.create.tenantId,pgr.track.end
+   ```root,pgr.create.tenantId,pgr.track.end
       pgr.create.tenantId,pgr.create.locality
       pgr.create.locality,pgr.create.landmark```
 
