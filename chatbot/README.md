@@ -45,7 +45,7 @@ Chatbot facilitates conversational integration of a Rest based microservice appl
 There are two types of configurations for chatbot states:-
 - Configuration for each state in chatbot, ex:- 
 
-   ```name : pgr.create.locality
+```name : pgr.create.locality
    description : "Locality"
    nodeType : step
    optional : false
