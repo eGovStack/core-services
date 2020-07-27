@@ -22,6 +22,6 @@ valuefirst.username =
 valuefirst.password =
 valuefirst.whatsapp.number =
 ```
-- Update  `valuefirst.whatsapp.number` to the number to be used server
+- Update  `valuefirst.whatsapp.number` to the number to be used on server
 - Update `valuefirst.username` and `valuefirst.password` with username and password for configured number for sending messages to user through whatsapp provider api calls
 
