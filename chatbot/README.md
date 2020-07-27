@@ -8,12 +8,14 @@ Chatbot service is a chatbot which provides functionality to the user to access 
 
 ### Service Dependencies
 
-- egov-user : All the users interacting through chatbot will be stored in the egov-user service. Chatbot does not store any user information such as mobile number.
+- egov-user-chatbot : For creating user without name validation and logging in user
+- egov-user : For searching user
 - egov-localization : The chatbot is made such that it will store localization codes and the actual text value will be fetched only at the end. This way we can provide multi-lingual support. Localization service is also used to construct messages from templates. This dependency can be eliminated if you want to pass values instead of localization codes.
 - egov-filestore : It is a dependency if you want to send/receive any file. This includes sending PDF/Image files.
 - egov-url-shortening : For shorting links sent to the user
 - egov-mdms-service : For loading mdms data
 - egov-location : For loading locality data
+- rainmaker-pgr : For creating/searching PGR complaints
 
 ### Swagger API Contract
 
