@@ -1,6 +1,6 @@
 # Local Setup
 
-This document will walk you through the dependencies of this service and how to set it up locally
+To setup the Chatbot service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
@@ -15,15 +15,13 @@ This document will walk you through the dependencies of this service and how to 
 
 ## Running Locally
 
-To run this services locally, you need to port forward below services locally
-
-```bash
-kubectl -n egov port-forward XXXXX
-``` 
-
-Update below listed properties in `application.properties` before running the project:
+To run the Chatbot services locally, update below listed properties in `xternal.properties` before running the project:
 
 ```ini
-egov.egfcommonmasters.hostname =
-egov.egfmasters.hostname =
+valuefirst.username =
+valuefirst.password =
+valuefirst.whatsapp.number =
 ```
+- Update  `valuefirst.whatsapp.number` to the number to be used server
+- Update `valuefirst.username` and `valuefirst.password` with username and password for configured number for sending messages to user through whatsapp provider api calls
+
