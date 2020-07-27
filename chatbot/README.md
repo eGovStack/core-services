@@ -47,7 +47,8 @@ There are two types of configurations for chatbot states:-
 - Graph adjacency list configuration:- to define flow between chatbot states
 
   ex:-
-      `root,pgr.create.tenantId,pgr.track.end`
+  
+     `root,pgr.create.tenantId,pgr.track.end`
   
       pgr.create.tenantId,pgr.create.locality
       
