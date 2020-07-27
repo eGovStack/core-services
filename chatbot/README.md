@@ -26,7 +26,16 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/cor
 
 ## Service Details
 
-<write Details about the service>
+Chatbot facilitates conversational integration of a Rest based microservice application. It collects data in multiple
+ stages of a conversation and makes a Rest call at the end of the flow.
+ 
+It's conversational flow can be defined using a tree which contains all possible ways a conversation with a user can go. 
+
+Currently, it supports input values of following type:
+1. Text : These can be further classified as:
+    * Free text : The input answer will be forwarded as is.
+    * Fixed Set Values : When the answer could be only one out of the given set of values 
+2.  Image : User can send an image to the chatbot which will be stored in egov-filestore.
 
 ### API Details
 
