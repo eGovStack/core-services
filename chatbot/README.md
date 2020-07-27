@@ -30,20 +30,34 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/cor
 
 ### API Details
 
-`POST /_create` 
 
-Creates or Updates Master Data on GitHub as JSON files
+a) `POST /messages` 
 
-- `MDMSCreateRequest`:  Request Info +  MasterDetail — Details of the master data that is to be created or updated on Github. 
+Receive user sent message and forward it to chatbot core logic for further processing and sending back response
 
-- `MasterDetail`
+- `Parameters`
 
-    | Input Field                               | Description                                                       | Mandatory  |   Data Type      |
-    | ----------------------------------------- | ------------------------------------------------------------------| -----------|------------------|
-    | `tenantId`                                | Unique id for a tenant.                                           | Yes        | String           |
-    | `filePath`                                | file-path on git where master data is to be created or updated    | Yes        | String           |
-    | `masterName`                              | Master Data name to be created or updated                         | Yes        | String           |
-    | `masterData`                              | content to be written on to the Config file                       | Yes        | Object           |
+    | Input Field                               | Description                                                       
+    | ----------------------------------------- | ------------------------------------------------------------------
+    | `to       `                               | Configured whatsapp server mobile number                                           
+    | `from`                                    | User's mobile number
+    | `text`                                    | The text that user want to send to the server in case of media type is text                      
+    | `media_type`                              | type of message ex:- text, image
+    | `media_data`                              | Media data if media type other than text
+    
+b) `GET /messages` 
+
+Receive user sent message and forward it to chatbot core logic for further processing and sending back response
+
+- `Parameters`
+
+    | Input Field                               | Description                                                       
+    | ----------------------------------------- | ------------------------------------------------------------------
+    | `to       `                               | Configured whatsapp server mobile number                                           
+    | `from`                                    | User's mobile number
+    | `text`                                    | The text that user want to send to the server in case of media type is text                      
+    | `media_type`                              | type of message ex:- text, image
+    | `media_data`                              | Media data if media type other than text    
 
 ### Kafka Consumers
 
