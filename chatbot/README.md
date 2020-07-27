@@ -30,7 +30,20 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/cor
 
 ### API Details
 
-<Detail about each API, what it does and any specific behaviours about the API>
+`POST /_create` 
+
+Creates or Updates Master Data on GitHub as JSON files
+
+- `MDMSCreateRequest`:  Request Info +  MasterDetail — Details of the master data that is to be created or updated on Github. 
+
+- `MasterDetail`
+
+    | Input Field                               | Description                                                       | Mandatory  |   Data Type      |
+    | ----------------------------------------- | ------------------------------------------------------------------| -----------|------------------|
+    | `tenantId`                                | Unique id for a tenant.                                           | Yes        | String           |
+    | `filePath`                                | file-path on git where master data is to be created or updated    | Yes        | String           |
+    | `masterName`                              | Master Data name to be created or updated                         | Yes        | String           |
+    | `masterData`                              | content to be written on to the Config file                       | Yes        | Object           |
 
 ### Kafka Consumers
 
