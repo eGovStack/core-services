@@ -19,8 +19,7 @@ Chatbot service is a chatbot which provides functionality to the user to access 
 
 ### Swagger API Contract
 
-NA
-
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/master/docs/chatbot-contract.yml#!/
 
 ## Service Details
 
