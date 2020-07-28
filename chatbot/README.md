@@ -23,16 +23,7 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/cor
 
 ## Service Details
 
-Chatbot facilitates conversational integration of a Rest based microservice application. It collects data in multiple
- stages of a conversation and makes a Rest call at the end of the flow.
- 
-It's conversational flow can be defined using a tree which contains all possible ways a conversation with a user can go. 
-
-Currently, it supports input values of following type:
-1. Text : These can be further classified as:
-    * Free text : The input answer will be forwarded as is.
-    * Fixed Set Values : When the answer could be only one out of the given set of values 
-2.  Image : User can send an image to the chatbot which will be stored in egov-filestore.
+Chatbot service allows citizen to access PGR service through whatsapp. Citizen can provide all details required to create PGR complaint through question and answer method. The service continuosly listen on PGR update Kafka topic and send notifications to users associated with PGR record. On any message from citizen which is forwarded by whatsapp provider, chatbot processes his messages by passing message through various stages ex:- validations, enrichment, transformations etc and at the end sends final response to user by calling endpoint of whatsapp provider.
  
 #### Configurations 
 
