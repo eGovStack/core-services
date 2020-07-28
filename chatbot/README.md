@@ -105,7 +105,7 @@ Receive user sent message and forward it to chatbot core logic for further proce
 
 ### Kafka Consumers
 - update-pgr-service : chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
-- The service uses consumers for internal proessing also between different stages.
+- The service uses consumers for internal processing also between different stages.
 
 ### Kafka Producers
 - send-message-localized : chatbot sends data to this topic for telemetry indexing and for internal processing.
