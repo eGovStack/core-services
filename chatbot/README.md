@@ -109,4 +109,4 @@ Receive user sent message and forward it to chatbot core logic for further proce
 
 ### Kafka Producers
 - send-message-localized : chatbot sends data to this topic for telemetry indexing and for internal processing.
-- The service uses procuers for internal proessing also between different stages.
+- The service uses producers for internal proessing also between different stages.
