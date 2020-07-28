@@ -16,17 +16,17 @@ paths:
       parameters:
         - name: to
           in: query
-          required: false
+          required: true
           description: The receipient mobile number of message
           type: string
         - name: from
           in: query
-          required: false
+          required: true
           description: The sender mobile number of message
           type: string
         - name: media_type
           in: query
-          required: false
+          required: true
           description: Type of message ex:- text, image
           type: string        
         - name: text
@@ -85,5 +85,4 @@ paths:
       tags:
         - Chatbot     
 
-      
-
+   
