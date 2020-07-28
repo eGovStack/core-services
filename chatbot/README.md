@@ -104,9 +104,9 @@ Receive user sent message and forward it to chatbot core logic for further proce
     | `media_data`                              | Media data if media type other than text    
 
 ### Kafka Consumers
-
-- The service uses consumers for only internal proessing. It does not have any consumer to interact with other services.
+- update-pgr-service : chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
+- The service uses consumers for internal proessing also between different stages.
 
 ### Kafka Producers
-
-- The service uses producers for only internal proessing. It does not have any producer to interact with other services.
+- send-message-localized : chatbot sends data to this topic for telemetry indexing and for internal processing.
+- The service uses procuers for internal proessing also between different stages.
