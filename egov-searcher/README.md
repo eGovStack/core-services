@@ -1,8 +1,9 @@
 # <eGov-Searcher>
 
-Searcher is a core services in egov suite of services, it provides generic search for all the rest of the modules in the egov suite without having to make use of any platform based data models with only the help of yaml based configs. 
+Searcher provides generic search for all the rest of the modules in the egov suite without having to make use of any platform based data models with only the help of yaml based configs. 
 
 ### DB UML Diagram
+
 
 
 
@@ -12,7 +13,6 @@ Searcher is a core services in egov suite of services, it provides generic searc
 
 ### Swagger API Contract
 
-Link to the swagger API contract yaml and editor link like below
 
 
 
