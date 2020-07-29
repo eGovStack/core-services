@@ -19,6 +19,8 @@ To run this services locally, you need to port forward below services locally
 
 ```bash
  kubectl port-forward -n egov {egov-user} 8088:8080
+ 
+-spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
 ``` 
 
 Update below listed properties in `application.properties` before running the project:
@@ -26,11 +28,9 @@ Update below listed properties in `application.properties` before running the pr
 ```ini
 -egov.user.contextpath=
 
-- search.yaml.path=
+-search.yaml.path=
 
  The git hub link for the file containing searcher query has to be provided here
  
  if you are using a local file prefix it with file:///PATH TO FILE/FILENAME
-
--spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
 ```
