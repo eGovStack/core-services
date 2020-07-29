@@ -22,7 +22,7 @@ Generic search provider for the egov suite. The service can be configured to pro
 
 ### API Details
 
-The Api path will be constructed based on the inbformation provided in the yaml file. These following variables from the yaml file will form the API."/{moduleName}/{searchName}/_get")
+The Api path will be constructed based on the inbformation provided in the yaml file. These following variables from the yaml file will form the API - "moduleName","searchName" in the follwing way @PostMapping("/{moduleName}/{searchName}/_get"). The API upon being queried will return results in the form of json based on the output structure provided in the yaml config.
 
 
 ### Kafka Consumers
