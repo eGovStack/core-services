@@ -36,4 +36,5 @@ public class Params {
 	
 	@JsonProperty("value")
 	private String value;
+	
 }
