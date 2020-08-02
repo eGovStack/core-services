@@ -40,6 +40,9 @@ public class SearchUtils {
 	@Autowired
 	private ObjectMapper mapper;
 	
+	@Value("${operaters.list}")
+	private List<String> operators;
+	
 	/**
 	 * Builds the query reqd for search
 	 * 
@@ -115,20 +118,29 @@ public class SearchUtils {
 						operator = " IN "; 
 					whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
 				} else {
-					String[] validOperators = {"=", "GE", "LE", "NE", "LIKE", "ILIKE"};
-					String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator(): "=";
-					if(!Arrays.asList(validOperators).contains(operator))
-						operator = "="; 
-					if (operator.equals("GE"))
+					List<String> validOperators = operators;
+					String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
+
+					if (!validOperators.contains(operator)) {
+						operator = "=";
+					}
+					if (operator.equals("GE")) {
 						operator = ">=";
-					else if (operator.equals("LE"))
+					} else if (operator.equals("LE")) {
 						operator = "<=";
-					else if (operator.equals("NE"))
+					} else if (operator.equals("NE")) {
 						operator = "!=";
-					else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
+					} else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
+
 						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
-					}								
-					whereClause.append(param.getName()).append(" " + operator + " ").append(":"+param.getName());
+					} else if (operator.equals("TOUPPERCASE")) {
+
+						paramValue = ((String) paramValue).toUpperCase();
+					} else if (operator.equals("TOLOWERCASE")) {
+
+						paramValue = ((String) paramValue).toLowerCase();
+					}
+					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
 				}
 				whereClause.append(" " + condition + " ");
 			}
