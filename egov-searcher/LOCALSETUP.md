@@ -19,13 +19,15 @@ To run this services locally, you need to port forward below services locally
 
 ```bash
  kubectl port-forward -n egov {egov-user} 8088:8080
- 
--spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+
 ``` 
 
 Update below listed properties in `application.properties` before running the project:
 
 ```ini
+ 
+-spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+
 -egov.user.contextpath=
 
 -search.yaml.path=
