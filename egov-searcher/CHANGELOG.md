@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.1
+- added Touppercase as operator for value entered in screen
+-  Limit and Offset made mandatory by default in the app
+## 1.1.1
+
+
 ## 1.1.0
 
 - Add support for Bill Genie search APIs
