@@ -28,7 +28,7 @@ Update below listed properties in `application.properties` before running the pr
  
 -spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
 
--egov.user.contextpath=
+-egov.user.contextpath={context path of the user service}
 
 -search.yaml.path=
 
