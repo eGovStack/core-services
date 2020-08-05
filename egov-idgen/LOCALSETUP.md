@@ -20,16 +20,16 @@ This document will walk you through the dependencies of this service and how to 
 To run the notification mail services locally, update below listed properties in `application.properties` before running the project:
 
 ```ini
-spring.datasource.url=
-spring.datasource.username=
-spring.datasource.password=
-mdms.service.host=
-mdms.service.search.uri=
+`spring.datasource.url`          : Local db URL
+
+`spring.datasource.username`     : Local db username
+
+`spring.datasource.password`     : Local db password
+
+`mdms.service.host`              : The host of the running environment (eg:https://egov-micro-qa.egovernments.org/citizen)
+
+`mdms.service.search.uri`        : MDMS service URI. i.e egov-mdms-service/v1/_search
 ```
 
-- Update the database related credentails in first three above mentioned properties
-- Update the value of `mdms.service.host` to respective environment host 
-- Update `mdms.service.search.uri` to value 'egov-mdms-service/v1/_search'
-
 ```bash
-kubectl -n egov port-forward <egov-idgen-PODNAME> 8088:5005
+kubectl -n egov port-forward <egov-mdms-service-PODNAME> 8094:5005
