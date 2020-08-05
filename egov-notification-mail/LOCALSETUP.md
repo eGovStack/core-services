@@ -20,14 +20,15 @@ This document will walk you through the dependencies of this service and how to 
 To run the notification mail services locally, update below listed properties in `application.properties` before running the project:
 
 ```ini
-mail.enabled=
-mail.sender.username=
-mail.sender.password=
-egov.localization.host=
-egov.user.host=
-email.subject=
-```
+`mail.enabled`            :  Controls if the mail notification to enabled. Default value is true.
 
-- Update `mail.enabled` to true 
-- Update the `mail.sender.username` with the senders username.
-- Update the `mail.sender.password` with the senders password.
+`mail.sender.username`    :  Senders email ID
+
+`mail.sender.password`    :  Senders pasdsword
+
+`egov.localization.host`  :  The host value of the server for localization API (eg: https://egov-micro-qa.egovernments.org/citizen/)
+
+`egov.user.host`          :  The host value of the server for User service (eg: https://egov-micro-qa.egovernments.org/citizen/)
+
+`email.subject`           :  The subject for the email.
+```
