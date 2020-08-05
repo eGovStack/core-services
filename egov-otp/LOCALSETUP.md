@@ -15,7 +15,4 @@ To setup the OTP service in your local system, clone the [Core Service repositor
 
 ## Running Locally
 
-To run this services locally, you need to port forward below services locally 
-
-```bash
-kubectl -n egov port-forward <egov-otp-PODNAME> 8089:5005
+To run it locally this service do not require port forwarding or property changes. Directly run the application.
