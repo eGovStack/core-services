@@ -96,9 +96,9 @@ Receive user sent message and forward it to chatbot core logic for further proce
     | `media_data`                              | Media data if media type other than text
 
 ### Kafka Consumers
-- update-pgr-service : chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
+- ```update-pgr-service``` : chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
 - The service uses consumers for internal processing also between different stages.
 
 ### Kafka Producers
-- send-message-localized : chatbot sends data to this topic for telemetry indexing and for internal processing.
+- ```send-message-localized``` : chatbot sends data to this topic for telemetry indexing and for internal processing.
 - The service uses producers for internal processing also between different stages.
