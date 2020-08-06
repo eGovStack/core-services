@@ -19,7 +19,7 @@ To run the Chatbot services locally, update below listed properties in `xternal.
 
 ```valuefirst.whatsapp.number:``` the number to be used on server
 
-```valuefirst.username:``` : username for configured number for sending messages to user through whatsapp provider api calls
+```valuefirst.username:``` username for configured number for sending messages to user through whatsapp provider api calls
 
-```valuefirst.password:``` : password for configured number for sending messages to user through whatsapp provider api calls
+```valuefirst.password:``` password for configured number for sending messages to user through whatsapp provider api calls
 
