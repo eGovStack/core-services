@@ -71,13 +71,13 @@ a) `POST /messages`
 
 Receive user sent message and forward it to chatbot core logic for further processing and sending back response
 
-- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc the user input would be sent in parameter `media_data`
+- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc, the user input would be sent in parameter `media_data`
 
 b) `GET /messages`
 
 Receive user sent message and forward it to chatbot core logic for further processing and sending back response
 
-- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc the user input would be sent in parameter `media_data`
+- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc, the user input would be sent in parameter `media_data`
 
 ### Kafka Consumers
 - ```update-pgr-service``` : used in ```update.pgr.service.topic``` application property, chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
