@@ -17,8 +17,7 @@ To setup the Chatbot service in your local system, clone the [Core Service repos
 
 To run the Chatbot services locally, update below listed properties in `xternal.properties` before running the project:
 
-```ini
-valuefirst.whatsapp.number : the number to be used on server
-valuefirst.username : username for configured number for sending messages to user through whatsapp provider api calls
-valuefirst.password : password for configured number for sending messages to user through whatsapp provider api calls
-```
+```valuefirst.whatsapp.number``` : the number to be used on server
+```valuefirst.username``` : username for configured number for sending messages to user through whatsapp provider api calls
+```valuefirst.password``` : password for configured number for sending messages to user through whatsapp provider api calls
+
