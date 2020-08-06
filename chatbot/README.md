@@ -8,18 +8,18 @@ Chatbot service is a chatbot which provides functionality to the user to access 
 
 ### Service Dependencies
 
-- egov-user-chatbot : For creating user without name validation and logging in user
-- egov-user : For searching user
-- egov-localization : The chatbot is made such that it will store localization codes and the actual text value will be fetched only at the end. This way we can provide multi-lingual support. Localization service is also used to construct messages from templates. This dependency can be eliminated if you want to pass values instead of localization codes.
-- egov-filestore : It is a dependency if you want to send/receive any file. This includes sending PDF/Image files.
-- egov-url-shortening : For shortening links sent to the user
-- egov-mdms-service : For loading mdms data
-- egov-location : For loading locality data
-- rainmaker-pgr : For creating/searching PGR complaints
+- ```egov-user-chatbot :``` For creating user without name validation and logging in user
+- ```egov-user :``` For searching user
+- ```egov-localization :``` The chatbot is made such that it will store localization codes and the actual text value will be fetched only at the end. This way we can provide multi-lingual support. Localization service is also used to construct messages from templates. This dependency can be eliminated if you want to pass values instead of localization codes.
+- ```egov-filestore :``` It is a dependency if you want to send/receive any file. This includes sending PDF/Image files.
+- ```egov-url-shortening :``` For shortening links sent to the user
+- ```egov-mdms-service :``` For loading mdms data
+- ```egov-location :``` For loading locality data
+- ```rainmaker-pgr :``` For creating/searching PGR complaints
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/master/docs/chatbot-contract.yml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/RAIN-1288/docs/chatbot-contract.yml#!/
 
 ## Service Details
 
@@ -61,6 +61,8 @@ There are two types of configurations for chatbot states:-
       root,pgr.create.tenantId,pgr.track.end
       pgr.create.tenantId,pgr.create.locality
       pgr.create.locality,pgr.create.landmark
+      
+> Note: For more information about these configs please refer technical documentation for the service from https://digit-discuss.atlassian.net/l/c/q8wfb0My
 
 ### API Details
 
@@ -69,34 +71,18 @@ a) `POST /messages`
 
 Receive user sent message and forward it to chatbot core logic for further processing and sending back response
 
-- `Parameters`
-
-    | Input Field                               | Description
-    | ----------------------------------------- | ------------------------------------------------------------------
-    | `to       `                               | Configured whatsapp server mobile number
-    | `from`                                    | User's mobile number
-    | `text`                                    | The text that user want to send to the server in case of media type is text
-    | `media_type`                              | type of message ex:- text, image
-    | `media_data`                              | Media data if media type other than text
+- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc, the user input would be sent in parameter `media_data`
 
 b) `GET /messages`
 
 Receive user sent message and forward it to chatbot core logic for further processing and sending back response
 
-- `Parameters`
-
-    | Input Field                               | Description
-    | ----------------------------------------- | ------------------------------------------------------------------
-    | `to       `                               | Configured whatsapp server mobile number
-    | `from`                                    | User's mobile number
-    | `text`                                    | The text that user want to send to the server in case of media type is text
-    | `media_type`                              | type of message ex:- text, image
-    | `media_data`                              | Media data if media type other than text
+- If the `media_type` parameter value is `text` then user input would be sent in parameter `text`, in other cases where `media_type` have some other value ex:- image, location etc, the user input would be sent in parameter `media_data`
 
 ### Kafka Consumers
-- update-pgr-service : chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
+- ```update-pgr-service``` : used in ```update.pgr.service.topic``` application property, chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
 - The service uses consumers for internal processing also between different stages.
 
 ### Kafka Producers
-- send-message-localized : chatbot sends data to this topic for telemetry indexing and for internal processing.
+- ```send-message-localized``` : chatbot sends data to this topic for telemetry indexing and for internal processing.
 - The service uses producers for internal processing also between different stages.
