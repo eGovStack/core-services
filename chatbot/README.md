@@ -61,6 +61,8 @@ There are two types of configurations for chatbot states:-
       root,pgr.create.tenantId,pgr.track.end
       pgr.create.tenantId,pgr.create.locality
       pgr.create.locality,pgr.create.landmark
+      
+> Note: For more information about these configs please refer technical documentation for the service from https://digit-discuss.atlassian.net/l/c/q8wfb0My
 
 ### API Details
 
