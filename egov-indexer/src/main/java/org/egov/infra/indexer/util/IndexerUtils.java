@@ -269,7 +269,8 @@ public class IndexerUtils {
 				id.append(JsonPath.read(stringifiedObject, index.getId()).toString());
 			} else {
 				for (int j = 0; j < idFormat.length; j++) {
-					String fieldVaue = String.valueOf(JsonPath.read(stringifiedObject, idFormat[j]));
+					Object bb=JsonPath.read(stringifiedObject, idFormat[j].trim());
+					String fieldVaue = bb.toString();
 					if(fieldVaue !=null)
 						id.append(fieldVaue);
 				}
