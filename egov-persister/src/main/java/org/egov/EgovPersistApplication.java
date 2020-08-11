@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.*;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -34,7 +34,6 @@ public class EgovPersistApplication {
 
     @Autowired
     private ApplicationContext applicationContext;
-
 
     public static void main(String[] args) {
         SpringApplication.run(EgovPersistApplication.class, args);
