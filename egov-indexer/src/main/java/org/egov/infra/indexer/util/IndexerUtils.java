@@ -666,5 +666,16 @@ public class IndexerUtils {
 		}
 	}
 
-
+	public void pushToKafka(String key, String enrichedObject, Index index) {
+		// skip collection and payment since already handled in pushCollectionToDSSTopic()
+		if (topicPushEnable && !index.getName().contains("collection") && !index.getName().contains("payment")) {
+			String topicName = index.getName() + "-" + "enriched";
+			try {
+				JsonNode enrichedObjectNode = getObjectMapper().readTree(enrichedObject);
+				producer.producer(topicName, key, enrichedObjectNode);
+			} catch (IOException e) {
+				log.error("Failed pushing data to the ES topic: " + topicName);
+			}
+		}
+	}
 }
