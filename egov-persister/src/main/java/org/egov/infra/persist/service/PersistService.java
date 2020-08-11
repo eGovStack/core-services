@@ -3,6 +3,7 @@ package org.egov.infra.persist.service;
 import com.github.zafarkhaja.semver.Version;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.infra.persist.repository.PersistRepository;
 import org.egov.infra.persist.utils.Utils;
@@ -81,7 +82,11 @@ public class PersistService {
 
 	private List<Mapping> filterMappings(List<Mapping> mappings, Object json){
 		List<Mapping> filteredMaps = new ArrayList<>();
-		String version = JsonPath.read(json, "$.RequestInfo.ver");
+		String version = "";
+		try {
+			version = JsonPath.read(json, "$.RequestInfo.ver");
+		}catch (PathNotFoundException ignore){
+		}
 		Version semVer = utils.getSemVer(version);
 		for (Mapping map: mappings) {
 			if(semVer.satisfies(map.getVersion()))
