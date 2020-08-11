@@ -93,11 +93,13 @@ public class DataTransformationService {
                     if (isCustom) {
                         String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(), stringifiedObject);
                         indexerUtils.pushCollectionToDSSTopic(id, customIndexJson, index);
+                        indexerUtils.pushToKafka(id, customIndexJson, index);
                         StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, customIndexJson);
                         if (null != builder)
                             jsonTobeIndexed = builder;
                     } else {
                         indexerUtils.pushCollectionToDSSTopic(id, stringifiedObject, index);
+                        indexerUtils.pushToKafka(id, stringifiedObject, index);
                         StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject, null);
                         if (null != builder)
                             jsonTobeIndexed = builder;
