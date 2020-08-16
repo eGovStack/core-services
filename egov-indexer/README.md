@@ -54,4 +54,5 @@ b) `POST /_reindex`
 This is used to migrate data from one index to another index
 
 c) `POST /_legacyindex`
+
 This is to run LegacyIndex job to index data from DB. In the request body the URL of the service which would be called by indexer service to pick data, must be mentioned.
