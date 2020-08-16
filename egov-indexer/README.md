@@ -1,6 +1,4 @@
-# Infra Indexer
-
-### Egov indexer service
+# Egov indexer service
 
 <p>Egov indexer service runs as a seperate service, This service is designed to perform all the indexing tasks of the egov platform. The service reads records posted on specific kafka topics and picks the corresponding index configuration from the yaml file provided by the respective module. </p>
 
