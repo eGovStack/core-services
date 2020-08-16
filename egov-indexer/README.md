@@ -24,9 +24,11 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - value : Path of the yml (https://raw.githubusercontent.com/egovernments/egov-services/master/citizen/citizen-indexer/src/main/resources/watercharges-indexer.yml,https://raw.githubusercontent.com/egovernments/egov-services/master/citizen/citizen-indexer/src/main/resources/property-tax.yml)
 
 - Raw yml configuration :
-- https://raw.githubusercontent.com/egovernments/egov-services/master/citizen/citizen-indexer/src/main/resources/watercharges-indexer.yml
+
 
 #### Configurations
+ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property-services.yml
+
 The different fields used in index config are following:-
 - mappings: List of mappings between topic name and respective index configurations.
 - topic: The topic on which the input json will be recieved, This will be the parent topic for the list of index configs.
