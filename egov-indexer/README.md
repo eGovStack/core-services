@@ -58,7 +58,6 @@ c) `POST /_legacyindex`
 This is to run LegacyIndex job to index data from DB. In the request body the URL of the service which would be called by indexer service to pick data, must be mentioned.
 
 ### Kafka Consumers
-- ```update-pgr-service``` : used in ```update.pgr.service.topic``` application property, chatbot listens on this topic to listen for updates on PGR records and then to send notifications to user.
 - The service uses consumers for topics defined in index configs to read data which would is to be indexed.
 
 ### Kafka Producers
