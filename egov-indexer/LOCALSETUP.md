@@ -21,8 +21,6 @@ To setup the Indexer service in your local system, clone the [Core Service repos
 
 
 -update below listed properties in `application.properties` prior to running the project:
-
-```ini
 egov.indexer.yml.repo.path : path to config files
 
 ```
