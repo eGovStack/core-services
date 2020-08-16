@@ -57,10 +57,12 @@ c) `POST /_legacyindex`
 
 This is to run LegacyIndex job to index data from DB. In the request body the URL of the service which would be called by indexer service to pick data, must be mentioned.
 
+> Note: In legacy indexing kafka-connect is used to do part of pushing record to elastic search. For more details please refer https://digit-discuss.atlassian.net/l/c/mxncnagK
+
 ### Kafka Consumers
 - The service uses consumers for topics defined in index configs to read data which is to be indexed.
 
 ### Kafka Producers
 - ```dss-collection-update``` : used in ```egov.indexer.dss.collectionindex.topic``` application property, indexer service sends collection service data to this topic to be used by DSS module
 - The indexer service produces to topic which is `{index_name}-enriched`, for providing option to use kafka-connect for pushing records to elastic search
-- In case of legacy indexing, indexer service would produce fetched from api call to external service to topic mentioned in `topic` field of config.
+- In case of legacy indexing, indexer service would produce data fetched from api call to external service to topic mentioned in `topic` field of config.
