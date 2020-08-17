@@ -10,6 +10,11 @@
 
 - ```egov-mdms-service :``` For enriching mdms data if mentioned in config
 
+
+### Swagger API Contract
+
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/RAIN-1288/docs/chatbot-contract.yml#!/
+
 ## Service Details
 
 Egov indexer service is used in egov platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
