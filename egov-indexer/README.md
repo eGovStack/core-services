@@ -19,13 +19,6 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - Supports custom json indexing with field mappings, Enrichment of the input object on the queue
 - Performs ES down handling
 
-- Application properties (application.properties of the citizen-indexer application)
-- Key : egov.indexer.yml.repo.path
-- value : Path of the yml (https://raw.githubusercontent.com/egovernments/egov-services/master/citizen/citizen-indexer/src/main/resources/watercharges-indexer.yml,https://raw.githubusercontent.com/egovernments/egov-services/master/citizen/citizen-indexer/src/main/resources/property-tax.yml)
-
-- Raw yml configuration :
-
-
 #### Configurations
 ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property-services.yml
 
