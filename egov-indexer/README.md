@@ -13,7 +13,7 @@
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/RAIN-1288/docs/chatbot-contract.yml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/gopesh67-patch-7/docs/indexer-contract.yml#!/
 
 ## Service Details
 
