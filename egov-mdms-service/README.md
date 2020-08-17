@@ -25,7 +25,7 @@ Once the data is stored in the map the same can be retrieved by making an API re
 1. Data folder parallel to docs (https://github.com/egovernments/egov-mdms-data/tree/master/data/pb). 
 2. Under data folder there will be a folder `<state>` which is a state specific master folder.
 3. Under `<state>` folder there will `<tenant>` folders where ulb specific master data will be checked in. for example `pb.testing`
-4. Each module will have one file each for statewide and ulb wise master data. Keep the file name as module name itself.
+4. Each module will have one file each for statewise and ulb wise master data. Keep the file name as module name itself.
 
 ### Sample Config
 
@@ -51,31 +51,14 @@ Each master has three key parameters `tenantId`, `moduleName`, `masterName`. A s
   ]
 }
 ```
-
+Suppose there are huge data to be store in one config file, the data can be store in seperate files. And these seperated config file data can be use under one master name, if `isMergeAllowed`
+flag is `true` in [mdms-masters-config.json](https://raw.githubusercontent.com/egovernments/punjab-mdms-data/UAT/mdms-masters-config.json)
 ### API Details
 
 `BasePath` /mdms/v1/[API endpoint]
 
 ##### Method
-a) `POST /_create` 
-
-Creates or Updates Master Data on GitHub as JSON files
-
-- `MDMSCreateRequest`:  Request Info +  MasterDetail — Details of the master data that is to be created or updated on Github. 
-
-- `MasterDetail`
-
-    | Input Field                               | Description                                                       | Mandatory  |   Data Type      |
-    | ----------------------------------------- | ------------------------------------------------------------------| -----------|------------------|
-    | `tenantId`                                | Unique id for a tenant.                                           | Yes        | String           |
-    | `filePath`                                | file-path on git where master data is to be created or updated    | Yes        | String           |
-    | `masterName`                              | Master Data name to be created or updated                         | Yes        | String           |
-    | `masterData`                              | content to be written on to the Config file                       | Yes        | Object           |
-
-- `MdmsCreateResponse`: Response Info
-
-
-b) `POST /_search`
+a) `POST /_search`
 
 This method fetches a list of masters for a specified module and tenantId.
 - `MDMSCriteriaReq (mdms request)` : Request Info + MdmsCriteria — Details of module and master which need to be searched using MDMS.
