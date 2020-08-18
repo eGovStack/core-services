@@ -50,6 +50,23 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 - groupby: group by clause if needed(group by fieldname)<br />
 - orderby: order by clause if needed(order by fieldname asc)<br />
 
+#### Call the MDMS or any other API with the post method
+1. Configuring the post object in the yaml itself like below.
+
+- externalService:
+  - entity: $.MdmsRes.egf-master.FinancialYear
+    - apiURL:  http://localhost:8094/egov-mdms-service/v1/_search
+    - keyOrder: finYearRange,startingDate,endingDate,tenantId
+    - tableName: tbl_financialyear
+    - stateData: true
+    - postObject:
+      - tenantId: $tenantid
+      - moduleDetails:
+        - moduleName: egf-master
+        - masterDetails:
+          - name: FinancialYear
+          filter: "[?(@.id IN [2,3] && @.active == true)]"
+2. Keep the post object in a seperate json file externally and call at runtime.
 
 ### API Details:
 a) `POST /report/asset/metadata/_get` 
@@ -127,20 +144,4 @@ Request Sample for reload API:<br />
 }<br />
 
 ---
-#### Call the MDMS or any other API with the post method
-1. Configuring the post object in the yaml itself like below.
 
-- externalService:
-  - entity: $.MdmsRes.egf-master.FinancialYear
-    - apiURL:  http://localhost:8094/egov-mdms-service/v1/_search
-    - keyOrder: finYearRange,startingDate,endingDate,tenantId
-    - tableName: tbl_financialyear
-    - stateData: true
-    - postObject:
-      - tenantId: $tenantid
-      - moduleDetails:
-        - moduleName: egf-master
-        - masterDetails:
-          - name: FinancialYear
-          filter: "[?(@.id IN [2,3] && @.active == true)]"
-2. Keep the post object in a seperate json file externally and call at runtime.
