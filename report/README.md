@@ -1,14 +1,28 @@
-# Reporting Framework
-### Reporting Service
+# Report Service
 Reporting Service is a service running independently on seperate server. This service loads the report configuration from a yaml file at the run time and provides the report details by using
 couple of APIS.
+
+
+### DB UML Diagram
+
+- NA
+
+### Service Dependencies
+- `egov-enc-service`: used for decryption of user PII data if required
+- `egov-mdms-service`: used by encryption library to load encryption configs
+
+### Swagger API Contract
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/reportinfra/contracts/reportinfra-1-0-0.yml#!/
+
+## Service Details
+
 #### Features supported
 - Provides metadata about the report.
 - Provides the data for the report.
 - Reload the configuration at runtime
 
 ### YML configuration
-- All the module yml configurations are located in docs/{modulename}/report/report.yml
+- All the module yml configurations are located in https://github.com/egovernments/configs/tree/master/reports
 
 ### Sample yml configuration : 
 - https://raw.githubusercontent.com/egovernments/egov-services/master/docs/citizen/reports/report.yml
@@ -35,9 +49,10 @@ couple of APIS.
 - query: (query string which needs to get execute to generate the report with the place holders for the search params. refer - sample config for clarifications)<br />
 - groupby: group by clause if needed(group by fieldname)<br />
 - orderby: order by clause if needed(order by fieldname asc)<br />
-### API Details:
 
-/report/asset/metadata/_get
+
+### API Details:
+a) `POST /report/asset/metadata/_get` 
 
 Request  Sample for Metadata API:
 {
