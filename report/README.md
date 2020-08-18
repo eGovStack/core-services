@@ -69,79 +69,17 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 2. Keep the post object in a seperate json file externally and call at runtime.
 
 ### API Details:
-a) `POST /report/asset/metadata/_get` 
+a) `POST /report/{moduleName}/metadata/_get` 
+This request to report service is made to get metadata for any report. The metadata contains information about search filters to be used in the report before actually sending request to get actual data. The user selected values are then used in GET_DATA request to filter data.
 
-Request  Sample for Metadata API:
-{
-   "RequestInfo": {<br />
-       "apiId" : "emp",<br />
-       "ver" : "1.0",<br />
-       "ts" : "10-03-2017 00:00:00",<br />
-       "action" : "create",<br />
-       "did" : "1",<br />
-       "key" : "abcdkey",<br />
-       "msgId" : "20170310130900",<br />
-       "requesterId" : "rajesh",<br />
-       "authToken" : "0348d66f-d818-47fc-933b-ba23079986b8"<br />
-      
-   } ,<br />
-   "tenantId" : "default",<br />
-   "reportName" :"ImmovableAssetRegister"<br />
-   
-}<br />
-#########################
+b) `POST /report/{moduleName}/_get` 
+This request to report service is used to get data for the report. Inputs given by user for filters are sent in request body. These filters values are used while querying data from DB.
 
-/report/asset/_get<br />
+### Kafka Consumers
 
-{<br />
-   "RequestInfo": {<br />
-       "apiId" : "emp",<br />
-       "ver" : "1.0",<br />
-       "ts" : "10-03-2017 00:00:00",<br />
-       "action" : "create",<br />
-       "did" : "1",<br />
-       "key" : "abcdkey",<br />
-       "msgId" : "20170310130900",<br />
-       "requesterId" : "rajesh",<br />
-       "authToken" : "39b6d8aa-e312-441e-8162-7032ae1303e1"<br />
-      
-   },<br />
-    "tenantId": "default",<br />
-    "reportName": "ImmovableAssetRegister",<br />
-    "searchParams": [<br />
-    	
-    	{
-              "name" : "assetid"
-              "input": ["1","2"]
-              
-        }
-        
-        
-        
-    ]<br />
-}<br />
+- NA
 
-########################
+### Kafka Producers
 
-: /report/_reload<br />
-Request Sample for reload API:<br />
-{<br />
-   "RequestInfo": {<br />
-       "apiId" : "emp",<br />
-       "ver" : "1.0",<br />
-       "ts" : "10-03-2017 00:00:00",<br />
-       "action" : "create",<br />
-       "did" : "1",<br />
-       "key" : "abcdkey",<br />
-       "msgId" : "20170310130900",<br />
-       "requesterId" : "rajesh",<br />
-       "authToken" : "3081f773-159b-455b-b977-acfd6ed2c61b"<br />
-      
-   } ,<br />
-   "tenantId" : "default",<br />
-  
-   
-}<br />
-
----
+- ```audit_data```: used in `kafka.topic.audit` property to push audit data from decryption process
 
