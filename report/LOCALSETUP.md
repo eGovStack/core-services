@@ -22,6 +22,6 @@ To setup the Report service in your local system, clone the [Core Service reposi
 
 -update below listed properties in `application.properties` prior to running the project:
 
- report.locationsfile.path : path to `reportFileLocationsv1.txt` file from local https://github.com/egovernments/configs repo
+ report.locationsfile.path : path to `reportFileLocationsv1.txt` file from local https://github.com/egovernments/configs/tree/master/reports repo
 
 ```
