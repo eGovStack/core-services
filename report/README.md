@@ -70,9 +70,11 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 
 ### API Details:
 a) `POST /report/{moduleName}/metadata/_get` 
+
 This request to report service is made to get metadata for any report. The metadata contains information about search filters to be used in the report before actually sending request to get actual data. The user selected values are then used in GET_DATA request to filter data.
 
 b) `POST /report/{moduleName}/_get` 
+
 This request to report service is used to get data for the report. Inputs given by user for filters are sent in request body. These filters values are used while querying data from DB.
 
 ### Kafka Consumers
