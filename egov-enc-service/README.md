@@ -30,7 +30,26 @@ NA
 
 
 ### API Details
-NA
+
+a) `POST /crypto/v1/_encrypt`
+
+Encrypts the given input value/s OR values of the object.
+
+b) `POST /crypto/v1/_decrypt`
+
+Decrypts the given input value/s OR values of the object.
+
+c) `/crypto/v1/_sign`
+
+Provide signature for a given value.
+
+d) `POST /crypto/v1/_verify`
+
+Check if the signature is correct for the provided value.
+
+e) `POST /crypto/v1/_rotatekey`
+
+Deactivate the keys for the given tenant and generate new keys. It will deactivate both symmetric and asymmetric keys for the provided tenant.
 
 ### Kafka Consumers
 NA
