@@ -50,7 +50,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: The receipient mobile number of message
+        description: The uniqueue id field to find original url
         required: true
         schema:
           type: string
