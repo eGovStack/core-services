@@ -13,7 +13,7 @@ Encryption Service is used to secure the data. It provides functionality to encr
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-enc-service/contract/enc-service.yaml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/gopesh67-patch-8/docs/enc-service-contract.yml#!/
 
 ## Service Details
 
