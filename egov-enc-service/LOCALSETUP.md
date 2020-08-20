@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the Indexer service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the encryption service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
