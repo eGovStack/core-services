@@ -8,12 +8,15 @@
 
 ### Service Dependencies
 
-- ```egov-mdms-service :``` For enriching mdms data if mentioned in config
+- egov-mdms-service
+- egov-enc-service
+- egov-otp
+- egov-filestore
 
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/RAIN-1284/docs/indexer-contract.yml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-user/contracts/v1-1-0.yml#!/
 
 ## Service Details
 
@@ -25,22 +28,7 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - Performs ES down handling
 
 #### Configurations
-ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property-services.yml
-
-The different fields used in index config are following:-
-- mappings: List of mappings between topic name and respective index configurations.
-- topic: The topic on which the input json will be recieved, This will be the parent topic for the list of index configs.
-- indexes: List of index configuration to be applied on the input json recieved on the parent topic.
-- name: name of the index.
-- type: document type.
-- id: Json path of the id to be used as index id while indexing. This takes comma seperated Jsonpaths to build custom index id. Values will be fetched from the json path and concatinated to form the indexId.
-- isBulk: boolean value to signify if the input is a json array or json object, true in the first case, false other wise. Note: if isBulk = true, indexer will accept only array of json objects as input.
-- jsonPath: Json Node path in case just a piece of the input json is to be indexed.
-- customJsonMapping: Set of mappings for building an entirely new json object to index onto ES.
-- indexMapping: Sample output json which will get indexed on to ES. This has to be provided by the respective module, if not provided, framework will fetch it from the ES. It is recommended to provide this.
-- fieldMapping: This is a list of mappings between fields of input and output json namely: inJsonPath and outJsonPath. It takes inJsonPath value from input json and puts it to outJsonPath field of output json.
-- uriMapping: This takes uri, queryParam, pathParam and apiRequest as to first build the uri and hit the service to get the response and then takes a list of fieldMappings as above to map fields of the api response to the fields of output json. Note: "$" is to be specified as place holder in the uri path wherever the pathParam is to be substituted in order. queryParams should be comma seperated.
-
+NA
 
 ### API Details
 
@@ -69,11 +57,11 @@ End-point to fetch the user details by access-token
 
 f) `POST /users/_updatenovalidate`
 
-End-point to update the user details without otp validations. User's username, type and tenantId are not update and ignored in update.
+End-point to update the user details without otp validations. User's username, type and tenantId are not updated and ignored in update.
 
 g) `POST /profile/_update`
 
-This is used to migrate data from one index to another index
+End-point to update user profile. This allows partial update on user's account.
 
 h) `POST /password/_update`
 
@@ -94,9 +82,7 @@ Endpoint for login. If the user is citizen the login is otp based else it is pas
 
 
 ### Kafka Consumers
-- The service uses consumers for topics defined in index configs to read data which is to be indexed.
+NA
 
 ### Kafka Producers
-- ```dss-collection-update``` : used in ```egov.indexer.dss.collectionindex.topic``` application property, indexer service sends collection service data to this topic to be used by DSS module
-- The indexer service produces to topic which is `{index_name}-enriched`, for providing option to use kafka-connect for pushing records to elastic search
-- In case of legacy indexing, indexer service would produce data fetched from api call to external service to topic mentioned in `topic` field of config.
+- ```audit_data``` : used in ```kafka.topic.audit``` application property, user service uses this topic for logging user data decryption calls.
