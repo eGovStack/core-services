@@ -1,3 +1,4 @@
+/*
 
 package org.egov.infra.persist.consumer;
 
@@ -157,3 +158,4 @@ public class PersisterBatchConsumerConfig {
     }
 
 }
+*/
