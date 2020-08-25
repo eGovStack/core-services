@@ -1,6 +1,6 @@
-# Egov indexer service
+# Egov-user service
 
-<p>Egov indexer service runs as a seperate service, This service is designed to perform all the indexing tasks of the egov platform. The service reads records posted on specific kafka topics and picks the corresponding index configuration from the yaml file provided by the respective module. </p>
+<p>Egov-user service is used for user data management and providing functionality to login and logout into Digit system </p>
 
 ### DB UML Diagram
 
@@ -20,12 +20,23 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 
 ## Service Details
 
-Egov indexer service is used in egov platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
-- Multiple indexes of a record posted on a single topic
-- Provision for custom index id
-- Performs both bulk and non-bulk indexing
-- Supports custom json indexing with field mappings, Enrichment of the input object on the queue
-- Performs ES down handling
+Feature List:
+- Employee:
+  - User registration
+  - Search user
+  - Update user details
+  - Forgot password
+  - Change password
+  - User role mapping(Single ulb to  multiple role)
+  - Enable employee to login into DIGIT system based on password.
+
+- Citizen:
+  - Create user
+  - Update user
+  - Search user
+  - User registration using OTP
+  - OTP based login
+
 
 #### Configurations
 NA
