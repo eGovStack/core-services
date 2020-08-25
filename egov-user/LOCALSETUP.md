@@ -16,6 +16,8 @@ To setup the egov-user service in your local system, clone the [Core Service rep
 ## Running Locally
 
 ```bash
--To run egov-user service locally, you need to port forward encryption services locally.
-- kubectl -n egov port-forward <egov-enc-service-PODNAME> 1234:8080
+-To run egov-user service locally follow below steps, 
+ - Port forward encryption services locally.
+   kubectl -n egov port-forward <egov-enc-service-PODNAME> 1234:8080
+ - Run redis on port 6379
 ```
