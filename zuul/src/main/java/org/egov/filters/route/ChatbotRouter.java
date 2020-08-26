@@ -2,6 +2,7 @@ package org.egov.filters.route;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -29,10 +30,10 @@ public class ChatbotRouter extends ZuulFilter {
     @Value("${chatbot.context.path}")
     private String chatbotContextPath;
 
-    @Value("${egov.user.isolation.service.host}")
-    private String isolationUserServiceHost;
-    @Value("${egov.user.isolation.service.search.path}")
-    private String userSearchPath;
+    @Value("${egov.home.isolation.case.management.service.host}")
+    private String homeIsolationCaseManagementServiceHost;
+    @Value("${egov.home.isolation.case.management.service.search.path}")
+    private String getHomeIsolationCaseManagementServiceSearchPath;
 
     @Value("${egov.statelevel.tenant}")
     public String stateLevelTenantId;
@@ -84,16 +85,21 @@ public class ChatbotRouter extends ZuulFilter {
     }
 
     public boolean isHomeIsolatedUser(String mobileNumber) throws IOException {
-        String searchUserRequestBody = "{\"RequestInfo\":{},\"tenantId\":\"\",\"mobileNumber\":\"\"}";
+        String searchUserRequestBody = "{\"RequestInfo\":{},\"mobileNumber\":\"\"}";
         ObjectNode request = (ObjectNode) objectMapper.readTree(searchUserRequestBody);
-        request.put("tenantId", stateLevelTenantId);
         request.put("mobileNumber", mobileNumber);
-        JsonNode response = restTemplate.postForObject(isolationUserServiceHost + userSearchPath, request,
-            JsonNode.class);
-        JsonNode users = response.get("user");
+        JsonNode response = restTemplate.postForObject(homeIsolationCaseManagementServiceHost + getHomeIsolationCaseManagementServiceSearchPath,
+            request, JsonNode.class);
+        ArrayNode cases = (ArrayNode) response.get("cases");
 
-        if(users.size() > 0) {
-            return true;
+        if(cases.size() > 0) {
+            Long currentTime = System.currentTimeMillis();
+            for(int i = 0; i < cases.size(); i++) {
+                Long endDate = cases.get(i).get("endDate").asLong();
+                if(endDate > currentTime) {
+                    return true;
+                }
+            }
         }
         return false;
     }
