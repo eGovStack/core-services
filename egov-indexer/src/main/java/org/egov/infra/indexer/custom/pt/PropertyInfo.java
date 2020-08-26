@@ -85,6 +85,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
     @Valid
     @JsonProperty("address")
     public Address address;
+    
+    @Size(max=256)
+    @JsonProperty("usageCategory")
+    public String usageCategory;
 
 
 
