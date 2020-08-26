@@ -8,6 +8,7 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 
+@Slf4j
 @Component
 @ConditionalOnProperty( value = "home.isolation.chatbot.router.enabled", havingValue = "true")
 public class ChatbotRouter extends ZuulFilter {
@@ -91,12 +93,13 @@ public class ChatbotRouter extends ZuulFilter {
         JsonNode response = restTemplate.postForObject(homeIsolationCaseManagementServiceHost + getHomeIsolationCaseManagementServiceSearchPath,
             request, JsonNode.class);
         ArrayNode cases = (ArrayNode) response.get("cases");
-
+        log.info("Number of home isolation cases : " + cases.size());
         if(cases.size() > 0) {
             Long currentTime = System.currentTimeMillis();
             for(int i = 0; i < cases.size(); i++) {
                 Long endDate = cases.get(i).get("endDate").asLong();
                 if(endDate > currentTime) {
+                    log.info("Redirecting to home isolation chatbot");
                     return true;
                 }
             }
