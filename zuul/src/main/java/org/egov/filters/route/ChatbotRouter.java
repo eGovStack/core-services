@@ -18,6 +18,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -32,10 +36,10 @@ public class ChatbotRouter extends ZuulFilter {
     @Value("${chatbot.context.path}")
     private String chatbotContextPath;
 
-    @Value("${egov.home.isolation.case.management.service.host}")
-    private String homeIsolationCaseManagementServiceHost;
-    @Value("${egov.home.isolation.case.management.service.search.path}")
-    private String getHomeIsolationCaseManagementServiceSearchPath;
+    @Value("${egov.user.isolation.service.host}")
+    private String isolationUserServiceHost;
+    @Value("${egov.user.isolation.service.search.path}")
+    private String userSearchPath;
 
     @Value("${egov.statelevel.tenant}")
     public String stateLevelTenantId;
@@ -72,6 +76,7 @@ public class ChatbotRouter extends ZuulFilter {
         if(isIsolatedUser) {
             URL url = new URL(homeIsolationChatbotHost);
             context.setRouteHost(url);
+            log.info("Redirecting user to home isolation chatbot");
         }
 
         return null;
@@ -86,20 +91,24 @@ public class ChatbotRouter extends ZuulFilter {
         return "";
     }
 
-    public boolean isHomeIsolatedUser(String mobileNumber) throws IOException {
-        String searchUserRequestBody = "{\"RequestInfo\":{},\"mobileNumber\":\"\"}";
+    public boolean isHomeIsolatedUser(String mobileNumber) throws IOException, ParseException {
+        String searchUserRequestBody = "{\"RequestInfo\":{},\"tenantId\":\"\",\"mobileNumber\":\"\"}";
         ObjectNode request = (ObjectNode) objectMapper.readTree(searchUserRequestBody);
+        request.put("tenantId", stateLevelTenantId);
         request.put("mobileNumber", mobileNumber);
-        JsonNode response = restTemplate.postForObject(homeIsolationCaseManagementServiceHost + getHomeIsolationCaseManagementServiceSearchPath,
-            request, JsonNode.class);
-        ArrayNode cases = (ArrayNode) response.get("cases");
-        log.info("Number of home isolation cases : " + cases.size());
-        if(cases.size() > 0) {
-            Long currentTime = System.currentTimeMillis();
-            for(int i = 0; i < cases.size(); i++) {
-                Long endDate = cases.get(i).get("endDate").asLong();
-                if(endDate > currentTime) {
-                    log.info("Redirecting to home isolation chatbot");
+        JsonNode response = restTemplate.postForObject(isolationUserServiceHost + userSearchPath, request,
+            JsonNode.class);
+        JsonNode users = response.get("user");
+
+        if(users.size() > 0) {
+            Long currentEpoch = System.currentTimeMillis();
+            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+            for(JsonNode user : users) {
+                Date date = df.parse(user.get("createdDate").asText());
+                long createdEpoch = date.getTime();
+                long caseEndEpoch = createdEpoch + TimeUnit.DAYS.toMillis(14);
+                if(caseEndEpoch > currentEpoch) {
                     return true;
                 }
             }
