@@ -76,10 +76,17 @@ public class CreateStepStream extends CreateStream {
             }
         }).to(answerOutputTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
-        branches[1].mapValues(chatNode -> {
+        branches[1].flatMapValues(chatNode -> {
+        	try
+        	{
             chatNode.setAddErrorMessage(true);
             answerStore.saveAnswer(config, chatNode);
-            return chatNode;
+            return Collections.singletonList(chatNode);
+        	}catch (Exception e) {
+                log.error("step stream error", e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
+                return Collections.emptyList();
+            }
         }).to(questionTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         kafkaStreamsConfig.startStream(builder, streamConfiguration);
