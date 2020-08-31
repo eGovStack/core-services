@@ -1,4 +1,4 @@
-/*
+
 
 package org.egov.infra.persist.consumer;
 
@@ -19,11 +19,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer;
-import org.springframework.kafka.listener.BatchMessageListener;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.kafka.listener.config.ContainerProperties;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.*;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -86,10 +83,10 @@ public class PersisterBatchConsumerConfig {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties().setErrorHandler(stoppingErrorHandler);
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(30000);
-        factory.getContainerProperties().setAckMode(AbstractMessageListenerContainer.AckMode.BATCH);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
+        factory.setBatchErrorHandler(new SeekToCurrentBatchErrorHandler());
 
 
         // BATCH PROPERTY
@@ -104,8 +101,8 @@ public class PersisterBatchConsumerConfig {
     public KafkaMessageListenerContainer<String, String> container() throws Exception {
         ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
         // set more properties
-        properties.setPauseEnabled(true);
-        properties.setPauseAfter(0);
+   //     properties.setPauseEnabled(true);
+   //     properties.setPauseAfter(0);
         // properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
         properties.setMessageListener(indexerMessageListener);
 
@@ -158,4 +155,4 @@ public class PersisterBatchConsumerConfig {
     }
 
 }
-*/
+
