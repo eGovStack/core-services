@@ -1,76 +1,51 @@
-# egr-filestore
-Service for storing and retrieving files.
+# Local Setup
 
-## API
+This document will walk you through the dependencies of eGov-Searcher and how to set it up locally
 
-### Save Files
+## Dependencies
 
-Endpoint
-```
-POST /files
-```
+### Infra Dependency
 
-Request Body
+- [X] Postgres DB
+- [ ] Redis
+- [ ] Elasticsearch
+- [ ] Kafka
+  - [ ] Consumer
+  - [ ] Producer
+- [x] Azure
+- [x] Aws-s3
+- [x] Minio
 
-| Field | Description |
-| ------ | ------ |
-| file | Files to upload |
-| jurisdictionId | Jurisdiction ID (Required Field) |
-| module | Name of the module where this request is coming from. (Required Field) |
-| tag | Tag (Optional Field) |
+## Running Locally
 
-Response
-```json
-{
-  "files": [
-    {
-      "fileStoreId": "62a12949-e295-4ac1-a84e-8008b9400817"
-    },
-    {
-      "fileStoreId": "893f6922-b1e6-4225-96c2-3df5c81259dd"
-    }
-  ]
-}
-```
-### Retrieve a File
+To run this services locally, you need to port forward below services locally
 
-Endpoint
-```
-GET /files/{fileStoreId}
-```
+```bash
 
-This endpoint returns the file.
+``` 
 
-### Retrieve File URLs by Tag
+Update below listed properties in `application.properties` before running the project:
 
-Endpoint
+```ini
 
-```
-GET /files?tag={tag}
-```
+is.container.fixed=true - tells whether the image containers to store the fiels are static or dynamic
 
-Response
-```json
-{
-  "files": [
-    {
-      "url": "http://localhost:8080/filestore/files/ede7540c-f7f0-43d2-ab89-23ba701fe1f9"
-    },
-    {
-      "url": "http://localhost:8080/filestore/files/f8e4de2f-c994-4347-80a2-9aa4b2602f93"
-    },
-    {
-      "url": "http://localhost:8080/filestore/files/71de41db-55e4-43f8-9a46-1146cbf3e619"
-    },
-    {
-      "url": "http://localhost:8080/filestore/files/83eb0e18-1cb8-4a2a-911c-a6ac5105cba8"
-    },
-    {
-      "url": "http://localhost:8080/filestore/files/62a12949-e295-4ac1-a84e-8008b9400817"
-    },
-    {
-      "url": "http://localhost:8080/filestore/files/893f6922-b1e6-4225-96c2-3df5c81259dd"
-    }
-  ]
-}
+#Azure - azure related configs to be added when azure is connected with app
+  isAzureStorageEnabled=false
+  azure.defaultEndpointsProtocol=https
+  azure.accountName=accname
+  azure.accountKey=acckey
+  azure.sas.expiry.time.in.secs=86400
+  source.azure.blob=AzureBlobStorage
+  azure.blob.host=https://$accountName.blob.core.windows.net
+  azure.api.version=2018-03-28
+
+#minio and S3 config - minio and S3 share the same variables for configs
+  minio.url=https://s3.amazonaws.com - if the url is aws then service provider is aws else it's minio
+  isS3Enabled=true
+  aws.secretkey=minioadmin
+  aws.key=minioadmin
+  fixed.bucketname=egov-rainmaker-1
+  minio.source=minio
+
 ```
