@@ -27,6 +27,7 @@ To run this services locally, you need to port forward below services locally
 Update below listed properties in `application.properties` before running the project:
 
 ```ini
+Only one of the service provider can be enabled at a time either azure or aws or minio.
 
 is.container.fixed=true - tells whether the image containers to store the fiels are static or dynamic
 
