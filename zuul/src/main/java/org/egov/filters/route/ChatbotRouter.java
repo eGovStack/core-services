@@ -70,8 +70,12 @@ public class ChatbotRouter extends ZuulFilter {
         HttpServletRequest request = context.getRequest();
 
         String mobileNumber = get10DigitMobileNumber(request);
+        
+        log.info("chatbot user is "+ mobileNumber);
 
         boolean isIsolatedUser = isHomeIsolatedUser(mobileNumber);
+        
+        log.info("isolatedUser "+ isIsolatedUser);
 
         if(isIsolatedUser) {
             URL url = new URL(homeIsolationChatbotHost);
