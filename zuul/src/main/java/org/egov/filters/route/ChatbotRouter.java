@@ -102,7 +102,10 @@ public class ChatbotRouter extends ZuulFilter {
         request.put("mobileNumber", mobileNumber);
         JsonNode response = restTemplate.postForObject(isolationUserServiceHost + userSearchPath, request,
             JsonNode.class);
+        log.info("user response is", response.toString());
+        
         JsonNode users = response.get("user");
+       
 
         if(users.size() > 0) {
             Long currentEpoch = System.currentTimeMillis();
