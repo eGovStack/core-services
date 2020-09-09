@@ -1,4 +1,4 @@
-# <eGov-Searcher>
+# eGov-Searcher
 
 Searcher provides generic search for all the rest of the modules in the egov suite without having to make use of any platform based data models with only the help of yaml based configs. 
 
