@@ -99,15 +99,22 @@ public class ProcessJSONUtil {
             return ciphertext.toString();
         }
         else {
-            Plaintext plaintext;
-            Ciphertext ciphertext = new Ciphertext(value.toString());
-            method = keyStore.getTypeOfKey(ciphertext.getKeyId());
-            if(method.equals(MethodEnum.SYM)) {
-                plaintext = symmetricEncryptionService.decrypt(ciphertext);
-            } else {
-                plaintext = asymmetricEncryptionService.decrypt(ciphertext);
+            Plaintext plaintext = null;
+            List<String> finalList =new ArrayList<String>();
+            String[] splittedCipherTextArray = Arrays.stream(value.toString().split(",")).map(String::trim).filter(item ->!item.isEmpty()).toArray(String[]::new);
+            String decrpytvalue ="";
+            for (String encryotvalue : splittedCipherTextArray) {
+                Ciphertext ciphertext = new Ciphertext(encryotvalue);
+                method = keyStore.getTypeOfKey(ciphertext.getKeyId());
+                if(method.equals(MethodEnum.SYM)) {
+                    plaintext = symmetricEncryptionService.decrypt(ciphertext);
+                } else {
+                    plaintext = asymmetricEncryptionService.decrypt(ciphertext);
+                }
+                finalList.add(plaintext.toString());
             }
-            return plaintext.toString();
+            decrpytvalue= String.join(",", finalList);
+            return decrpytvalue;
         }
     }
 
