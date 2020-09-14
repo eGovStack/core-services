@@ -9,7 +9,7 @@ message: chatbot.messages.pgrCreateTenantId
 
 validationRequired : true
 typeOfValues : FixedSetValues
-displayValuesAsOptions: true
+displayValuesAsOptions: false
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
 values :

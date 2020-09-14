@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.minidev.json.JSONArray;
 import org.egov.chat.service.valuefetch.ExternalValueFetcher;
+import org.egov.chat.util.URLShorteningSevice;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private URLShorteningSevice urlShorteningSevice;
+
 
     private String moduleName = "tenant";
     private String masterDetailsName = "citymodule";
@@ -31,6 +35,11 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
     private String mdmsHost;
     @Value("${mdms.service.search.path}")
     private String mdmsSearchPath;
+
+    @Value("${egov.external.host}")
+    private String egovExternalHost;
+    @Value("${tenantid.options.path}")
+    private String localityOptionsPath;
 
 
     @Override
@@ -46,7 +55,12 @@ public class TenantIdValueFetcher implements ExternalValueFetcher {
 
     @Override
     public String createExternalLinkForParams(ObjectNode params) {
-        return null;
+        String mobile = params.get("recipient").asText();
+        String tenantId = "pb";
+
+        String url = egovExternalHost + localityOptionsPath + "?phone=" + mobile + "&tenantId=" + tenantId;
+        String shortenedURL = urlShorteningSevice.shortenURL(url);
+        return shortenedURL;
     }
 
     private JSONArray fetchMdmsData(String tenantId) {
