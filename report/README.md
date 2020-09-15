@@ -83,4 +83,4 @@ This request to report service is used to get data for the report. Inputs given 
 
 ### Kafka Producers
 
-- ```audit_data```: used in `kafka.topic.audit` property to push audit data from decryption process
+- `audit_data`: used in `kafka.topic.audit` property to push audit data from decryption process
