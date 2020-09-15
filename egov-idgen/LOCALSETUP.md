@@ -17,19 +17,20 @@ This document will walk you through the dependencies of this service and how to 
 
 ## Running Locally
 
+To run the IdGen services in your local system, you need to port forward below services
+
+```bash
+function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
+kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080
+``` 
+
 To run the notification mail services locally, update below listed properties in `application.properties` before running the project:
 
 ```ini
-`spring.datasource.url`          : Local db URL
+# The host of the running environment (eg:https://egov-micro-qa.egovernments.org/citizen)
+mdms.service.host=http://127.0.0.1:8088/
 
-`spring.datasource.username`     : Local db username
-
-`spring.datasource.password`     : Local db password
-
-`mdms.service.host`              : The host of the running environment (eg:https://egov-micro-qa.egovernments.org/citizen)
-
-`mdms.service.search.uri`        : MDMS service URI. i.e egov-mdms-service/v1/_search
+# MDMS service URI. i.e egov-mdms-service/v1/_search
+mdms.service.search.uri=
 ```
 
-```bash
-kubectl -n egov port-forward <egov-mdms-service-PODNAME> 8094:5005
