@@ -41,5 +41,5 @@ This method send the OTP to user via sms or email based on the below parameter
 ### Kafka Producers
 
 - Following are the Producer topic.
-    - **egov.core.notification.sms.otp** :- This topic is used to send OTP to user mobile number.
-    - **org.egov.core.notification.email** :- This topic is used to send OTP to user email id.
+    - `egov.core.notification.sms.otp` :- This topic is used to send OTP to user mobile number.
+    - `org.egov.core.notification.email` :- This topic is used to send OTP to user email id.
