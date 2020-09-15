@@ -64,6 +64,6 @@ This is to run LegacyIndex job to index data from DB. In the request body the UR
 - The service uses consumers for topics defined in index configs to read data which is to be indexed.
 
 ### Kafka Producers
-- ```dss-collection-update``` : used in ```egov.indexer.dss.collectionindex.topic``` application property, indexer service sends collection service data to this topic to be used by DSS module
+- `dss-collection-update` : used in `egov.indexer.dss.collectionindex.topic` application property, indexer service sends collection service data to this topic to be used by DSS module
 - The indexer service produces to topic which is `{index_name}-enriched`, for providing option to use kafka-connect for pushing records to elastic search
 - In case of legacy indexing, indexer service would produce data fetched from api call to external service to topic mentioned in `topic` field of config.
