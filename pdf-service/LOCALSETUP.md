@@ -17,8 +17,6 @@ To setup the PDF-service in your local system, clone the [Core Service repositor
 
 ### Local setup
 1. To setup the PDF-service, clone the [Core Service repository](https://github.com/egovernments/core-services)
-2. Open the terminal and run the following command
-
 2. Write configuration as per your requirement [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/data-config/tl-receipt.json) and [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/format-config/tl-receipt.json).
 3. In EnvironmentVariable.js file, mention the local file path of data and format configuration file under the variables `DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS`  and `FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS` while mentioning the  file path we have to add `file://` as prefix. If there are multiple file seperate it with `,` .
     
@@ -30,7 +28,7 @@ To setup the PDF-service in your local system, clone the [Core Service repositor
 
     `cd [filepath to pdf service]`
                                                       
-    `sudo npm install --unsafe-perm=true`             (run this command only once when you clone the repo)
+    `npm install`             (run this command only once when you clone the repo)
                                                                                                                                                  
     `npm run dev`
 
