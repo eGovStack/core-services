@@ -18,18 +18,19 @@ To setup the egov-location service in your local system, clone the [Core Service
 To run the egov-location services locally, you need to port forward below services locally
 
 ```bash
- kubectl port-forward -n egov {egov-mdms} 8088:8080
+function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
+kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080
 ``` 
 
 Update below listed properties in `application.properties` before running the project:
 
 ```ini
- 
--spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+# {mdms hostname}
+egov.services.egov_mdms.hostname=http://127.0.0.1:8088
 
--egov.services.egov_mdms.hostname={mdms hostname}
+# {mdms module which contain boundary master}
+egov.service.egov.mdms.moduleName = 
 
--egov.service.egov.mdms.moduleName = {mdms module which contain boundary master}
-
--egov.service.egov.mdms.masterName = {mdms master file which contain boundary details}
+# {mdms master file which contain boundary details}
+egov.service.egov.mdms.masterName = 
 ```
