@@ -18,42 +18,23 @@ To setup the egov-accesscontrol service in your local system, clone the [Core Se
 To run the egov-accesscontrol services locally, you need to port forward below services locally
 
 ```bash
- kubectl port-forward -n egov {egov-mdms} 8088:8080
+function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
+kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080
 ``` 
 
 Update below listed properties in `application.properties` before running the project:
 
 ```ini
  
--spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+egov.mdms.host={mdms hostname}
 
--spring.flyway.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+mdms.roleactionmaster.names = {roleactions master name}
 
--egov.mdms.host={mdms hostname}
+mdms.roleaction.path = {roleaction json path}
 
--egov.mdms.search.endpoint = {mdms search endpoint}
+mdms.actions.path = {action json path}
 
--mdms.roleactionmodule.name = {role action module name}
+mdms.actionstest.path = {action test json path}
 
--mdms.actionstestmodule.name = {action test module name} 
-
--mdms.actionsmodule.name = {action module name}
-
--mdms.rolemodule.name = {role module name}
-
--mdms.rolemaster.name = {roles master name}
-
--mdms.actionmaster.names = {action master name}
-
--mdms.actiontestmaster.names = {action test master name}
-
--mdms.roleactionmaster.names = {roleactions master name}
-
--mdms.roleaction.path = {roleaction json path}
-
--mdms.actions.path = {action json path}
-
--mdms.actionstest.path = {action test json path}
-
--mdms.role.path = {role json path}
+mdms.role.path = {role json path}
 ```
