@@ -18,17 +18,21 @@ To setup the user-otp service in your local system, clone the [Core Service repo
 To run the user-otp service in your local system, you need to port forward below services
 
 ```bash
- kubectl port-forward -n egov {egov-localization pod id} 8087:8080
- kubectl port-forward -n egov {egov-user pod id} 8088:8080
- kubectl port-forward -n egov {egov-otp pod id} 8089:8080
+function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
+kubectl port-forward -n egov $(kgpt egov-localization) 8087:8080
+kubectl port-forward -n egov $(kgpt egov-user) 8088:8080
+kubectl port-forward -n egov $(kgpt egov-otp) 8089:8080
 ``` 
 
 Update below listed properties in **`application.properties`** before running the project:
 
 ```ini
--user.host = {egov-user service hostname}
+#{egov-user service hostname}
+user.host = http://127.0.0.1:8088
 
--otp.host = {egov-otp service hostname}
+# {egov-otp service hostname}
+otp.host = http://127.0.0.1:8089
 
--egov.localisation.host = {egov-localisation service hostname}
+# {egov-localisation service hostname}
+egov.localisation.host = http://127.0.0.1:8087
 ```
