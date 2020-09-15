@@ -18,25 +18,23 @@ To setup the egov-workflow-v2 service in your local system, clone the [Core Serv
 To run the egov-workflow-v2 services locally, you need to port forward below services locally
 
 ```bash
- kubectl port-forward -n egov {egov-mdms} 8088:8080
- kubectl port-forward -n egov {egov-user} 8089:8080
+function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
+kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080
+kubectl port-forward -n egov $(kgpt egov-user) 8089:8080
 ``` 
 
 Update below listed properties in `application.properties` before running the project:
 
 ```ini
- 
--spring.datasource.url=jdbc:postgresql://localhost:5432/{local postgres db name}
+# {mdms hostname}
+egov.mdms.host=http://127.0.0.1:8088
 
--egov.mdms.host={mdms hostname}
+#{user service hostname}
+egov.user.host=http://127.0.0.1:8089 
 
--egov.mdms.search.endpoint = {mdms search endpoint}
+# true for state level and false for tenant level
+egov.wf.statelevel=
 
--egov.user.host = {user service hostname}
-
--egov.user.search.endpoint = {user service search endpoint}
-
--egov.wf.statelevel = {true for state level and false for tenant level}
-
--egov.wf.inbox.assignedonly = {Boolean flag if set to true default search will return records assigned to the user only, if false it will return all the records based on user’s role.}
+#Boolean flag if set to true default search will return records assigned to the user only, if false it will return all the records based on user’s role.
+egov.wf.inbox.assignedonly =
 ```
