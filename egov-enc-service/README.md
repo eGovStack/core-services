@@ -4,7 +4,7 @@ Encryption Service is used to secure the data. It provides functionality to encr
 
 ### DB UML Diagram
 
-- NA
+- To Do
 
 ### Service Dependencies
 
@@ -26,8 +26,17 @@ Encryption Service offers following features :
 - Rotate Key - Encryption Service supports changing the key used for encryption. The old key will still remain with the service which will be used to decrypt old data. All the new data will be encrypted by the new key.
 
 #### Configurations
-NA
 
+Following are the properties in application.properties file in egov-enc-service which are configurable.
+
+| Property                     |  Default Value    | Remarks                                                                                                                      | 
+| -----------------------------| ------------------| -----------------------------------------------------------------------------------------------------------------------------|
+| `master-password`            | asd@#$@$!132123   | Master password for encryption/ decryption.                                                                                  |
+| `master.salt`                | qweasdzx          | A salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.  |
+| `master.initialvector`       | qweasdzxqwea      | An initialization vector is a fixed-size input to a cryptographic primitive.                                                 |
+| `size.key.symmetric`         | 256               | Default size of Symmetric key.                                                                                               |          
+| `size.key.asymmetric`        | 1024              | Default size of Asymmetric key.                                                                                              |      
+| `size.initialvector`         | 12                | Default size of Initial vector.                                                                                              |
 
 ### API Details
 
