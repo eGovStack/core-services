@@ -20,13 +20,13 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 ## Service Details
 
-###Reconciliation
+### Reconciliation
 
 - Reconciliation is carried out by two jobs scheduled via a Quartz clustered scheduler.
 - Early Reconciliation job is set to run every 15 minutes [configurable via app properties], and is aimed at reconciling transactions which were created 15 - 30 minutes ago and are in PENDING state.
 - Daily Reconciliation job is set to run once per day, and is aimed at reconciling all transactions that are in PENDING state, except for ones which were created 30 minutes ago.
 
-###Packages
+### Packages
 
 - config :- All configuration related to the App, including main quartz scheduler configs
 - service :- Consists of main service classes for app functioning.
@@ -34,7 +34,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 - service/jobs/* :- Contains jobs and respective configs for the jobs which are to be scheduled on the Quartz scheduler
 - web/controllers :- Controllers for the app.
 
-###Extension
+### Extension
 - Additional gateways can be added by implementing the [Gateway](https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/src/main/java/org/egov/pg/service/Gateway.java) interface.
 
 ### Gateways Supported
@@ -47,8 +47,8 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 **Configurable Properties:**
 
-Following are the properties in application.properties file in egov-pg-service has to be added and set with default value after integrating with new gateway.
-In the below table properties for AXIS payment gateway is shown, same releveant propert needs to be add for other payment gateway.
+Following are the properties in application.properties file in egov-pg-service has to be added and set with default value after integrating with new payment gateway.
+In the below table properties for AXIS bank payment gateway is shown, same releveant propert needs to be add for other payment gateway.
 
 | Property                          | Remarks                                                  | 
 | ----------------------------------| ---------------------------------------------------------|
@@ -67,7 +67,7 @@ In the below table properties for AXIS payment gateway is shown, same releveant 
 
 ### API Details
 
-`BasePath` /payments/v1/[API endpoint]
+`BasePath` /pg-service/transaction/v1/[API endpoint]
 
 ##### Method
 
