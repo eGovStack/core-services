@@ -15,15 +15,5 @@ This document will walk you through the dependencies of Localisation and how to 
 
 ## Running Locally
 
-To run this services locally, you need to port forward below services locally
+No changes required.
 
-```bash
-
-``` 
-
-Update below listed properties in `application.properties` before running the project:
-
-```ini
-
-
-```
