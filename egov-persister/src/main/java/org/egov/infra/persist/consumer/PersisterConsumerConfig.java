@@ -71,8 +71,6 @@ public class PersisterConsumerConfig {
         ErrorHandlingDeserializer2<String> errorHandlingDeserializer
                 = new ErrorHandlingDeserializer2<>(new JsonDeserializer<>(Object.class));
 
-        Object t = JsonDeserializer.TRUSTED_PACKAGES;
-
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), errorHandlingDeserializer);
     }
 
