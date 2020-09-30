@@ -5,6 +5,7 @@ package org.egov.infra.persist.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.egov.infra.persist.web.contract.TopicMap;
 import org.egov.tracer.KafkaConsumerErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.*;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer2;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -76,7 +79,13 @@ public class PersisterBatchConsumerConfig {
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, batchSize);
 
 
-        return new DefaultKafkaConsumerFactory<>(props);
+        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class,false);
+
+        ErrorHandlingDeserializer2<String> errorHandlingDeserializer
+                = new ErrorHandlingDeserializer2<>(jsonDeserializer);
+
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), errorHandlingDeserializer);
+
     }
 
     @Bean("kafkaListenerContainerFactoryBatch")

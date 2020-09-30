@@ -68,8 +68,10 @@ public class PersisterConsumerConfig {
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
 
+        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class,false);
+
         ErrorHandlingDeserializer2<String> errorHandlingDeserializer
-                = new ErrorHandlingDeserializer2<>(new JsonDeserializer<>(Object.class));
+                = new ErrorHandlingDeserializer2<>(jsonDeserializer);
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), errorHandlingDeserializer);
     }
