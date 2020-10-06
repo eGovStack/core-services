@@ -54,6 +54,8 @@ public class TransactionValidatorTest {
                 .amountPaid(new BigDecimal("100"))
                 .taxAmount(new BigDecimal("100"))
                 .build();
+        org.egov.pg.web.models.User user = org.egov.pg.web.models.User.builder().userName("").name("XYZ").uuid("").tenantId("").mobileNumber("9999999999").build();
+
         txn = Transaction.builder().txnAmount("100")
                 .txnStatus(Transaction.TxnStatusEnum.PENDING)
                 .billId("ORDER0012")
@@ -62,6 +64,7 @@ public class TransactionValidatorTest {
                 .productInfo("Property Tax Payment")
                 .gateway("ABCD123")
                 .consumerCode("PT-21055")
+                .user(user)
                 .taxAndPayments(Collections.singletonList(taxAndPayment))
                 .build();
         BillDetail billDetail = BillDetail.builder().amountPaid(new BigDecimal(100)).build();
