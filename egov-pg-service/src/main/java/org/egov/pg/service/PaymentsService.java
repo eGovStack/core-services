@@ -107,6 +107,7 @@ public class PaymentsService {
 				.totalAmountPaid(new BigDecimal(request.getTransaction().getTxnAmount()))
 				.paymentMode(CollectionPaymentModeEnum.ONLINE)
 				.paidBy(request.getTransaction().getUser().getName())
+				.payerName(request.getTransaction().getUser().getName())
 				.mobileNumber(request.getTransaction().getUser().getMobileNumber())
 				.instrumentDate(System.currentTimeMillis())
 				.instrumentNumber("PROV_PAYMENT_VALIDATION")
