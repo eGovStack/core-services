@@ -45,6 +45,14 @@ public class AppProperties {
 
     private final String bankAccountPath;
 
+    private final String userServiceHost;
+
+    private final String userServiceCreatePath;
+
+    private final String userServiceSearchPath;
+
+    private final Boolean isUserCreationEnable;
+
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
@@ -63,6 +71,10 @@ public class AppProperties {
         this.bankAccountPath = environment.getRequiredProperty("egov.bankaccountservice.path");
         this.paymentCreatePath = environment.getRequiredProperty("egov.collectionservice.payment.create.path");
         this.paymentValidatePath = environment.getRequiredProperty("egov.collectionservice.payment.validate.path");
+        this.userServiceHost = environment.getRequiredProperty("egov.userservice.host");
+        this.userServiceCreatePath = environment.getRequiredProperty("egov.userservice.create.path");
+        this.userServiceSearchPath = environment.getRequiredProperty("egov.userservice.search.path");
+        this.isUserCreationEnable = Boolean.valueOf(environment.getRequiredProperty("pg.is.user.create.enabled"));
     }
 
 }
