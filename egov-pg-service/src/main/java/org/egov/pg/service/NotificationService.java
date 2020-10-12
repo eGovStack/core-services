@@ -10,6 +10,8 @@ import org.egov.pg.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +47,10 @@ public class NotificationService {
         String txnStatus = String.valueOf(transactionRequest.getTransaction().getTxnStatus());
         String finalMsg = getFinalMessage(transactionRequest, txnStatus, topic);
         String mobileNumber = transactionRequest.getTransaction().getUser().getMobileNumber();
-        SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(finalMsg).build();
-        smsRequests.add(req);
+        if(!StringUtils.isEmpty(finalMsg)){
+            SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(finalMsg).build();
+            smsRequests.add(req);
+        }
         return smsRequests;
     }
 
