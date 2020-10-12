@@ -45,6 +45,18 @@ public class AppProperties {
 
     private final String bankAccountPath;
 
+    private final Boolean isSMSEnable;
+
+    private final Boolean isLocalizationStateLevel;
+
+    private final String localizationHost;
+
+    private final String localizationContextPath;
+
+    private final String localizationSearchEndpoint;
+
+    private String smsNotifTopic;
+
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
@@ -63,6 +75,12 @@ public class AppProperties {
         this.bankAccountPath = environment.getRequiredProperty("egov.bankaccountservice.path");
         this.paymentCreatePath = environment.getRequiredProperty("egov.collectionservice.payment.create.path");
         this.paymentValidatePath = environment.getRequiredProperty("egov.collectionservice.payment.validate.path");
+        this.isSMSEnable = Boolean.valueOf(environment.getRequiredProperty("notification.sms.enabled"));
+        this.isLocalizationStateLevel = Boolean.valueOf(environment.getRequiredProperty("egov.localization.statelevel"));
+        this.localizationHost = environment.getRequiredProperty("egov.localization.host");
+        this.localizationContextPath = environment.getRequiredProperty("egov.localization.context.path");
+        this.localizationSearchEndpoint = environment.getRequiredProperty("egov.localization.search.endpoint");
+        this.smsNotifTopic = environment.getRequiredProperty("kafka.topics.notification.sms");
     }
 
 }

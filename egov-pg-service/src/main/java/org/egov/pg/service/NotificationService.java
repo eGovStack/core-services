@@ -1,0 +1,81 @@
+package org.egov.pg.service;
+
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.pg.config.AppProperties;
+import org.egov.pg.models.Transaction;
+import org.egov.pg.utils.NotificationUtil;
+import org.egov.pg.web.models.SMSRequest;
+import org.egov.pg.web.models.TransactionRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.pg.constants.PgConstants.PG_MODULE;
+
+@Service
+@Slf4j
+public class NotificationService {
+
+    @Autowired
+    private AppProperties appProperties;
+
+    @Autowired
+    private NotificationUtil notificationUtil;
+
+
+
+
+    public void smsNotification(TransactionRequest transactionRequest, String topic){
+
+        if (appProperties.getIsSMSEnable() != null && appProperties.getIsSMSEnable()) {
+            List<SMSRequest> smsRequests = getSmsRequest(transactionRequest, topic);
+            if (!CollectionUtils.isEmpty(smsRequests)) {
+                notificationUtil.sendSMS(smsRequests);
+            }
+        }
+
+    }
+
+    public List<SMSRequest> getSmsRequest(TransactionRequest transactionRequest, String topic){
+        List<SMSRequest> smsRequests = new ArrayList<>();
+        String txnStatus = String.valueOf(transactionRequest.getTransaction().getTxnStatus());
+        String finalMsg = getFinalMessage(transactionRequest, txnStatus, topic);
+        String mobileNumber = transactionRequest.getTransaction().getUser().getMobileNumber();
+        SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(finalMsg).build();
+        smsRequests.add(req);
+        return smsRequests;
+    }
+
+    private String getFinalMessage(TransactionRequest transactionRequest, String txnStatus, String topic) {
+        String tenantId = transactionRequest.getTransaction().getTenantId();
+        String localizationMessage = notificationUtil.getLocalizationMessages(tenantId, transactionRequest.getRequestInfo(),PG_MODULE);
+
+        Transaction transaction = transactionRequest.getTransaction();
+
+        String message = notificationUtil.getCustomizedMsg(txnStatus, localizationMessage);
+        if (message == null) {
+            log.info("No message Found for topic : " + topic);
+            return message;
+        }
+
+        if(message.contains("<amount>"))
+            message.replace("<amount>",transaction.getTxnAmount());
+
+        if(message.contains("<consumerCode>"))
+            message.replace("<consumerCode>",transaction.getConsumerCode());
+
+        if(message.contains("<txnId>"))
+            message.replace("<txnId>",transaction.getTxnId());
+
+        if(message.contains("<Payment failure reason>"))
+            message.replace("<Payment failure reason>",transaction.getTxnStatusMsg());
+
+        return message;
+    }
+
+
+}
