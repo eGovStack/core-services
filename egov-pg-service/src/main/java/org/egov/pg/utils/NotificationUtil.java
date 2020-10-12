@@ -1,5 +1,6 @@
 package org.egov.pg.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -34,11 +35,15 @@ public class NotificationUtil {
     @Autowired
     private Producer producer;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     public String getLocalizationMessages(String tenantId, RequestInfo requestInfo, String module) {
         @SuppressWarnings("rawtypes")
         Optional<Object> responseMap = serviceCallRepository.fetchResult(getUri(tenantId, requestInfo, module),
                 requestInfo);
-        return responseMap.toString();
+        LinkedHashMap response = mapper.convertValue(responseMap.get(), LinkedHashMap.class);
+        return new JSONObject(response).toString();
     }
 
     public String getUri(String tenantId, RequestInfo requestInfo, String module) {
