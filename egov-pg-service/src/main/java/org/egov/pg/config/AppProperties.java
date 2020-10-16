@@ -3,6 +3,7 @@ package org.egov.pg.config;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -53,6 +54,24 @@ public class AppProperties {
 
     private final Boolean isUserCreationEnable;
 
+    private final Boolean isSMSEnable;
+
+    private final Boolean isLocalizationStateLevel;
+
+    private final String localizationHost;
+
+    private final String localizationContextPath;
+
+    private final String localizationSearchEndpoint;
+
+    private final String smsNotifTopic;
+
+    private final String applicationPayLink;
+
+    private final String urlShortnerHost;
+
+    private final String urlShortnerEndpoint;
+
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
@@ -75,6 +94,15 @@ public class AppProperties {
         this.userServiceCreatePath = environment.getRequiredProperty("egov.userservice.create.path");
         this.userServiceSearchPath = environment.getRequiredProperty("egov.userservice.search.path");
         this.isUserCreationEnable = Boolean.valueOf(environment.getRequiredProperty("pg.is.user.create.enabled"));
+        this.isSMSEnable = Boolean.valueOf(environment.getRequiredProperty("notification.sms.enabled"));
+        this.isLocalizationStateLevel = Boolean.valueOf(environment.getRequiredProperty("egov.localization.statelevel"));
+        this.localizationHost = environment.getRequiredProperty("egov.localization.host");
+        this.localizationContextPath = environment.getRequiredProperty("egov.localization.context.path");
+        this.localizationSearchEndpoint = environment.getRequiredProperty("egov.localization.search.endpoint");
+        this.smsNotifTopic = environment.getRequiredProperty("kafka.topics.notification.sms");
+        this.applicationPayLink = environment.getRequiredProperty("egov.application.pay.link");
+        this.urlShortnerHost = environment.getRequiredProperty("egov.url.shortner.host");
+        this.urlShortnerEndpoint =environment.getRequiredProperty("egov.url.shortner.endpoint");
     }
 
 }
