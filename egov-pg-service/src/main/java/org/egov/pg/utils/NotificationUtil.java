@@ -9,6 +9,7 @@ import org.egov.pg.config.AppProperties;
 import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.ServiceCallRepository;
 import org.egov.pg.web.models.SMSRequest;
+import org.egov.pg.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -109,5 +110,30 @@ public class NotificationUtil {
             return actualURL;
         }
         else return res;
+    }
+
+    public String getBusinessService(TransactionRequest transactionRequest){
+        StringBuilder uri = new StringBuilder();
+        uri.append(appProperties.getBillingServiceHost()).append(appProperties.getBillingServiceSearchEndpoint())
+                .append("?").append("tenantId=").append(transactionRequest.getTransaction().getTenantId())
+                .append("&billId=").append(transactionRequest.getTransaction().getBillId());
+
+        Optional<Object> response =  serviceCallRepository.fetchResult(uri.toString(), transactionRequest.getRequestInfo());
+
+        LinkedHashMap responseMap = mapper.convertValue(response.get(), LinkedHashMap.class);
+
+        String billResponse = new JSONObject(responseMap).toString();
+
+        String path = "$..Bill[0].businessService";
+        String service = null;
+        try {
+            ArrayList<String> serviceObj = (ArrayList<String>) JsonPath.parse(billResponse).read(path);
+            if(serviceObj != null && serviceObj.size() > 0) {
+                service = serviceObj.get(0);
+            }
+        } catch (Exception e) {
+            log.warn("Fetching from localization failed", e);
+        }
+        return service;
     }
 }

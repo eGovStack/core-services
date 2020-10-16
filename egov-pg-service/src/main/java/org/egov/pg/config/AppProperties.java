@@ -72,6 +72,10 @@ public class AppProperties {
 
     private final String urlShortnerEndpoint;
 
+    private final String billingServiceHost;
+
+    private final String billingServiceSearchEndpoint;
+
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
@@ -103,6 +107,8 @@ public class AppProperties {
         this.applicationPayLink = environment.getRequiredProperty("egov.application.pay.link");
         this.urlShortnerHost = environment.getRequiredProperty("egov.url.shortner.host");
         this.urlShortnerEndpoint =environment.getRequiredProperty("egov.url.shortner.endpoint");
+        this.billingServiceHost = environment.getRequiredProperty("egov.billing.service.host");
+        this.billingServiceSearchEndpoint = environment.getRequiredProperty("egov.bill.searchendpoint");
     }
 
 }

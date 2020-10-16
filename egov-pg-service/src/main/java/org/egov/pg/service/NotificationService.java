@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.egov.pg.constants.PgConstants.PG_MODULE;
 
@@ -77,10 +78,11 @@ public class NotificationService {
             message = message.replace("<Payment failure reason>",transaction.getTxnStatusMsg());
 
         if (message.contains("<payment link>")) {
+            String businessService = notificationUtil.getBusinessService(transactionRequest);
             String paymentLink = appProperties.getCollectionServiceHost() + appProperties.getApplicationPayLink();
             paymentLink = paymentLink.replace("$consumerCode", transaction.getConsumerCode());
             paymentLink = paymentLink.replace("$tenantId", transaction.getTenantId());
-            paymentLink = paymentLink.replace("$businessService", transaction.getModule());
+            paymentLink = paymentLink.replace("$businessService", businessService);
             message = message.replace("<payment link>", notificationUtil.getShortnerURL(paymentLink));
         }
 
