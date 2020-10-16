@@ -66,8 +66,6 @@ public class NotificationUtil {
     public String getCustomizedMsg(String txnStatus, String localizationMessage) {
         StringBuilder notificationCode = new StringBuilder();
         notificationCode.append(PG_NOTIFICATION).append("_").append(txnStatus);
-        log.info("txnStatus= "+notificationCode);
-        log.info("localizationMessage = "+localizationMessage);
         String path = "$..messages[?(@.code==\"{}\")].message";
         path = path.replace("{}", notificationCode);
         String message = null;
