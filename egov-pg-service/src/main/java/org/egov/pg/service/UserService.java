@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -101,7 +98,7 @@ public class UserService {
 
         user.put("name", transaction.getUser().getName());
         user.put("mobileNumber", transaction.getUser().getMobileNumber());
-        user.put("userName", transaction.getUser().getMobileNumber());
+        user.put("userName", UUID.randomUUID().toString());
         user.put("active", true);
         user.put("type", "CITIZEN");
         user.put("tenantId", transaction.getTenantId().split("\\.")[0]);
