@@ -32,7 +32,9 @@ public class NotificationService {
 
     public void smsNotification(TransactionRequest transactionRequest, String topic){
 
-        if (appProperties.getIsSMSEnable() != null && appProperties.getIsSMSEnable()) {
+        if (appProperties.getIsSMSEnable() != null && appProperties.getIsSMSEnable()
+                && transactionRequest.getRequestInfo().getUserInfo() !=null
+                && transactionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("SYSTEM")) {
             List<SMSRequest> smsRequests = getSmsRequest(transactionRequest, topic);
             if (!CollectionUtils.isEmpty(smsRequests)) {
                 notificationUtil.sendSMS(smsRequests);
