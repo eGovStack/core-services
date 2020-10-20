@@ -32,7 +32,9 @@ public class NotificationService {
 
     public void smsNotification(TransactionRequest transactionRequest, String topic){
 
-        if (appProperties.getIsSMSEnable() != null && appProperties.getIsSMSEnable()) {
+        if (appProperties.getIsSMSEnable() != null && appProperties.getIsSMSEnable()
+                && transactionRequest.getRequestInfo().getUserInfo() !=null
+                && transactionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("SYSTEM")) {
             List<SMSRequest> smsRequests = getSmsRequest(transactionRequest, topic);
             if (!CollectionUtils.isEmpty(smsRequests)) {
                 notificationUtil.sendSMS(smsRequests);
@@ -79,7 +81,7 @@ public class NotificationService {
 
         if (message.contains("<payment link>")) {
             String businessService = notificationUtil.getBusinessService(transactionRequest);
-            String paymentLink = appProperties.getCollectionServiceHost() + appProperties.getApplicationPayLink();
+            String paymentLink = appProperties.getNotificationHost() + appProperties.getApplicationPayLink();
             paymentLink = paymentLink.replace("$consumerCode", transaction.getConsumerCode());
             paymentLink = paymentLink.replace("$tenantId", transaction.getTenantId());
             paymentLink = paymentLink.replace("$businessService", businessService);
