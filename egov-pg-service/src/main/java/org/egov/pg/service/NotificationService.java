@@ -79,7 +79,7 @@ public class NotificationService {
 
         if (message.contains("<payment link>")) {
             String businessService = notificationUtil.getBusinessService(transactionRequest);
-            String paymentLink = appProperties.getCollectionServiceHost() + appProperties.getApplicationPayLink();
+            String paymentLink = appProperties.getNotificationHost() + appProperties.getApplicationPayLink();
             paymentLink = paymentLink.replace("$consumerCode", transaction.getConsumerCode());
             paymentLink = paymentLink.replace("$tenantId", transaction.getTenantId());
             paymentLink = paymentLink.replace("$businessService", businessService);
