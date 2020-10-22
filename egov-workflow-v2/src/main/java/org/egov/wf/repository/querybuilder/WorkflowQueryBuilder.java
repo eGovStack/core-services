@@ -214,6 +214,30 @@ public class WorkflowQueryBuilder {
     }
 
 
+    public String getInboxSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+
+        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+
+        List<String> statuses = criteria.getStatus();
+        StringBuilder builder = new StringBuilder(query);
+
+        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
+            builder.append(" AND ((asg.assignee = ?  AND pi.tenantid = ?) OR CONCAT (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append("))");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+            addToPreparedStatement(preparedStmtList,statuses);
+        }
+        else {
+            builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        String paginatedQuery = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
+        paginatedQuery = paginatedQuery + ORDERBY_CREATEDTIME;
+
+        return paginatedQuery;
+    }
 
 
 

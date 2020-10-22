@@ -69,8 +69,31 @@ public class WorKflowRepository {
      */
     public List<ProcessInstance> getProcessInstancesForStatus(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(criteria.getStatus()))
+            return new LinkedList<>();
+
         String query = queryBuilder.getStatusBasedProcessInstance(criteria, preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
+
+
+    /**
+     *
+     * @param criteria
+     * @return
+     */
+    public List<ProcessInstance> getProcessInstancesForUserInbox(ProcessInstanceSearchCriteria criteria){
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(criteria.getStatus()))
+            return new LinkedList<>();
+
+        String query = queryBuilder.getInboxSearchQuery(criteria, preparedStmtList);
+        log.info("query for status search: "+query+" params: "+preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+    }
+
+
 
 }
