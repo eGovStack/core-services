@@ -1,5 +1,7 @@
 package org.egov.infra.indexer.web.contract;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -22,5 +24,11 @@ public class FieldMapping {
 
 	  @JsonProperty("outJsonPath")
 	  private String outJsonPath;
+	  
+	  @JsonProperty("filter")
+	  private String filter;
+
+	  @JsonProperty("filterMapping")
+	  private List<FilterMapping> filterMapping;
 
 }
