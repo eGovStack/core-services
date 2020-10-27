@@ -90,7 +90,7 @@ public class WorKflowRepository {
             return new LinkedList<>();
 
         String query = queryBuilder.getInboxSearchQuery(criteria, preparedStmtList);
-        log.info("query for status search: "+query+" params: "+preparedStmtList);
+        log.debug("query for status search: "+query+" params: "+preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
