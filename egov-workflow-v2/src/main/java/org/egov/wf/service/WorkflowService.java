@@ -110,13 +110,18 @@ public class WorkflowService {
         List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         criteria.setStatus(actionableStatuses);
+
+        List<ProcessInstance> processInstances = workflowRepository.getProcessInstancesForUserInbox(criteria);
+        return processInstances;
+
+        /*
         List<ProcessInstance> processInstancesForAssignee = workflowRepository.getProcessInstancesForAssignee(criteria);
         List<ProcessInstance> processInstancesForStatus = new LinkedList<>();
         if(!config.getAssignedOnly())
             processInstancesForStatus = workflowRepository.getProcessInstancesForStatus(criteria);
         Set<ProcessInstance> processInstanceSet = new LinkedHashSet<>(processInstancesForStatus);
         processInstanceSet.addAll(processInstancesForAssignee);
-        return new LinkedList<>(processInstanceSet);
+        return new LinkedList<>(processInstanceSet);*/
     }
 
 

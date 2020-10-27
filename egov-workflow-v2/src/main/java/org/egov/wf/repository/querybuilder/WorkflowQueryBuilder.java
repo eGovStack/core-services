@@ -51,7 +51,7 @@ public class WorkflowQueryBuilder {
             " ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action FROM ( ";*/
 
     private final String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY wf_id) offset_ FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY wf_createdTime DESC,wf_id) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
@@ -214,6 +214,30 @@ public class WorkflowQueryBuilder {
     }
 
 
+    public String getInboxSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+
+        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+
+        List<String> statuses = criteria.getStatus();
+        StringBuilder builder = new StringBuilder(query);
+
+        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
+            builder.append(" AND ((asg.assignee = ?  AND pi.tenantid = ?) OR CONCAT (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append("))");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+            addToPreparedStatement(preparedStmtList,statuses);
+        }
+        else {
+            builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        String paginatedQuery = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
+        paginatedQuery = paginatedQuery + ORDERBY_CREATEDTIME;
+
+        return paginatedQuery;
+    }
 
 
 
