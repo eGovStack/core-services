@@ -44,7 +44,7 @@ public class MDMSController {
                                      @RequestParam("tenantId") String tenantId,
                                      @RequestBody RequestInfo requestInfo) {
 
-        log.info("MDMSController mdmsCriteriaReq [" + module + ", " + master + ", " + filter + "]");
+        log.debug("MDMSController mdmsCriteriaReq [" + module + ", " + master + ", " + filter + "]");
         MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
         mdmsCriteriaReq.setRequestInfo(requestInfo);
         MdmsCriteria criteria = new MdmsCriteria();
