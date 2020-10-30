@@ -11,13 +11,11 @@ public class RoleQueryBuilder {
 
 	public static String insertRoleQuery() {
 
-		logger.info("RoleQueryBuilder : InsertRoleQuery");
 		return "INSERT INTO eg_ms_role(name,code,description,createdby,createddate,lastmodifiedby,lastmodifieddate) values "
 				+ "(:name,:code,:description,:createdby,:createddate,:lastmodifiedby,:lastmodifieddate)";
 	}
 
 	public static String updateRoleQuery() {
-		logger.info("RoleQueryBuilder : updateRoleQuery");
 		return "update eg_ms_role set code=:code,description=:description,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate where name=:name";
 	}
 

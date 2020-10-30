@@ -29,6 +29,7 @@ import javax.validation.constraints.Size;
 public class UserRequest {
 
     private Long id;
+
     private String userName;
     private String salutation;
 

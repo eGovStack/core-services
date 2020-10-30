@@ -31,7 +31,7 @@ public class RoleActionRepository {
 
 	public List<RoleAction> createRoleActions(final RoleActionsRequest actionRequest) {
 
-		LOGGER.info("Create Role Actions Repository::" + actionRequest);
+		LOGGER.debug("Create Role Actions Repository::" + actionRequest);
 		final String roleActionsInsert = "insert into eg_roleaction(rolecode,actionid,tenantid) values (:rolecode,:actionid,:tenantid)";
 
 		List<Integer> actionList = getActionsBasedOnIds(actionRequest);
@@ -84,7 +84,7 @@ public class RoleActionRepository {
 
 	public boolean checkActionNamesAreExistOrNot(final RoleActionsRequest actionRequest) {
 
-		LOGGER.info("checkActionNamesAreExistOrNot::" + actionRequest);
+		LOGGER.debug("checkActionNamesAreExistOrNot::" + actionRequest);
 
 		if (actionRequest.getActions().size() > 0) {
 

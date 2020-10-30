@@ -250,7 +250,6 @@ public class UserService {
 
 
     private void validateAndEnrichCitizen(User user) {
-        log.info("Validating User........");
         if (isCitizenLoginOtpBased && !StringUtils.isNumeric(user.getUsername()))
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
@@ -274,7 +273,6 @@ public class UserService {
     }
 
     private Object getAccess(User user, String password) {
-        log.info("Fetch access token for register with login flow");
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -443,11 +441,11 @@ public class UserService {
         // validateOtp(request.getOtpValidationRequest());
         User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType());
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased) {
-            log.info("CITIZEN forgot password flow is disabled");
+            log.debug("CITIZEN forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();
         }
         if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased) {
-            log.info("EMPLOYEE forgot password flow is disabled");
+            log.debug("EMPLOYEE forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();
         }
         /* decrypt here */
@@ -488,8 +486,8 @@ public class UserService {
             boolean unlockAble =
                     System.currentTimeMillis() - user.getAccountLockedDate() > TimeUnit.MINUTES.toMillis(accountUnlockCoolDownPeriod);
 
-            log.info("Account eligible for unlock - " + unlockAble);
-            log.info("Current time {}, last lock time {} , cool down period {} ", System.currentTimeMillis(),
+            log.debug("Account eligible for unlock - " + unlockAble);
+            log.debug("Current time {}, last lock time {} , cool down period {} ", System.currentTimeMillis(),
                     user.getAccountLockedDate(), TimeUnit.MINUTES.toMillis(accountUnlockCoolDownPeriod));
             return unlockAble;
         } else
@@ -522,7 +520,7 @@ public class UserService {
 
                 user = updateWithoutOtpValidation(userToBeUpdated, requestInfo);
                 removeTokensByUser(user);
-                log.info("Locked account with uuid {} for {} minutes as exceeded max allowed attempts of {} within {} " +
+                log.debug("Locked account with uuid {} for {} minutes as exceeded max allowed attempts of {} within {} " +
                                 "minutes",
                         user.getUuid(), accountUnlockCoolDownPeriod, maxInvalidLoginAttempts, maxInvalidLoginAttemptsPeriod);
                 throw new OAuth2Exception("Account locked");

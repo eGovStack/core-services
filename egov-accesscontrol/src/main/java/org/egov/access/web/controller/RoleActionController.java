@@ -49,7 +49,7 @@ public class RoleActionController {
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
 		}
 
-		logger.info("Create Role Actions Type Request::" + roleActionRequest);
+		logger.debug("Create Role Actions Type Request::" + roleActionRequest);
 
 		final List<ErrorResponse> errorResponses = validateRoleActionsRequest(roleActionRequest);
 

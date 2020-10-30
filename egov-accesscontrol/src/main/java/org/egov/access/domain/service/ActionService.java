@@ -115,8 +115,8 @@ public class ActionService {
 
 		boolean isAuthorized = uris.contains(uriToBeAuthorized) || containsRegexUri(regexUris, uriToBeAuthorized);
 
-		log.info("Request tenant ids:  " + authorizeRequest.getTenantIds());
-		log.info("Role {} has access to requested URI {} : {}", applicableRoles, uriToBeAuthorized,
+		log.debug("Request tenant ids:  " + authorizeRequest.getTenantIds());
+		log.debug("Role {} has access to requested URI {} : {}", applicableRoles, uriToBeAuthorized,
                 isAuthorized);
 
 		return isAuthorized;

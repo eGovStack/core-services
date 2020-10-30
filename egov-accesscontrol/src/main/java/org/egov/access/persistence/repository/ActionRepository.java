@@ -111,7 +111,7 @@ public class ActionRepository {
 
 	public List<Action> createAction(final ActionRequest actionRequest) {
 
-		LOGGER.info("Create Action Repository::" + actionRequest);
+		LOGGER.debug("Create Action Repository::" + actionRequest);
 		final String actionInsert = ActionQueryBuilder.insertActionQuery();
 
 		List<Action> actions = actionRequest.getActions();
@@ -134,7 +134,7 @@ public class ActionRepository {
 
 	public List<Action> updateAction(final ActionRequest actionRequest) {
 
-		LOGGER.info("update Action Repository::" + actionRequest);
+		LOGGER.debug("update Action Repository::" + actionRequest);
 		final String actionUpdate = ActionQueryBuilder.updateActionQuery();
 
 		List<Action> actions = actionRequest.getActions();
@@ -209,7 +209,7 @@ public class ActionRepository {
 			query = query + " ORDER BY id ASC";
 		}
 
-		LOGGER.info("Action Query : " + query);
+		LOGGER.debug("Action Query : " + query);
 		namedParameterJdbcTemplate.query(query, parametersMap, actionRowMapper);
 		Map<String, List<Action>> actionMap = actionRowMapper.actionMap;
 
@@ -243,7 +243,7 @@ public class ActionRepository {
 			parametersMap.put("enabled", actionRequest.getEnabled());
 		}
 
-		LOGGER.info("services Query : " + query);
+		LOGGER.debug("services Query : " + query);
 		List<Module> modules = namedParameterJdbcTemplate.query(query, parametersMap, moduleRowMapper);
 
 		return modules;
@@ -297,7 +297,7 @@ public class ActionRepository {
 			allservicesQueryBuilder.append(" and s1.tenantid = :tenantid ) SELECT * FROM nodes )");
 		}
 
-		LOGGER.info("All Services Query : " + allservicesQueryBuilder.toString());
+		LOGGER.debug("All Services Query : " + allservicesQueryBuilder.toString());
 		List<Module> allServiceList = namedParameterJdbcTemplate.query(allservicesQueryBuilder.toString(),
 				parametersMap, moduleRowMapper);
 

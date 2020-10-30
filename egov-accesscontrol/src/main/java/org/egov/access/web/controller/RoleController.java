@@ -57,8 +57,8 @@ public class RoleController {
 			@RequestBody final RoleRequest roleRequest) throws UnsupportedEncodingException, JSONException {
 
 		RoleSearchCriteria roleSearchCriteria = RoleSearchCriteria.builder().codes(new ArrayList<String>()).tenantId(tenantId).build();
-		
-		System.out.println("Tenant id from the controller: "+tenantId);
+
+		logger.debug("Tenant id from the controller: " + tenantId);
 
 		if (code != null && !code.isEmpty()) {
 
@@ -86,7 +86,7 @@ public class RoleController {
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
 		}
 
-		logger.info("Create Role Type Request::" + roleRequest);
+		logger.debug("Create Role Type Request::" + roleRequest);
 
 		final List<ErrorResponse> errorResponses = validatRoleRequest(roleRequest, taskAction[0]);
 
@@ -106,7 +106,7 @@ public class RoleController {
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
 		}
 
-		logger.info("Update Role Request::" + roleRequest);
+		logger.debug("Update Role Request::" + roleRequest);
 
 		final List<ErrorResponse> errorResponses = validatRoleRequest(roleRequest, taskAction[1]);
 

@@ -75,7 +75,7 @@ public class UserController {
      */
     @PostMapping("/citizen/_create")
     public Object createCitizen(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        log.info("Received Citizen Registration Request  " + createUserRequest);
+        log.debug("Received Citizen Registration Request  " + createUserRequest);
         User user = createUserRequest.toDomain(true);
         user.setOtpValidationMandatory(IsValidationMandatory);
         if (isRegWithLoginEnabled) {
@@ -114,7 +114,7 @@ public class UserController {
     @PostMapping("/_search")
     public UserSearchResponse get(@RequestBody @Valid UserSearchRequest request, @RequestHeader HttpHeaders headers) {
 
-        log.info("Received User search Request  " + request);
+        log.debug("Received User search Request  " + request);
         if (request.getActive() == null) {
             request.setActive(true);
         }
@@ -171,7 +171,7 @@ public class UserController {
      */
     @PostMapping("/profile/_update")
     public UpdateResponse patch(@RequestBody final @Valid CreateUserRequest createUserRequest) {
-        log.info("Received Profile Update Request  " + createUserRequest);
+        log.debug("Received Profile Update Request  " + createUserRequest);
         User user = createUserRequest.toDomain(false);
         final User updatedUser = userService.partialUpdate(user, createUserRequest.getRequestInfo());
         return createResponseforUpdate(updatedUser);

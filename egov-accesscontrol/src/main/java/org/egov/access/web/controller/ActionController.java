@@ -158,7 +158,7 @@ public class ActionController {
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
 		}
 
-		logger.info("Create Action Type Request::" + actionRequest);
+		logger.debug("Create Action Type Request::" + actionRequest);
 
 		final List<ErrorResponse> errorResponses = validateActionRequest(actionRequest, taskAction[0]);
 
@@ -179,7 +179,7 @@ public class ActionController {
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
 		}
 
-		logger.info("Update Action Request::" + actionRequest);
+		logger.debug("Update Action Request::" + actionRequest);
 
 		final List<ErrorResponse> errorResponses = validateActionRequest(actionRequest, taskAction[1]);
 

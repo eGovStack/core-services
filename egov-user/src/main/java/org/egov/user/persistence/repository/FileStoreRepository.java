@@ -37,7 +37,6 @@ public class FileStoreRepository {
         Map<String, String> fileStoreUrls = null;
 
         String idLIst = fileStoreIds.toString().substring(1, fileStoreIds.toString().length() - 1).replace(", ", ",");
-        log.info("idLIst: " + idLIst);
         String Url = fileStoreHost + fileStorePath + "?tenantId=" + tenantId + "&fileStoreIds=" + idLIst;
 
         try {
@@ -45,7 +44,6 @@ public class FileStoreRepository {
         } catch (HttpClientErrorException e) {
             throw new RuntimeException(e.getResponseBodyAsString());
         }
-        log.info("filrStoreUrls " + fileStoreUrls);
         if (null != fileStoreUrls && !fileStoreUrls.isEmpty())
             return fileStoreUrls;
         return null;

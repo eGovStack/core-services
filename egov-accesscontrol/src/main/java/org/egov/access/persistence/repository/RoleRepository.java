@@ -56,7 +56,7 @@ public class RoleRepository {
 	
 	public List<Role> createRole(final RoleRequest roleRequest) {
 
-		LOGGER.info("Create Role Repository::" + roleRequest);
+		LOGGER.debug("Create Role Repository::" + roleRequest);
 		final String roleInsert = RoleQueryBuilder.insertRoleQuery();
 
 		List<Role> roles = roleRequest.getRoles();
@@ -79,7 +79,7 @@ public class RoleRepository {
 
 	public List<Role> updateRole(final RoleRequest roleRequest) {
 
-		LOGGER.info("update Role Repository::" + roleRequest);
+		LOGGER.debug("update Role Repository::" + roleRequest);
 		final String roleUpdate = RoleQueryBuilder.updateRoleQuery();
 
 		List<Role> roles = roleRequest.getRoles();
@@ -131,8 +131,8 @@ public List<Role> getAllMDMSRoles(RoleSearchCriteria roleSearchCriteria) throws 
 		}
 		rFilter = rFilter.replaceAll("\\$code", rolecodelist.toString());
 		MdmsCriteriaReq mcq = getRoleMDMSCriteria(roleSearchCriteria, rFilter);
-		LOGGER.info("Role Filter: "+rFilter.toString());
-		LOGGER.info("The URL is: "+ url);
+		LOGGER.debug("Role Filter: "+rFilter.toString());
+		LOGGER.debug("The URL is: "+ url);
 		
 		try {
 		res = restTemplate.postForObject(url, mcq, String.class);
@@ -142,7 +142,7 @@ public List<Role> getAllMDMSRoles(RoleSearchCriteria roleSearchCriteria) throws 
 
 		Object jsonObject = JsonPath.read(res,rolePath);
 		JSONArray mdmsArray = new JSONArray(jsonObject.toString());
-		LOGGER.info("Role  from MDMS: "+jsonObject.toString());
+		LOGGER.debug("Role  from MDMS: "+jsonObject.toString());
 		
 		
 		roleList = convertToRole(mdmsArray);
@@ -155,7 +155,6 @@ private MdmsCriteriaReq getRoleMDMSCriteria(RoleSearchCriteria roleSearchCriteri
 	mName = moduleName;
 	String tenantId = "";
 	tenantId = roleSearchCriteria.getTenantId();
-	LOGGER.info("Tenant id from repository: "+tenantId);
 	MdmsCriteriaReq mcq = new MdmsCriteriaReq();
 	List<MasterDetail> masterDetails = new ArrayList<MasterDetail>();
 	List<ModuleDetail> moduleDetail = new ArrayList<ModuleDetail>();
@@ -163,7 +162,6 @@ private MdmsCriteriaReq getRoleMDMSCriteria(RoleSearchCriteria roleSearchCriteri
 	MdmsCriteria mc = new MdmsCriteria();
 	if(tenantId.contains(".")){
 		 String[] stateid = tenantId.split("\\.");
-		 LOGGER.info("State IDs are :"+stateid);
 		 mc.setTenantId(stateid[0]);
 		 
 	 } else {
