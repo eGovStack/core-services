@@ -3,6 +3,9 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.1 - 2020-11-04
+- Improved Error Handling
+
 ## 1.1.0 - 2020-10-01
 - Integrate PGR v2.0
 
