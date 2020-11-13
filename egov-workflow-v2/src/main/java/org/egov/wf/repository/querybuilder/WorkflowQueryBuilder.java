@@ -56,6 +56,10 @@ public class WorkflowQueryBuilder {
 
     private final String LATEST_RECORD = " pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ";
 
+    private static final String COUNT_WRAPPER = "select count(DISTINCT wf_id) from ({INTERNAL_QUERY}) as count";
+
+
+
     /**
      * Creates the query according to the search params
      * @param criteria The criteria containg fields to search on
@@ -64,6 +68,17 @@ public class WorkflowQueryBuilder {
      */
     public String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
 
+        String queryWithoutPagination = getProcessInstanceSearchQueryWithoutPagination(criteria, preparedStmtList);
+
+        String query = addPaginationWrapper(queryWithoutPagination,preparedStmtList,criteria);
+        query = query + ORDERBY_CREATEDTIME;
+
+
+        return query;
+
+    }
+
+    private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder builder = new StringBuilder(QUERY);
 
         if(!criteria.getHistory())
@@ -88,13 +103,9 @@ public class WorkflowQueryBuilder {
             addToPreparedStatement(preparedStmtList,businessIds);
         }
 
-        String query = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
-        query = query + ORDERBY_CREATEDTIME;
-
-
-        return query;
-
+        return builder.toString();
     }
+
 
     public String getProcessInstanceSearchQueryWithState(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
        String finalQuery = getProcessInstanceSearchQuery(criteria,preparedStmtList);
@@ -235,7 +246,53 @@ public class WorkflowQueryBuilder {
         return paginatedQuery;
     }
 
+    /**
+     * Returns the total number of processInstances for the given criteria
+     * @param criteria
+     * @param preparedStmtList
+     * @return
+     */
+    public String getInboxCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
+        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+
+        List<String> statuses = criteria.getStatus();
+        StringBuilder builder = new StringBuilder(query);
+
+        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
+            builder.append(" AND ((asg.assignee = ?  AND pi.tenantid = ?) OR CONCAT (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append("))");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+            addToPreparedStatement(preparedStmtList,statuses);
+        }
+        else {
+            builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        String countQuery = addCountWrapper(builder.toString());
+
+        return countQuery;
+    }
+
+
+    public String getProcessInstanceCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+        String finalQuery = getProcessInstanceSearchQueryWithoutPagination(criteria,preparedStmtList);
+        String countQuery = addCountWrapper(finalQuery);
+        return countQuery;
+    }
+
+
+    /**
+     * Adds a count wrapper around the query
+     * @param query
+     * @return
+     */
+    private String addCountWrapper(String query){
+        String countQuery = COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        return countQuery;
+    }
 
 
 

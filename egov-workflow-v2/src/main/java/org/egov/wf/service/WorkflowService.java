@@ -79,12 +79,28 @@ public class WorkflowService {
         else processInstances = workflowRepository.getProcessInstances(criteria);
         if(CollectionUtils.isEmpty(processInstances))
             return processInstances;
+
         enrichmentService.enrichUsersFromSearch(requestInfo,processInstances);
         List<ProcessStateAndAction> processStateAndActions = enrichmentService.enrichNextActionForSearch(requestInfo,processInstances);
     //    workflowValidator.validateSearch(requestInfo,processStateAndActions);
         enrichmentService.enrichAndUpdateSlaForSearch(processInstances);
         return processInstances;
     }
+
+
+    public Integer count(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        Integer count;
+        if(criteria.isNull()){
+            enrichSearchCriteriaFromUser(requestInfo, criteria);
+            count = workflowRepository.getInboxCount(criteria);
+        }
+        else count = workflowRepository.getProcessInstancesCount(criteria);
+
+        return count;
+    }
+
+
+
 
 
     /**
@@ -95,22 +111,8 @@ public class WorkflowService {
      */
     private List<ProcessInstance> getUserBasedProcessInstances(RequestInfo requestInfo,
                                        ProcessInstanceSearchCriteria criteria){
-        BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
 
-        /*
-        * If tenantId is sent in query param processInstances only for that tenantId is returned
-        * else all tenantIds for which the user has roles are returned
-        * */
-        if(criteria.getTenantId()!=null)
-            businessServiceSearchCriteria.setTenantIds(Collections.singletonList(criteria.getTenantId()));
-        else
-            businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
-
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
-        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
-        criteria.setAssignee(requestInfo.getUserInfo().getUuid());
-        criteria.setStatus(actionableStatuses);
-
+        enrichSearchCriteriaFromUser(requestInfo, criteria);
         List<ProcessInstance> processInstances = workflowRepository.getProcessInstancesForUserInbox(criteria);
         return processInstances;
 
@@ -125,6 +127,30 @@ public class WorkflowService {
     }
 
 
+    /**
+     * Enriches processInstance search criteria based on requestInfo
+     * @param requestInfo
+     * @param criteria
+     */
+    private void enrichSearchCriteriaFromUser(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+
+        BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
+
+        /*
+         * If tenantId is sent in query param processInstances only for that tenantId is returned
+         * else all tenantIds for which the user has roles are returned
+         * */
+        if(criteria.getTenantId()!=null)
+            businessServiceSearchCriteria.setTenantIds(Collections.singletonList(criteria.getTenantId()));
+        else
+            businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
+
+        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
+        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
+        criteria.setAssignee(requestInfo.getUserInfo().getUuid());
+        criteria.setStatus(actionableStatuses);
+
+    }
 
 
 
