@@ -71,6 +71,13 @@ public class WorkflowController {
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
 
+    @RequestMapping(value="/process/_count", method = RequestMethod.POST)
+    public ResponseEntity<Integer> count(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                          @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+        Integer count = workflowService.count(requestInfoWrapper.getRequestInfo(),criteria);
+        return new ResponseEntity<>(count,HttpStatus.OK);
+    }
+
 
 
 
