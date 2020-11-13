@@ -79,6 +79,7 @@ public class WorkflowService {
         else processInstances = workflowRepository.getProcessInstances(criteria);
         if(CollectionUtils.isEmpty(processInstances))
             return processInstances;
+
         enrichmentService.enrichUsersFromSearch(requestInfo,processInstances);
         List<ProcessStateAndAction> processStateAndActions = enrichmentService.enrichNextActionForSearch(requestInfo,processInstances);
     //    workflowValidator.validateSearch(requestInfo,processStateAndActions);

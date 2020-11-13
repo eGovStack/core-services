@@ -56,7 +56,7 @@ public class WorkflowQueryBuilder {
 
     private final String LATEST_RECORD = " pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ";
 
-    private static final String COUNT_WRAPPER = "select count(*) from ({INTERNAL_QUERY}) as count";
+    private static final String COUNT_WRAPPER = "select count(DISTINCT wf_id) from ({INTERNAL_QUERY}) as count";
 
     /**
      * Creates the query according to the search params
