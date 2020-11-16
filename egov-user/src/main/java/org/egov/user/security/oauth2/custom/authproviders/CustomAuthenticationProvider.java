@@ -134,7 +134,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (user.getType() != null && user.getType().equals(UserType.CITIZEN))
             isCitizen = true;
 
-		Span passwordMatched = tracer.buildSpan("unlockAccount").asChildOf(tracer.activeSpan()).start();
+		Span passwordMatched = tracer.buildSpan("passwordMatched").asChildOf(tracer.activeSpan()).start();
 
         boolean isPasswordMatched;
         if (isCitizen) {
@@ -157,7 +157,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			  then we have change below code Separate by comma or other and
 			  iterate
 			 */
-			Span matched = tracer.buildSpan("unlockAccount").asChildOf(tracer.activeSpan()).start();
+			Span matched = tracer.buildSpan("objectReturn").asChildOf(tracer.activeSpan()).start();
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
             final SecureUser secureUser = new SecureUser(getUser(user));
