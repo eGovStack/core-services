@@ -176,13 +176,19 @@ public class UserService {
         /* encrypt here / encrypted searchcriteria will be used for search*/
 
 
+        Span encryptSpan = tracer.buildSpan("encryptionDecryptionUtil.encryptObject").asChildOf(tracer.activeSpan()).start();
         searchCriteria= encryptionDecryptionUtil.encryptObject(searchCriteria,"UserSearchCriteria",UserSearchCriteria.class);
+        encryptSpan.finish();
+
+        Span findAllSpan = tracer.buildSpan("userRepository.findAll(searchCriteria)").asChildOf(tracer.activeSpan()).start();
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
+        findAllSpan.finish();
 
         /* decrypt here / final reponse decrypted*/
 
+        Span decryptObjectSpan = tracer.buildSpan("encryptionDecryptionUtil.decryptObject").asChildOf(tracer.activeSpan()).start();
         list= encryptionDecryptionUtil.decryptObject(list,"UserList",User.class,requestInfo);
-
+        decryptObjectSpan.finish();
 
         Span setFileStoreSpan = tracer.buildSpan("setFileStoreUrlsByFileStoreIds").asChildOf(tracer.activeSpan()).start();
         setFileStoreUrlsByFileStoreIds(list);

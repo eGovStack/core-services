@@ -1,5 +1,6 @@
 package org.egov.user.persistence.repository;
 
+import io.opentracing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.Address;
@@ -41,6 +42,8 @@ public class UserRepository {
 	private RoleRepository roleRepository;
 	private UserResultSetExtractor userResultSetExtractor;
 
+	@Autowired
+	private Tracer tracer;
 	@Autowired
 	UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
                    AddressRepository addressRepository, UserResultSetExtractor userResultSetExtractor,
@@ -90,7 +93,10 @@ public class UserRepository {
         log.debug(queryStr);
 
         users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
+
+		Span enrichRolesSpan = tracer.buildSpan("enrichRoles").asChildOf(tracer.activeSpan()).start();
         enrichRoles(users);
+		enrichRolesSpan.finish();
 
         return users;
     }

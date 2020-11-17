@@ -34,6 +34,9 @@ public class UserController {
 	private UserService userService;
 	private TokenService tokenService;
 
+	@Autowired
+	private Tracer tracer;
+
 	@Value("${mobile.number.validation.workaround.enabled}")
 	private String mobileValidationWorkaroundEnabled;
 	
@@ -185,7 +188,9 @@ public class UserController {
                 searchCriteria.setLimit(defaultSearchSize);
         }
 
+        Span span = tracer.buildSpan("searchUsers").asChildOf(tracer.activeSpan()).start();
 		List<User> userModels = userService.searchUsers(searchCriteria, isInterServiceCall(headers),request.getRequestInfo());
+		span.finish();
 		List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
 				.collect(Collectors.toList());
 		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
