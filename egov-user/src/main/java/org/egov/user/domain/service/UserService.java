@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentracing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -80,6 +81,9 @@ public class UserService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private Tracer tracer;
+
     public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
                        PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil,TokenStore tokenStore,
                        @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
@@ -105,9 +109,11 @@ public class UserService {
      */
     public User getUniqueUser(String userName, String tenantId, UserType userType) {
 
+
         UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder()
                 .userName(userName)
                 .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
+                .limit(2)
                 .type(userType)
                 .build();
 
@@ -119,7 +125,10 @@ public class UserService {
         /* encrypt here */
 
         userSearchCriteria=  encryptionDecryptionUtil.encryptObject(userSearchCriteria,"UserSearchCriteria",UserSearchCriteria.class);
+
+        Span findAllSpan = tracer.buildSpan("userRepository.findAll(userSearchCriteria)").asChildOf(tracer.activeSpan()).start();
         List<User> users = userRepository.findAll(userSearchCriteria);
+        findAllSpan.finish();
 
         if(users.isEmpty())
             throw new UserNotFoundException(userSearchCriteria);
@@ -140,7 +149,9 @@ public class UserService {
             throw new UserNotFoundException(userSearchCriteria);
         }
 
+        Span findAllSpan = tracer.buildSpan("userRepository.findAll(userSearchCriteria)2").asChildOf(tracer.activeSpan()).start();
         List<User> users = userRepository.findAll(userSearchCriteria);
+        findAllSpan.finish();
 
         if(users.isEmpty())
             throw new UserNotFoundException(userSearchCriteria);
@@ -172,7 +183,10 @@ public class UserService {
 
         list= encryptionDecryptionUtil.decryptObject(list,"UserList",User.class,requestInfo);
 
+
+        Span setFileStoreSpan = tracer.buildSpan("setFileStoreUrlsByFileStoreIds").asChildOf(tracer.activeSpan()).start();
         setFileStoreUrlsByFileStoreIds(list);
+        setFileStoreSpan.finish();
         return list;
     }
 
@@ -188,11 +202,20 @@ public class UserService {
         conditionallyValidateOtp(user);
         /* encrypt here */
         user= encryptionDecryptionUtil.encryptObject(user,"User",User.class);
+        Span validateUserUniquenessSpan = tracer.buildSpan("validateUserUniqueness").asChildOf(tracer.activeSpan()).start();
         validateUserUniqueness(user);
+        validateUserUniquenessSpan.finish();
+
         if (isEmpty(user.getPassword())) {
+            Span randomPassword = tracer.buildSpan("randomPassword").asChildOf(tracer.activeSpan()).start();
             user.setPassword(UUID.randomUUID().toString());
+            randomPassword.finish();
         }
+
+        Span updatePassword = tracer.buildSpan("updatePassword").asChildOf(tracer.activeSpan()).start();
         user.setPassword(encryptPwd(user.getPassword()));
+        updatePassword.finish();
+
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser=persistNewUser(user);
@@ -316,6 +339,8 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
+        Span updateWithoutOtpValidation = tracer.buildSpan("updateWithoutOtpValidation").asChildOf(tracer.activeSpan()).start();
+
         final User existingUser = getUserByUuid(user.getUuid());
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         validateUserRoles(user);
@@ -332,6 +357,7 @@ public class UserService {
 
         User encryptedUpdatedUserfromDB=getUserByUuid(user.getUuid());
         User decryptedupdatedUserfromDB= encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB,"User",User.class,requestInfo);
+        updateWithoutOtpValidation.finish();
         return decryptedupdatedUserfromDB;
     }
 
@@ -445,8 +471,10 @@ public class UserService {
      * @param user whose failed login attempts are to be reset
      */
     public void resetFailedLoginAttempts(User user){
+        Span span = tracer.buildSpan("resetFailedLoginAttempts").asChildOf(tracer.activeSpan()).start();
         if(user.getUuid() != null)
             userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
+        span.finish();
     }
 
     /**
@@ -484,6 +512,7 @@ public class UserService {
      * @param ipAddress IP address of remote
      */
     public void handleFailedLogin(User user, String ipAddress,RequestInfo requestInfo){
+        Span span = tracer.buildSpan("handleFailedLogin").asChildOf(tracer.activeSpan()).start();
         if(!Objects.isNull(user.getUuid())) {
         List<FailedLoginAttempt> failedLoginAttempts =
                 userRepository.fetchFailedAttemptsByUserAndTime(user.getUuid(),
@@ -503,7 +532,7 @@ public class UserService {
                     user.getUuid(), accountUnlockCoolDownPeriod, maxInvalidLoginAttempts, maxInvalidLoginAttemptsPeriod);
             throw new OAuth2Exception("Account locked");
         }
-
+        span.finish();
         userRepository.insertFailedLoginAttempt(new FailedLoginAttempt(user.getUuid(), ipAddress,
                 System.currentTimeMillis(), true));
         }
@@ -518,9 +547,11 @@ public class UserService {
      * @param existingRawPassword
      */
     private void validateExistingPassword(User user, String existingRawPassword) {
+        Span span = tracer.buildSpan("validateExistingPassword").asChildOf(tracer.activeSpan()).start();
         if (!passwordEncoder.matches(existingRawPassword, user.getPassword())) {
             throw new PasswordMismatchException();
         }
+        span.finish();
     }
 
 //    /**
@@ -549,10 +580,15 @@ public class UserService {
 
 
     String encryptPwd(String pwd) {
-        if(!isNull(pwd))
-            return passwordEncoder.encode(pwd);
-        else
-            return null;
+        Span span = tracer.buildSpan("encryptPwd").asChildOf(tracer.activeSpan()).start();
+        try {
+            if(!isNull(pwd))
+                return passwordEncoder.encode(pwd);
+            else
+                return null;
+        } finally {
+            span.finish();
+        }
     }
 
     /**

@@ -35,6 +35,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.spy;
 
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 

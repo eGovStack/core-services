@@ -1,5 +1,6 @@
 package org.egov.user.web.controller;
 
+import io.opentracing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.egov.common.contract.response.ResponseInfo;
@@ -44,7 +45,6 @@ public class UserController {
 
     @Value("${egov.user.search.default.size}")
     private Integer defaultSearchSize;
-	
 
 	@Autowired
 	public UserController(UserService userService, TokenService tokenService) {

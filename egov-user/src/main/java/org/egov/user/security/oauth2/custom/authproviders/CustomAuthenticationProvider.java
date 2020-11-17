@@ -240,6 +240,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      * @return Updated user
      */
     private User unlockAccount(User user, RequestInfo requestInfo) {
+        Span span = tracer.buildSpan("unlockAccount").asChildOf(tracer.activeSpan()).start();
         User userToBeUpdated = user.toBuilder()
                 .accountLocked(false)
                 .password(null)
@@ -247,7 +248,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         User updatedUser = userService.updateWithoutOtpValidation(userToBeUpdated, requestInfo);
         userService.resetFailedLoginAttempts(userToBeUpdated);
-
+        span.finish();
         return updatedUser;
     }
 
