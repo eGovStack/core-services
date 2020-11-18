@@ -94,7 +94,7 @@ public class PGRComplaintTrack implements RestEndpoint {
 
             DocumentContext documentContext = JsonPath.parse(responseEntity.getBody().toString());
 
-            Integer numberOfServices = documentContext.read("$.PGREntities.length()");
+            Integer numberOfServices = documentContext.read("$.ServiceWrappers.length()");
 
             if (numberOfServices > 0) {
                 ObjectNode trackComplaintHeader = objectMapper.createObjectNode();
@@ -119,19 +119,19 @@ public class PGRComplaintTrack implements RestEndpoint {
 
                     ObjectNode params = objectMapper.createObjectNode();
 
-                    String complaintNumber = documentContext.read("$.PGREntities.[" + i + "].service.serviceRequestId");
+                    String complaintNumber = documentContext.read("$.ServiceWrappers.[" + i + "].service.serviceRequestId");
                     params.set("complaintNumber", objectMapper.valueToTree(numeralLocalization.getLocalizationCodesForStringContainingNumbers(complaintNumber)));
 
-                    String complaintCategory = documentContext.read("$.PGREntities.[" + i + "].service.serviceCode");
+                    String complaintCategory = documentContext.read("$.ServiceWrappers.[" + i + "].service.serviceCode");
                     param = objectMapper.createObjectNode();
                     param.put("code", complaintCategoryLocalizationPrefix + complaintCategory);
                     params.set("complaintCategory", param);
 
-                    Date createdDate = new Date((long) documentContext.read("$.PGREntities.[" + i + "].service.auditDetails.createdTime"));
+                    Date createdDate = new Date((long) documentContext.read("$.ServiceWrappers.[" + i + "].service.auditDetails.createdTime"));
                     String filedDate = getDateFromTimestamp(createdDate);
                     params.set("filedDate", objectMapper.valueToTree(numeralLocalization.getLocalizationCodesForStringContainingNumbers(filedDate)));
 
-                    String status = documentContext.read("$.PGREntities.[" + i + "].service.applicationStatus");
+                    String status = documentContext.read("$.ServiceWrappers.[" + i + "].service.applicationStatus");
                     param = objectMapper.createObjectNode();
                     param.put("code", pgrStatusLocalisationPrefix + status.toLowerCase());
                     params.set("status", param);
