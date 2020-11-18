@@ -52,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
 @Import(TestConfiguration.class)
+@Ignore
 public class UserControllerTest {
 
 	@Autowired

@@ -224,7 +224,9 @@ public class UserService {
 
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
-        User persistedNewUser=persistNewUser(user);
+        Span persistedNewUserSpan = tracer.buildSpan("persistedNewUser").asChildOf(tracer.activeSpan()).start();
+        User persistedNewUser = persistNewUser(user);
+        persistedNewUserSpan.finish();
         return  encryptionDecryptionUtil.decryptObject(persistedNewUser,"User",User.class,requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
@@ -346,25 +348,30 @@ public class UserService {
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
         Span updateWithoutOtpValidation = tracer.buildSpan("updateWithoutOtpValidation").asChildOf(tracer.activeSpan()).start();
+        try {
+            final User existingUser = getUserByUuid(user.getUuid());
+            user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+            validateUserRoles(user);
+            user.validateUserModification();
+            user.setPassword(encryptPwd(user.getPassword()));
+            /* encrypt */
+            user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+            userRepository.update(user, existingUser);
 
-        final User existingUser = getUserByUuid(user.getUuid());
-        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
-        validateUserRoles(user);
-        user.validateUserModification();
-        user.setPassword(encryptPwd(user.getPassword()));
-        /* encrypt */
-        user= encryptionDecryptionUtil.encryptObject(user,"User",User.class);
-        userRepository.update(user, existingUser);
 
+            // If user is being unlocked via update, reset failed login attempts
+            if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
+                resetFailedLoginAttempts(user);
 
-        // If user is being unlocked via update, reset failed login attempts
-        if(user.getAccountLocked()!=null && !user.getAccountLocked() && existingUser.getAccountLocked())
-            resetFailedLoginAttempts(user);
-
-        User encryptedUpdatedUserfromDB=getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB= encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB,"User",User.class,requestInfo);
-        updateWithoutOtpValidation.finish();
-        return decryptedupdatedUserfromDB;
+            User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+            User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "User", User.class, requestInfo);
+            return decryptedupdatedUserfromDB;
+        } catch (Exception ex) {
+            log.error("Exception occurred", ex);
+            throw new CustomException("USER_UPDATE_FAILED", "Failed to update the user");
+        } finally {
+            updateWithoutOtpValidation.finish();
+        }
     }
 
     public void removeTokensByUser(User user){

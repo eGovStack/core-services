@@ -1,5 +1,6 @@
 package org.egov.user.web.contract;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -7,6 +8,7 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Ignore
 public class RoleRequestTest {
 
     @Test
