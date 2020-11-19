@@ -208,6 +208,10 @@ public class UserService {
         conditionallyValidateOtp(user);
         /* encrypt here */
         user= encryptionDecryptionUtil.encryptObject(user,"User",User.class);
+        if (user.getRoles().size() == 0) {
+            log.error("This cannot happen, somethings wrong");
+        }
+
         Span validateUserUniquenessSpan = tracer.buildSpan("validateUserUniqueness").asChildOf(tracer.activeSpan()).start();
         validateUserUniqueness(user);
         validateUserUniquenessSpan.finish();
@@ -354,7 +358,7 @@ public class UserService {
             if (existingUser.getRoles() == null) {
                 log.error("This is fatal and shouldn't happen");
             }
-            
+
             if (existingUser == null) {
                 log.error("This is fatal and cannot happen");
             }

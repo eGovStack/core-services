@@ -161,7 +161,10 @@ public class UserRepository {
 		final User savedUser = save(user);
 		if (user.getRoles().size() > 0) {
 			saveUserRoles(user);
+		} else {
+			log.error("This should not be allowed");
 		}
+
 		final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
 				savedUser.getTenantId());
 		final Address savedPermanentAddress = saveAddress(user.getPermanentAddress(), savedUser.getId(),
