@@ -350,12 +350,20 @@ public class UserService {
         Span updateWithoutOtpValidation = tracer.buildSpan("updateWithoutOtpValidation").asChildOf(tracer.activeSpan()).start();
         try {
             final User existingUser = getUserByUuid(user.getUuid());
+
+            if (existingUser == null) {
+                log.error("This is fatal and cannot happen");
+            }
+            
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
             user.validateUserModification();
             user.setPassword(encryptPwd(user.getPassword()));
             /* encrypt */
             user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+            if (userRepository == null) {
+                log.error("This is fatal and cannot happen");
+            }
             userRepository.update(user, existingUser);
 
 
