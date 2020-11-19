@@ -351,10 +351,14 @@ public class UserService {
         try {
             final User existingUser = getUserByUuid(user.getUuid());
 
+            if (existingUser.getRoles() == null) {
+                log.error("This is fatal and shouldn't happen");
+            }
+            
             if (existingUser == null) {
                 log.error("This is fatal and cannot happen");
             }
-            
+
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
             user.validateUserModification();
