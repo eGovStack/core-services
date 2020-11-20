@@ -25,7 +25,7 @@ public class WorkflowQueryBuilder {
 
 
     private static final String QUERY =
-                    "SELECT pi.*,st.*,ac.*,doc.*,pi.id as wf_id,pi.lastModifiedTime as wf_lastModifiedTime,pi.createdTime as wf_createdTime," +
+                    " SELECT pi.*,st.*,ac.*,doc.*,pi.id as wf_id,pi.lastModifiedTime as wf_lastModifiedTime,pi.createdTime as wf_createdTime," +
                     "       pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status," +
                     "       doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime,doc.createdBy as doc_createdBy," +
                     "       doc.lastModifiedBy as doc_lastModifiedBy,doc.tenantid as doc_tenantid,doc.id as doc_id,asg.assignee as assigneeuuid," +
@@ -40,6 +40,10 @@ public class WorkflowQueryBuilder {
                             LEFT_OUTER_JOIN +
                     "       eg_wf_action_v2 ac ON ac.currentState = st.uuid "+
                     "       WHERE ";
+
+
+    private static final String WITH_CLAUSE = " WITH target_ids AS (select id from eg_wf_processinstance_v2 pi_inner" +
+                                            " LEFT OUTER JOIN   eg_wf_assignee_v2 asg_inner ON asg_inner.processinstanceid = pi_inner.id WHERE ";
 
     /*
      * ORDER BY class for wf last modified time added to make search result in desc order 
@@ -172,6 +176,10 @@ public class WorkflowQueryBuilder {
     }
 
 
+
+
+
+
     /**
      * Adds orderBy clause to the query with limit 1
      * @param query The query to be modified
@@ -223,27 +231,64 @@ public class WorkflowQueryBuilder {
 
     public String getInboxSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
-        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+        String with_query = WITH_CLAUSE + " pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+
+        String query = QUERY + " pi.id in (Select id from target_ids) ORDER BY wf_createdTime DESC ";
 
         List<String> statuses = criteria.getStatus();
-        StringBuilder builder = new StringBuilder(query);
+        StringBuilder with_query_builder = new StringBuilder(with_query);
 
         if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-            builder.append(" AND ((asg.assignee = ?  AND pi.tenantid = ?) OR CONCAT (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append("))");
+            with_query_builder.append(" AND ((asg_inner.assignee = ?  AND pi_inner.tenantid = ?) OR CONCAT (pi_inner.tenantid,':',pi_inner.status) IN (").append(createQuery(statuses)).append("))");
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
             addToPreparedStatement(preparedStmtList,statuses);
         }
         else {
-            builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
+            with_query_builder.append(" AND asg_inner.assignee = ?  AND pi_inner.tenantid = ?");
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        String paginatedQuery = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
-        paginatedQuery = paginatedQuery + ORDERBY_CREATEDTIME;
+        with_query_builder.append(" ORDER BY pi_inner.createdBy DESC ");
 
-        return paginatedQuery;
+        addPagination(with_query_builder,preparedStmtList,criteria);
+
+        with_query_builder.append(")");
+
+        StringBuilder builder = new StringBuilder(with_query_builder);
+
+        builder.append(query);
+
+        return builder.toString();
+    }
+
+
+    /**
+     * Wraps pagination around the base query
+     * @param query The query for which pagination has to be done
+     * @param preparedStmtList The object list to send the params
+     * @param criteria The object containg the search params
+     * @return Query with pagination
+     */
+    private void addPagination(StringBuilder query,List<Object> preparedStmtList,ProcessInstanceSearchCriteria criteria){
+        int limit = config.getDefaultLimit();
+        int offset = config.getDefaultOffset();
+        query.append(" OFFSET ? ");
+        query.append(" LIMIT ? ");
+
+        if(criteria.getLimit()!=null && criteria.getLimit()<=config.getMaxSearchLimit())
+            limit = criteria.getLimit();
+
+        if(criteria.getLimit()!=null && criteria.getLimit()>config.getMaxSearchLimit())
+            limit = config.getMaxSearchLimit();
+
+        if(criteria.getOffset()!=null)
+            offset = criteria.getOffset();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit);
+
     }
 
     /**
