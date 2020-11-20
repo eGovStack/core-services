@@ -250,7 +250,7 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        with_query_builder.append(" ORDER BY pi_inner.createdBy DESC ");
+        with_query_builder.append(" ORDER BY pi_inner.createdTime DESC ");
 
         addPagination(with_query_builder,preparedStmtList,criteria);
 
