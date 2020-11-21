@@ -114,6 +114,9 @@ public class WorkflowService {
 
         enrichSearchCriteriaFromUser(requestInfo, criteria);
         List<ProcessInstance> processInstances = workflowRepository.getProcessInstancesForUserInbox(criteria);
+
+        processInstances = filterDuplicates(processInstances);
+
         return processInstances;
 
         /*
@@ -126,6 +129,25 @@ public class WorkflowService {
         return new LinkedList<>(processInstanceSet);*/
     }
 
+
+    /**
+     * Removes duplicate businessId which got created due to simultaneous request
+     * @param processInstances
+     * @return
+     */
+    private List<ProcessInstance> filterDuplicates(List<ProcessInstance> processInstances){
+
+        if(CollectionUtils.isEmpty(processInstances))
+            return processInstances;
+
+        Map<String,ProcessInstance> businessIdToProcessInstanceMap = new LinkedHashMap<>();
+
+        for(ProcessInstance processInstance : processInstances){
+            businessIdToProcessInstanceMap.put(processInstance.getBusinessId(), processInstance);
+        }
+
+        return new LinkedList<>(businessIdToProcessInstanceMap.values());
+    }
 
     /**
      * Enriches processInstance search criteria based on requestInfo
