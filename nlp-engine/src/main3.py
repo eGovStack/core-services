@@ -55,14 +55,6 @@ for i in range(len(not_to_be_paid)):
     not_to_be_paid[i]=res['KeyWords'][0]['bigrams'][2]['prefix']+' '+not_to_be_paid[i]
 
 
-
-
-
-paids=open('paid2.txt').readlines()
-unpaids=open('unpaid2.txt').readlines()
-
-names = ([(name, 'paid') for name in paids] +[(name, 'unpaid') for name in unpaids])
-
 def features(sentence):
     
     
@@ -94,13 +86,6 @@ def features(sentence):
     
     
     return res
-
-m= [(n[0],n[1]) for n in names]
-
-
-featuresets = [(features(n[0]), n[1]) for n in m] 
-
-
 
 classifier_f = open("dectree.pickle", "rb")
 classifier = pickle.load(classifier_f)
