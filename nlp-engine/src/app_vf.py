@@ -4,7 +4,7 @@ from entity_recognition import *
 import requests
 from googletrans import Translator
 from fuzzywuzzy import fuzz
-from flask_ngrok import run_with_ngrok
+#from flask_ngrok import run_with_ngrok
 from city_extract import find_city
 import time
 
@@ -29,7 +29,7 @@ def close_to(a):
     
 
 app_vf = Flask(__name__)
-run_with_ngrok(app_vf)
+#run_with_ngrok(app_vf)
 
 
 @app_vf.route('/', methods=['POST'])
