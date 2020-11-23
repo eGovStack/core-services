@@ -1,5 +1,6 @@
 package org.egov.wf.repository.querybuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,6 +240,18 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
         }
+
+        if(!StringUtils.isEmpty(criteria.getBusinessService())){
+            builder.append(" AND pi.businessservice =? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
+        if(!StringUtils.isEmpty(criteria.getModuleName())){
+            builder.append(" AND pi.modulename =? ");
+            preparedStmtList.add(criteria.getModuleName());
+        }
+
+
 
         String paginatedQuery = addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
         paginatedQuery = paginatedQuery + ORDERBY_CREATEDTIME;
