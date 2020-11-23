@@ -29,6 +29,8 @@ public class EventLogRequest {
 
     Object responseBody;
 
+    String method;
+    String referer;
     String url;
     String responseContentType;
     String queryParams;
@@ -53,23 +55,33 @@ public class EventLogRequest {
         });
     }
 
-    public static EventLogRequest fromRequestContext(RequestContext ctx) {
+    public static EventLogRequest fromRequestContext(RequestContext ctx, RequestCaptureCriteria criteria) {
         Object body = null;
-        body = ctx.get(CURRENT_REQUEST_SANITIZED_BODY);
+        if (criteria.isCaptureInputBody()) {
+            body = ctx.get(CURRENT_REQUEST_SANITIZED_BODY);
+        }
+
+        String referer = ctx.getRequest().getHeader("referrer");
+        String method = ctx.getRequest().getMethod();
         Long startTime = (Long)ctx.get(CURRENT_REQUEST_START_TIME);
         Long endTime = System.currentTimeMillis();
         ctx.set(CURRENT_REQUEST_END_TIME, endTime);
 
         Object responseBody = null ;
-
+        boolean isErrorStatusCode = !(ctx.getResponseStatusCode() >= 200 && ctx.getResponseStatusCode() < 300);
         if (isJsonResponse(ctx)) {
-            try {
-                responseBody = Utils.getResponseBody(ctx);
-                responseBody = objectMapper.readValue((String)responseBody,
-                    new TypeReference<HashMap<String, Object>>() {
-                    });
-            } catch (Exception e) {
-                log.error("Exception while reading body", e);
+            if (
+                criteria.isCaptureOutputBody() ||
+                    (criteria.isCaptureOutputBodyOnlyForError() && isErrorStatusCode)
+            ) {
+                try {
+                    responseBody = Utils.getResponseBody(ctx);
+                    responseBody = objectMapper.readValue((String) responseBody,
+                        new TypeReference<HashMap<String, Object>>() {
+                        });
+                } catch (Exception e) {
+                    log.error("Exception while reading body", e);
+                }
             }
         }
 
@@ -87,6 +99,8 @@ public class EventLogRequest {
 
         EventLogRequest req = EventLogRequest.builder()
             .requestBody(body)
+            .method(method)
+            .referer(referer)
             .responseBody(responseBody)
             .queryParams(ctx.getRequest().getQueryString())
             .correlationId((String)ctx.get(CORRELATION_ID_KEY))
