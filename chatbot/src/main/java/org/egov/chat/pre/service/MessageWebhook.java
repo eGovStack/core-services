@@ -27,7 +27,8 @@ public class MessageWebhook {
 
     public Object receiveMessage(Map<String, String> params) throws Exception {
         JsonNode message = prepareMessage(params);
-        System.out.println("message-->"+message.toString()+"\n");
+        for (Map.Entry<String,String> entry : params.entrySet())
+            System.out.println("Key = " + entry.getKey());
         if(requestFormatter.isValid(message)) {
             message = requestFormatter.getTransformedRequest(message);
             String key = message.at("/user/mobileNumber").asText();
