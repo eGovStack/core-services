@@ -30,6 +30,8 @@ public class ExternalEmailService implements EmailService {
     	System.out.println("Port = " + mailSender.getPort());
     	System.out.println("Protocol = " + mailSender.getProtocol());
     	System.out.println("Properties = " + mailSender.getJavaMailProperties());
+    	System.out.println("Username = " + mailSender.getUsername());
+    	System.out.println("Password = " + mailSender.getPassword());
 		if(email.isHTML()) {
 			sendHTMLEmail(email);
 		} else {
