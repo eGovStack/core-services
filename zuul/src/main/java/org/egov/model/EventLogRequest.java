@@ -38,10 +38,11 @@ public class EventLogRequest {
     int statusCode;
 
     String timestamp;
+    String userType;
     Long requestDuration;
 
     String correlationId;
-
+    String userTenantId;
     String userId;
 
     String tenantId;
@@ -87,10 +88,15 @@ public class EventLogRequest {
 
 
         User user = (User) ctx.get(USER_INFO_KEY);
+
         String uuid = "";
+        String userType = "";
+        String userTenantId = "";
 
         if (user != null) {
             uuid = user.getUuid();
+            userType = user.getType();
+            userTenantId = user.getTenantId();
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
@@ -101,6 +107,7 @@ public class EventLogRequest {
             .requestBody(body)
             .method(method)
             .referer(referer)
+            .userType(userType)
             .responseBody(responseBody)
             .queryParams(ctx.getRequest().getQueryString())
             .correlationId((String)ctx.get(CORRELATION_ID_KEY))
@@ -108,6 +115,7 @@ public class EventLogRequest {
             .timestamp(formatter.format(date))
             .requestDuration(endTime - startTime)
             .userId(uuid)
+            .userTenantId(userTenantId)
             .tenantId((String)ctx.get(CURRENT_REQUEST_TENANTID))
             .url(ctx.getRequest().getRequestURI()).build();
 
