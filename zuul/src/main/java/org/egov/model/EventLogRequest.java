@@ -62,7 +62,7 @@ public class EventLogRequest {
             body = ctx.get(CURRENT_REQUEST_SANITIZED_BODY);
         }
 
-        String referer = ctx.getRequest().getHeader("referrer");
+        String referer = ctx.getRequest().getHeader("referer");
         String method = ctx.getRequest().getMethod();
         Long startTime = (Long)ctx.get(CURRENT_REQUEST_START_TIME);
         Long endTime = System.currentTimeMillis();
