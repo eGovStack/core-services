@@ -26,6 +26,10 @@ public class ExternalEmailService implements EmailService {
     
     @Override
     public void sendEmail(Email email) {
+    	System.out.println("Host = " + mailSender.getHost());
+    	System.out.println("Port = " + mailSender.getPort());
+    	System.out.println("Protocol = " + mailSender.getProtocol());
+    	System.out.println("Properties = " + mailSender.getJavaMailProperties());
 		if(email.isHTML()) {
 			sendHTMLEmail(email);
 		} else {
