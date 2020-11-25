@@ -3,7 +3,7 @@ nodeType : endpoint
 
 class : org.egov.chat.xternal.restendpoint.PGRComplaintCreate
 
-nodes : [ pgr.create.confirmTenantid, pgr.create.complaintType, pgr.create.photo, pgr.create.locality, pgr.create.landmark, pgr.create.complaintDetails ]
+nodes : [ pgr.create.confirmTenantid, pgr.create.complaintType, pgr.create.photo, pgr.create.confirmLocality, pgr.create.landmark, pgr.create.complaintDetails ]
 
 params :
   mobileNumber : /user/mobileNumber

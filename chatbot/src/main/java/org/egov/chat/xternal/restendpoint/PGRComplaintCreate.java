@@ -58,7 +58,7 @@ public class PGRComplaintCreate implements RestEndpoint {
         String userId = params.get("userId").asText();
         String complaintType = params.get("pgr.create.complaintType").asText();
         String city = params.get("pgr.create.confirmTenantid").asText();
-        String locality = params.get("pgr.create.locality").asText();
+        String locality = params.get("pgr.create.confirmLocality").asText();
         String complaintDetails = params.get("pgr.create.complaintDetails").asText();
         String landmark = params.get("pgr.create.landmark").asText();
         String photo = params.get("pgr.create.photo").asText();

@@ -10,7 +10,6 @@ message: chatbot.messages.pgrConfirmCity
 validationRequired : true
 typeOfValues : FixedSetValues
 displayValuesAsOptions: yes
-displayOptionsInExternalLink: true
 numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
 numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
 

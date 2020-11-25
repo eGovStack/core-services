@@ -33,6 +33,8 @@ public class LocalityV2ValueFetcher implements ExternalValueFetcher {
     private LocalizationService localizationService;
 
     private String requestBodyString = "{\"input_city\":\"\",\"input_lang\":\"\"}";
+    private String nlpCitySearchPath="/nlp-engine/fuzzy/city";
+    private String getNlpCitySearchhost="http://nlp-engine.egov:8080";
 
     @Override
     public String getCodeForValue(ObjectNode params, String value) {
@@ -41,20 +43,18 @@ public class LocalityV2ValueFetcher implements ExternalValueFetcher {
 
     @Override
     public String createExternalLinkForParams(ObjectNode params) {
-        /*List<String> cityList = getLocalityList(params);
-        String code=cityList.get(0);
-        String locale="en_IN";*/
-        String message= "\n\nPlease type and send *\"1\"* to proceed with the above city or send *\"mseva\"* to return";
-        return message;
+        return null;
     }
 
     @Override
     public ArrayNode getValues(ObjectNode params) {
         List<String> cityList = getLocalityList(params);
         ArrayNode data = objectMapper.createArrayNode();
-        ObjectNode option1 = objectMapper.createObjectNode();
-        option1.put("code", cityList.get(0));
-        data.add(option1);
+        for(String code:cityList){
+            ObjectNode value = objectMapper.createObjectNode();
+            value.put("code", code);
+            data.add(value);
+        }
         return  data;
     }
 
@@ -74,7 +74,7 @@ public class LocalityV2ValueFetcher implements ExternalValueFetcher {
             e.printStackTrace();
         }
 
-        String url= "http://nlp-engine.egov:8080/city";
+        String url=getNlpCitySearchhost+nlpCitySearchPath;
 
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);
         JsonNode cityDetected=locationData.get("city_detected");

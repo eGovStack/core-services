@@ -33,6 +33,8 @@ public class TenantIdV2ValueFetcher implements ExternalValueFetcher {
     private LocalizationService localizationService;
 
     private String requestBodyString = "{\"city\":\"\",\"locality\":\"\"}";
+    private String nlpCitySearchPath="/nlp-engine/fuzzy/locality";
+    private String getNlpCitySearchhost="http://nlp-engine.egov:8080";
 
     @Override
     public String getCodeForValue(ObjectNode params, String value) {
@@ -41,20 +43,18 @@ public class TenantIdV2ValueFetcher implements ExternalValueFetcher {
 
     @Override
     public String createExternalLinkForParams(ObjectNode params) {
-        /*List<String> cityList = getLocalityList(params);
-        String code=cityList.get(0);
-        String locale="en_IN";*/
-        String message= "\n\nPlease type and send *\"1\"* to proceed with the above city or send *\"mseva\"* to return";
-        return message;
+        return null;
     }
 
     @Override
     public ArrayNode getValues(ObjectNode params) {
-        List<String> cityList = getLocalityList(params);
+        List<String> boundaryDataList = getLocalityList(params);
         ArrayNode data = objectMapper.createArrayNode();
-        ObjectNode option1 = objectMapper.createObjectNode();
-        option1.put("code", cityList.get(0));
-        data.add(option1);
+        for(String code:boundaryDataList){
+            ObjectNode value = objectMapper.createObjectNode();
+            value.put("code", code);
+            data.add(value);
+        }
         return  data;
     }
 
@@ -74,19 +74,19 @@ public class TenantIdV2ValueFetcher implements ExternalValueFetcher {
             e.printStackTrace();
         }
 
-        String url= "http://127.0.0.1:5000/locality";
+        String url=getNlpCitySearchhost+nlpCitySearchPath;
 
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);
-        JsonNode cityDetected=locationData.get("predictions");
-        ObjectReader reader = mapper.readerFor(new TypeReference<List<String>>() {
-        });
-        List<String> cityList = new ArrayList<>();
-        try {
-            cityList = reader.readValue(cityDetected);
+        //JsonNode cityDetected=locationData.get("predictions");
+        ArrayNode boundries = (ArrayNode) locationData.get("predictions");
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<String> localities = new ArrayList<>();
+
+        for (JsonNode boundry : boundries) {
+            String code = boundry.get("code").asText();
+            if(!localities.contains(code))
+                localities.add(code);
         }
-        return cityList;
+        return localities;
     }
 }

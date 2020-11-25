@@ -1,7 +1,8 @@
 root,pgr.create.selectTenantid,pgr.track.end
 pgr.create.selectTenantid,pgr.create.confirmTenantid
-pgr.create.confirmTenantid,pgr.create.locality
-pgr.create.locality,pgr.create.landmark
+pgr.create.confirmTenantid,pgr.create.selectLocality
+pgr.create.selectLocality,pgr.create.confirmLocality
+pgr.create.confirmLocality,pgr.create.landmark
 pgr.create.landmark,pgr.create.complaintType
 pgr.create.complaintType,pgr.create.complaintDetails
 pgr.create.complaintDetails,pgr.create.photo
