@@ -13,7 +13,7 @@ matchAnswerThreshold : 70
 
 type : text
 
-File a Complaint : pgr.create.tenantId
+File a Complaint : pgr.create.selectTenantid
 Track Complaint Status : pgr.track.end
 
 errorMessage: chatbot.messages.rootErrorMessage

@@ -1,5 +1,6 @@
-root,pgr.create.tenantId,pgr.track.end
-pgr.create.tenantId,pgr.create.locality
+root,pgr.create.selectTenantid,pgr.track.end
+pgr.create.selectTenantid,pgr.create.confirmTenantid
+pgr.create.confirmTenantid,pgr.create.locality
 pgr.create.locality,pgr.create.landmark
 pgr.create.landmark,pgr.create.complaintType
 pgr.create.complaintType,pgr.create.complaintDetails

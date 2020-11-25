@@ -1,0 +1,26 @@
+name: pgr.create.confirmLocality
+description : "Confirm Locality"
+nodeType : step
+optional : false
+
+type: text
+
+message: chatbot.messages.pgrConfirmLocality
+
+validationRequired : true
+typeOfValues : FixedSetValues
+displayValuesAsOptions: yes
+displayOptionsInExternalLink: true
+numberPrefixLocalizationCode: chatbot.message.numberPrefixLocalizationCode
+numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
+
+values :
+  batchSize : 9
+  class : org.egov.chat.xternal.valuefetch.TenantIdV2ValueFetcher
+  params :
+    message : /message
+    tenantId : ~pgr.create.confirmTenantid
+
+matchAnswerThreshold: 80
+
+errorMessage: chatbot.messages.pgrCreateLocalityError

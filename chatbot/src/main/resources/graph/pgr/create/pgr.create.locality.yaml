@@ -14,7 +14,7 @@ message : chatbot.messages.pgrCreateLocality
 values :
   class : org.egov.chat.xternal.valuefetch.LocalityValueFetcher
   params :
-    tenantId : ~pgr.create.tenantId
+    tenantId : ~pgr.create.confirmTenantid
     authToken : /user/authToken
     recipient: /extraInfo/recipient
 

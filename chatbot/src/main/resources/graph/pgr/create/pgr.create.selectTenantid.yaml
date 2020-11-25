@@ -1,0 +1,9 @@
+name : pgr.create.selectTenantid
+description : "Locality of the complaint"
+nodeType : step
+
+optional : false
+
+type : text
+
+message : chatbot.messages.pgrSelectCity
