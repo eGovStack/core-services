@@ -6,6 +6,8 @@ from city_extract import *
 
 locality_api = Flask(__name__)
 
+
+locality_api.config['APPLICATION_ROOT']='/nlp-engine'
 @locality_api.route('/fuzzy/city', methods=['POST'])
 def reply():
     request_data=request.get_json()
