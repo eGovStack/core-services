@@ -2,8 +2,22 @@ from flask import Flask, jsonify, request, send_file
 import json
 import requests
 from fuzzywuzzy import fuzz
+from city_extract import *
 
 locality_api = Flask(__name__)
+
+@locality_api.route('/city', methods=['POST'])
+def reply():
+    request_data=request.get_json()
+    inp= request_data['input_city']
+    lang=request_data['input_lang']
+
+    k= find_city(inp)
+    response=dict()
+    response['city_detected']= k[0]
+    response['match']= k[1]
+
+    return jsonify(response)
 
 @locality_api.route('/locality',methods=['POST'])
 def reply():
@@ -49,7 +63,7 @@ def reply():
     predictions=list()
 
     for i in range(min(3,len(localities))):
-        predictions.append(localities[len(localities)-1-i])
+        predictions.append(localities[len(localities)-1-i][1])
     
     
     
