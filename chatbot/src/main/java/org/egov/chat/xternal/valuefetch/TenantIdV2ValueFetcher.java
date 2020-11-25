@@ -11,6 +11,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.egov.chat.service.valuefetch.ExternalValueFetcher;
 import org.egov.chat.util.LocalizationService;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -87,6 +88,10 @@ public class TenantIdV2ValueFetcher implements ExternalValueFetcher {
             if(!localities.contains(code))
                 localities.add(code);
         }
+
+        if(localities==null||localities.isEmpty())
+            throw new CustomException("MISS_SPELL_ERROR_LOCALITY", "Locality you entered does not match with our system data");
+
         return localities;
     }
 }

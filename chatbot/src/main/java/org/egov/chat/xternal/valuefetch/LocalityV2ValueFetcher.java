@@ -11,6 +11,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.egov.chat.service.valuefetch.ExternalValueFetcher;
 import org.egov.chat.util.LocalizationService;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -87,6 +88,9 @@ public class LocalityV2ValueFetcher implements ExternalValueFetcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(cityList==null||cityList.isEmpty()||(cityList.size()==1 && cityList.get(0).equalsIgnoreCase("Please try again")))
+            throw new CustomException("MISS_SPELL_ERROR_CITY", "City you entered does not match with our system data");
+
         return cityList;
     }
 }

@@ -22,4 +22,4 @@ values :
 
 matchAnswerThreshold: 80
 
-errorMessage: chatbot.messages.pgrCreateLocalityError
+errorMessage: chatbot.messages.pgrCreateCityError
