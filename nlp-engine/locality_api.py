@@ -49,7 +49,7 @@ def reply():
     predictions=list()
 
     for i in range(min(3,len(localities))):
-        predictions.append(localities[len(localities)-1-i])
+        predictions.append(localities[len(localities)-1-i][1])
     
     
     
