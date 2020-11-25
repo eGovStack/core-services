@@ -20,7 +20,7 @@ def reply():
     return jsonify(response)
 
 @locality_api.route('/locality',methods=['POST'])
-def reply():
+def reply_2():
     request_data=request.get_json()
     city=request_data['city']
     locality=request_data['locality']
