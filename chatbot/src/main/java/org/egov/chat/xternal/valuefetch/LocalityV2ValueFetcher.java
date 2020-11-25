@@ -74,7 +74,7 @@ public class LocalityV2ValueFetcher implements ExternalValueFetcher {
             e.printStackTrace();
         }
 
-        String url= "http://nlp-engine:8080/city";
+        String url= "http://nlp-engine.egov:8080/city";
 
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);
         JsonNode cityDetected=locationData.get("city_detected");
