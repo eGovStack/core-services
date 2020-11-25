@@ -30,7 +30,7 @@ def reply_2():
 
     payload="{\r\n\r\n   \"apiId\": \"asset-services\",\r\n   \"ver\": null,\r\n   \"ts\": null,\r\n   \"action\": null,\r\n   \"did\": null,\r\n   \"key\": null,\r\n   \"msgId\": \"search with from and to values\",\r\n   \"authToken\": \"{{qaAuth}}}\",\r\n   \"correlationId\": null,\r\n   \"userInfo\": {\r\n     \"id\": \"1\",\r\n     \"userName\": null,\r\n     \"name\": null,\r\n     \"type\": null,\r\n     \"mobileNumber\": null,\r\n     \"emailId\": null,\r\n     \"roles\": null\r\n   }\r\n \r\n}"
 
-    url="https://egov-micro-qa.egovernments.org/egov-location/location/v11/boundarys/_search?tenantId=pb."+str(city)
+    url="https://egov-micro-qa.egovernments.org/egov-location/location/v11/boundarys/_search?tenantId="+str(city)
 
     response=requests.request("POST",url, data=payload, headers={"Content-Type": "application/json"})
 
