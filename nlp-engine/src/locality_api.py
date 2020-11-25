@@ -58,4 +58,4 @@ def reply():
     
     
 
-locality_api.run()
+locality_api.run(port=8080)
