@@ -74,4 +74,4 @@ def reply_2():
     
     
 
-locality_api.run(port=8080)
+locality_api.run(host='0.0.0.0',port=8080)
