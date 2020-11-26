@@ -24,9 +24,12 @@ public class CommonAPIErrorMessage {
     private LocalizationService localizationService;
     private String commonApiErrorMessage = "chatbot.message.common.api.errormessage";
     private String localizedTopic = "send-message-localized";
+    private String selectTenantNode="pgr.create.selectTenantid";
+    private String selectLocalityNode="pgr.create.selectLocality";
+    private String tenantLocalitySearchError="chatbot.messages.pgrCreateCityError";
 
-    private Response getErrorMessageResponse() {
-        String localizedErrorMessage = localizationService.getMessageForCode(commonApiErrorMessage);
+    private Response getErrorMessageResponse(String errorMessageCode) {
+        String localizedErrorMessage = localizationService.getMessageForCode(errorMessageCode);
         Response response = Response.builder().type("text").timestamp(System.currentTimeMillis()).nodeId("Error").text(localizedErrorMessage).build();
         return response;
     }
@@ -46,7 +49,11 @@ public class CommonAPIErrorMessage {
         try {
             if (chatNode.getConversationState() != null)
                 resetConversation(chatNode);
-            chatNode.setResponse(getErrorMessageResponse());
+            if(chatNode.getConversationState().getActiveNodeId().equalsIgnoreCase(selectTenantNode)
+                    ||chatNode.getConversationState().getActiveNodeId().equalsIgnoreCase(selectLocalityNode))
+                chatNode.setResponse(getErrorMessageResponse(tenantLocalitySearchError));
+            else
+                chatNode.setResponse(getErrorMessageResponse(commonApiErrorMessage));
             kafkaTemplate.send(localizedTopic, chatNode);
         } catch (Exception ex) {
             log.error("error occurred while sending user error response", ex);

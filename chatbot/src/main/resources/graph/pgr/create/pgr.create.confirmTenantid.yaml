@@ -15,7 +15,7 @@ numberPostfixLocalizationCode: chatbot.message.numberPostfixLocalizationCode
 
 values :
   batchSize : 9
-  class : org.egov.chat.xternal.valuefetch.LocalityV2ValueFetcher
+  class : org.egov.chat.xternal.valuefetch.TenantIdNlpValueFetcher
   params :
     locality : /message
     tenantId : /tenantId

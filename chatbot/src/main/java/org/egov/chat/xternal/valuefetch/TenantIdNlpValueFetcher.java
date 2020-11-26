@@ -23,7 +23,7 @@ import java.util.List;
 
 @PropertySource("classpath:xternal.properties")
 @Component
-public class LocalityV2ValueFetcher implements ExternalValueFetcher {
+public class TenantIdNlpValueFetcher implements ExternalValueFetcher {
 
     @Autowired
     private RestTemplate restTemplate;
