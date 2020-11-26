@@ -34,7 +34,7 @@ public class WorkflowQueryBuilder {
 			+ "       eg_wf_action_v2 ac ON ac.currentState = st.uuid " + "       WHERE ";
 
 
-	private static final String WITH_CLAUSE = " WITH target_ids AS ( select id from eg_wf_processinstance_v2 pi_inner WHERE " ;
+	private static final String WITH_CLAUSE = " select id from eg_wf_processinstance_v2 pi_inner WHERE " ;
 
 	/*
 	 * ORDER BY class for wf last modified time added to make search result in desc
@@ -106,18 +106,16 @@ public class WorkflowQueryBuilder {
 			builder.append(" and pi.businessId IN (").append(createQuery(businessIds)).append(")");
 			addToPreparedStatement(preparedStmtList, businessIds);
 		}
-		
+
         return builder.toString();
 
 
 	}
 
 
-	private String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
-
+	public String getProcessInstanceIds(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 		StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
 
-		String query = QUERY + " pi.id in (Select id from target_ids) ORDER BY wf_createdTime DESC ";
 
 		if (!criteria.getHistory())
 			with_query_builder.append(" pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ");
@@ -148,29 +146,26 @@ public class WorkflowQueryBuilder {
 			addToPreparedStatement(preparedStmtList, status);
 		}
 
-		with_query_builder.append(" ORDER BY pi_inner.createdTime DESC ");
+		with_query_builder.append(" ORDER BY pi_inner.lastModifiedTime DESC ");
 
 		addPagination(with_query_builder,preparedStmtList,criteria);
 
-		with_query_builder.append(")");
+		return with_query_builder.toString();
+	}
 
-		StringBuilder builder = new StringBuilder(with_query_builder);
 
-		builder.append(query);
+	public String getProcessInstanceSearchQueryById(List<String> ids, List<Object> preparedStmtList){
+
+		StringBuilder builder = new StringBuilder(QUERY);
+
+		builder.append(" pi.id IN (").append(createQuery(ids)).append(")");
+		addToPreparedStatement(preparedStmtList, ids);
+
+		builder.append(" ORDER BY wf_lastModifiedTime DESC ");
 
 		return builder.toString();
-
-
 	}
 
-
-	public String getProcessInstanceSearchQueryWithState(ProcessInstanceSearchCriteria criteria,
-			List<Object> preparedStmtList) {
-		String finalQuery = getProcessInstanceSearchQuery(criteria, preparedStmtList);
-		// String finalQuery = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
-		// finalQuery = addOrderByCreatedTime(finalQuery);
-		return finalQuery;
-	}
 
 	/**
 	 * Creates preparedStatement
@@ -230,58 +225,11 @@ public class WorkflowQueryBuilder {
 		return finalQuery;
 	}
 
-	/**
-	 * Adds orderBy clause to the query with limit 1
-	 * 
-	 * @param query The query to be modified
-	 * @return Query ordered descending by createTime returning the tp entry
-	 */
-	private String addOrderByCreatedTime(String query) {
-		StringBuilder builder = new StringBuilder(query);
-		builder.append(" ORDER BY wf_createdTime DESC ");
-		return builder.toString();
-	}
 
-	/**
-	 * Creates query to search processInstanceFromRequest assigned to user
-	 * 
-	 * @return search query based on assignee
-	 */
-	public String getAssigneeSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
-		String query = QUERY + " asg.assignee = ? " + " AND pi.tenantid = ? "
-				+ " AND pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
-		preparedStmtList.add(criteria.getAssignee());
-		preparedStmtList.add(criteria.getTenantId());
-		// query = OUTER_QUERY+query+")" + " fp "+STATE_JOIN_QUERY;
-		return query;
-	}
 
-	/**
-	 * Creates query to search processInstanceFromRequest based on user roles
-	 * 
-	 * @return search query based on assignee
-	 */
-	public String getStatusBasedProcessInstance(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
-//        String query = QUERY +" pi.tenantid = ? " +
-//                "AND pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
-		String query = QUERY
-				+ "pi.lastmodifiedTime  IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
-		StringBuilder builder = new StringBuilder(query);
-//        preparedStmtList.add(criteria.getTenantId());
-		List<String> statuses = criteria.getStatus();
-		if (!CollectionUtils.isEmpty(statuses)) {
-			builder.append(" and CONCAT  (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append(")");
-			addToPreparedStatement(preparedStmtList, statuses);
-		}
-		return builder.toString();
-		// return OUTER_QUERY+builder.toString()+")" + " fp "+STATE_JOIN_QUERY;
-	}
-
-	public String getInboxSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+	public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
 		String with_query = WITH_CLAUSE + " pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
-
-		String query = QUERY + " pi.id in (Select id from target_ids) ORDER BY wf_createdTime DESC ";
 
 		List<String> statuses = criteria.getStatus();
 		StringBuilder with_query_builder = new StringBuilder(with_query);
@@ -298,15 +246,11 @@ public class WorkflowQueryBuilder {
 			preparedStmtList.add(criteria.getTenantId());
 		}
 
-		with_query_builder.append(" ORDER BY pi_inner.createdTime DESC ");
+		with_query_builder.append(" ORDER BY pi_inner.lastModifiedTime DESC ");
 
 		addPagination(with_query_builder,preparedStmtList,criteria);
 
-		with_query_builder.append(")");
-
 		StringBuilder builder = new StringBuilder(with_query_builder);
-
-		builder.append(query);
 
 		return builder.toString();
 	}
