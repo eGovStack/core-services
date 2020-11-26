@@ -42,6 +42,8 @@ public class WorKflowRepository {
     public List<ProcessInstance> getProcessInstances(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getProcessInstanceSearchQueryWithState(criteria, preparedStmtList);
+        log.debug("query for status search: "+query+" params: "+preparedStmtList);
+
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 

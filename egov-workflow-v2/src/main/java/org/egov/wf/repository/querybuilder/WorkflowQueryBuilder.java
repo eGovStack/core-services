@@ -69,7 +69,7 @@ public class WorkflowQueryBuilder {
 	 * @param preparedStmtList The List of object to store the search params
 	 * @return
 	 */
-	public String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+/*	public String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
 
 		String queryWithoutPagination = getProcessInstanceSearchQueryWithoutPagination(criteria, preparedStmtList);
 
@@ -79,7 +79,7 @@ public class WorkflowQueryBuilder {
 
         return query;
 
-    }
+    }*/
 
     private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
         
@@ -112,6 +112,58 @@ public class WorkflowQueryBuilder {
 
 
 	}
+
+
+	private String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+
+		StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
+
+		String query = QUERY + " pi.id in (Select id from target_ids) ORDER BY wf_createdTime DESC ";
+
+		if (!criteria.getHistory())
+			with_query_builder.append(" pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ");
+
+
+		if (criteria.getHistory())
+			with_query_builder.append(" pi_inner.tenantid=? ");
+		else
+			with_query_builder.append(" AND pi_inner.tenantid=? ");
+
+		preparedStmtList.add(criteria.getTenantId());
+
+		List<String> ids = criteria.getIds();
+		if (!CollectionUtils.isEmpty(ids)) {
+			with_query_builder.append("and pi_inner.id IN (").append(createQuery(ids)).append(")");
+			addToPreparedStatement(preparedStmtList, ids);
+		}
+
+		List<String> businessIds = criteria.getBusinessIds();
+		if (!CollectionUtils.isEmpty(businessIds)) {
+			with_query_builder.append(" and pi_inner.businessId IN (").append(createQuery(businessIds)).append(")");
+			addToPreparedStatement(preparedStmtList, businessIds);
+		}
+
+		List<String> status = criteria.getStatus();
+		if (!CollectionUtils.isEmpty(status)) {
+			with_query_builder.append(" and pi_inner.status IN (").append(createQuery(status)).append(")");
+			addToPreparedStatement(preparedStmtList, status);
+		}
+
+		with_query_builder.append(" ORDER BY pi_inner.createdTime DESC ");
+
+		addPagination(with_query_builder,preparedStmtList,criteria);
+
+		with_query_builder.append(")");
+
+		StringBuilder builder = new StringBuilder(with_query_builder);
+
+		builder.append(query);
+
+		return builder.toString();
+
+
+	}
+
 
 	public String getProcessInstanceSearchQueryWithState(ProcessInstanceSearchCriteria criteria,
 			List<Object> preparedStmtList) {
