@@ -34,8 +34,7 @@ public class WorkflowQueryBuilder {
 			+ "       eg_wf_action_v2 ac ON ac.currentState = st.uuid " + "       WHERE ";
 
 
-	private static final String WITH_CLAUSE = " WITH target_ids AS (select id from eg_wf_processinstance_v2 pi_inner" +
-			" LEFT OUTER JOIN   eg_wf_assignee_v2 asg_inner ON asg_inner.processinstanceid = pi_inner.id WHERE ";
+	private static final String WITH_CLAUSE = " WITH target_ids AS ( select id from eg_wf_processinstance_v2 pi_inner WHERE " ;
 
 	/*
 	 * ORDER BY class for wf last modified time added to make search result in desc
@@ -288,13 +287,13 @@ public class WorkflowQueryBuilder {
 		StringBuilder with_query_builder = new StringBuilder(with_query);
 
 		if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-			with_query_builder.append(" AND ((asg_inner.assignee = ?  AND pi_inner.tenantid = ?) OR CONCAT (pi_inner.tenantid,':',pi_inner.status) IN (").append(createQuery(statuses)).append("))");
+			with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_inner.tenantid = ? ) OR (pi_inner.tenantid || ':' || pi_inner.status) IN (").append(createQuery(statuses)).append("))");
 			preparedStmtList.add(criteria.getAssignee());
 			preparedStmtList.add(criteria.getTenantId());
 			addToPreparedStatement(preparedStmtList,statuses);
 		}
 		else {
-			with_query_builder.append(" AND asg_inner.assignee = ?  AND pi_inner.tenantid = ?");
+			with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_inner.tenantid = ?");
 			preparedStmtList.add(criteria.getAssignee());
 			preparedStmtList.add(criteria.getTenantId());
 		}
