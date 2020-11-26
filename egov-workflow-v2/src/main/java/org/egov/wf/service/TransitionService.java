@@ -144,14 +144,14 @@ public class TransitionService {
          * object
          */
         List<ProcessInstance> processInstancesFromDB = repository.getProcessInstances(criteria);
-        try {
-            Map<String, ProcessInstance> businessStateMap = processInstancesFromDB.stream()
-                    .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
-            return businessStateMap;
-        } catch (Exception ex) {
-            log.error("Exception", ex);
-            throw ex;
+
+        Map<String, ProcessInstance> businessStateMap = new LinkedHashMap<>();
+        for(ProcessInstance processInstance : processInstancesFromDB){
+            businessStateMap.put(processInstance.getBusinessId(), processInstance);
         }
+
+        return businessStateMap;
+
     }
 
 
