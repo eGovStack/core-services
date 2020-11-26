@@ -46,6 +46,9 @@ public class WorKflowRepository {
 
         List<String> ids = getProcessInstanceIds(criteria);
 
+        if(CollectionUtils.isEmpty(ids))
+            return new LinkedList<>();
+
         String query = queryBuilder.getProcessInstanceSearchQueryById(ids, preparedStmtList);
         log.debug("query for status search: "+query+" params: "+preparedStmtList);
 
@@ -66,6 +69,9 @@ public class WorKflowRepository {
            return new LinkedList<>();
 
        List<String> ids = getInboxSearchIds(criteria);
+
+       if(CollectionUtils.isEmpty(ids))
+           return new LinkedList<>();
 
        String query = queryBuilder.getProcessInstanceSearchQueryById(ids, preparedStmtList);
        log.debug("query for status search: "+query+" params: "+preparedStmtList);
