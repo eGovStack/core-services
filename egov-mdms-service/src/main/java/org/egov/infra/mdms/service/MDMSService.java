@@ -35,7 +35,7 @@ public class MDMSService {
 	@Value("${egov.kafka.topics.reload}")
 	private String reloadTopic;
 
-	@Cacheable
+	@Cacheable("mdmsData")
 	public Map<String, Map<String, JSONArray>> searchMaster(MdmsCriteriaReq mdmsCriteriaReq) {
 		
 		Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
