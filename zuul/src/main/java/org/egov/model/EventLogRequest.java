@@ -34,6 +34,8 @@ public class EventLogRequest {
     String url;
     String responseContentType;
     String queryParams;
+    Integer uid;
+    String username;
 
     int statusCode;
 
@@ -92,11 +94,14 @@ public class EventLogRequest {
         String uuid = "";
         String userType = "";
         String userTenantId = "";
-
+        String userName = "";
+        Integer userId = 0;
         if (user != null) {
             uuid = user.getUuid();
             userType = user.getType();
             userTenantId = user.getTenantId();
+            userName = user.getUserName();
+            userId = user.getId();
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
@@ -107,6 +112,8 @@ public class EventLogRequest {
             .requestBody(body)
             .method(method)
             .referer(referer)
+            .username(userName)
+            .uid(userId)
             .userType(userType)
             .responseBody(responseBody)
             .queryParams(ctx.getRequest().getQueryString())
