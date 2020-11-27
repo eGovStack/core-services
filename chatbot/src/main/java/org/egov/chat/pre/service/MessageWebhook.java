@@ -50,7 +50,7 @@ public class MessageWebhook {
 
     private JsonNode getResponseForChatbotDown(JsonNode incomingMessageNode) throws JsonProcessingException {
 
-        String chatbotDownResponse = "mSeva Chatbot is down for scheduled maintenance right now. This will be up and running from 7th September 2020";
+        String chatbotDownResponse = "mSeva Chatbot is down for scheduled maintenance right now. This will be up and running from 30th November 2020";
 
         EgovChat chatNode = objectMapper.treeToValue(incomingMessageNode, EgovChat.class);
 
