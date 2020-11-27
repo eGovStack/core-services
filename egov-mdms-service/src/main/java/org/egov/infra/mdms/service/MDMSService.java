@@ -14,6 +14,8 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ public class MDMSService {
 	@Value("${egov.kafka.topics.reload}")
 	private String reloadTopic;
 
+	@Cacheable
 	public Map<String, Map<String, JSONArray>> searchMaster(MdmsCriteriaReq mdmsCriteriaReq) {
 		
 		Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
@@ -99,6 +102,7 @@ public class MDMSService {
 		return responseMap;
 	}
 
+
 	private JSONArray getMasterData(Map<String, Map<String, JSONArray>> stateLevel,
 			Map<String, Map<String, JSONArray>> ulbLevel, String moduleName, String masterName,String tenantId) throws Exception {
 		
@@ -144,7 +148,6 @@ public class MDMSService {
 	}
 
 	public void updateCache(String path, String tenantId) {
-
 		ObjectMapper jsonReader = new ObjectMapper();
 
 		try {
