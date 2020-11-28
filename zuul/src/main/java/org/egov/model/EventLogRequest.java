@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.egov.Utils.Utils;
 import org.egov.contract.User;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -66,25 +67,25 @@ public class EventLogRequest {
 
         String referer = ctx.getRequest().getHeader("referer");
         String method = ctx.getRequest().getMethod();
-        Long startTime = (Long)ctx.get(CURRENT_REQUEST_START_TIME);
+        Long startTime = (Long) ctx.get(CURRENT_REQUEST_START_TIME);
         Long endTime = System.currentTimeMillis();
         ctx.set(CURRENT_REQUEST_END_TIME, endTime);
 
-        Object responseBody = null ;
+        Object responseBody = null;
         boolean isErrorStatusCode = !(ctx.getResponseStatusCode() >= 200 && ctx.getResponseStatusCode() < 300);
-        if (isJsonResponse(ctx)) {
-            if (
-                criteria.isCaptureOutputBody() ||
-                    (criteria.isCaptureOutputBodyOnlyForError() && isErrorStatusCode)
-            ) {
-                try {
-                    responseBody = Utils.getResponseBody(ctx);
+        if (
+            criteria.isCaptureOutputBody() ||
+                (criteria.isCaptureOutputBodyOnlyForError() && isErrorStatusCode)
+        ) {
+            try {
+                responseBody = Utils.getResponseBody(ctx);
+                if (isJsonResponse(ctx)) {
                     responseBody = objectMapper.readValue((String) responseBody,
                         new TypeReference<HashMap<String, Object>>() {
                         });
-                } catch (Exception e) {
-                    log.error("Exception while reading body", e);
                 }
+            } catch (Exception e) {
+                log.error("Exception while reading body", e);
             }
         }
 
@@ -96,6 +97,7 @@ public class EventLogRequest {
         String userTenantId = "";
         String userName = "";
         Integer userId = 0;
+        
         if (user != null) {
             uuid = user.getUuid();
             userType = user.getType();
@@ -117,13 +119,13 @@ public class EventLogRequest {
             .userType(userType)
             .responseBody(responseBody)
             .queryParams(ctx.getRequest().getQueryString())
-            .correlationId((String)ctx.get(CORRELATION_ID_KEY))
+            .correlationId((String) ctx.get(CORRELATION_ID_KEY))
             .statusCode(ctx.getResponseStatusCode())
             .timestamp(formatter.format(date))
             .requestDuration(endTime - startTime)
             .userId(uuid)
             .userTenantId(userTenantId)
-            .tenantId((String)ctx.get(CURRENT_REQUEST_TENANTID))
+            .tenantId((String) ctx.get(CURRENT_REQUEST_TENANTID))
             .url(ctx.getRequest().getRequestURI()).build();
 
         return req;
