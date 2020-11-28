@@ -291,7 +291,8 @@ public class WorkflowQueryBuilder {
      */
     public String getInboxCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
-        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 WHERE tenantid=? GROUP BY businessid)";
+        preparedStmtList.add(criteria.getTenantId());
 
         List<String> statuses = criteria.getStatus();
         StringBuilder builder = new StringBuilder(query);
