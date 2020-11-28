@@ -75,6 +75,7 @@ public class ActionController {
 	}
 
 	@PostMapping(value = "_get")
+	@Deprecated
 	public ResponseEntity<?> getAllActions(@RequestBody final ActionRequest actionRequest){
 
 		final List<ErrorResponse> errorResponses = validateActionRequest(actionRequest, "get");
@@ -96,6 +97,7 @@ public class ActionController {
 			return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
 		
 		List<Action> actionList = actionService.getAllMDMSActions(actionRequest);
+
 		return getNewListSuccessResponse(actionRequest.getRequestInfo(), actionList);
 
 	}
