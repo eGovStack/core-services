@@ -117,9 +117,10 @@ public class WorkflowQueryBuilder {
 		StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
 
 
-		if (!criteria.getHistory())
-			with_query_builder.append(" pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid) ");
-
+		if (!criteria.getHistory()) {
+			with_query_builder.append(" pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 WHERE tenantid = ? GROUP BY businessid) ");
+			preparedStmtList.add(criteria.getTenantId());
+		}
 
 		if (criteria.getHistory())
 			with_query_builder.append(" pi_inner.tenantid=? ");
