@@ -62,7 +62,15 @@ public class EventLogRequest {
     public static EventLogRequest fromRequestContext(RequestContext ctx, RequestCaptureCriteria criteria) {
         Object body = null;
         if (criteria.isCaptureInputBody()) {
-            body = ctx.get(CURRENT_REQUEST_SANITIZED_BODY);
+            body = ctx.get(CURRENT_REQUEST_SANITIZED_BODY_STR);
+
+            if (body == null) {
+                try {
+                    body = IOUtils.toString(ctx.getRequest().getInputStream());
+                } catch (IOException e) {
+
+                }
+            }
         }
 
         String referer = ctx.getRequest().getHeader("referer");
