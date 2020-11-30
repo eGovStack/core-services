@@ -81,7 +81,8 @@ public class BoundaryApplication extends SpringBootServletInitializer {
 	public CacheManager cacheManager() {
 		return new SpringCache2kCacheManager()
 				.addCaches(b->b.name("cBoundariesByTenantAndHierarchyType").expireAfterWrite(boundaryCacheExpiry, TimeUnit.MINUTES).entryCapacity(250))
-				.addCaches(b->b.name("cBoundariesByIdsAndTypeAndNumberAndCodeAndTenant").expireAfterWrite(boundaryCacheExpiry, TimeUnit.MINUTES).entryCapacity(250));
+				.addCaches(b->b.name("cBoundariesByIdsAndTypeAndNumberAndCodeAndTenant").expireAfterWrite(boundaryCacheExpiry, TimeUnit.MINUTES).entryCapacity(250))
+				.addCaches(b->b.name("mdmsCache").expireAfterWrite(boundaryCacheExpiry, TimeUnit.MINUTES).entryCapacity(250));
 	}
 
 }
