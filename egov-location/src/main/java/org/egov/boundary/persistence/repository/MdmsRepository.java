@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -80,6 +81,7 @@ public class MdmsRepository {
 	    this.masterName = masterName;			
 	}
 
+	@Cacheable(value = "mdmsCache", sync = true, key = "{#tenantId, #hierarchyTypeCode}")
 	public JSONArray getByCriteria(String tenantId,String hierarchyTypeCode,RequestInfo requestInfo) {
 		
 		MasterDetails[] masterDetails;
