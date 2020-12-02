@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.extra.spring.SpringCache2kCacheManager;
 import org.egov.encryption.EncryptionService;
 import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
@@ -20,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -36,9 +40,11 @@ import redis.clients.jedis.JedisShardInfo;
 import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @Slf4j
+@EnableCaching
 @Import({TracerConfiguration.class,EncryptionConfiguration.class})
 public class EgovUserApplication {
 
@@ -54,6 +60,9 @@ public class EgovUserApplication {
 	
 	@Autowired
 	private CustomAuthenticationKeyGenerator customAuthenticationKeyGenerator;
+
+	@Value("${cache.expiry.masterdata.minutes:5}")
+	private long masterDataExpiry;
 
 
 	@PostConstruct
@@ -111,6 +120,13 @@ public class EgovUserApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EgovUserApplication.class, args);
+	}
+
+	@Bean
+	@Profile("!test")
+	public CacheManager cacheManager() {
+		return new SpringCache2kCacheManager()
+				.addCaches(b->b.name("cRolesByCode").expireAfterWrite(masterDataExpiry, TimeUnit.MINUTES).entryCapacity(50));
 	}
 
 }
