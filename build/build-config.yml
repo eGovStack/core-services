@@ -225,3 +225,49 @@ config:
       - work-dir: "egov-user"
         image-name: "egov-user-chatbot"
         dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven/Dockerfile"
+  
+  - name: "builds/core-services/egov-url-shortening"
+    build:
+      - work-dir: "egov-url-shortening"
+        image-name: "egov-url-shortening"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "egov-url-shortening/src/main/resources/db"
+        image-name: "egov-url-shortening-db"
+  
+  - name: "builds/core-services/chatbot"
+    build:
+      - work-dir: "chatbot"
+        image-name: "chatbot"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "chatbot/src/main/resources/db"
+        image-name: "chatbot-db"
+        
+  - name: "builds/core-services/http-to-kafka-connector"
+    build:
+      - work-dir: "http-to-kafka-connector"
+        image-name: "whatsapp-webhook"
+
+  - name: "builds/core-services/egov-user-chatbot"
+    build:
+      - work-dir: "egov-user"
+        image-name: "egov-user-chatbot"
+        dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/core-services/mailbot"
+    build:
+      - work-dir: "mailbot"
+        image-name: "mailbot"
+        dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/core-services/libraries/enc-client"
+    build:
+      - work-dir: "libraries/enc-client"
+        image-name: "enc-client"
+
+
+  - name: "builds/core-services/nlp-engine"
+    build:
+      - work-dir: "nlp-engine"
+        image-name: "nlp-engine"
+        dockerfile: "nlp-engine/Dockerfile"

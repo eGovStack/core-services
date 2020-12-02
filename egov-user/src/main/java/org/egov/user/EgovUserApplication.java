@@ -1,20 +1,26 @@
 package org.egov.user;
 
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.annotation.PostConstruct;
+
+import org.cache2k.extra.spring.SpringCache2kCacheManager;
+import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
-import org.egov.tracer.model.CustomException;
 import org.egov.user.security.CustomAuthenticationKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -22,22 +28,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisShardInfo;
 
-import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @SpringBootApplication
-@Import(TracerConfiguration.class)
+@Slf4j
+@EnableCaching
+@Import({TracerConfiguration.class,EncryptionConfiguration.class})
 public class EgovUserApplication {
 
 
@@ -52,6 +56,9 @@ public class EgovUserApplication {
 	
 	@Autowired
 	private CustomAuthenticationKeyGenerator customAuthenticationKeyGenerator;
+
+	@Value("${cache.expiry.masterdata.minutes:5}")
+	private long masterDataExpiry;
 
 
 	@PostConstruct
@@ -109,6 +116,13 @@ public class EgovUserApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EgovUserApplication.class, args);
+	}
+
+	@Bean
+	@Profile("!test")
+	public CacheManager cacheManager() {
+		return new SpringCache2kCacheManager("cache-" + hashCode())
+				.addCaches(b->b.name("cRolesByCode").expireAfterWrite(masterDataExpiry, TimeUnit.MINUTES).entryCapacity(50));
 	}
 
 }

@@ -15,6 +15,7 @@ import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -335,6 +336,7 @@ public class UserRepository {
 	 * @param tenantId tenant id of the roles
 	 * @return enriched roles
 	 */
+	@Cacheable(value = "cRolesByCode", key = "roleCodes", sync = true)
     private Set<Role> fetchRolesByCode(Set<String> roleCodes, String tenantId) {
 
 
@@ -553,8 +555,13 @@ public class UserRepository {
 	 */
 	private void updateRoles(User user) {
 		Map<String, Object> roleInputs = new HashMap<String, Object>();
+		List<String> roleCodes = user.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 		roleInputs.put("user_id", user.getId());
 		roleInputs.put("user_tenantid", user.getTenantId());
+
+		// Add roles filter as well, other wise during concurrent update call there is a
+		// null pointer exception due to delete of roles
+		roleInputs.put("roles", roleCodes);
 		namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
 		saveUserRoles(user);
 	}
