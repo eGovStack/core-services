@@ -126,7 +126,7 @@ public class EgovUserApplication {
 	@Bean
 	@Profile("!test")
 	public CacheManager cacheManager() {
-		return new SpringCache2kCacheManager()
+		return new SpringCache2kCacheManager("cache-" + hashCode())
 				.addCaches(b->b.name("cRolesByCode").expireAfterWrite(masterDataExpiry, TimeUnit.MINUTES).entryCapacity(50));
 	}
 
