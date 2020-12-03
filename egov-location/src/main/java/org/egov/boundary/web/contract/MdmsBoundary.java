@@ -21,6 +21,7 @@ public class MdmsBoundary {
 	private String latitude;
 	private String longitude;
 	private String area;
+	private String pinCode;
 	private Long boundaryNum;
 	private List<MdmsBoundary> children = new ArrayList<MdmsBoundary>();
 }
