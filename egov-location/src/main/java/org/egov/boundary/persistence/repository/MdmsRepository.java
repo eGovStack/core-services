@@ -92,7 +92,7 @@ public class MdmsRepository {
 		moduleDetails = new ModuleDetails[1];
 		String filter = null;
         if (hierarchyTypeCode != null && !hierarchyTypeCode.isEmpty()) {
-			filter = "[?(@." + "hierarchyType.code" + " in [" + hierarchyTypeCode.toUpperCase() + "])]";
+			filter = "[?(@." + "hierarchyType.code" + " in ['" + hierarchyTypeCode.toUpperCase() + "'])]";
 		}
 		masterDetails[0] = MasterDetails.builder().name(masterName)
 				.filter(filter).build();
