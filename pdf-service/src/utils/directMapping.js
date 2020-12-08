@@ -22,7 +22,7 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 
 function escapeRegex(string) {
   if(typeof string == "string")
-  return string.replace(/[\\"|]/g, '\\$&'); 
+  return string.replace(/[\\"]/g, '\\$&'); 
    else
     return string;
   }
