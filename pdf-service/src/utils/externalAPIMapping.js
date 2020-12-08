@@ -294,10 +294,12 @@ export const externalAPIMapping = async function(
             loc.isSubTypeRequired,
             loc.delimiter
           );
-        else
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = replaceValue;
+        else{
+          let currentValue = replaceValue;
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] = currentValue.replace(/\"/g,'\\\\"');
+        }
         if (externalAPIArray[i].jPath[j].isUpperCaseRequired) {
           let currentValue =
             variableTovalueMap[externalAPIArray[i].jPath[j].variable];
