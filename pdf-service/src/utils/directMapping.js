@@ -22,7 +22,7 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 
 function escapeRegex(string) {
   if(typeof string == "string")
-   return string.replace(/[\/\\^"$*+?()|[\]{}]/g, '\\$&'); 
+  return string.replace(/[\\"|]/g, '\\$&'); 
    else
     return string;
   }
@@ -144,7 +144,12 @@ export const directMapping = async (
                 loc.delimiter
               );
             }
-            ownerObject[scema[k].variable] = fieldValue;
+            let currentValue = fieldValue;
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+
+          currentValue= escapeRegex(currentValue);
+          ownerObject[scema[k].variable] = currentValue;
           }
           // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));
           // x += 2;

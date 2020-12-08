@@ -19,7 +19,7 @@ import logger from "../config/logger";
 
 function escapeRegex(string) {
   if(typeof string == "string")
-   return string.replace(/[\/\\^"$*+?()|[\]{}]/g, '\\$&'); 
+   return string.replace(/[\\"|]/g, '\\$&'); 
    else
     return string;
   }
@@ -265,7 +265,13 @@ export const externalAPIMapping = async function(
                 loc.delimiter
               );
             }
-            ownerObject[scema[k].variable] = fieldValue;
+            //console.log("\nvalue-->"+fieldValue)
+          let currentValue = fieldValue;
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+
+          currentValue= escapeRegex(currentValue);
+            ownerObject[scema[k].variable] = currentValue;
             
           }
           // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));

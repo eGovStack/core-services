@@ -660,9 +660,7 @@ export const fillValues = (variableTovalueMap, formatconfig) => {
       .replace(/"\[/g, "[")
       .replace(/\]"/g, "]")
       .replace(/\]\[/g, "],[")
-      .replace(/"\{/g, "{")
-      .replace(/\}"/g, "}")
-      
+      .replace(/"\{/g, "{")      
   );
   return output;
 };
