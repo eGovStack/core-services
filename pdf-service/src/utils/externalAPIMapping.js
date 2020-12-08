@@ -17,6 +17,13 @@ import logger from "../config/logger";
  * @param {*} requestInfo -request info from request body
  */
 
+function escapeRegex(string) {
+  if(typeof string == "string")
+   return string.replace(/[\/\\^"$*+?()|[\]{}]/g, '\\$&'); 
+   else
+    return string;
+  }
+
 export const externalAPIMapping = async function(
   key,
   req,
@@ -298,7 +305,13 @@ export const externalAPIMapping = async function(
           let currentValue = replaceValue;
           if (typeof currentValue == "object" && currentValue.length > 0)
             currentValue = currentValue[0];
-          variableTovalueMap[externalAPIArray[i].jPath[j].variable] = currentValue.replace(/\"/g,'\\\\"');
+
+         // currentValue=currentValue.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+          currentValue= escapeRegex(currentValue);
+          variableTovalueMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = currentValue;
+          
         }
         if (externalAPIArray[i].jPath[j].isUpperCaseRequired) {
           let currentValue =
