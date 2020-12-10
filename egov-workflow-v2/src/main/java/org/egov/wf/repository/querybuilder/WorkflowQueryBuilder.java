@@ -34,7 +34,7 @@ public class WorkflowQueryBuilder {
 			+ "       eg_wf_action_v2 ac ON ac.currentState = st.uuid " + "       WHERE ";
 
 
-	private static final String WITH_CLAUSE = " select id from eg_wf_processinstance_v2 pi_inner WHERE " ;
+	private static final String WITH_CLAUSE = " select id from eg_wf_processinstance_v2 pi_outer WHERE " ;
 
 	/*
 	 * ORDER BY class for wf last modified time added to make search result in desc
@@ -118,36 +118,42 @@ public class WorkflowQueryBuilder {
 
 
 		if (!criteria.getHistory()) {
-			with_query_builder.append(" pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 WHERE tenantid = ? GROUP BY businessid) ");
+			with_query_builder.append(" pi_outer.lastmodifiedTime = (" +
+					"SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
+					") ");
 			preparedStmtList.add(criteria.getTenantId());
 		}
 
-		if (criteria.getHistory())
+		/*if (criteria.getHistory())
 			with_query_builder.append(" pi_inner.tenantid=? ");
 		else
-			with_query_builder.append(" AND pi_inner.tenantid=? ");
+			with_query_builder.append(" AND pi_inner.tenantid=? ");*/
 
-		preparedStmtList.add(criteria.getTenantId());
+		if (criteria.getHistory()){
+			with_query_builder.append(" pi_outer.tenantid=? ");
+			preparedStmtList.add(criteria.getTenantId());
+		}
+
 
 		List<String> ids = criteria.getIds();
 		if (!CollectionUtils.isEmpty(ids)) {
-			with_query_builder.append("and pi_inner.id IN (").append(createQuery(ids)).append(")");
+			with_query_builder.append("and pi_outer.id IN (").append(createQuery(ids)).append(")");
 			addToPreparedStatement(preparedStmtList, ids);
 		}
 
 		List<String> businessIds = criteria.getBusinessIds();
 		if (!CollectionUtils.isEmpty(businessIds)) {
-			with_query_builder.append(" and pi_inner.businessId IN (").append(createQuery(businessIds)).append(")");
+			with_query_builder.append(" and pi_outer.businessId IN (").append(createQuery(businessIds)).append(")");
 			addToPreparedStatement(preparedStmtList, businessIds);
 		}
 
 		List<String> status = criteria.getStatus();
 		if (!CollectionUtils.isEmpty(status)) {
-			with_query_builder.append(" and pi_inner.status IN (").append(createQuery(status)).append(")");
+			with_query_builder.append(" and pi_outer.status IN (").append(createQuery(status)).append(")");
 			addToPreparedStatement(preparedStmtList, status);
 		}
 
-		with_query_builder.append(" ORDER BY pi_inner.lastModifiedTime DESC ");
+		with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
 		addPagination(with_query_builder,preparedStmtList,criteria);
 
@@ -230,24 +236,25 @@ public class WorkflowQueryBuilder {
 
 	public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
-		String with_query = WITH_CLAUSE + " pi_inner.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 GROUP BY businessid)";
+		String with_query = WITH_CLAUSE + " pi_outer.lastmodifiedTime = (" +
+				"SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
+				") ";
 
+		preparedStmtList.add(criteria.getTenantId());
 		List<String> statuses = criteria.getStatus();
 		StringBuilder with_query_builder = new StringBuilder(with_query);
 
 		if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-			with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_inner.tenantid = ? ) OR (pi_inner.tenantid || ':' || pi_inner.status) IN (").append(createQuery(statuses)).append("))");
+			with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?)) OR (pi_outer.tenantid || ':' || pi_outer.status) IN (").append(createQuery(statuses)).append("))");
 			preparedStmtList.add(criteria.getAssignee());
-			preparedStmtList.add(criteria.getTenantId());
 			addToPreparedStatement(preparedStmtList,statuses);
 		}
 		else {
-			with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_inner.tenantid = ?");
+			with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) ");
 			preparedStmtList.add(criteria.getAssignee());
-			preparedStmtList.add(criteria.getTenantId());
 		}
 
-		with_query_builder.append(" ORDER BY pi_inner.lastModifiedTime DESC ");
+		with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
 		addPagination(with_query_builder,preparedStmtList,criteria);
 
