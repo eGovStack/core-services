@@ -75,7 +75,14 @@ public class AuthFilter extends ZuulFilter {
         final HttpHeaders headers = new HttpHeaders();
         headers.add(CORRELATION_ID_HEADER_NAME, (String) ctx.get(CORRELATION_ID_KEY));
         final HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
-        return restTemplate.postForObject(authURL, httpEntity, User.class);
+        User user = null ;
+        try{
+            user = restTemplate.postForObject(authURL, httpEntity, User.class);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return user;
     }
 
 }

@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"code", "tenantId"})
-public class Role {
-    @JsonProperty("id")
+public class Role implements java.io.Serializable{
+
+	private static final long serialVersionUID = 8967926454506815772L;
+
+	@JsonProperty("id")
     private Long id;
 
     @JsonProperty("name")
