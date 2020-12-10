@@ -124,15 +124,12 @@ public class WorkflowQueryBuilder {
 			preparedStmtList.add(criteria.getTenantId());
 		}
 
-		/*if (criteria.getHistory())
-			with_query_builder.append(" pi_inner.tenantid=? ");
-		else
-			with_query_builder.append(" AND pi_inner.tenantid=? ");*/
-
-		if (criteria.getHistory()){
+		if (criteria.getHistory())
 			with_query_builder.append(" pi_outer.tenantid=? ");
-			preparedStmtList.add(criteria.getTenantId());
-		}
+		else
+			with_query_builder.append(" AND pi_outer.tenantid=? ");
+
+		preparedStmtList.add(criteria.getTenantId());
 
 
 		List<String> ids = criteria.getIds();
@@ -245,13 +242,15 @@ public class WorkflowQueryBuilder {
 		StringBuilder with_query_builder = new StringBuilder(with_query);
 
 		if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-			with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?)) OR (pi_outer.tenantid || ':' || pi_outer.status) IN (").append(createQuery(statuses)).append("))");
+			with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_outer.tenantid = ? ) OR (pi_outer.tenantid || ':' || pi_outer.status) IN (").append(createQuery(statuses)).append("))");
 			preparedStmtList.add(criteria.getAssignee());
+			preparedStmtList.add(criteria.getTenantId());
 			addToPreparedStatement(preparedStmtList,statuses);
 		}
 		else {
-			with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) ");
+			with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_outer.tenantid = ? ");
 			preparedStmtList.add(criteria.getAssignee());
+			preparedStmtList.add(criteria.getTenantId());
 		}
 
 		with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
