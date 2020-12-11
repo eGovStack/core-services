@@ -338,7 +338,7 @@ public class BoundaryService {
 		return boundaryRepository.getAllBoundariesByIdsAndTypeAndNumberAndCodeAndTenant(boundarySearchRequest);
 	}
 
-	@Cacheable(value = "cBoundariesByTenantAndHierarchyType", key = "boundarySearchRequest", sync = true)
+	@Cacheable(value = "cBoundariesByTenantAndHierarchyType", key = "{#boundarySearchRequest.toString()}", sync = true)
 	public List<MdmsTenantBoundary> getBoundariesByTenantAndHierarchyType(BoundarySearchRequest boundarySearchRequest,RequestInfo requestInfo){
 		Long startTime = null;
 		Long endTime = null;
