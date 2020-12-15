@@ -118,10 +118,10 @@ config:
       - work-dir: "egov-pg-service/src/main/resources/db"
         image-name: "egov-pg-service-db"
 
-  - name: "builds/core-services/egov-searcher"
+  - name: "builds/core-services/searcher"
     build:
-      - work-dir: "egov-searcher"
-        image-name: "egov-searcher"
+      - work-dir: "searcher"
+        image-name: "searcher"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/egov-telemetry"
