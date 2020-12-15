@@ -11,7 +11,7 @@
 - egov-mdms-service
 - egov-enc-service
 - egov-otp
-- egov-filestore
+- filestore
 
 
 ### Swagger API Contract

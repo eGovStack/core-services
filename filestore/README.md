@@ -1,5 +1,5 @@
 
-# <eGov-Filestore>
+# <-Filestore->
 
 Filestore provides file upload capability for all the rest of the modules in the Digit suite.
 

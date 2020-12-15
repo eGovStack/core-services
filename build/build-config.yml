@@ -38,12 +38,12 @@ config:
       - work-dir: "egov-enc-service/src/main/resources/db"
         image-name: "egov-enc-service-db"
 
-  - name: "builds/core-services/egov-filestore"
+  - name: "builds/core-services/filestore"
     build:
-      - work-dir: "egov-filestore"
+      - work-dir: "filestore"
         image-name: "egov-filestore"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-filestore/src/main/resources/db"
+      - work-dir: "filestore/src/main/resources/db"
         image-name: "egov-filestore-db"
 
   - name: "builds/core-services/egov-idgen"
@@ -84,9 +84,9 @@ config:
         image-name: "egov-mdms-service"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-notification-mail"
+  - name: "builds/core-services/email-notification"
     build:
-      - work-dir: "egov-notification-mail"
+      - work-dir: "email-notification"
         image-name: "egov-notification-mail"
         dockerfile: "build/maven/Dockerfile"
 
