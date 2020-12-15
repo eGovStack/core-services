@@ -1,5 +1,5 @@
 
-# egov-notification-mail service
+# email-notification service
 
 Mail service enables the email notification to the user. The functionality is exposed via REST API.
 
