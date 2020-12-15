@@ -11,9 +11,9 @@
 		<relativePath></relativePath>
 	</parent>
 	<groupId>org.egov</groupId>
-	<artifactId>egov-filestore</artifactId>
+	<artifactId>filestore</artifactId>
 	<version>1.2.0-SNAPSHOT</version>
-	<name>egov-filestore</name>
+	<name>filestore</name>
 	<description>eGov File store project for eGov services</description>
 	<properties>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
