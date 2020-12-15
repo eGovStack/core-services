@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "4578ff36-17a2-4fc0-8614-ed3094f71a68",
-		"name": "egov-enc-service",
+		"name": "encryption",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -20,14 +20,14 @@
 					"raw": "{\n  \"encryptionRequests\": [\n    {\n      \"tenantId\": \"pb\",\n      \"type\": \"Imp\",\n      \"value\": \"My email\"\n    },\n    {\n      \"tenantId\": \"pb.jalandhar\",\n      \"type\": \"Normal\",\n      \"value\": [\n        \"Personal\",\n        \"Private\"\n      ]\n    },\n    {\n      \"tenantId\": \"pb.mohali\",\n      \"type\": \"Normal\",\n      \"value\": {\n        \"userObject1\": {\n          \"name\": \"John Doe\",\n          \"mobileNumber\": \"98989121234\"\n        }\n      }\n    }\n  ]\n}"
 				},
 				"url": {
-					"raw": "localhost:1234//egov-enc-service/crypto/v1/_encrypt",
+					"raw": "localhost:1234//encryption/crypto/v1/_encrypt",
 					"host": [
 						"localhost"
 					],
 					"port": "1234",
 					"path": [
 						"",
-						"egov-enc-service",
+						"encryption",
 						"crypto",
 						"v1",
 						"_encrypt"
@@ -51,14 +51,14 @@
 					"raw": "[\n    \"437506|A5ag4DfbhHAHiqXRKFcAedFKtNOelHX+8+jB0ckNG/tihwimx7xu6akEoa+kaQPcIhSnYeveloIhdPBCOgrXWvkWGZfShx1i2bE2vAcWB+r0YIDdwZLKJbQGBHDqcEOn8mfO+LnmpJ5P4zPETtE+2EHhta+vKcE5OQj8ZQawHS4=\",\n    [\n        \"896077|I/8Xwqr5MwB6UucEP8/Q5wiCHpbaNqGE\",\n        \"896077|I+gMx6TjN0BcLxudEiYQKIDKtSlmpJY=\"\n    ],\n    {\n        \"userObject1\": {\n            \"mobileNumber\": \"395551|eSfiPrQ1UK07d0SupYQYqbr2QFNOWSuYJYcU\",\n            \"name\": \"395551|CnCzaK1ADfnx+4FINXIQ9zjnUs1ieAtz\"\n        }\n    }\n]"
 				},
 				"url": {
-					"raw": "localhost:1234//egov-enc-service/crypto/v1/_decrypt",
+					"raw": "localhost:1234//encryption/crypto/v1/_decrypt",
 					"host": [
 						"localhost"
 					],
 					"port": "1234",
 					"path": [
 						"",
-						"egov-enc-service",
+						"encryption",
 						"crypto",
 						"v1",
 						"_decrypt"
@@ -82,14 +82,14 @@
 					"raw": "{\n\t\"tenantId\": \"pb.jalandhar\",\n\t\"value\": \"value\"\n}"
 				},
 				"url": {
-					"raw": "localhost:1234//egov-enc-service/crypto/v1/_sign",
+					"raw": "localhost:1234//encryption/crypto/v1/_sign",
 					"host": [
 						"localhost"
 					],
 					"port": "1234",
 					"path": [
 						"",
-						"egov-enc-service",
+						"encryption",
 						"crypto",
 						"v1",
 						"_sign"
@@ -113,14 +113,14 @@
 					"raw": "{\n    \"value\": \"value\",\n    \"signature\": \"553916|dyQwMYZw7an2FhXg14yKki5L/jd2WrUMAfp1uzMPkNlwXILNeW0VMxa7USFI71QvCQCLPnQGCXcPXSo6jXiIJrZhSn8B4etGWrXXEjxSoSF8l/t+XiTJZoeBxnefb112iMxJCW2ZIDRdp83wItPJwxVfWHxnWOTHemQHUNNwzk4=\"\n}"
 				},
 				"url": {
-					"raw": "localhost:1234//egov-enc-service/crypto/v1/_verify",
+					"raw": "localhost:1234//encryption/crypto/v1/_verify",
 					"host": [
 						"localhost"
 					],
 					"port": "1234",
 					"path": [
 						"",
-						"egov-enc-service",
+						"encryption",
 						"crypto",
 						"v1",
 						"_verify"
@@ -144,13 +144,13 @@
 					"raw": "{\n\t\"tenantId\": \"pb.phagwara\"\n}"
 				},
 				"url": {
-					"raw": "localhost:1234/egov-enc-service/crypto/v1/_rotatekey",
+					"raw": "localhost:1234/encryption/crypto/v1/_rotatekey",
 					"host": [
 						"localhost"
 					],
 					"port": "1234",
 					"path": [
-						"egov-enc-service",
+						"encryption",
 						"crypto",
 						"v1",
 						"_rotatekey"

@@ -29,56 +29,56 @@ public class CryptoApiControllerTest {
 
     @Test
     public void cryptoV1DecryptPostSuccess() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_decrypt").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_decrypt").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isOk());
     }
 
     @Test
     public void cryptoV1DecryptPostFailure() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_decrypt").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_decrypt").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isBadRequest());
     }
 
     @Test
     public void cryptoV1EncryptPostSuccess() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_encrypt").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_encrypt").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isOk());
     }
 
     @Test
     public void cryptoV1EncryptPostFailure() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_encrypt").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_encrypt").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isBadRequest());
     }
 
     @Test
     public void cryptoV1SignPostSuccess() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_sign").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_sign").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isOk());
     }
 
     @Test
     public void cryptoV1SignPostFailure() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_sign").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_sign").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isBadRequest());
     }
 
     @Test
     public void cryptoV1VerifyPostSuccess() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_verify").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_verify").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isOk());
     }
 
     @Test
     public void cryptoV1VerifyPostFailure() throws Exception {
-        mockMvc.perform(post("/egov-enc-service/crypto/v1/_verify").contentType(MediaType
+        mockMvc.perform(post("/encryption/crypto/v1/_verify").contentType(MediaType
         .APPLICATION_JSON_UTF8))
         .andExpect(status().isBadRequest());
     }

@@ -19,7 +19,7 @@ To setup the egov-user service in your local system, clone the [Core Service rep
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
-kubectl port-forward -n egov $(kgpt egov-enc-service) 8087:8080 &
+kubectl port-forward -n egov $(kgpt encryption) 8087:8080 &
 kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080 &
 kubectl port-forward -n egov $(kgpt egov-otp) 8089:8080
 ```

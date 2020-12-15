@@ -30,13 +30,13 @@ config:
       - work-dir: "egov-data-uploader/src/main/resources/db"
         image-name: "egov-data-uploader-db"
 
-  - name: "builds/core-services/egov-enc-service"
+  - name: "builds/core-services/encryption"
     build:
-      - work-dir: "egov-enc-service"
-        image-name: "egov-enc-service"
+      - work-dir: "encryption"
+        image-name: "encryption"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-enc-service/src/main/resources/db"
-        image-name: "egov-enc-service-db"
+      - work-dir: "encryption/src/main/resources/db"
+        image-name: "encryption-db"
 
   - name: "builds/core-services/filestore"
     build:
