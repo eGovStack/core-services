@@ -20,7 +20,7 @@ To run report service locally, you need to port forward mdms and encryption serv
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
 kubectl port-forward -n egov $(kgpt egov-mdms-service) 8087:8080
-kubectl port-forward -n egov $(kgpt egov-enc-service) 8088:8080
+kubectl port-forward -n egov $(kgpt encryption) 8088:8080
 ```
 
 Update below listed properties in `application.properties` prior to running the project:

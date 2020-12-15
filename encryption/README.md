@@ -27,7 +27,7 @@ Encryption Service offers following features :
 
 #### Configurations
 
-Following are the properties in application.properties file in egov-enc-service which are configurable.
+Following are the properties in application.properties file in encryption which are configurable.
 
 | Property                     |  Default Value    | Remarks                                                                                                                      | 
 | -----------------------------| ------------------| -----------------------------------------------------------------------------------------------------------------------------|

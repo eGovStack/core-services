@@ -8,7 +8,7 @@ couple of APIS.
 - NA
 
 ### Service Dependencies
-- `egov-enc-service`: used for decryption of user PII data if required
+- `encryption`: used for decryption of user PII data if required
 - `egov-mdms-service`: used by encryption library to load encryption configs
 
 ### Swagger API Contract
