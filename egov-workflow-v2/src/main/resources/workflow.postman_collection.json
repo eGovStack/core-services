@@ -283,14 +283,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8085/egov-searcher/locality/TLLocalitySearcher/_get",
+					"raw": "http://localhost:8085/searcher/locality/TLLocalitySearcher/_get",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8085",
 					"path": [
-						"egov-searcher",
+						"searcher",
 						"locality",
 						"TLLocalitySearcher",
 						"_get"

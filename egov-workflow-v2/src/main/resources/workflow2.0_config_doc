@@ -13,12 +13,12 @@ Config:
     Searcher:
      	The employee inbox has added column to display the locality of the applications. This mapping 	of the application number to locality is fetched by calling searcher API for the respective 	module. If new module is integrated with workflow it's searcher config should be added in the 	locality searcher yaml with module code as name in definition. The format of the url is as 	follows:
 
-	            /egov-searcher/locality/{BUSINESSSERVICE}/_get
+	            /searcher/locality/{BUSINESSSERVICE}/_get
 
         Sample request for TL:
 
                     curl -X POST \
-                        https://egov-micro-dev.egovernments.org/egov-searcher/locality/TL/_get \
+                        https://egov-micro-dev.egovernments.org/searcher/locality/TL/_get \
                         -H 'Content-Type: application/json' \
                         -H 'Postman-Token: 1c2adbb9-004f-42ce-8aab-a29a2b0df7a7' \
                         -H 'cache-control: no-cache' \
