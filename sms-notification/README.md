@@ -1,4 +1,4 @@
-# egov-notification-sms service
+# sms-notification service
 
 Notification SMS service consumes SMS from the kafka notification topic and process them to send it to an third party service.
 
@@ -108,7 +108,7 @@ Any SMS which expire due to kafka lags, or some other internal issues, they will
 If a `backup` topic has not been configured, then in an event of an error the same will be delivered to `kafka.topics.error.sms`
 
 ### Kafka Consumers
-`egov.core.notification.sms` : egov-notification-sms listens to this topic to get the data
+`egov.core.notification.sms` : sms-notification listens to this topic to get the data
 
 
 ### Kafka Producers
