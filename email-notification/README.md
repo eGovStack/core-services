@@ -10,7 +10,7 @@ Mail service enables the email notification to the user. The functionality is ex
 ### Service Dependencies
 
 - egov-user
-- egov-localization
+- localization
 
 ### Swagger API Contract
 
@@ -20,7 +20,7 @@ NA
 
 egov-notification-mail is a consumer which listens to the egov.core.notification.email topic, reads the message and generates email using SMTP Protocol.
 The services needs the the senders email configured. On the other hand, if senders email is not configured, the services gets the email id by internally calling 
-egov-user service to fetch email id. Once the email is generated, the content is localized by egov-localization service after which its been notified to the email id.
+egov-user service to fetch email id. Once the email is generated, the content is localized by localization service after which its been notified to the email id.
 
 ### API Details
 

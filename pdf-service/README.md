@@ -7,7 +7,7 @@ PDF service is one of the core application which is use to bulk generate the pdf
 - NA
 
 ### Service Dependencies
-- egov-localization
+- localization
 - egov-filestore
 
 ### Swagger API Contract

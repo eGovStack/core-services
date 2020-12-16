@@ -62,13 +62,13 @@ config:
       - work-dir: "egov-indexer/src/main/resources/db"
         image-name: "egov-indexer-db"
 
-  - name: "builds/core-services/egov-localization"
+  - name: "builds/core-services/localization"
     build:
-      - work-dir: "egov-localization"
-        image-name: "egov-localization"
+      - work-dir: "localization"
+        image-name: "localization"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-localization/src/main/resources/db"
-        image-name: "egov-localization-db"
+      - work-dir: "localization/src/main/resources/db"
+        image-name: "localization-db"
 
   - name: "builds/core-services/egov-location"
     build:
