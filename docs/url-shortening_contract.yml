@@ -1,18 +1,18 @@
 openapi: 3.0.1
 info:
   title: Egov URL shortening service
-  description: APIs available in egov-url-shortening to shorten urls and get original
+  description: APIs available in url-shortening to shorten urls and get original
     urls from shortened urls
   contact:
     name: Abhishek Jain
   version: 1.0.0
 servers:
-- url: /egov-url-shortening
+- url: /url-shortening
 paths:
   /shortener:
     post:
       tags:
-      - egov-url-shortening service endpoints
+      - url-shortening service endpoints
       summary: shorten given url
       operationId: shortenUrlUsingPOST
       requestBody:
@@ -45,7 +45,7 @@ paths:
   /{id}:
     get:
       tags:
-      - egov-url-shortening service endpoints
+      - url-shortening service endpoints
       summary: redirects user to orignal url identified by id
       parameters:
       - name: id

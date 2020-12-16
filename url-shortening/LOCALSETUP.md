@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-url-shortening service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the url-shortening service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
