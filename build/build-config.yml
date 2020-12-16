@@ -41,10 +41,10 @@ config:
   - name: "builds/core-services/filestore"
     build:
       - work-dir: "filestore"
-        image-name: "egov-filestore"
+        image-name: "filestore"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "filestore/src/main/resources/db"
-        image-name: "egov-filestore-db"
+        image-name: "filestore-db"
 
   - name: "builds/core-services/egov-idgen"
     build:
@@ -87,7 +87,7 @@ config:
   - name: "builds/core-services/email-notification"
     build:
       - work-dir: "email-notification"
-        image-name: "egov-notification-mail"
+        image-name: "email-notification"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/sms-notification"
@@ -201,11 +201,11 @@ config:
   
   - name: "builds/core-services/egov-url-shortening"
     build:
-      - work-dir: "egov-url-shortening"
-        image-name: "egov-url-shortening"
+      - work-dir: "url-shortening"
+        image-name: "url-shortening"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-url-shortening/src/main/resources/db"
-        image-name: "egov-url-shortening-db"
+      - work-dir: "url-shortening/src/main/resources/db"
+        image-name: "url-shortening-db"
   
   - name: "builds/core-services/chatbot"
     build:

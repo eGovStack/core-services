@@ -12,7 +12,7 @@
   <artifactId>email-notification</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <name>email-notification</name>
-  <description>egov notification mail project</description>
+  <description>notification mail project</description>
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
