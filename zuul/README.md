@@ -11,7 +11,7 @@ This allows any browser, mobile app or other user interface to consume underlyin
 
 ### Service Dependencies
 - egov-accesscontrol
-- egov-user
+- user
 
 ### Swagger API Contract
 

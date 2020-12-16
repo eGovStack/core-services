@@ -7,7 +7,7 @@ Workflows are a series of steps that moves a process from one state to another s
 
 ### Service Dependencies
 - egov-mdms
-- egov-user
+- user
 
 ### Swagger API Contract
 

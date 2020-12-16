@@ -130,13 +130,13 @@ config:
         image-name: "egov-telemetry"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-user"
+  - name: "builds/core-services/user"
     build:
-      - work-dir: "egov-user"
-        image-name: "egov-user"
+      - work-dir: "user"
+        image-name: "user"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-user/src/main/resources/db"
-        image-name: "egov-user-db"
+      - work-dir: "user/src/main/resources/db"
+        image-name: "user-db"
 
   - name: "builds/core-services/egov-workflow-v2"
     build:

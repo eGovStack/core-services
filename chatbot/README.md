@@ -9,7 +9,7 @@ Chatbot service is a chatbot which provides functionality to the user to access 
 ### Service Dependencies
 
 - `egov-user-chatbot` : For creating user without name validation and logging in user
-- `egov-user` : For searching user
+- `user` : For searching user
 - `localization` : The chatbot is made such that it will store localization codes and the actual text value will be fetched only at the end. This way we can provide multi-lingual support. Localization service is also used to construct messages from templates. This dependency can be eliminated if you want to pass values instead of localization codes.
 - `filestore` : It is a dependency if you want to send/receive any file. This includes sending PDF/Image files.
 - `url-shortening` : For shortening links sent to the user

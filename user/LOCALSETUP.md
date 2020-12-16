@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-user service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the user service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-user service in your local system, clone the [Core Service rep
 
 ## Running Locally
 
-- To run egov-user service locally follow below steps, Port forward encryption services locally
+- To run user service locally follow below steps, Port forward encryption services locally
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

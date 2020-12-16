@@ -7,7 +7,7 @@ User-OTP service handles the OTP for user registration, user login and password 
 - NA
 
 ### Service Dependencies
-- egov-user
+- user
 - localization
 - egov-otp
 
