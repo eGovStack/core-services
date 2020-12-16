@@ -104,10 +104,10 @@ config:
       - work-dir: "egov-otp/src/main/resources/db"
         image-name: "egov-otp-db"
 
-  - name: "builds/core-services/egov-persister"
+  - name: "builds/core-services/persister"
     build:
-      - work-dir: "egov-persister"
-        image-name: "egov-persister"
+      - work-dir: "persister"
+        image-name: "persister"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/egov-pg-service"

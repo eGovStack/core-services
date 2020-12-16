@@ -183,4 +183,4 @@ This API request to PDF generation service, generate pdf and return the download
 
 ### Kafka Producers
 
-- ```PDF_GEN_CREATE```: PDF-Service sends create response data to this topic for egov-persister service to store data in DB.
+- ```PDF_GEN_CREATE```: PDF-Service sends create response data to this topic for persister service to store data in DB.
