@@ -1,7 +1,7 @@
 
 # Persister
 ### Egov persister service
-Egov-Persister is a service running independently on seperate server. This service reads the kafka topics and put the messages in DB. We write a yml configuration and put the file path in application.properties.
+Persister is a service running independently on seperate server. This service reads the kafka topics and put the messages in DB. We write a yml configuration and put the file path in application.properties.
 
 ### DB UML Diagram
 

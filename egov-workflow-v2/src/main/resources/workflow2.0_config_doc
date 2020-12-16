@@ -8,7 +8,7 @@ Config:
      	Persister config for egov-workflow-v2 is updated. Insert query for the table eg_wf_assignee_v2 	is  added in egov-workflow-v2-persister.yml.
        	The latest updated config can be referred from the below link:
 
-            	https://github.com/egovernments/configs/blob/master/egov-persister/egov-workflow-v2-	persister.yml
+            	https://github.com/egovernments/configs/blob/master/persister/egov-workflow-v2-	persister.yml
 
     Searcher:
      	The employee inbox has added column to display the locality of the applications. This mapping 	of the application number to locality is fetched by calling searcher API for the respective 	module. If new module is integrated with workflow it's searcher config should be added in the 	locality searcher yaml with module code as name in definition. The format of the url is as 	follows:
