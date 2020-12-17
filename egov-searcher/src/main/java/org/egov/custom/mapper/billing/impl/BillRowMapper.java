@@ -54,12 +54,19 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				auditDetails.setLastModifiedTime((Long) rs.getObject("b_lastmodifieddate"));
 				
 				Address address = new Address();
-				address.setDoorNo(rs.getString("ptadd_doorno"));
-				address.setCity(rs.getString("ptadd_city"));
-				address.setLandmark(rs.getString("ptadd_landmark"));
-				address.setPincode(rs.getString("ptadd_pincode"));
-				address.setLocality(rs.getString("ptadd_locality"));
-				User user = User.builder().id(rs.getString("ptown_userid")).build();
+				if(isColumnPresent(rs,"ptadd_doorno"))
+					address.setDoorNo(rs.getString("ptadd_doorno"));
+				if(isColumnPresent(rs,"ptadd_city"))
+					address.setCity(rs.getString("ptadd_city"));
+				if(isColumnPresent(rs,"ptadd_landmark"))
+					address.setLandmark(rs.getString("ptadd_landmark"));
+				if(isColumnPresent(rs,"ptadd_pincode"))
+					address.setPincode(rs.getString("ptadd_pincode"));
+				if(isColumnPresent(rs,"ptadd_locality"))
+					address.setLocality(rs.getString("ptadd_locality"));
+				User user = new User();
+				if(isColumnPresent(rs,"ptown_userid"))
+					user = User.builder().id(rs.getString("ptown_userid")).build();
 								
 				bill = Bill.builder()
 					.id(billId)
@@ -82,8 +89,9 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.address(address)
 					.user(user)
 					.build();
-				
-				userIds.add(user.getId());
+
+				if(isColumnPresent(rs,"ptown_userid"))
+					userIds.add(user.getId());
 
 				billMap.put(bill.getId(), bill);
 				billDetailMap.clear();
@@ -142,6 +150,20 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		UserResponse res = rest.postForObject(userContext.concat(userSearchPath), userCriteria, UserResponse.class);
 		Map<String, String> users = res.getUsers().stream().collect(Collectors.toMap(User::getUuid, User::getName));
 		bills.forEach(bill -> bill.getUser().setName(users.get(bill.getUser().getId())));
+	}
+
+	private boolean isColumnPresent(ResultSet rs, String column)
+	{
+		try
+		{
+			rs.findColumn(column);
+			return true;
+		} catch (SQLException sqlex)
+		{
+			return false;
+			//log.debug("column doesn't exist {}", column);
+		}
+		//return false;
 	}
 	
 }
