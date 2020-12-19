@@ -10,14 +10,14 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0
   version: 1.1.0
 servers:
-- url: /egov-indexer/index-operations
+- url: /indexer/index-operations
 tags:
-- name: egov-indexer service
+- name: indexer service
 paths:
   /index-operations/_legacyindex:
     post:
       tags:
-      - egov-indexer service
+      - indexer service
       summary: This endpoint is used to start legacy index job to reindex records
         from DB. The data is fetched from DB by calling api mentioned in request in
         batches. The is useful when some record is present in DB but missing on index.
@@ -51,7 +51,7 @@ paths:
   /index-operations/_reindex:
     post:
       tags:
-      - egov-indexer service
+      - indexer service
       summary: This endpoint is used to start indexing job to reindex records from
         one index to another index.
       description: Reindex data from one index to another
@@ -83,7 +83,7 @@ paths:
   /index-operations/{key}/_index:
     post:
       tags:
-      - egov-indexer service
+      - indexer service
       summary: This endpoint is used to index one record on a index. The information
         to pick correct config is provided with the data to be indexed.
       description: Index request to index one record on an index

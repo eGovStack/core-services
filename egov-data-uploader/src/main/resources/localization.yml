@@ -1,5 +1,5 @@
 curl -X POST \
-  http://egov-indexer.egov:8080/egov-indexer/index-operations/_reindex \
+  http://indexer.egov:8080/indexer/index-operations/_reindex \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
   -H 'Postman-Token: 13cc2773-0932-4471-036c-a6a37b4c2583' \

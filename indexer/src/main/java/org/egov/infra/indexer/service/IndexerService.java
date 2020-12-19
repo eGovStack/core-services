@@ -135,6 +135,7 @@ public class IndexerService {
 		if(index.getName().contains("collection") || index.getName().contains("payment") || configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
 			// this is already sent
 		} else {
+			
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
 		}
 
