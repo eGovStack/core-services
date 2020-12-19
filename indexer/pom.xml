@@ -9,10 +9,10 @@
     <relativePath></relativePath>
   </parent>
   <groupId>org.egov</groupId>
-  <artifactId>egov-indexer</artifactId>
+  <artifactId>indexer</artifactId>
   <version>1.1.1-SNAPSHOT</version>
-  <name>egov-indexer</name>
-  <description>egov indexer framework</description>
+  <name>indexer</name>
+  <description>indexer framework</description>
   <url>http://maven.apache.org</url>
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

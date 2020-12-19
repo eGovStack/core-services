@@ -54,13 +54,13 @@ config:
       - work-dir: "egov-idgen/src/main/resources/db"
         image-name: "egov-idgen-db"
 
-  - name: "builds/core-services/egov-indexer"
+  - name: "builds/core-services/indexer"
     build:
-      - work-dir: "egov-indexer"
-        image-name: "egov-indexer"
+      - work-dir: "indexer"
+        image-name: "indexer"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-indexer/src/main/resources/db"
-        image-name: "egov-indexer-db"
+      - work-dir: "indexer/src/main/resources/db"
+        image-name: "indexer-db"
 
   - name: "builds/core-services/localization"
     build:
