@@ -8,10 +8,10 @@
 # -
 # -
 config:
-  - name: "builds/core-services/egov-accesscontrol"
+  - name: "builds/core-services/accesscontrol"
     build:
-      - work-dir: "egov-accesscontrol"
-        image-name: "egov-accesscontrol"
+      - work-dir: "accesscontrol"
+        image-name: "accesscontrol"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/egov-common-masters"

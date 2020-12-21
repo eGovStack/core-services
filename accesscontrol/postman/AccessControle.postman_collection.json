@@ -28,7 +28,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/actions/_update",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/actions/_update",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -41,7 +41,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703686188,
-			"name": "http://localhost:8091/access/v1/actions/_create",
+			"name": "http://localhost:8091/accesscontrol/v1/actions/_create",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -58,7 +58,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/actions/_get",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/actions/_get",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -71,7 +71,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703425838,
-			"name": "http://localhost:8091/access/v1/actions/_get",
+			"name": "http://localhost:8091/accesscontrol/v1/actions/_get",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -88,7 +88,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/roles/_update",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/roles/_update",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -100,7 +100,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703799268,
-			"name": "http://localhost:8091/access/v1/roles/_update",
+			"name": "http://localhost:8091/accesscontrol/v1/roles/_update",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -117,7 +117,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/role-actions/_create",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/role-actions/_create",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -130,7 +130,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703579932,
-			"name": "http://localhost:8091/access/v1/role-actions/_create",
+			"name": "http://localhost:8091/accesscontrol/v1/role-actions/_create",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -147,7 +147,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/actions/_update",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/actions/_update",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -160,7 +160,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703474881,
-			"name": "http://localhost:8091/access/v1/actions/_update",
+			"name": "http://localhost:8091/accesscontrol/v1/actions/_update",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -177,7 +177,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/roles/_create",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/roles/_create",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -189,7 +189,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703536314,
-			"name": "http://localhost:8091/access/v1/roles/_create",
+			"name": "http://localhost:8091/accesscontrol/v1/roles/_create",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],
@@ -206,7 +206,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://egov-micro-dev.egovernments.org/access/v1/roles/_search",
+			"url": "http://egov-micro-dev.egovernments.org/accesscontrol/v1/roles/_search",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -219,7 +219,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1502703639738,
-			"name": "http://localhost:8091/access/v1/roles/_search",
+			"name": "http://localhost:8091/accesscontrol/v1/roles/_search",
 			"description": "",
 			"collectionId": "4eabcd36-50a8-2e8f-ed10-055fa391cea6",
 			"responses": [],

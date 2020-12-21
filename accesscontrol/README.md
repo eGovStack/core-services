@@ -93,7 +93,7 @@ Refer to the action given below.
 
 ### API Details
 
-`BasePath` /access/v1/[API endpoint]
+`BasePath` /accesscontrol/v1/[API endpoint]
 
 ##### Method
 

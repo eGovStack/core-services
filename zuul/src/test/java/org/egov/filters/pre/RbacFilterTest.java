@@ -43,7 +43,7 @@ public class RbacFilterTest {
     public void init(){
         MockitoAnnotations.initMocks(this);
         request = new MockHttpServletRequest();
-        rbacFilter = new RbacFilter(restTemplate, "http://localhost:8091/access/v1/actions/_authorize", new ObjectMapper());
+        rbacFilter = new RbacFilter(restTemplate, "http://localhost:8091/accesscontrol/v1/actions/_authorize", new ObjectMapper());
 
         RequestContext.getCurrentContext().clear();
     }
@@ -71,7 +71,7 @@ public class RbacFilterTest {
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.set(USER_INFO_KEY, user);
 
-        mockServer.expect(requestTo("http://localhost:8091/access/v1/actions/_authorize"))
+        mockServer.expect(requestTo("http://localhost:8091/accesscontrol/v1/actions/_authorize"))
             .andRespond(withUnauthorizedRequest());
 
         request.setRequestURI("/hr-masters/do/something");
@@ -100,7 +100,7 @@ public class RbacFilterTest {
         request.setRequestURI("/pgr/seva");
         ctx.setRequest(request);
 
-        mockServer.expect(requestTo("http://localhost:8091/access/v1/actions/_authorize"))
+        mockServer.expect(requestTo("http://localhost:8091/accesscontrol/v1/actions/_authorize"))
             .andRespond(withSuccess());
 
         rbacFilter.run();
@@ -119,7 +119,7 @@ public class RbacFilterTest {
         user.setRoles(Collections.singletonList(new Role(10L, "CITIZEN", "CITIZEN", "default")));
         ctx.set(USER_INFO_KEY, user);
 
-        mockServer.expect(requestTo("http://localhost:8091/access/v1/actions/_authorize"))
+        mockServer.expect(requestTo("http://localhost:8091/accesscontrol/v1/actions/_authorize"))
             .andRespond(withUnauthorizedRequest());
 
         try {

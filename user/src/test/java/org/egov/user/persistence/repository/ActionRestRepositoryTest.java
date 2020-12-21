@@ -21,7 +21,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class ActionRestRepositoryTest {
 
     private static final String HOST = "http://host";
-    private static final String ROLE_ACTION = "/access/v1/actions/_search";
+    private static final String ROLE_ACTION = "/accesscontrol/v1/actions/_search";
     private final Resources resources = new Resources();
 
     private ActionRestRepository actionRestRepository;
@@ -37,7 +37,7 @@ public class ActionRestRepositoryTest {
 	/*@Test
 	public void testShouldGetActionByRole() {
 		server.expect(once(),
-				requestTo("http://host/access/v1/actions/_search"))
+				requestTo("http://host/accesscontrol/v1/actions/_search"))
 				.andExpect(method(HttpMethod.POST))
 				.andExpect(content().string(resources.getFileContents("actionRequest.json")))
 				.andRespond(withSuccess(resources.getFileContents("actionsResponse.json"),
