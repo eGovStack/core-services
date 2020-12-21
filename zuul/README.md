@@ -10,7 +10,7 @@ This allows any browser, mobile app or other user interface to consume underlyin
 - NA
 
 ### Service Dependencies
-- egov-accesscontrol
+- accesscontrol
 - user
 
 ### Swagger API Contract

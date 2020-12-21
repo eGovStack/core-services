@@ -19,7 +19,7 @@ To run the Zuul services in your local system, you need to port forward below se
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
-kubectl port-forward -n egov $(kgpt egov-accesscontrol) 8087:8080
+kubectl port-forward -n egov $(kgpt accesscontrol) 8087:8080
 kubectl port-forward -n egov $(kgpt user) 8088:8080
 ``` 
 

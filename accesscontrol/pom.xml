@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.egov</groupId>
-    <artifactId>egov-accesscontrol</artifactId>
+    <artifactId>accesscontrol</artifactId>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>egov-accesscontrol</name>
+    <name>accesscontrol</name>
     <description>Role Based Access Control-RBAC</description>
 
     <parent>
