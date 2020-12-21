@@ -8,7 +8,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 ### Service Dependencies
 
-- egov-idgen
+- idgen
 - collection-services
 - egf-master
 - persister

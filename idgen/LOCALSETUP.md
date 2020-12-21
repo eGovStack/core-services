@@ -2,7 +2,7 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the egov-idgen service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+- To setup the idgen service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 

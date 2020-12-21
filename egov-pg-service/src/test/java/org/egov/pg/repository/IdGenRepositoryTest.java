@@ -19,7 +19,7 @@ public class IdGenRepositoryTest {
     public void setUp() {
         MockEnvironment env = new MockEnvironment();
         env.setProperty("idGenHost", "http://localhost:8088/");
-        env.setProperty("idGenPath", "egov-idgen/id/_generate");
+        env.setProperty("idGenPath", "idgen/id/_generate");
         AppProperties appProperties = new AppProperties(env);
 
         idGenRepository = new IdGenRepository(new RestTemplate(), appProperties);
