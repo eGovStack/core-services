@@ -172,13 +172,13 @@ config:
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/core-services/egov-user-event"
+  - name: "builds/core-services/user-event"
     build:
-      - work-dir: "egov-user-event"
-        image-name: "egov-user-event"
+      - work-dir: "user-event"
+        image-name: "user-event"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-user-event/src/main/resources/db"
-        image-name: "egov-user-event-db"
+      - work-dir: "user-event/src/main/resources/db"
+        image-name: "user-event-db"
         dockerfile: "build/maven/Dockerfile"       
 
   - name: "builds/core-services/pdf-service"
