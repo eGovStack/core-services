@@ -40,7 +40,7 @@ class GupShupWhatsAppProvider {
 
             let headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'apiKey': "81ee6fe7c9854228c2270996a3340c1f"
+                'apiKey': ""
             }
 
             var urlSearchParams = new URLSearchParams();
