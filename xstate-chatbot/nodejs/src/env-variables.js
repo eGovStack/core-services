@@ -13,6 +13,14 @@ const envVariables = {
 
     repoProvider: process.env.REPO_PROVIDER || 'PostgreSQL',
 
+    postgresConfig: {
+        dbHost: process.env.DB_HOST || 'localhost',
+        dbPort: process.env.DB_PORT || '5432',
+        dbName: process.env.DB_NAME || 'chat',
+        dbUsername: process.env.DB_USER || 'postgres',
+        dbPassword: process.env.DB_PASSWORD || ''
+    },
+
     mdmsHost: process.env.MDMS_HOST || 'https://egov-micro-dev.egovernments.org/',
 
     localisationServiceHost: process.env.LOCALISATION_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
