@@ -22,7 +22,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8082/egov-location/location/v11/boundarys/_search?tenantId=default&hierarchyTypeCode=revenue&boundaryType=Ward&codes=8,9",
+			"url": "http://localhost:8082/location/location/v11/boundarys/_search?tenantId=default&hierarchyTypeCode=revenue&boundaryType=Ward&codes=8,9",
 			"queryParams": [
 				{
 					"key": "tenantId",
@@ -63,7 +63,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1511959711705,
-			"name": "http://localhost:8082/egov-location/location/v11/boundarys/_search?tenantId=default&hierarchyTypeCode=revenue&boundaryType=Ward&codes=8,9",
+			"name": "http://localhost:8082/location/location/v11/boundarys/_search?tenantId=default&hierarchyTypeCode=revenue&boundaryType=Ward&codes=8,9",
 			"description": "",
 			"collectionId": "5bb88e02-fa74-56cc-265e-13f54afaf7c4",
 			"responses": [],

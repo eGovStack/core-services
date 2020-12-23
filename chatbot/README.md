@@ -14,7 +14,7 @@ Chatbot service is a chatbot which provides functionality to the user to access 
 - `filestore` : It is a dependency if you want to send/receive any file. This includes sending PDF/Image files.
 - `url-shortening` : For shortening links sent to the user
 - `egov-mdms-service` : For loading mdms data
-- `egov-location` : For loading locality data
+- `location` : For loading locality data
 - `rainmaker-pgr` : For creating/searching PGR complaints
 
 ### Swagger API Contract

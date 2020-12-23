@@ -1,4 +1,4 @@
-# eGov-Location Service
+# Location Service
 
 An eGov core application which provides location details of the tenant for which the services are being provided.
 ### DB UML Diagram
@@ -10,7 +10,7 @@ An eGov core application which provides location details of the tenant for which
 
 ### Swagger API Contract
 
-Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-location/contracts/v11-0-0.yml#!/) for egov-location service to understand the structure of APIs and to have visualization of all internal APIs.
+Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/location/contracts/v11-0-0.yml#!/) for location service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -27,7 +27,7 @@ The boundary data has been moved to mdms from the master tables in DB. The locat
 ```json
 {
   "tenantId": "pg.cityA",
-   "moduleName": "egov-location",
+   "moduleName": "location",
   "TenantBoundary": [
   {
       "hierarchyType": {
@@ -52,7 +52,7 @@ The boundary data has been moved to mdms from the master tables in DB. The locat
 ```
 ### API Details
 
-`BasePath` /egov-location/location/v11/[API endpoint]
+`BasePath` /location/location/v11/[API endpoint]
 
 ##### Method
 a) `/boundarys/_search`

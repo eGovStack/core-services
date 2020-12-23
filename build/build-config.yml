@@ -70,13 +70,13 @@ config:
       - work-dir: "localization/src/main/resources/db"
         image-name: "localization-db"
 
-  - name: "builds/core-services/egov-location"
+  - name: "builds/core-services/location"
     build:
-      - work-dir: "egov-location"
-        image-name: "egov-location"
+      - work-dir: "location"
+        image-name: "location"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-location/src/main/resources/db"
-        image-name: "egov-location-db"
+      - work-dir: "location/src/main/resources/db"
+        image-name: "location-db"
 
   - name: "builds/core-services/egov-mdms-service"
     build:
