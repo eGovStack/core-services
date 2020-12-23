@@ -9,9 +9,9 @@
     <relativePath></relativePath>
   </parent>
   <groupId>org.egov</groupId>
-  <artifactId>egov-location</artifactId>
+  <artifactId>location</artifactId>
   <version>1.1.1-SNAPSHOT</version>
-  <name>egov-location</name>
+  <name>location</name>
   <description>boundary service for egov applications</description>
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

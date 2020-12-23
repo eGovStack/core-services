@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-location service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the location service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-location service in your local system, clone the [Core Service
 
 ## Running Locally
 
-To run the egov-location services locally, you need to port forward below services locally
+To run the location services locally, you need to port forward below services locally
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
