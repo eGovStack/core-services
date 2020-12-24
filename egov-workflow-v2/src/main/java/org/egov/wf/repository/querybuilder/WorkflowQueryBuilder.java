@@ -93,7 +93,7 @@ public class WorkflowQueryBuilder {
 
         List<String> ids = criteria.getIds();
         if(!CollectionUtils.isEmpty(ids)) {
-            builder.append("and tl.id IN (").append(createQuery(ids)).append(")");
+            builder.append(" and pi.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList,ids);
         }
 
@@ -103,6 +103,12 @@ public class WorkflowQueryBuilder {
             builder.append(" and pi.businessId IN (").append(createQuery(businessIds)).append(")");
             addToPreparedStatement(preparedStmtList,businessIds);
         }
+
+        if(!StringUtils.isEmpty(criteria.getAssignee())){
+            builder.append(" AND asg.assignee = ? ");
+            preparedStmtList.add(criteria.getAssignee());
+        }
+
 
         return builder.toString();
     }
