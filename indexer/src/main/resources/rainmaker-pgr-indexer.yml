@@ -58,7 +58,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.complaintWard
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: common-masters
           masterName: Department
           tenantId: pb
@@ -69,7 +69,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.common-masters.Department.*.name
             outJsonPath: $.Data.department
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: RAINMAKER-PGR
           masterName: ServiceDefs
           tenantId: pb
@@ -80,7 +80,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.RAINMAKER-PGR.ServiceDefs.*.slaHours
             outJsonPath: $.Data.slaHours
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb
@@ -162,7 +162,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.complaintWard
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: common-masters
           masterName: Department
           tenantId: pb
@@ -173,7 +173,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.common-masters.Department.*.name
             outJsonPath: $.Data.department
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: RAINMAKER-PGR
           masterName: ServiceDefs
           tenantId: pb
@@ -184,7 +184,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.RAINMAKER-PGR.ServiceDefs.*.slaHours
             outJsonPath: $.Data.slaHours
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb
@@ -275,7 +275,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.complaintWard
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: common-masters
           masterName: Department
           tenantId: pb
@@ -286,7 +286,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.common-masters.Department.*.name
             outJsonPath: $.Data.department
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: RAINMAKER-PGR
           masterName: ServiceDefs
           tenantId: pb
@@ -297,7 +297,7 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.RAINMAKER-PGR.ServiceDefs.*.slaHours
             outJsonPath: $.Data.slaHours
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb

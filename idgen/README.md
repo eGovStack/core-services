@@ -8,7 +8,7 @@ The idgen service generates new id based on the id formats passed. The applicati
 
 ### Service Dependencies
 
-- egov-mdms-service
+- mdms
 
 ### Swagger API Contract
 

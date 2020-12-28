@@ -76,7 +76,7 @@ public class UserRepositoryTest {
 
         server = MockRestServiceServer.bindTo(restTemplate).build();
 
-        server.expect(once(), requestTo("http://localhost:8094/egov-mdms-service/v1/_search"))
+        server.expect(once(), requestTo("http://localhost:8094/mdms/v1/_search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(new Resources().getFileContents("roleSearchValidatedResponse.json"),
                         MediaType.APPLICATION_JSON_UTF8));

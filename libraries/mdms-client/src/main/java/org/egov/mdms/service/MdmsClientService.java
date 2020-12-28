@@ -30,7 +30,7 @@ public class MdmsClientService {
 	@Value("${mdms.service.host:http://localhost:8080/}")
 	private String mdmsHost;
 	
-	@Value("${mdms.service.search.uri:egov-mdms-service/v1/_search}")
+	@Value("${mdms.service.search.uri:mdms/v1/_search}")
 	private String mdmsSearchUri;
 
 	public MdmsResponse getMaster(RequestInfo requestInfo, String tenantId,

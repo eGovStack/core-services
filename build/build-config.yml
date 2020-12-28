@@ -78,10 +78,10 @@ config:
       - work-dir: "location/src/main/resources/db"
         image-name: "location-db"
 
-  - name: "builds/core-services/egov-mdms-service"
+  - name: "builds/core-services/mdms"
     build:
-      - work-dir: "egov-mdms-service"
-        image-name: "egov-mdms-service"
+      - work-dir: "mdms"
+        image-name: "mdms"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/email-notification"
