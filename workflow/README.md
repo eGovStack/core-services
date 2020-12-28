@@ -1,6 +1,6 @@
-# eGov-Workflow-v2 Service
+# Workflow Service
 
-Workflows are a series of steps that moves a process from one state to another state by actions performed by different kind of Actors - Humans, Machines, Time based events etc. to achieve a goal like on boarding an employee, or approve an application or grant a resource etc. The egov-workflow-v2 is a workflow engine which helps in performing this operations seamlessly using a predefined configuration. 
+Workflows are a series of steps that moves a process from one state to another state by actions performed by different kind of Actors - Humans, Machines, Time based events etc. to achieve a goal like on boarding an employee, or approve an application or grant a resource etc. The workflow is a workflow engine which helps in performing this operations seamlessly using a predefined configuration. 
 
 ### DB UML Diagram
 - NA
@@ -11,7 +11,7 @@ Workflows are a series of steps that moves a process from one state to another s
 
 ### Swagger API Contract
 
-Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/master/docs/worfklow-2.0.yml#!/) for egov-workflow-v2 service to understand the structure of APIs and to have visualization of all internal APIs.
+Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/master/docs/worfklow-2.0.yml#!/) for workflow service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -109,7 +109,7 @@ The action object is the last object in hierarchy, it defines the name of the ac
 
 ### API Details
 
-`BasePath` /egov-workflow-v2/egov-wf/[API endpoint]
+`BasePath` /workflow/egov-wf/[API endpoint]
 
 ##### Method
 a) `/businessservice/_create`

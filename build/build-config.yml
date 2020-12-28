@@ -138,13 +138,13 @@ config:
       - work-dir: "user/src/main/resources/db"
         image-name: "user-db"
 
-  - name: "builds/core-services/egov-workflow-v2"
+  - name: "builds/core-services/workflow"
     build:
-      - work-dir: "egov-workflow-v2"
-        image-name: "egov-workflow-v2"
+      - work-dir: "workflow"
+        image-name: "workflow"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-workflow-v2/src/main/resources/db"
-        image-name: "egov-workflow-v2-db"
+      - work-dir: "workflow/src/main/resources/db"
+        image-name: "workflow-db"
 
   - name: "builds/core-services/report"
     build:
