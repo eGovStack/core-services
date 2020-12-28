@@ -9,7 +9,7 @@ couple of APIS.
 
 ### Service Dependencies
 - `encryption`: used for decryption of user PII data if required
-- `egov-mdms-service`: used by encryption library to load encryption configs
+- `mdms`: used by encryption library to load encryption configs
 
 ### Swagger API Contract
 http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/reportinfra/contracts/reportinfra-1-0-0.yml#!/
@@ -55,7 +55,7 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 
 - externalService:
   - entity: $.MdmsRes.egf-master.FinancialYear
-    - apiURL:  http://localhost:8094/egov-mdms-service/v1/_search
+    - apiURL:  http://localhost:8094/mdms/v1/_search
     - keyOrder: finYearRange,startingDate,endingDate,tenantId
     - tableName: tbl_financialyear
     - stateData: true

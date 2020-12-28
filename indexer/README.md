@@ -8,7 +8,7 @@
 
 ### Service Dependencies
 
-- `egov-mdms-service`: For enriching mdms data if mentioned in config
+- `mdms`: For enriching mdms data if mentioned in config
 
 
 ### Swagger API Contract

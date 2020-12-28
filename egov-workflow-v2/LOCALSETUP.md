@@ -19,7 +19,7 @@ To run the egov-workflow-v2 services locally, you need to port forward below ser
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
-kubectl port-forward -n egov $(kgpt egov-mdms-service) 8088:8080
+kubectl port-forward -n egov $(kgpt mdms) 8088:8080
 kubectl port-forward -n egov $(kgpt user) 8089:8080
 ``` 
 

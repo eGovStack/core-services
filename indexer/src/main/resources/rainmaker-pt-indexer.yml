@@ -33,7 +33,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.ward
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb
@@ -77,7 +77,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.ward
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb
@@ -130,7 +130,7 @@ ServiceMaps:
           - inJsonPath: $.TenantBoundary[0].boundary[0]
             outJsonPath: $.Data.ward
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb
@@ -188,7 +188,7 @@ ServiceMaps:
           - inJsonPath: $.Demands
             outJsonPath: $.Data.demands
         mdmsMapping:
-        - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+        - path: http://mdms.egov:8080/mdms/v1/_search
           moduleName: tenant
           masterName: tenants
           tenantId: pb

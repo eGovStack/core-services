@@ -8,7 +8,7 @@ Encryption Service is used to secure the data. It provides functionality to encr
 
 ### Service Dependencies
 
-- egov-mdms-service
+- mdms
 
 
 ### Swagger API Contract

@@ -8,7 +8,7 @@ Access Control Service(ACS) main job is to Authorize end user based on their rol
 - NA
 
 ### Service Dependencies
-- egov-mdms service
+- mdms
 
 ### Swagger API Contract
 

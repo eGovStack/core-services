@@ -8,7 +8,7 @@
 
 ### Service Dependencies
 
-- egov-mdms-service
+- mdms
 - encryption
 - egov-otp
 - filestore
