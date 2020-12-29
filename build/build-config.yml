@@ -181,12 +181,12 @@ config:
         image-name: "user-event-db"
         dockerfile: "build/maven/Dockerfile"       
 
-  - name: "builds/core-services/pdf-service"
+  - name: "builds/core-services/pdfgen"
     build:
-      - work-dir: "pdf-service"
-        image-name: "pdf-service"
-      - work-dir: "pdf-service/migration"
-        image-name: "pdf-service-db"
+      - work-dir: "pdfgen"
+        image-name: "pdfgen"
+      - work-dir: "pdfgen/migration"
+        image-name: "pdfgen-db"
         
   - name: "builds/core-services/telemetry/egov-telemetry-kafka-streams"
     build:

@@ -1,18 +1,18 @@
 openapi: 3.0.1
 info:
-  title: PDF-Service APIs
+  title: PDFGEN APIs
   description: |
-    APIs available in PDF-Service
+    APIs available in PDFGEN
   contact:
     name: eGovernments Foundation
   version: 1.1.0
 servers:
-- url: /pdf-service/v1/
+- url: /pdfgen/v1/
 paths:
   /_create:
     post:
       tags:
-      - PDF-Service endpoints
+      - PDFGEN endpoints
       summary: Generate PDF and store output pdfs to filestore and return their filestoreids.
         The information is also saved into DB so that using _search endpoint we can
         retrieve already generated pdfs.
@@ -57,7 +57,7 @@ paths:
   /_createnosave:
     post:
       tags:
-      - PDF-Service endpoints
+      - PDFGEN endpoints
       summary: Generates pdf without storing any information on filestore or in DB.
         The generated pdf would be returned as binary response
       description: Generate pdf and return as binary response
@@ -95,7 +95,7 @@ paths:
   /_search:
     post:
       tags:
-      - PDF-Service endpoints
+      - PDFGEN endpoints
       summary: Get filestoreids and other information about already generated pdf
         by searching on jobid or entityid with other optional search parameters
       description: Get details for already generated PDF
