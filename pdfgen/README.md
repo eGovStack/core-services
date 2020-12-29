@@ -1,4 +1,4 @@
-# PDF-Service
+# PDFGEN
 
 PDF service is one of the core application which is use to bulk generate the pdf as per requirement.
 
@@ -38,8 +38,8 @@ Please refer to the  below Swagger API contarct for PDF service to understand th
 
 ### Configuration
 PDF service use two config files for a pdf generation as per requirement
-- Format Config File: It define format as per PDFMake syntax of pdf [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/format-config/tl-receipt.json).
-- Data Config File : It use to fill format of pdf to prepare final object which will go to PDFMake and will be converted into PDF [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/data-config/tl-receipt.json).
+- Format Config File: It define format as per PDFMake syntax of pdf [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdfgen/format-config/tl-receipt.json).
+- Data Config File : It use to fill format of pdf to prepare final object which will go to PDFMake and will be converted into PDF [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdfgen/data-config/tl-receipt.json).
 
 PDF generation service read these such files at start-up to support PDF generation for all configured module.
 
@@ -110,14 +110,14 @@ PDF generation service read these such files at start-up to support PDF generati
 If the format field in not specified in date variable declaration then in PDF date is shown with default format of `DD/MM/YYYY`.
 ### API Details
 
-`BasePath` /pdf-service/v1/[API endpoint]
+`BasePath` /pdfgen/v1/[API endpoint]
 
 ##### Method
 a) `POST /_create` 
 
 This API request to PDF generation service is made to generate pdf and return the filestore id and job id.
 
-- `Endpoint`: /pdf-service/v1/_create?key={configFileName}&tenantId={tenantId}
+- `Endpoint`: /pdfgen/v1/_create?key={configFileName}&tenantId={tenantId}
 
 - `CreateRequest`:  Request Info + json object depending on the requirement which will be converted to pdf. 
 
@@ -143,8 +143,8 @@ b) `POST /_search`
 
 This API request to PDF generation service, search the already created pdf (based on job Id or entity id) for particular application number. 
 
-- `Endpoint`: /pdf-service/v1/_search?jobid={jobid}
-              /pdf-service/v1/_search?entityid={entityid}
+- `Endpoint`: /pdfgen/v1/_search?jobid={jobid}
+              /pdfgen/v1/_search?entityid={entityid}
 
 - `SearchRequest`:  Request Info
 
@@ -173,14 +173,14 @@ c) `POST /_createnosave`
 
 This API request to PDF generation service, generate pdf and return the downloadable pdf file(binary response) as response.
 
-- `Endpoint`: /pdf-service/v1/_create?key={configFileName}&tenantId={tenantId}
+- `Endpoint`: /pdfgen/v1/_create?key={configFileName}&tenantId={tenantId}
 
 - `CreateRequest`:  Request Info + json object depending on the requirement which will be converted to pdf. 
 
 ### Kafka Consumers
 
-- ```PDF_GEN_RECEIVE```: PDF-Service receive the JSON object along with the template name for creation of pdf of particular pdf template.
+- ```PDF_GEN_RECEIVE```: PDFGEN receive the JSON object along with the template name for creation of pdf of particular pdf template.
 
 ### Kafka Producers
 
-- ```PDF_GEN_CREATE```: PDF-Service sends create response data to this topic for persister service to store data in DB.
+- ```PDF_GEN_CREATE```: PDFGEN sends create response data to this topic for persister service to store data in DB.
