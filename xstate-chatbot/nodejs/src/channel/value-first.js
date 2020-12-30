@@ -97,6 +97,10 @@ class ValueFirstWhatsAppProvider {
         reformattedMessage.user = {
             mobileNumber: requestBody.from.slice(2)
         };
+        reformattedMessage.extraInfo ={
+            whatsAppBusinessNumber: requestBody.to.slice(2),
+            tenantId: config.rootTenantId
+        };
 
         return reformattedMessage;
 
@@ -173,14 +177,10 @@ class ValueFirstWhatsAppProvider {
         return file;
     }
 
-    async getTransformedResponse(user, messages){
+    async getTransformedResponse(user, messages, extraInfo){
         let userMobile = user.mobileNumber;
 
-        let extraInfo = {               // temperary variable for image type until extraInfo is implement over the project
-            filestoreId: 'd435efe0-1852-4d40-af13-9560edcf43cb'
-        };
-
-        let fromMobileNumber = config.whatsAppBusinessNumber;
+        let fromMobileNumber = "91"+extraInfo.whatsAppBusinessNumber;
         if(!fromMobileNumber)
             console.error("Receipient number can not be empty");
 
@@ -259,9 +259,9 @@ class ValueFirstWhatsAppProvider {
         return reformattedMessage;
     }
 
-    async sendMessageToUser(user, messages) {
+    async sendMessageToUser(user, messages,extraInfo) {
         let requestBody = {};
-        requestBody = await this.getTransformedResponse(user, messages);
+        requestBody = await this.getTransformedResponse(user, messages, extraInfo);
         this.sendMessage(requestBody);       
     }
 

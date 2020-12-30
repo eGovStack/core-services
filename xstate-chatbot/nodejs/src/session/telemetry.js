@@ -1,4 +1,6 @@
-const fetch = require("node-fetch");5
+const config = require('../env-variables');
+const producer = require('./kafka/kafka-producer');
+
 class Telemetry {
     async log(userId, type, data) {
         let object = {
@@ -12,24 +14,13 @@ class Telemetry {
 
         // console.log('Telemetry: ' + JSON.stringify(object));
 
-        // var elasticSearchHost = "http://localhost:9200"; // config.elasticSearchHost;
-        // var elasticSearchPath = "/test_index2/_doc";
-        // var url = `${elasticSearchHost}${elasticSearchPath}` ;
-        // try {
-        //     let response = await fetch(url, {
-        //         method: 'POST',
-        //         body: JSON.stringify(object),
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     });
-        // } catch(error) {
-        //     console.error("Telemetry Failure");
-        //     console.error(error);
-        // }
+        let payloads = [ {
+            topic: config.chatbotTelemetryTopic,
+            messages: JSON.stringify(object)
+        } ]
+
+        producer.send(payloads, function(err, data) {});
     }
 };
-
-
 
 module.exports = new Telemetry();

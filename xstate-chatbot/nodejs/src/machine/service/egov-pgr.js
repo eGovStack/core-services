@@ -40,8 +40,8 @@ class PGRService {
     return data["MdmsRes"][moduleName][masterName];
   }
   
-  async fetchFrequentComplaints() {
-    let complaintTypes = await this.fetchMdmsData(config.rootTenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.order && @.active == true)].serviceCode");
+  async fetchFrequentComplaints(tenantId) {
+    let complaintTypes = await this.fetchMdmsData(tenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.order && @.active == true)].serviceCode");
     let localisationPrefix = 'SERVICEDEFS.';
     let messageBundle = {};
     for(let complaintType of complaintTypes) {
@@ -50,8 +50,8 @@ class PGRService {
     }
     return {complaintTypes, messageBundle};
   }
-  async fetchComplaintCategories() {
-    let complaintCategories = await this.fetchMdmsData(config.rootTenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.active == true)].menuPath");
+  async fetchComplaintCategories(tenantId) {
+    let complaintCategories = await this.fetchMdmsData(tenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.active == true)].menuPath");
     complaintCategories = [...new Set(complaintCategories)];
     let localisationPrefix = 'SERVICEDEFS.';
     let messageBundle = {};
@@ -61,8 +61,8 @@ class PGRService {
     }
     return { complaintCategories, messageBundle };
   }
-  async fetchComplaintItemsForCategory(category) {
-    let complaintItems = await this.fetchMdmsData(config.rootTenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.active == true && @.menuPath == \"" + category + "\")].serviceCode");
+  async fetchComplaintItemsForCategory(category, tenantId) {
+    let complaintItems = await this.fetchMdmsData(tenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.active == true && @.menuPath == \"" + category + "\")].serviceCode");
     let localisationPrefix = 'SERVICEDEFS.';
     let messageBundle = {};
     for(let complaintItem of complaintItems) {
@@ -72,14 +72,14 @@ class PGRService {
     return { complaintItems, messageBundle };
   }
 
-  async getCityAndLocalityForGeocode(geocode) {
+  async getCityAndLocalityForGeocode(geocode, tenantId) {
     let latlng = geocode.substring(1, geocode.length - 1); // Remove braces
     let cityAndLocality = await getCityAndLocality(latlng);
     return cityAndLocality;
   }
 
-  async fetchCities(){
-    let cities = await this.fetchMdmsData(config.rootTenantId, "tenant", "citymodule", "$.[?(@.module=='PGR.WHATSAPP')].tenants.*.code");
+  async fetchCities(tenantId){
+    let cities = await this.fetchMdmsData(tenantId, "tenant", "citymodule", "$.[?(@.module=='PGR.WHATSAPP')].tenants.*.code");
     let messageBundle = {};
     for(let city of cities) {
       let message = localisationService.getMessageBundleForCode(city);
@@ -88,8 +88,8 @@ class PGRService {
     return {cities, messageBundle};
   }
 
-  getCityExternalWebpageLink() {
-    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + config.rootTenantId + '&phone=' + config.whatsAppBusinessNumber;
+  getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
   }
 
   async fetchLocalities(tenantId) {
@@ -108,18 +108,16 @@ class PGRService {
       localitiesLocalisationCodes.push(localisationCode);
     }
     let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(localitiesLocalisationCodes, tenantId);
-    console.log(localisedMessages);
     let messageBundle = {};
     for(let locality of localities) {
       let localisationCode = tenantId.replace('.', '_').toUpperCase() + '_ADMIN_' + locality;
       messageBundle[locality] = localisedMessages[localisationCode]
     }
-    console.log(messageBundle);
     return { localities, messageBundle };
   }
 
-  getLocalityExternalWebpageLink(tenantId) {
-    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + config.whatsAppBusinessNumber;
+  getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
   }
 
   async persistComplaint(slots) {

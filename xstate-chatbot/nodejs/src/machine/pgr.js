@@ -54,7 +54,7 @@ const pgr =  {
               states: {
                 question: {
                   invoke: {
-                    src: (context) => pgrService.fetchFrequentComplaints(),
+                    src: (context) => pgrService.fetchFrequentComplaints(context.extraInfo.tenantId),
                     id: 'fetchFrequentComplaints',
                     onDone: {
                       actions: assign((context, event) => {
@@ -112,7 +112,7 @@ const pgr =  {
                   states: {
                     question: {
                       invoke:  {                  
-                        src: (context, event)=>pgrService.fetchComplaintCategories(),
+                        src: (context, event)=>pgrService.fetchComplaintCategories(context.extraInfo.tenantId),
                         id: 'fetchComplaintCategories',
                         onDone: {
                           actions: assign((context, event) => {
@@ -241,7 +241,7 @@ const pgr =  {
                     src: (context, event) => {
                       if(event.message.type === 'location') {
                         context.slots.pgr.geocode = event.message.input;
-                        return pgrService.getCityAndLocalityForGeocode(event.message.input);
+                        return pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
                       }
                       return Promise.resolve({});
                     },
@@ -255,10 +255,7 @@ const pgr =  {
                         })
                       },
                       {
-                        target: '#city',
-                        actions: assign((context, event) => {
-                          console.log('qwe');
-                        })
+                        target: '#city'
                       }
                     ],
                     onError: {
@@ -315,12 +312,12 @@ const pgr =  {
                 question: {
                   invoke: {
                     id: 'fetchCities',
-                    src: (context, event) => pgrService.fetchCities(),
+                    src: (context, event) => pgrService.fetchCities(context.extraInfo.tenantId),
                     onDone: {
                       actions: assign((context, event) => {
                         let { cities, messageBundle } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.city.question.preamble, context.user.locale);
-                        let link = pgrService.getCityExternalWebpageLink();
+                        let link = pgrService.getCityExternalWebpageLink(context.extraInfo.tenantId, context.extraInfo.whatsAppBusinessNumber);
                         let message = preamble + '\n' + link;
                         context.grammer = dialog.constructLiteralGrammer(cities, messageBundle, context.user.locale);
                         dialog.sendMessage(context, message);
@@ -369,7 +366,7 @@ const pgr =  {
                       actions: assign((context, event) => {
                         let { localities, messageBundle } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.locality.question.preamble, context.user.locale);
-                        let link = pgrService.getLocalityExternalWebpageLink(context.slots.pgr.city);
+                        let link = pgrService.getLocalityExternalWebpageLink(context.slots.pgr.city, context.extraInfo.whatsAppBusinessNumber);
                         let message = preamble + '\n' + link;
                         context.grammer = dialog.constructLiteralGrammer(localities, messageBundle, context.user.locale);
                         dialog.sendMessage(context, message);
