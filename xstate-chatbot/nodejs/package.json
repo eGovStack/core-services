@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "main": "src/app.js",
     "scripts": {
-        "start": "node src/app.js",
+        "start": "node --inspect src/app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "rushang7",
@@ -15,7 +15,9 @@
         "express": "^4.16.4",
         "express-cluster": "0.0.5",
         "form-data": "^3.0.0",
+        "kafka-node": "^5.0.0",
         "lodash": "^4.17.11",
+        "moment-timezone": "^0.5.32",
         "node-fetch": "^2.6.1",
         "node-rest-client": "^3.1.0",
         "pg": "^8.4.1",
