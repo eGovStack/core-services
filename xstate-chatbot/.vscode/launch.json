@@ -12,6 +12,16 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/nodejs/src/app.js"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to remote",
+            "address": "0.0.0.0",
+            "port": 9229,
+            "protocol": "inspector",
+            "remoteRoot": "/app/src",
+            "localRoot": "${workspaceFolder}/nodejs/src"
         }
     ]
 }
