@@ -25,7 +25,7 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - Performs ES down handling
 
 #### Configurations
-ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property-services.yml
+ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property.yml
 
 The different fields used in index config are following:-
 - mappings: List of mappings between topic name and respective index configurations.
