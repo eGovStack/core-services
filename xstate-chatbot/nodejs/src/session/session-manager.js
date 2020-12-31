@@ -52,7 +52,8 @@ class SessionManager {
         state.context.user = { locale: locale, userId: userId };
         state.event = {};
         state._event = {};
-        state.history.context.user = {};
+        if(state.history)
+            state.history.context.user = {};
         return state;
     }
 
