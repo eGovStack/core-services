@@ -49,7 +49,7 @@ Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https:
 {
         "tenantId": "pb.amritsar",
         "businessService": "PGR",
-        "business": "pgr-services",
+        "business": "pgr",
         "businessServiceSla": 432000000,
         "states": [...]
     }
