@@ -303,7 +303,7 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'Please type\n\n1 for Complaints\n2 for Bills\n3 for Receipts.\n\n4 to Change Language',
+      en_IN : 'Please type and send the number of your option from the list given 👇 below:\n\n1 File or Track Complaints.\n2 Pay Bills and Fees.\n3 View Payments Receipts.\n4 Change Language.',
       hi_IN: 'कृप्या टाइप करे\n\n1 शिकायतों के लिए\n2 बिलों के लिए\n3 रसीदों के लिए\n\n4 भाषा बदलने के लिए'
     }
   },

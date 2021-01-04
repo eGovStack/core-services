@@ -219,7 +219,7 @@ class ReceiptService {
     async getShortenedURL(finalPath)
     {
       var urlshortnerHost = config.externalHost;
-      var url = urlshortnerHost + '/egov-url-shortening/shortener';
+      var url = urlshortnerHost + 'egov-url-shortening/shortener';
       var request = {};
       request.url = finalPath; 
       var options = {
