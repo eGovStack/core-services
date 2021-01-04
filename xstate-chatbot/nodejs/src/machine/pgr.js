@@ -414,7 +414,7 @@ const pgr =  {
           id: 'persistComplaint',
           invoke: {
             id: 'persistComplaint',
-            src: (context) => pgrService.persistComplaint(context.slots.pgr),
+            src: (context) => pgrService.persistComplaint(context.user,context.slots.pgr,context.extraInfo),
             onDone: {
               target: '#endstate',
               actions: assign((context, event) => {

@@ -39,7 +39,7 @@ const envVariables = {
     cityExternalWebpagePath: process.env.CITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/city',
     localityExternalWebpagePath: process.env.LOCALITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/locality',
 
-    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
+    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '918744060444',
     
     userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
     userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
@@ -70,6 +70,10 @@ const envVariables = {
     collectonServiceHost: process.env.COLLECTION_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
     collectonServicSearchEndpoint: process.env.COLLECTION_SERVICE_SEARCH_ENDPOINT || 'collection-services/payments/$module/_search',
     receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 3,
+
+    pgrServiceHost: process.env.PGR_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
+    pgrCreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'pgr-services/v2/request/_create',
+    pgrSearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'pgr-services/v2/request/_search',
 
     dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
     timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
