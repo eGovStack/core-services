@@ -305,7 +305,7 @@ const uploadFiles = async (
 };
 
 app.post(
-  "/pdf-service/v1/_create",
+  "/pdfgen/v1/_create",
   asyncHandler(async (req, res) => {
     let requestInfo;
     try {
@@ -352,7 +352,7 @@ app.post(
 );
 
 app.post(
-  "/pdf-service/v1/_createnosave",
+  "/pdfgen/v1/_createnosave",
   asyncHandler(async (req, res) => {
     let requestInfo;
     try {
@@ -416,7 +416,7 @@ app.post(
 );
 
 app.post(
-  "/pdf-service/v1/_search",
+  "/pdfgen/v1/_search",
   asyncHandler(async (req, res) => {
     let requestInfo;
     try {
