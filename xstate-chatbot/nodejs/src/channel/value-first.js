@@ -79,8 +79,8 @@ class ValueFirstWhatsAppProvider {
         let type = requestBody.media_type;
         let input;
         if(type === "location") {
-            let location = requestBody.message.location;
-            input = '(' + location.latitude + ',' + location.longitude + ')';
+            //let location = requestBody..location;
+            input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
         } 
         else if(type === 'image'){
             var imageInBase64String = requestBody.media_data;
@@ -236,8 +236,26 @@ class ValueFirstWhatsAppProvider {
             body: JSON.stringify(requestBody)
         }
         let response = await fetch(url,request);
-        if(response.status === 200)
-            return response
+        if(response.status === 200){
+            let messageBack = await response.json();
+            if(Array.isArray(messageBack.MESSAGEACK.GUID)){
+                if(typeof messageBack.MESSAGEACK.GUID[0].ERROR != "undefined"){
+                    if(messageBack.MESSAGEACK.GUID[0].ERROR.CODE === 28680)
+                        console.error('Invalid Credentials. UserName or Password is incorrect');
+                    return messageBack;
+                }
+            }
+            else{
+                if(typeof messageBack.MESSAGEACK.GUID.ERROR != 'undefined'){
+                    if(messageBack.MESSAGEACK.GUID.ERROR.CODE === 28680)
+                        console.error('Invalid Credentials. UserName or Password is incorrect');
+                    return messageBack;
+                }
+
+            }
+            
+            return messageBack
+        }         
         else {
             console.error('Error in sending message');
             return undefined;

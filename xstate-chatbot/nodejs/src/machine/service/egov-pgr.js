@@ -3,6 +3,8 @@ const config = require('../../env-variables');
 const getCityAndLocality = require('./util/google-maps-util');
 const localisationService = require('../util/localisation-service');
 
+let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
+
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
@@ -120,8 +122,39 @@ class PGRService {
     return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
   }
 
-  async persistComplaint(slots) {
-    
+  async persistComplaint(user,slots,extraInfo) {
+    let requestBody = JSON.parse(pgrCreateRequestBody);
+
+    let authToken = user.authToken;
+    let mobileNumber = user.mobileNumber;
+    let userId = user.userId;
+    let complaintType = slots.complaint;
+    let locality = slots.locality;
+    let city = slots.city;
+    let userInfo = user.userInfo;
+
+    requestBody["RequestInfo"]["authToken"] = authToken;
+    requestBody["RequestInfo"]["userInfo"] = userInfo;
+    requestBody["service"]["tenantId"] = city;
+    requestBody["service"]["address"]["city"] = city;
+    requestBody["service"]["address"]["locality"]["code"] = locality;
+    requestBody["service"]["serviceCode"] = complaintType;
+    requestBody["service"]["accountId"] = userId;
+
+    var url = config.pgrServiceHost+config.pgrCreateEndpoint;
+
+    var options = {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+          'Content-Type': 'application/json'
+      }
+    }
+
+    let response = await fetch(url, options);
+    let data = await response.json();
+
+    return data;
   }
   
 }

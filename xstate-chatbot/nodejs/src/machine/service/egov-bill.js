@@ -248,7 +248,7 @@ class BillService {
   
   async getShortenedURL(finalPath)
 {
-  var urlshortnerHost = config.UrlShortnerHost;
+  var urlshortnerHost = config.urlShortnerHost;
   var url = urlshortnerHost + '/egov-url-shortening/shortener';
   var request = {};
   request.url = finalPath; 

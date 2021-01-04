@@ -71,6 +71,10 @@ const envVariables = {
     collectonServicSearchEndpoint: process.env.COLLECTION_SERVICE_SEARCH_ENDPOINT || 'collection-services/payments/$module/_search',
     receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 3,
 
+    pgrServiceHost: process.env.PGR_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
+    pgrCreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'pgr-services/v2/request/_create',
+    pgrSearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'pgr-services/v2/request/_search',
+
     dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
     timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
 
