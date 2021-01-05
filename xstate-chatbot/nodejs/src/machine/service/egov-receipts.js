@@ -69,13 +69,73 @@ class ReceiptService {
         return { searchOptions, messageBundle };
     }
     getOptionAndExampleMessageBundle(service, searchParamOption) {
-        let option = {
+      let option,example;
+
+      if(searchParamOption === 'mobile'){
+        option = {
           en_IN: 'Mobile Number'
         };
-        let example = {
+        example = {
           en_IN: 'Do not use +91 or 0 before mobile number.'
         }
-        return { option, example };
+      }
+  
+      if(searchParamOption === 'consumerNumber'){
+        option = {
+          en_IN: 'Consumer Number'
+        };
+        example = {
+          en_IN: ' '
+        }
+      }
+  
+      if(searchParamOption === 'connectionNumber'){
+        option = {
+          en_IN: 'Connection Number'
+        };
+        example = {
+         en_IN: ' '
+        }
+      }
+  
+      if(searchParamOption === 'propertyId'){
+        option = {
+          en_IN: 'Property ID'
+        };
+        example = {
+         en_IN: ' '
+        }
+      }
+  
+      if(searchParamOption === 'tlApplicationNumber'){
+        option = {
+          en_IN: 'Trade License Application Number'
+        };
+        example = {
+         en_IN: ' '
+        }
+      }
+  
+      if(searchParamOption === 'nocApplicationNumber'){
+        option = {
+          en_IN: 'Fire Noc Application Number'
+        };
+        example = {
+         en_IN: ' '
+        }
+      }
+  
+      if(searchParamOption === 'bpaApplicationNumber'){
+        option = {
+          en_IN: 'BPA Application Number'
+        };
+        example = {
+         en_IN: ' '
+        }
+      }
+  
+      
+      return { option, example };
     }
     validateparamInput(service, searchParamOption, paramInput) {
         if(searchParamOption === 'mobile') {
@@ -138,11 +198,13 @@ class ReceiptService {
       
       
       if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
-        paymentUrl+='&';
+        
         if(user.paramOption=='mobile')
-        paymentUrl +='mobileNumber='+user.paramInput;
-        else
-        paymentUrl +=user.paramOption+'='+user.paramInput;
+        paymentUrl +='&mobileNumber='+user.paramInput;
+
+        if(user.paramOption=='consumerNumber' || user.paramOption == 'tlApplicationNumber' || user.paramOption == 'nocApplicationNumber'
+          || user.paramOption=='bpaApplicationNumber' || user.paramOption=='connectionNumber' || user.paramOption=='propertyId')
+              paymentUrl +='&consumerCodes='+user.paramInput;
       }
       else{
         paymentUrl+='&';

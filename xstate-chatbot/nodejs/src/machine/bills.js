@@ -500,7 +500,7 @@ let messages = {
   },
   paramInputInitiate: {
     question: {
-      en_IN: 'Please type and send ‘*1*’ to Enter {{searchParamOption}} again. \nOr \'mseva\' to Go ⬅️ Back to the main menu.'
+      en_IN: 'Please type and send ‘1’ to Enter {{searchParamOption}} again. \nOr \'mseva\' to Go ⬅️ Back to the main menu.'
     }
   }
 }

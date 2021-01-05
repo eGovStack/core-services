@@ -75,12 +75,72 @@ class BillService {
   }
 
   getOptionAndExampleMessageBundle(service, searchParamOption) {
-    let option = {
-      en_IN: 'Mobile Number'
-    };
-    let example = {
-      en_IN: 'Do not use +91 or 0 before mobile number.'
+    let option,example;
+
+    if(searchParamOption === 'mobile'){
+      option = {
+        en_IN: 'Mobile Number'
+      };
+      example = {
+        en_IN: 'Do not use +91 or 0 before mobile number.'
+      }
     }
+
+    if(searchParamOption === 'consumerNumber'){
+      option = {
+        en_IN: 'Consumer Number'
+      };
+      example = {
+        en_IN: ' '
+      }
+    }
+
+    if(searchParamOption === 'connectionNumber'){
+      option = {
+        en_IN: 'Connection Number'
+      };
+      example = {
+       en_IN: ' '
+      }
+    }
+
+    if(searchParamOption === 'propertyId'){
+      option = {
+        en_IN: 'Property ID'
+      };
+      example = {
+       en_IN: ' '
+      }
+    }
+
+    if(searchParamOption === 'tlApplicationNumber'){
+      option = {
+        en_IN: 'Trade License Application Number'
+      };
+      example = {
+       en_IN: ' '
+      }
+    }
+
+    if(searchParamOption === 'nocApplicationNumber'){
+      option = {
+        en_IN: 'Fire Noc Application Number'
+      };
+      example = {
+       en_IN: ' '
+      }
+    }
+
+    if(searchParamOption === 'bpaApplicationNumber'){
+      option = {
+        en_IN: 'BPA Application Number'
+      };
+      example = {
+       en_IN: ' '
+      }
+    }
+
+    
     return { option, example };
   }
 
@@ -176,17 +236,14 @@ class BillService {
 
 
     if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
-      billUrl+='&';
       if(user.paramOption=='mobile')
-        billUrl +='mobileNumber='+user.paramInput;
+        billUrl +='&mobileNumber='+user.paramInput;
+
       if(user.paramOption=='consumerNumber' || user.paramOption == 'tlApplicationNumber' || user.paramOption == 'nocApplicationNumber'
       || user.paramOption=='bpaApplicationNumber' || user.paramOption=='connectionNumber' || user.paramOption=='propertyId')
-        billUrl +='consumerCode='+user.paramInput;
-      else
-        billUrl +=user.paramOption+'='+user.paramInput;
-      
-      billUrl+='&';
-      billUrl +='service='+user.service;
+        billUrl +='&consumerCode='+user.paramInput;
+
+      billUrl +='&service='+user.service;
     }
     else{
       billUrl+='&';
