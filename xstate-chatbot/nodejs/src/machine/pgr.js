@@ -1,6 +1,9 @@
 const { assign } = require('xstate');
 const { pgrService } = require('./service/service-loader');
 const dialog = require('./util/dialog');
+const localisationService = require('./util/localisation-service');
+const config = require('../env-variables');
+const moment = require("moment-timezone");
 
 const pgr =  {
   id: 'pgr',
@@ -437,17 +440,23 @@ const pgr =  {
         onDone: [
           {
             target: '#endstate',
-            cond: (context, event) => event.data.length > 0,
+            cond: (context, event) => {
+              return event.data.ServiceWrappers.length>0;
+            },
             actions: assign((context, event) => {
-              let complaints = event.data;
+              let complaints = event.data.ServiceWrappers;
               let message = dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale);
+              let localisationPrefix = 'SERVICEDEFS.';
               message += '\n';
               for(let i = 0; i < complaints.length; i++) {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
-                template = template.replace('{{complaintType}}', complaints[i].complaintType);
-                template = template.replace('{{complaintId}}', complaints[i].complaintId);
-                template = template.replace('{{filedDate}}', complaints[i].filedDate);
-                template = template.replace('{{complaintStatus}}', complaints[i].complaintStatus);
+                let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + complaints[i].service.serviceCode.toUpperCase());
+                let filedDate = complaints[i].service.auditDetails.createdTime;
+                filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
+                template = template.replace('{{complaintType}}',serviceCode.en_IN);
+                template = template.replace('{{complaintId}}', complaints[i].service.serviceRequestId);
+                template = template.replace('{{filedDate}}', filedDate);
+                template = template.replace('{{complaintStatus}}', complaints[i].service.applicationStatus);
                 template = template.replace('{{complaintLink}}', complaints[i].complaintLink);
                 message += '\n' + (i + 1) + '. ' + template;
               }

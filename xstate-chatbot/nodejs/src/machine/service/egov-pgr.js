@@ -141,7 +141,7 @@ class PGRService {
     requestBody["service"]["serviceCode"] = complaintType;
     requestBody["service"]["accountId"] = userId;
 
-    var url = config.pgrServiceHost+config.pgrCreateEndpoint;
+    var url = config.externalHost+config.pgrCreateEndpoint;
 
     var options = {
       method: 'POST',
@@ -155,6 +155,40 @@ class PGRService {
     let data = await response.json();
 
     return data;
+  }
+
+  async fetchOpenComplaints(user){
+    let requestBody = {
+      RequestInfo: {
+        authToken: user.authToken
+      }
+    };
+
+    var url = config.externalHost+config.pgrSearchEndpoint+'?tenantId=pb.amritsar'
+    url+='&';
+    url+='mobileNumber='+user.mobileNumber;
+
+    let options = {
+      method: 'POST',
+      origin: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    }
+
+    let response = await fetch(url, options);
+    let results;
+    if(response.status === 200) {
+      results = await response.json();
+      
+    } else {
+      console.error('Error in fetching the bill');
+      return undefined;
+    }
+
+    return results;
+
   }
   
 }
