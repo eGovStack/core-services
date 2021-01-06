@@ -8,6 +8,7 @@ import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -59,8 +60,10 @@ public class BusinessServiceController {
                                                           @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 
         BusinessServiceSearchCriteria searchCriteria = mapper.convertValue(criteria,BusinessServiceSearchCriteria.class);
-        if(searchCriteria.getAssignes().equals("ASSIGNED_TO_ME")){
-            searchCriteria.setUuid(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid());
+        if(!StringUtils.isEmpty(searchCriteria.getAssignes())) {
+            if (searchCriteria.getAssignes().equals("ASSIGNED_TO_ME")) {
+                searchCriteria.setUuid(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid());
+            }
         }
         List<BusinessService> businessServices = businessMasterService.search(searchCriteria);
         BusinessServiceResponse response = BusinessServiceResponse.builder().businessServices(businessServices)
