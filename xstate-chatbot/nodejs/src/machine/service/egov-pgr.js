@@ -77,7 +77,41 @@ class PGRService {
   async getCityAndLocalityForGeocode(geocode, tenantId) {
     let latlng = geocode.substring(1, geocode.length - 1); // Remove braces
     let cityAndLocality = await getCityAndLocality(latlng);
-    return cityAndLocality;
+    let { cities, messageBundle } = await this.fetchCities(tenantId);
+    let matchedCity = null;
+    let matchedCityMessageBundle = null;
+    for(let city of cities) {
+      let cityName = messageBundle[city]['en_IN'];
+      if(cityName.toLowerCase() == cityAndLocality.city.toLowerCase()) {
+        matchedCity = city;
+        matchedCityMessageBundle = messageBundle[city];
+        break;
+      }
+    }
+    if(matchedCity) {
+      let matchedLocality = null;
+      let matchedLocalityMessageBundle = null;  
+      let { localities, messageBundle } = await this.fetchLocalities(matchedCity);
+      for(let locality of localities) {
+        let localityName = messageBundle[locality]['en_IN'];
+        if(localityName.toLowerCase() == cityAndLocality.locality.toLowerCase()) {
+          matchedLocality = locality;
+          matchedLocalityMessageBundle = messageBundle[locality];
+          return {
+            city: matchedCity,
+            locality: matchedLocality,
+            matchedCityMessageBundle: matchedCityMessageBundle,
+            matchedLocalityMessageBundle: matchedLocalityMessageBundle
+          };
+        }
+      }
+      // Matched City found but no matching locality found
+      return {
+        city: matchedCity,
+        matchedCityMessageBundle: matchedCityMessageBundle
+      }
+    } 
+    return undefined;    // No matching city found
   }
 
   async fetchCities(tenantId){

@@ -8,6 +8,10 @@ const moment = require("moment-timezone");
 const pgr =  {
   id: 'pgr',
   initial: 'pgrmenu',
+  onEntry: assign((context, event) => {
+    context.slots.pgr = {}
+    context.pgr = {};
+  }),
   states: {
     pgrmenu : {
       id: 'pgrmenu',
@@ -251,10 +255,9 @@ const pgr =  {
                     onDone: [
                       {
                         target: '#confirmLocation',
-                        cond: (context, event) => event.data.city,
+                        cond: (context, event) => event.data,
                         actions: assign((context, event) => {
-                          context.slots.pgr["city"]= event.data.city;
-                          context.slots.pgr["locality"] = event.data.locality;
+                          context.pgr.detectedLocation = event.data;
                         })
                       },
                       {
@@ -274,9 +277,16 @@ const pgr =  {
               states: {
                 question: {
                   onEntry: assign((context, event) => {
-                    let message = dialog.get_message(messages.fileComplaint.confirmLocation.question, context.user.locale);
-                    message = message.replace('{{city}}', context.slots.pgr['city']);
-                    message = message.replace('{{locality}}', context.slots.pgr['locality']);
+                    let message;
+                    if(context.pgr.detectedLocation.locality) {
+                      let localityName = dialog.get_message(context.pgr.detectedLocation.matchedLocalityMessageBundle, context.user.locale);
+                      message = dialog.get_message(messages.fileComplaint.confirmLocation.confirmCityAndLocality, context.user.locale);
+                      message = message.replace('{{locality}}', localityName);
+                    } else {
+                      message = dialog.get_message(messages.fileComplaint.confirmLocation.confirmCity, context.user.locale);                      
+                    }
+                    let cityName = dialog.get_message(context.pgr.detectedLocation.matchedCityMessageBundle, context.user.locale);
+                    message = message.replace('{{city}}', cityName);
                     dialog.sendMessage(context, message);
                   }),
                   on: {
@@ -290,6 +300,10 @@ const pgr =  {
                       context.slots.pgr["locationConfirmed"] = false;
                     } else {
                       context.slots.pgr["locationConfirmed"] = true;
+                      context.slots.pgr.city = context.pgr.detectedLocation.city;
+                      if(context.pgr.detectedLocation.locality) {
+                        context.slots.pgr.locality = context.pgr.detectedLocation.locality;
+                      }
                     }
                   }),
                   always: [
@@ -522,8 +536,11 @@ let messages = {
       }
     }, // geoLocation 
     confirmLocation: {
-      question: {
+      confirmCityAndLocality: {
         en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nLocality: {{locality}}\nPlease send "*No*", if it is incorrect'
+      },
+      confirmCity: {
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "*No*", if it is incorrect'
       }
     },
     city: {
