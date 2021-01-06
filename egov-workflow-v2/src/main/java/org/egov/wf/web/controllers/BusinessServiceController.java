@@ -59,6 +59,9 @@ public class BusinessServiceController {
                                                           @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 
         BusinessServiceSearchCriteria searchCriteria = mapper.convertValue(criteria,BusinessServiceSearchCriteria.class);
+        if(searchCriteria.getAssignes().equals("ASSIGNED_TO_ME")){
+            searchCriteria.setUuid(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid());
+        }
         List<BusinessService> businessServices = businessMasterService.search(searchCriteria);
         BusinessServiceResponse response = BusinessServiceResponse.builder().businessServices(businessServices)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),true))

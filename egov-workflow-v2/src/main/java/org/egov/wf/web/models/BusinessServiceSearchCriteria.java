@@ -26,6 +26,12 @@ public class BusinessServiceSearchCriteria {
     @JsonProperty("businessServices")
     private List<String> businessServices;
 
+    @JsonProperty("assignes")
+    private String assignes;
+
+    @JsonIgnore
+    private String uuid;
+
     @JsonIgnore
     private List<String> stateUuids;
 
@@ -38,5 +44,6 @@ public class BusinessServiceSearchCriteria {
         this.businessServices = criteria.getBusinessServices();
         this.stateUuids = criteria.getStateUuids();
         this.actionUuids = criteria.getActionUuids();
+        this.uuid = criteria.getUuid();
     }
 }

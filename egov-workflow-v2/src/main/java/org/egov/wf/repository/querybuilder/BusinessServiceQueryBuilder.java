@@ -3,6 +3,7 @@ package org.egov.wf.repository.querybuilder;
 import org.egov.wf.web.models.BusinessServiceSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -46,6 +47,11 @@ public class BusinessServiceQueryBuilder {
 
             builder.append(" AND bs.businessService IN (").append(createQuery(businessServices)).append(")");
             addToPreparedStatement(preparedStmtList, businessServices);
+        }
+
+        if(!StringUtils.isEmpty(criteria.getUuid())){
+            builder.append(" AND bs.uuid = ?");
+            preparedStmtList.add(criteria.getUuid());
         }
 
         List<String> stateUuids = criteria.getStateUuids();
