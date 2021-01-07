@@ -5,7 +5,7 @@ const dummyBillService = require('./dummy-bill');
 const egovBillService = require('./egov-bill');
 const dummyReceiptService = require('./dummy-receipts');
 const egovReceiptService = require('./egov-receipts');
-const consumer = require('../../session/kafka/kafka-consumer');
+//const consumer = require('../../session/kafka/kafka-consumer');
 
 if(config.serviceProvider === 'eGov') {
     console.log("Using eGov Services");
