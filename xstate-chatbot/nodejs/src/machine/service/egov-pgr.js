@@ -202,9 +202,18 @@ class PGRService {
     }
 
     let response = await fetch(url, options);
-    let data = await response.json();
 
-    return data;
+
+    let results;
+    if(response.status === 200) {
+      let responseBody = await response.json();
+      results = await this.preparePGRResult(responseBody);
+    } else {
+      console.error('Error in fetching the bill');
+      return undefined;
+    }
+    console.log(JSON.stringify(results));
+    return results;
   }
 
   async fetchOpenComplaints(user){

@@ -438,7 +438,7 @@ const pgr =  {
                 let complaintDetails = event.data;
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
                 message = message.replace('{{complaintNumber}}', complaintDetails.ServiceWrappers[0].service.serviceRequestId);
-                message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
+                message = message.replace('{{complaintLink}}', complaintDetails.ServiceWrappers[0].complaintUrl);
                 dialog.sendMessage(context, message, false);
               })
             }
