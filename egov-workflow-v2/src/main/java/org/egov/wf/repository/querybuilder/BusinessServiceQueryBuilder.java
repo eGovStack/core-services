@@ -1,6 +1,8 @@
 package org.egov.wf.repository.querybuilder;
 
+import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.web.models.BusinessServiceSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -29,8 +31,8 @@ public class BusinessServiceQueryBuilder {
             INNER_JOIN + " eg_wf_state_v2 st ON st.businessServiceId = bs.uuid " +
             LEFT_OUTER_JOIN  + " eg_wf_action_v2 ac ON ac.currentState = st.uuid WHERE ";
 
-
-
+    @Autowired
+    WorkflowConfig config;
 
     public String getBusinessServices(BusinessServiceSearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder builder = new StringBuilder(BASE_QUERY);
@@ -69,6 +71,22 @@ public class BusinessServiceQueryBuilder {
         }
 
         builder.append(" ORDER BY seq");
+
+        builder.append(" OFFSET ? ");
+
+        if(criteria.getOffset() == null){
+            preparedStmtList.add(config.getDefaultOffset());
+        }else{
+            preparedStmtList.add(criteria.getOffset());
+        }
+
+        builder.append(" LIMIT ? ");
+
+        if(criteria.getLimit() == null){
+            preparedStmtList.add(config.getDefaultLimit());
+        }else{
+            preparedStmtList.add(criteria.getLimit() > config.getMaxSearchLimit() ? config.getMaxSearchLimit() : criteria.getLimit());
+        }
 
         return builder.toString();
     }

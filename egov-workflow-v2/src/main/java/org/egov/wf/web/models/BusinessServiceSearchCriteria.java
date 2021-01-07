@@ -29,6 +29,12 @@ public class BusinessServiceSearchCriteria {
     @JsonProperty("assignes")
     private String assignes;
 
+    @JsonProperty("offset")
+    private Integer offset;
+
+    @JsonProperty("limit")
+    private Integer limit;
+
     @JsonIgnore
     private String uuid;
 
