@@ -36,6 +36,8 @@ const envVariables = {
 
     externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-dev.egovernments.org/',
 
+    egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
+
     cityExternalWebpagePath: process.env.CITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/city',
     localityExternalWebpagePath: process.env.LOCALITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/locality',
 
@@ -51,7 +53,8 @@ const envVariables = {
     billServiceHost: process.env.BILL_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
     billServiceSearchPath: process.env.BILL_SERVICE_SEARCH_PATH || 'billing-service/bill/v2/_search',
     billSearchLimit: process.env.BILL_SEARCH_LIMIT || 5,
-    googleAPIKey: process.env.GOOGLE_API_KEY || '',
+
+    googleAPIKey: process.env.GOOGLE_MAPS_API_KEY || '',
 
     valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
     valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
