@@ -157,6 +157,21 @@ class PGRService {
     return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
+  async preparePGRResult(responseBody){
+    let serviceWrappers = responseBody.ServiceWrappers;
+    var results = {};
+    results['ServiceWrappers'] = [];
+
+    for( let serviceWrapper of serviceWrappers){
+      let mobileNumber = serviceWrapper.service.citizen.mobileNumber;
+      let serviceRequestId = serviceWrapper.service.serviceRequestId;
+      let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId,mobileNumber);
+      serviceWrapper.complaintUrl = complaintURL;
+      results['ServiceWrappers'].push(serviceWrapper);
+    }
+    return results;
+  }
+
   async persistComplaint(user,slots,extraInfo) {
     let requestBody = JSON.parse(pgrCreateRequestBody);
 
@@ -199,7 +214,8 @@ class PGRService {
       }
     };
 
-    var url = config.externalHost+config.pgrSearchEndpoint+'?tenantId=pb.amritsar'
+    var url = config.externalHost+config.pgrSearchEndpoint;
+    url = url + '?tenantId=' + config.rootTenantId;
     url+='&';
     url+='mobileNumber='+user.mobileNumber;
 
@@ -215,8 +231,8 @@ class PGRService {
     let response = await fetch(url, options);
     let results;
     if(response.status === 200) {
-      results = await response.json();
-      
+      let responseBody = await response.json();
+      results=await this.preparePGRResult(responseBody);
     } else {
       console.error('Error in fetching the bill');
       return undefined;
@@ -246,7 +262,7 @@ class PGRService {
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
-    let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
+    let url = config.externalHost + "digit-ui/citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=pgr/complaints/" + encodedPath + "?source=whatsapp";
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
 }

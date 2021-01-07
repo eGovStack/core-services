@@ -232,8 +232,9 @@ class BillService {
       }
     };
 
-    let billUrl = config.billServiceHost + config.billServiceSearchPath + '?tenantId=pb.amritsar';
-
+    let billUrl = config.billServiceHost + config.billServiceSearchPath;
+    billUrl = billUrl + '?tenantId=' + config.rootTenantId;
+    
 
     if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
       if(user.paramOption=='mobile')

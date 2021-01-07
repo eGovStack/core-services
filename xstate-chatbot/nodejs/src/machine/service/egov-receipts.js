@@ -194,8 +194,8 @@ class ReceiptService {
       };
        var searchEndpoint = config.collectonServicSearchEndpoint;
        searchEndpoint= searchEndpoint.replace(/\$module/g,service);
-      let paymentUrl = config.externalHost + searchEndpoint + '?tenantId=pb.amritsar';
-      
+      let paymentUrl = config.externalHost + searchEndpoint;
+      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       
       if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
         
@@ -251,7 +251,8 @@ class ReceiptService {
 
       var searchEndpoint = config.collectonServicSearchEndpoint;
       searchEndpoint= searchEndpoint.replace(/\$module/g,service);
-      let paymentUrl = config.collectonServiceHost + searchEndpoint + '?tenantId=pb.amritsar';
+      let paymentUrl = config.collectonServiceHost + searchEndpoint;
+      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       paymentUrl+='&';
       paymentUrl +='consumerCodes='+consumerCodes;
 

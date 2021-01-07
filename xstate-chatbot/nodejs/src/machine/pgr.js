@@ -472,14 +472,13 @@ const pgr =  {
                 let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + complaints[i].service.serviceCode.toUpperCase());
                 let applicationStatus = localisationService.getMessageBundleForCode( complaints[i].service.applicationStatus);
                 let filedDate = complaints[i].service.auditDetails.createdTime;
-                //let complaintLink = pgrService.makeCitizenURLForComplaint(complaints[i].service.serviceRequestId,complaints[i].service.citizen.mobileNumber);
-                let complaintLink = (async () => await pgrService.makeCitizenURLForComplaint(complaints[i].service.serviceRequestId,complaints[i].service.citizen.mobileNumber))();
                 filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
+                
                 template = template.replace('{{complaintType}}',serviceCode.en_IN);
                 template = template.replace('{{complaintId}}', complaints[i].service.serviceRequestId);
                 template = template.replace('{{filedDate}}', filedDate);
                 template = template.replace('{{complaintStatus}}', applicationStatus.en_IN);
-                template = template.replace('{{complaintLink}}', complaintLink);
+                template = template.replace('{{complaintLink}}', complaints[i].complaintUrl);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
               dialog.sendMessage(context, message, false);
