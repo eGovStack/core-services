@@ -325,9 +325,10 @@ class BillService {
   {
     var UIHost = config.externalHost;
     var paymentPath = config.msgpaylink;
-    paymentPath=paymentPath.replace(/\$consumercode/g,consumerCode);
-    paymentPath=paymentPath.replace(/\$tenantId/g,tenantId);
-    paymentPath=paymentPath.replace(/\$businessservice/g,businessService);
+    paymentPath = paymentPath.replace(/\$consumercode/g,consumerCode);
+    paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
+    paymentPath = paymentPath.replace(/\$businessservice/g,businessService);
+    paymentPath = paymentPath.replace(/\$redirectNumber/g,"+"+config.whatsAppBusinessNumber);
     var finalPath = UIHost + paymentPath;
     var link = await this.getShortenedURL(finalPath);
     return link;

@@ -15,6 +15,8 @@ let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@TEMPL
 
 let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
+let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
+
 class ValueFirstWhatsAppProvider {
 
     async checkForMissedCallNotification(requestBody){
@@ -93,7 +95,7 @@ class ValueFirstWhatsAppProvider {
         reformattedMessage.message = {
             input: input,
             type: type
-        }
+        };
         reformattedMessage.user = {
             mobileNumber: requestBody.from.slice(2)
         };
@@ -282,6 +284,34 @@ class ValueFirstWhatsAppProvider {
         requestBody = await this.getTransformedResponse(user, messages, extraInfo);
         this.sendMessage(requestBody);       
     }
+
+    async getTransformMessageForTemplate(reformattedMessages){
+
+        let requestBody = JSON.parse(valueFirstRequestBody);
+        requestBody["USER"]["@USERNAME"] = config.valueFirstUsername;
+        requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
+
+        for(let message of reformattedMessages){
+            let messageBody = JSON.parse(templateMessageBody);
+            let templateParams = message.extraInfo.params;
+            let combinedStringForTemplateInfo = message.extraInfo.templateId;
+            let userMobile = message.user.mobileNumber;
+            
+            for(let param of templateParams)
+                combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
+
+            messageBody['@TEMPLATEINFO'] = combinedStringForTemplateInfo;
+
+            messageBody["ADDRESS"][0]["@FROM"] = config.whatsAppBusinessNumber;
+            messageBody["ADDRESS"][0]["@TO"] = '91' + userMobile;
+
+            requestBody["SMS"].push(messageBody);
+
+        }
+        this.sendMessage(requestBody); 
+    }
+
+    
 
 }
 

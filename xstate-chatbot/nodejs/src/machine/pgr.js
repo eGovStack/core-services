@@ -457,24 +457,31 @@ const pgr =  {
             cond: (context, event) => {
               return event.data.ServiceWrappers.length>0;
             },
-            actions: assign((context, event) => {
+            actions: assign((context, event) => {     
               let complaints = event.data.ServiceWrappers;
+              let complaintLimit = config.complaintSearchLimit;
+
+              if(complaints.length < complaintLimit)
+                complaintLimit = complaints.length;
+  
               let message = dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale);
               let localisationPrefix = 'SERVICEDEFS.';
               message += '\n';
-              for(let i = 0; i < complaints.length; i++) {
+              for(let i = 0; i < complaintLimit; i++) {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
                 let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + complaints[i].service.serviceCode.toUpperCase());
+                let applicationStatus = localisationService.getMessageBundleForCode( complaints[i].service.applicationStatus);
                 let filedDate = complaints[i].service.auditDetails.createdTime;
+                //let complaintLink = pgrService.makeCitizenURLForComplaint(complaints[i].service.serviceRequestId,complaints[i].service.citizen.mobileNumber);
+                let complaintLink = (async () => await pgrService.makeCitizenURLForComplaint(complaints[i].service.serviceRequestId,complaints[i].service.citizen.mobileNumber))();
                 filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
                 template = template.replace('{{complaintType}}',serviceCode.en_IN);
                 template = template.replace('{{complaintId}}', complaints[i].service.serviceRequestId);
                 template = template.replace('{{filedDate}}', filedDate);
-                template = template.replace('{{complaintStatus}}', complaints[i].service.applicationStatus);
-                template = template.replace('{{complaintLink}}', complaints[i].complaintLink);
-                message += '\n' + (i + 1) + '. ' + template;
+                template = template.replace('{{complaintStatus}}', applicationStatus.en_IN);
+                template = template.replace('{{complaintLink}}', complaintLink);
+                message += '\n\n' + (i + 1) + '. ' + template;
               }
-
               dialog.sendMessage(context, message, false);
             })
           },

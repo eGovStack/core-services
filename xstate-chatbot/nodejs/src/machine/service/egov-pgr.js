@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 const config = require('../../env-variables');
 const getCityAndLocality = require('./util/google-maps-util');
 const localisationService = require('../util/localisation-service');
+const urlencode = require('urlencode');
 
 let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
 
@@ -125,7 +126,7 @@ class PGRService {
   }
 
   getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
+    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async fetchLocalities(tenantId) {
@@ -153,7 +154,7 @@ class PGRService {
   }
 
   getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
+    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async persistComplaint(user,slots,extraInfo) {
@@ -224,6 +225,31 @@ class PGRService {
     return results;
 
   }
+
+  async getShortenedURL(finalPath){
+    var urlshortnerHost = config.externalHost;
+    var url = urlshortnerHost + 'egov-url-shortening/shortener';
+    var request = {};
+    request.url = finalPath; 
+    var options = {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+    let response = await fetch(url, options);
+    let data = await response.text();
+    return data;
+}
+
+
+  async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
+    let encodedPath = urlencode(serviceRequestId, 'utf8');
+    let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
+    let shortURL = await this.getShortenedURL(url);
+    return shortURL;
+}
   
 }
 
