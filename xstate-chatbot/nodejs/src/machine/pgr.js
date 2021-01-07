@@ -250,7 +250,7 @@ const pgr =  {
                         context.slots.pgr.geocode = event.message.input;
                         return pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
                       }
-                      return Promise.resolve({});
+                      return Promise.resolve();
                     },
                     onDone: [
                       {
