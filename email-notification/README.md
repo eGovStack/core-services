@@ -18,7 +18,7 @@ NA
 
 ## Service Details
 
-egov-notification-mail is a consumer which listens to the egov.core.notification.email topic, reads the message and generates email using SMTP Protocol.
+email-notification is a consumer which listens to the egov.core.notification.email topic, reads the message and generates email using SMTP Protocol.
 The services needs the the senders email configured. On the other hand, if senders email is not configured, the services gets the email id by internally calling 
 user service to fetch email id. Once the email is generated, the content is localized by localization service after which its been notified to the email id.
 
@@ -28,7 +28,7 @@ NA
 
 ### Kafka Consumers
 
-- egov.core.notification.email : egov-notification-mail listens to this topic to listen for the updates on emails and then to send notifications to user.
+- egov.core.notification.email : email-notification listens to this topic to listen for the updates on emails and then to send notifications to user.
 
 ### Kafka Producers
 
