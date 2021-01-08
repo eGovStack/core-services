@@ -199,7 +199,7 @@ config:
         image-name: "egov-telemetry-batch-process"
         dockerfile: "build/maven/Dockerfile"
   
-  - name: "builds/core-services/egov-url-shortening"
+  - name: "builds/core-services/url-shortening"
     build:
       - work-dir: "url-shortening"
         image-name: "url-shortening"
