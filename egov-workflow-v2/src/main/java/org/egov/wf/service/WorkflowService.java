@@ -58,7 +58,13 @@ public class WorkflowService {
      */
     public List<ProcessInstance> transition(ProcessInstanceRequest request){
         RequestInfo requestInfo = request.getRequestInfo();
-        log.info("Request documents " + request.getProcessInstances().get(0).getDocuments().toString());
+        List<Document> documents = new ArrayList<>();
+        for(ProcessInstance pi : request.getProcessInstances()){
+            documents.addAll(pi.getDocuments());
+        }
+        for(Document document : documents){
+            log.info("FILESTORE ID: " + document.getFileStoreId());
+        }
         log.info("Request received: " + request.toString());
         List<ProcessStateAndAction> processStateAndActions = transitionService.getProcessStateAndActions(request.getProcessInstances(),true);
         enrichmentService.enrichProcessRequest(requestInfo,processStateAndActions);
