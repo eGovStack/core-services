@@ -14,7 +14,7 @@
 	<artifactId>filestore</artifactId>
 	<version>1.2.1-SNAPSHOT</version>
 	<name>filestore</name>
-	<description>eGov File store project for eGov services</description>
+	<description>File store project for eGov services</description>
 	<properties>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
