@@ -39,7 +39,7 @@ public class Document   {
         private String documentType = null;
 
         @Size(max=64)
-        @JsonProperty("fileStoreId")
+        @JsonProperty("fileStore")
         private String fileStoreId = null;
 
         @Size(max=64)
