@@ -258,13 +258,13 @@ public class UserRepository {
         updateuserInputs.put("Guardian", user.getGuardian());
 
         if (user.getGuardianRelation() != null) {
-            if (GuardianRelation.Father.toString().equals(user.getGuardianRelation().toString())) {
+            if (GuardianRelation.FATHER.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Mother.toString().equals(user.getGuardianRelation().toString())) {
+            } else if (GuardianRelation.MOTHER.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Husband.toString().equals(user.getGuardianRelation().toString())) {
+            } else if (GuardianRelation.HUSBAND.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Other.toString().equals(user.getGuardianRelation().toString())) {
+            } else if (GuardianRelation.OTHER.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
             } else {
                 updateuserInputs.put("GuardianRelation", "");
@@ -521,13 +521,13 @@ public class UserRepository {
         }
 
         userInputs.put("guardian", entityUser.getGuardian());
-        if (GuardianRelation.Father.equals(entityUser.getGuardianRelation())) {
+        if (GuardianRelation.FATHER.equals(entityUser.getGuardianRelation())) {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Mother.equals(entityUser.getGuardianRelation())) {
+        } else if (GuardianRelation.MOTHER.equals(entityUser.getGuardianRelation())) {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Husband.equals(entityUser.getGuardianRelation())) {
+        } else if (GuardianRelation.HUSBAND.equals(entityUser.getGuardianRelation())) {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Other.equals(entityUser.getGuardianRelation())) {
+        } else if (GuardianRelation.OTHER.equals(entityUser.getGuardianRelation())) {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
         } else {
             userInputs.put("guardianrelation", "");
