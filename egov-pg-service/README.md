@@ -10,7 +10,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 - idgen
 - collection-services
-- egf-master
+- finance-master
 - persister
 
 ### Swagger API Contract

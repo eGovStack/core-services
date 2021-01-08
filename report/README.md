@@ -54,7 +54,7 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 1. Configuring the post object in the yaml itself like below.
 
 - externalService:
-  - entity: $.MdmsRes.egf-master.FinancialYear
+  - entity: $.MdmsRes.finance-master.FinancialYear
     - apiURL:  http://localhost:8094/mdms/v1/_search
     - keyOrder: finYearRange,startingDate,endingDate,tenantId
     - tableName: tbl_financialyear
@@ -62,7 +62,7 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
     - postObject:
       - tenantId: $tenantid
       - moduleDetails:
-        - moduleName: egf-master
+        - moduleName: finance-master
         - masterDetails:
           - name: FinancialYear
           filter: "[?(@.id IN [2,3] && @.active == true)]"
