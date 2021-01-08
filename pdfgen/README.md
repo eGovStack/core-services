@@ -8,7 +8,7 @@ PDF service is one of the core application which is use to bulk generate the pdf
 
 ### Service Dependencies
 - localization
-- egov-filestore
+- filestore
 
 ### Swagger API Contract
 Please refer to the  below Swagger API contarct for PDF service to understand the structure of APIs and to have visualization of all internal APIs [Swagger API contract](https://app.swaggerhub.com/apis/eGovernment/pdf-service_ap_is/1.1.0)
