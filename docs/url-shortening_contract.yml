@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Egov URL shortening service
+  title: URL shortening service
   description: APIs available in url-shortening to shorten urls and get original
     urls from shortened urls
   contact:

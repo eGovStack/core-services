@@ -1,4 +1,4 @@
-# Egov url shortening service
+# url shortening service
 
 The -url-shortening service is used to shorten long urls. There may be requirement when we want to avoid sending very long urls to the user ex:- sms, whatsapp etc,
 this service compresses the url.
