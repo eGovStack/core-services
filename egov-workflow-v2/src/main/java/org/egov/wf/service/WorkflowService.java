@@ -1,5 +1,6 @@
 package org.egov.wf.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.repository.BusinessServiceRepository;
@@ -13,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-
+@Slf4j
 @Service
 public class WorkflowService {
 
@@ -57,7 +58,8 @@ public class WorkflowService {
      */
     public List<ProcessInstance> transition(ProcessInstanceRequest request){
         RequestInfo requestInfo = request.getRequestInfo();
-
+        log.info("Request documents " + request.getProcessInstances().get(0).getDocuments().toString());
+        log.info("Request received: " + request.toString());
         List<ProcessStateAndAction> processStateAndActions = transitionService.getProcessStateAndActions(request.getProcessInstances(),true);
         enrichmentService.enrichProcessRequest(requestInfo,processStateAndActions);
         workflowValidator.validateRequest(requestInfo,processStateAndActions);
