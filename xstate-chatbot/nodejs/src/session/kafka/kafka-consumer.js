@@ -15,8 +15,9 @@ let payload = [
 ];
 
 var options = {
-  groupId: 'pgr-v2-consumer-group',
-  fromOffset: 'latest'
+  groupId: 'chatbot-pgr-v2-consumer-group',
+  fromOffset: 'earliest',
+  autoCommit: false
 };
 
 const consumer = new Consumer(

@@ -286,29 +286,33 @@ class ValueFirstWhatsAppProvider {
     }
 
     async getTransformMessageForTemplate(reformattedMessages){
+        if(reformattedMessages.length>0){
+            let requestBody = JSON.parse(valueFirstRequestBody);
+            requestBody["USER"]["@USERNAME"] = config.valueFirstUsername;
+            requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
 
-        let requestBody = JSON.parse(valueFirstRequestBody);
-        requestBody["USER"]["@USERNAME"] = config.valueFirstUsername;
-        requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
-
-        for(let message of reformattedMessages){
-            let messageBody = JSON.parse(templateMessageBody);
-            let templateParams = message.extraInfo.params;
-            let combinedStringForTemplateInfo = message.extraInfo.templateId;
-            let userMobile = message.user.mobileNumber;
+            for(let message of reformattedMessages){
+                let messageBody = JSON.parse(templateMessageBody);
+                let templateParams = message.extraInfo.params;
+                let combinedStringForTemplateInfo = message.extraInfo.templateId;
+                let userMobile = message.user.mobileNumber;
             
-            for(let param of templateParams)
-                combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
+                for(let param of templateParams)
+                    combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
 
-            messageBody['@TEMPLATEINFO'] = combinedStringForTemplateInfo;
+                messageBody['@TEMPLATEINFO'] = combinedStringForTemplateInfo;
 
-            messageBody["ADDRESS"][0]["@FROM"] = config.whatsAppBusinessNumber;
-            messageBody["ADDRESS"][0]["@TO"] = '91' + userMobile;
+                messageBody["ADDRESS"][0]["@FROM"] = config.whatsAppBusinessNumber;
+                messageBody["ADDRESS"][0]["@TO"] = '91' + userMobile;
 
-            requestBody["SMS"].push(messageBody);
+                requestBody["SMS"].push(messageBody);
+
+            }
+            this.sendMessage(requestBody);
 
         }
-        this.sendMessage(requestBody); 
+
+         
     }
 
     
