@@ -186,7 +186,7 @@ class ReceiptService {
       
     }
 
-    async findreceipts(user,service){ 
+    async findreceiptsList(user,service){ 
       let requestBody = {
         RequestInfo: {
           authToken: user.authToken
@@ -227,10 +227,37 @@ class ReceiptService {
         results=await this.preparePaymentResult(responseBody,false);
       } else {
         console.error('Error in fetching the bill');
-        return undefined;
+        return [];
+      }
+      
+      return results;
+    }
+
+    async findreceipts(user,service){
+
+      if(service === 'WS'){
+        let businessService = ['WS','SW'];
+        return await this.findReceiptsForMutipleBusinsessService(user,businessService);
+      }
+      if(service === 'BPA'){
+        let businessService = ['BPA.LOW_RISK_PERMIT_FEE', 'BPA.NC_APP_FEE', 'BPA.NC_SAN_FEE', 'BPA.NC_OC_APP_FEE', 'BPA.NC_OC_SAN_FEE'];
+        return await this.findReceiptsForMutipleBusinsessService(user,businessService);
       }
 
-      return results;
+      else
+          return await this.findreceiptsList(user,service);
+
+
+    }
+
+    async findReceiptsForMutipleBusinsessService(user,businessService){
+      let receiptResults=[];
+      for(let service of businessService){
+        let results = await this.findreceiptsList(user,service);
+        if(results.length>0)
+          receiptResults = receiptResults.concat(results);
+      }
+      return receiptResults;
     }
 
     async fetchReceiptsForParam(user, service, searchParamOption, paraminput) {
@@ -238,7 +265,11 @@ class ReceiptService {
           user.paramOption=searchParamOption;
         if(paraminput)  
           user.paramInput=paraminput;
-        return await this.findreceipts(user,service);
+        if(service === 'WS' || service === 'BPA'){
+          return await this.findreceipts(user,service)
+        }
+        else
+          return await this.findreceiptsList(user,service);
     }
 
     async multipleRecordReceipt(user,service,consumerCodes){ 

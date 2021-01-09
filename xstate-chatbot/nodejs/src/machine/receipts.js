@@ -255,7 +255,7 @@ const receipts = {
         id:'mobileLinkage',
         onEntry: assign((context, event) => {
           let message1=dialog.get_message(messages.mobileLinkage.notLinked,context.user.locale);
-          message1 = message1.replace('{{service}}',context.receipts.slots.service);
+          message1 = message1.replace(/{{service}}/g,context.receipts.slots.service);
           //context.chatInterface.toUser(context.user, message1);
           dialog.sendMessage(context, message1, false);
         }),
@@ -729,7 +729,7 @@ let messages = {
   },
   mobileLinkage:{
     notLinked: {
-      en_IN: 'It seems the mobile number you are using is not linked with {{service}} service. Please visit ULB to link your account number with Service_Name. Still you can avail service by searching your account information.'
+      en_IN: 'It seems the mobile number you are using is not linked with {{service}} service. Please visit ULB to link your account number with {{service}} service. Still you can avail service by searching your account information.'
     },
   },
   searchParams:{

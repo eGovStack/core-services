@@ -212,7 +212,6 @@ class PGRService {
       console.error('Error in fetching the bill');
       return undefined;
     }
-    console.log(JSON.stringify(results));
     return results;
   }
 

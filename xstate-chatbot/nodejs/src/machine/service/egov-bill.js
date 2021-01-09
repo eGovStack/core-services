@@ -224,7 +224,7 @@ class BillService {
   return Bills['Bills'];  
   }
 
-  async fetchBillsForUser(user, locale) {
+  async searchBillsForUser(user, locale) {
 
     let requestBody = {
       RequestInfo: {
@@ -244,7 +244,7 @@ class BillService {
       || user.paramOption=='bpaApplicationNumber' || user.paramOption=='connectionNumber' || user.paramOption=='propertyId')
         billUrl +='&consumerCode='+user.paramInput;
 
-      billUrl +='&service='+user.service;
+      billUrl +='&businessService='+user.service;
     }
     else{
       billUrl+='&';
@@ -261,18 +261,19 @@ class BillService {
     }
     
     let response = await fetch(billUrl, options);
-    let results,totalBillSize,pendingBillSize;
-    if(response.status === 200) {
+    let results,totalBillSize=0,pendingBillSize=0;
+    if(response.status === 201) {
       let responseBody = await response.json();
       results=await this.prepareBillResult(responseBody);
       totalBillSize=responseBody.Bill.length;
       pendingBillSize=results.length;
       
-    } else {
+    } 
+    /*else {
       console.error('Error in fetching the bill');
       return undefined;
-    }
-
+    }*/
+    
     if(totalBillSize==0){
       return {                        
         totalBills: 0,             // mobile number not linked with any bills
@@ -295,12 +296,54 @@ class BillService {
 
   }
 
+  async fetchBillsForUser(user,service,locale){
+    let billSupportedBussinessService;
+
+    if(service){
+      if(service === 'WS')
+      billSupportedBussinessService = ['WS','SW'];
+      if(service === 'BPA')
+        billSupportedBussinessService = ['BPA.LOW_RISK_PERMIT_FEE', 'BPA.NC_APP_FEE', 'BPA.NC_SAN_FEE', 'BPA.NC_OC_APP_FEE', 'BPA.NC_OC_SAN_FEE'];
+    }
+    else
+      billSupportedBussinessService = ['WS','SW', 'PT', 'TL', 'FIRENOC', 'BPA.LOW_RISK_PERMIT_FEE', 'BPA.NC_APP_FEE', 'BPA.NC_SAN_FEE', 'BPA.NC_OC_APP_FEE', 'BPA.NC_OC_SAN_FEE'];
+
+    let billResults={
+        pendingBills:[],
+        totalBills:0
+    };
+
+    let self = this;
+
+    for(let service of billSupportedBussinessService){
+      user.service = service;
+
+      if(!user.hasOwnProperty('paramOption') || (user.paramOption==null) ){
+        user.paramOption = 'mobile';
+        user.paramInput = user.mobileNumber;
+      }
+      let results = await self.searchBillsForUser(user);
+      
+      if(results.hasOwnProperty('totalBills') && results.hasOwnProperty('pendingBills') && results.totalBills !=0 && results.pendingBills)
+        billResults.pendingBills = billResults.pendingBills.concat(results.pendingBills);
+        billResults.totalBills = billResults.totalBills + results.totalBills;
+      }
+      
+      return billResults;
+
+  }
+
   async fetchBillsForParam(user, service, paramOption, paramInput) {
-      //console.log(`Received params: ${JSON.stringify(user)}, ${JSON.stringify(service)}, ${paramOption}, ${JSON.stringify(paramInput)}`);
       user.service=service;
       user.paramOption=paramOption;
       user.paramInput=paramInput;
-      let billsForUser = await this.fetchBillsForUser(user);
+
+      let billsForUser;
+      if(service === 'WS' || service === 'BPA')
+        billsForUser = await this.fetchBillsForUser(user,service);
+      else
+        billsForUser = await this.searchBillsForUser(user);
+
       return billsForUser.pendingBills;
   }
   
