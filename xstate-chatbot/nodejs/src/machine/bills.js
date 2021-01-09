@@ -332,7 +332,7 @@ const bills = {
               message = message.replace('{{id}}', bill.id);
               message = message.replace('{{secondaryInfo}}', bill.secondaryInfo);
               message = message.replace('{{period}}', bill.period);
-              message = message.replace('{{dueAmount}}', bill.amount);
+              message = message.replace('{{dueAmount}}', bill.dueAmount);
               message = message.replace('{{dueDate}}', bill.dueDate);
               message = message.replace('{{paymentLink}}', bill.paymentLink);
             } else {

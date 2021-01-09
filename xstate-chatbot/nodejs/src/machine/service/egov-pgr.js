@@ -271,7 +271,7 @@ class PGRService {
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
-    let url = config.externalHost + "digit-ui/citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=pgr/complaints/" + encodedPath + "?source=whatsapp";
+    let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
 }

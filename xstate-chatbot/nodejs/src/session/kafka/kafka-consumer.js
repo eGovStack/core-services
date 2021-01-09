@@ -7,15 +7,22 @@ let receiveJob = config.pgrUpdateTopic;
 const Consumer = kafka.Consumer;
 let client = new kafka.KafkaClient({kafkaHost: config.kafkaHost});
 
+let payload = [
+  { 
+    topic: receiveJob, 
+    partition: 0
+  },
+];
+
+var options = {
+  groupId: 'pgr-v2-consumer-group',
+  fromOffset: 'latest'
+};
+
 const consumer = new Consumer(
   client,
-  [
-      { topic: receiveJob },
-  ],
-  {
-      autoCommit: false,
-      fromOffset: 'latest'
-  }
+  payload,
+  options
 );
 
 consumer.on("ready", function() {
