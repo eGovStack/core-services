@@ -1,5 +1,6 @@
 package org.egov.wf.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 import static org.egov.wf.util.WorkflowConstants.CITIZEN_TYPE;
 import static org.egov.wf.util.WorkflowConstants.SENDBACKTOCITIZEN;
 
-
+@Slf4j
 @Component
 public class WorkflowValidator {
 
@@ -151,9 +152,12 @@ public class WorkflowValidator {
                 isAssigneeUserInfo = processStateAndAction.getProcessInstanceFromDb().getAssignes().stream().map(User::getUuid).collect(Collectors.toList())
                         .contains(requestInfo.getUserInfo().getUuid());
             }
-            if(!isStateChanging && !isAssigneeUserInfo && !isRoleAvailableForTransition)
-                throw new CustomException("INVALID MARK ACTION","The processInstanceFromRequest cannot be marked by the user");
-
+            if(!isStateChanging && !isAssigneeUserInfo && !isRoleAvailableForTransition) {
+                log.info("isStateChanging: " + isStateChanging);
+                log.info("isAssigneeUserInfo: " + isAssigneeUserInfo);
+                log.info("isRoleAvailableForTransistion: " + isRoleAvailableForTransition);
+                throw new CustomException("INVALID MARK ACTION", "The processInstanceFromRequest cannot be marked by the user");
+            }
             /**
              * Checks if in case of action causing transition the assignee has role that can take some action
              * in the resultant state
