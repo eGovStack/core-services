@@ -1,5 +1,5 @@
 # Access Control Service
-### Egov Access Control Service
+### Access Control Service
 DIGIT is API based Platform here each api is denoting to a DIGIT resource.
 Access Control Service(ACS) main job is to Authorize end user based on their roles and provide access of the DIGIT platform resources.
 
@@ -12,7 +12,7 @@ Access Control Service(ACS) main job is to Authorize end user based on their rol
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-accesscontrol/contracts/v1-0-1.yml#!/) for access control service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/accesscontrol/contracts/v1-0-1.yml#!/) for access control service to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 
