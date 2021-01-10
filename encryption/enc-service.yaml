@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: eGov Encryption Service
+  title: Encryption Service
   description: API for encryption / decryption
   contact:
     name: Egovernments Foundation
