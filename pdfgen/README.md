@@ -1,6 +1,6 @@
 # PDFGEN
 
-PDF service is one of the core application which is use to bulk generate the pdf as per requirement.
+PDFGEN is one of the core application which is use to bulk generate the pdf as per requirement.
 
 ### DB UML Diagram
 
@@ -11,7 +11,7 @@ PDF service is one of the core application which is use to bulk generate the pdf
 - filestore
 
 ### Swagger API Contract
-Please refer to the  below Swagger API contarct for PDF service to understand the structure of APIs and to have visualization of all internal APIs [Swagger API contract](https://app.swaggerhub.com/apis/eGovernment/pdf-service_ap_is/1.1.0)
+Please refer to the  below Swagger API contarct for PDFGEN to understand the structure of APIs and to have visualization of all internal APIs [Swagger API contract](https://app.swaggerhub.com/apis/eGovernment/pdf-service_ap_is/1.1.0)
 
 
 ## Service Details
@@ -37,7 +37,7 @@ Please refer to the  below Swagger API contarct for PDF service to understand th
 [Mustache.js](https://github.com/janl/mustache.js/ ):- As templating engine to populate format as defined in format config, from request json based on mappings defined in data config
 
 ### Configuration
-PDF service use two config files for a pdf generation as per requirement
+PDFGEN use two config files for a pdf generation as per requirement
 - Format Config File: It define format as per PDFMake syntax of pdf [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdfgen/format-config/tl-receipt.json).
 - Data Config File : It use to fill format of pdf to prepare final object which will go to PDFMake and will be converted into PDF [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdfgen/data-config/tl-receipt.json).
 
