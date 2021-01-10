@@ -1,4 +1,4 @@
-# eGov Encryption Service
+# Encryption Service
 
 Encryption Service is used to secure the data. It provides functionality to encrypt and decrypt data
 
