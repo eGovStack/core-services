@@ -53,7 +53,7 @@ const envVariables = {
     userLoginAuthorizationHeader: process.env.USER_LOGIN_AUTHORIZATION_HEADER || 'Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0',
 
     billServiceHost: process.env.BILL_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
-    billServiceSearchPath: process.env.BILL_SERVICE_SEARCH_PATH || 'billing-service/bill/v2/_search',
+    billServiceSearchPath: process.env.BILL_SERVICE_SEARCH_PATH || 'billing-service/bill/v2/_fetchbill',
     billSearchLimit: process.env.BILL_SEARCH_LIMIT || 5,
 
     googleAPIKey: process.env.GOOGLE_MAPS_API_KEY || '',
