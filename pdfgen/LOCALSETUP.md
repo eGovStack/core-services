@@ -26,7 +26,7 @@ To setup the PDFGEN in your local system, clone the [Core Service repository](ht
 
 4. Open the terminal and run the following command
 
-    `cd [filepath to pdf service]`
+    `cd [filepath to pdfgen]`
                                                       
     `npm install`             (run this command only once when you clone the repo)
                                                                                                                                                  
