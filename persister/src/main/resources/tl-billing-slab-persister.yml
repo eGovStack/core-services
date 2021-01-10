@@ -1,5 +1,5 @@
 serviceMaps:
- serviceName: TL Calculator
+ serviceName: Tradelicense Calculator
  mappings:
  - version: 1.0
    name: tradelicense-calculator
