@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: eGov Workflow Engine.
+  title: Workflow Engine.
   description: |
     APIs for Workflow engine. This modules handles Below functionality. 
     1. Start workflow 
