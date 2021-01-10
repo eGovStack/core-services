@@ -262,7 +262,8 @@ class BillService {
     
     let response = await fetch(billUrl, options);
     let results,totalBillSize=0,pendingBillSize=0;
-    if(response.status === 201) {
+
+    if(response.status === 200 || response.status === 201) {
       let responseBody = await response.json();
       results=await this.prepareBillResult(responseBody);
       totalBillSize=responseBody.Bill.length;
@@ -323,14 +324,34 @@ class BillService {
         user.paramInput = user.mobileNumber;
       }
       let results = await self.searchBillsForUser(user);
-      
-      if(results.hasOwnProperty('totalBills') && results.hasOwnProperty('pendingBills') && results.totalBills !=0 && results.pendingBills)
+      if(results.totalBills !=0 && results.pendingBills){
         billResults.pendingBills = billResults.pendingBills.concat(results.pendingBills);
         billResults.totalBills = billResults.totalBills + results.totalBills;
       }
+    }  
+    
+    if(billResults.totalBills === 0 ||  billResults.pendingBills.length === 0){
+      return {                        
+        totalBills: 0,
+        pendingBills: undefined
+      }
       
-      return billResults;
+    }
 
+    let finalResult = [];
+    let billLimit = config.billSearchLimit;
+
+    if(billResults.pendingBills.length < billLimit)
+      billLimit = billResults.pendingBills.length;
+
+    for(var i=0; i<billLimit; i++)
+      finalResult = finalResult.concat(billResults.pendingBills[i]); 
+
+
+      return {
+        pendingBills: finalResult,      // Pending bills exist
+        totalBills: billLimit
+      }
   }
 
   async fetchBillsForParam(user, service, paramOption, paramInput) {

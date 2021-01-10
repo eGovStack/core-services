@@ -745,7 +745,7 @@ let messages = {
   },
   paramInput: {
     question: {
-      en_IN: 'Please Enter {{option}} to view the bill. {{example}}\n\nOr Type and send "mseva" to Go ⬅️ Back to main menu.'
+      en_IN: 'Please Enter {{option}} to view the payment receipts. {{example}}\n\nOr Type and send "mseva" to Go ⬅️ Back to main menu.'
     },
     re_enter: {
       en_IN: 'Sorry, the value you have provided is incorrect.\nPlease re-enter the {{option}} again to fetch the bills.\n\nOr Type and send \'mseva\' to Go ⬅️ Back to main menu.'

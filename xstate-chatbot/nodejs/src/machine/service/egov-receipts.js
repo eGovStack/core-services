@@ -5,7 +5,7 @@ const moment = require("moment-timezone");
 class ReceiptService {
 
     getSupportedServicesAndMessageBundle() {
-        let services = [ 'WS', 'PT', 'TL', 'FNOC', 'BPA' ];
+        let services = [ 'WS', 'PT', 'TL', 'FIRENOC', 'BPA' ];
         let messageBundle = {
           WS: {
             en_IN: 'Water and Sewerage Bill'
@@ -16,7 +16,7 @@ class ReceiptService {
           TL: {
             en_IN: 'Trade License Fees'
           },
-          FNOC: {
+          FIRENOC: {
             en_IN: 'Fire NOC Fees'
           },
           BPA: {
@@ -60,7 +60,7 @@ class ReceiptService {
         else if(service === 'TL') {
           searchOptions = [ 'mobile', 'tlApplicationNumber' ];
         } 
-        else if(service === 'FNOC') {
+        else if(service === 'FIRENOC') {
           searchOptions = [ 'mobile', 'nocApplicationNumber' ];
         } 
         else if(service === 'BPA') {
@@ -137,12 +137,42 @@ class ReceiptService {
       
       return { option, example };
     }
+    
     validateparamInput(service, searchParamOption, paramInput) {
-        if(searchParamOption === 'mobile') {
-          let regexp = new RegExp('^[0-9]{10}$');
-          return regexp.test(paramInput)
+
+      if(searchParamOption === 'mobile') {
+        let regexp = new RegExp('^[0-9]{10}$');
+        return regexp.test(paramInput)
+      }
+
+      if(searchParamOption === 'consumerNumber' || searchParamOption === 'propertyId' || searchParamOption === 'connectionNumber'){
+        if(service === 'PT'){
+          let regexp = new RegExp(state+'-PT-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+          return regexp.test(paramInput);
         }
-        return true;
+        if(service === 'WS'){
+          //todo
+          let regexp = new RegExp('WS/\\d{3}/\\d{4}-\\d{2}/\\d+$');
+          return regexp.test(paramInput);
+        }
+      }
+    
+
+      if(searchParamOption === 'tlApplicationNumber'){
+        let regexp = new RegExp(state+'-TL-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+        return regexp.test(paramInput);
+      }
+
+      if(searchParamOption === 'nocApplicationNumber'){
+        let regexp = new RegExp(state+'-FN-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+        return regexp.test(paramInput);
+      }
+
+      if(searchParamOption === 'bpaApplicationNumber'){
+        let regexp = new RegExp(state+'-BP-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+        return regexp.test(paramInput);
+      }
+      return true;
     }    
 
     async preparePaymentResult(responseBody,isMultipleRecords){
@@ -226,7 +256,7 @@ class ReceiptService {
         let responseBody = await response.json();
         results=await this.preparePaymentResult(responseBody,false);
       } else {
-        console.error('Error in fetching the bill');
+        console.error('Error in fetching the payment data');
         return [];
       }
       
@@ -302,7 +332,7 @@ class ReceiptService {
         let responseBody = await response.json();
         results=await this.preparePaymentResult(responseBody,true);
       } else {
-        console.error('Error in fetching the bill');
+        console.error('Error in fetching the payment data');
         return undefined;
       }
 
