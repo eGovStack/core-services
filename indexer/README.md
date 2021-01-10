@@ -1,4 +1,4 @@
-# Egov indexer service
+# indexer service
 
 <p>indexer service runs as a seperate service, This service is designed to perform all the indexing tasks of the egov platform. The service reads records posted on specific kafka topics and picks the corresponding index configuration from the yaml file provided by the respective module. </p>
 
@@ -17,7 +17,7 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/cor
 
 ## Service Details
 
-Egov indexer service is used in egov platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
+indexer service is used in egov platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
 - Multiple indexes of a record posted on a single topic
 - Provision for custom index id
 - Performs both bulk and non-bulk indexing
@@ -25,7 +25,7 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - Performs ES down handling
 
 #### Configurations
-ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property.yml
+ex:- https://raw.githubusercontent.com/egovernments/configs/master/indexer/property.yml
 
 The different fields used in index config are following:-
 - mappings: List of mappings between topic name and respective index configurations.
