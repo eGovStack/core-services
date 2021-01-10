@@ -41,7 +41,7 @@ Config:
 
          The searcher yaml can be referred from the below link:
 
-            https://github.com/egovernments/configs/blob/master/egov-searcher/localitySearcher.yml
+            https://github.com/egovernments/configs/blob/master/searcher/localitySearcher.yml
 
 
     BusinessService:
