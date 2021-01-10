@@ -232,7 +232,7 @@ class BillService {
       }
     };
 
-    let billUrl = config.billServiceHost + config.billServiceSearchPath;
+    let billUrl = config.externalHost + config.billServiceSearchPath;
     billUrl = billUrl + '?tenantId=' + config.rootTenantId;
     
 
@@ -263,7 +263,7 @@ class BillService {
     let response = await fetch(billUrl, options);
     let results,totalBillSize=0,pendingBillSize=0;
 
-    if(response.status === 200 || response.status === 201) {
+    if(response.status === 201) {
       let responseBody = await response.json();
       results=await this.prepareBillResult(responseBody);
       totalBillSize=responseBody.Bill.length;
