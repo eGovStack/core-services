@@ -9,7 +9,7 @@ User-OTP service handles the OTP for user registration, user login and password 
 ### Service Dependencies
 - user
 - localization
-- egov-otp
+- otp
 
 ### Swagger API Contract
 - NA

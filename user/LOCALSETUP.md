@@ -21,7 +21,7 @@ To setup the user service in your local system, clone the [Core Service reposito
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
 kubectl port-forward -n egov $(kgpt encryption) 8087:8080 &
 kubectl port-forward -n egov $(kgpt mdms) 8088:8080 &
-kubectl port-forward -n egov $(kgpt egov-otp) 8089:8080
+kubectl port-forward -n egov $(kgpt otp) 8089:8080
 ```
 
 - Run redis on port 6379

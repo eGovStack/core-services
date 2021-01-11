@@ -1,5 +1,5 @@
 
-# egov-otp Service
+# otp Service
 
 OTP Service is a core service that is available on the DIGIT platform.  The service is used to authenticate the user in the platform.
 The functionality is exposed via REST API.
@@ -22,21 +22,21 @@ The functionality is exposed via REST API.
 
 Link to the swagger API contract yaml and editor link like below
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-otp/contract/v1-0-0.yml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/otp/contract/v1-0-0.yml#!/
 
 
 
 ## Service Details
 
-egov-otp is being called internally by user-otp service which fetches mobileNumber and feeds to egov-otp to generate 'n' digit OTP. 
+otp is being called internally by user-otp service which fetches mobileNumber and feeds to otp to generate 'n' digit OTP. 
 
 
 
 ### API Details
 
-`BasePath` /egov-otp/v1
+`BasePath` /otp/v1
 
-Egov-otp service APIs - contains create, validate and search end point
+otp service APIs - contains create, validate and search end point
 
 a) `POST /otp/v1/_create`   - create OTP Configuration this API is internal call from v1/_send end point, this end point present in user-otp service no need of explicity call
 

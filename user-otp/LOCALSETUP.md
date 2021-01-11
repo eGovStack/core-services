@@ -21,7 +21,7 @@ To run the user-otp service in your local system, you need to port forward below
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
 kubectl port-forward -n egov $(kgpt localization) 8087:8080
 kubectl port-forward -n egov $(kgpt user) 8088:8080
-kubectl port-forward -n egov $(kgpt egov-otp) 8089:8080
+kubectl port-forward -n egov $(kgpt otp) 8089:8080
 ``` 
 
 Update below listed properties in **`application.properties`** before running the project:
@@ -30,7 +30,7 @@ Update below listed properties in **`application.properties`** before running th
 #{user service hostname}
 user.host = http://127.0.0.1:8088
 
-# {egov-otp service hostname}
+# {otp service hostname}
 otp.host = http://127.0.0.1:8089
 
 # {egov-localisation service hostname}

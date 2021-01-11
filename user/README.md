@@ -10,7 +10,7 @@
 
 - mdms
 - encryption
-- egov-otp
+- otp
 - filestore
 
 

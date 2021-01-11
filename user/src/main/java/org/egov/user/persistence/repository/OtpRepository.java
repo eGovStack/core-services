@@ -31,7 +31,7 @@ public class OtpRepository {
     }
 
     /**
-     * rest-call to egov-otp to check otp validation is complete or not.
+     * rest-call to otp to check otp validation is complete or not.
      *
      * @param request
      * @return
@@ -45,7 +45,7 @@ public class OtpRepository {
 
 
     /**
-     * rest call to egov-otp to validate the otp.
+     * rest call to otp to validate the otp.
      *
      * @param request
      * @return

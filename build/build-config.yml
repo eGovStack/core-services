@@ -96,13 +96,13 @@ config:
         image-name: "sms-notification"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-otp"
+  - name: "builds/core-services/otp"
     build:
-      - work-dir: "egov-otp"
-        image-name: "egov-otp"
+      - work-dir: "otp"
+        image-name: "otp"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-otp/src/main/resources/db"
-        image-name: "egov-otp-db"
+      - work-dir: "otp/src/main/resources/db"
+        image-name: "otp-db"
 
   - name: "builds/core-services/persister"
     build:
