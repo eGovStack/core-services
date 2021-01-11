@@ -13,7 +13,7 @@ public class CollectionsRepositoryTest {
 
     @Test
     public void name() {
-        String url = "http://egov-micro-dev.egovernments.org/collection-services/receipts/_search?tenantId=default&transactionId=DEFA1624961312";
+        String url = "http://egov-micro-dev.egovernments.org/collection/receipts/_search?tenantId=default&transactionId=DEFA1624961312";
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setTs(0L);
         requestInfo.setApiId("org.egov.pgr");

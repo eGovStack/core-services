@@ -56,7 +56,7 @@
           "tenantIdPaths": [
             "$.ReceiptWorkflow.*.tenantId"
           ],
-          "url": "http://collection-services:8080/collection-services/receipts/_workflow",
+          "url": "http://collection:8080/collection/receipts/_workflow",
           "additionalResFields": {
             "$.ReceiptWorkflow.*.code[0]": "Response"
           }
