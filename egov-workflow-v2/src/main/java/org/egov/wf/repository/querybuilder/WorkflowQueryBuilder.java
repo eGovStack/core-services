@@ -36,20 +36,7 @@ public class WorkflowQueryBuilder {
 
     private static final String WITH_CLAUSE = " select id from eg_wf_processinstance_v2 pi_outer WHERE " ;
 
-    /*
-     * ORDER BY class for wf last modified time added to make search result in desc
-     * order
-     */
-    /*
-     * private static final String STATE_JOIN_QUERY = INNER_JOIN +
-     * " eg_wf_state_v2 st ON st.uuid = fp.pi_status " + LEFT_OUTER_JOIN +
-     * " eg_wf_action_v2 ac ON ac.currentState = st.uuid";
-     *
-     * private static final String OUTER_QUERY =
-     * "SELECT fp.*,st.*,ac.*, st.uuid as st_uuid,st.tenantId as st_tenantId,"+
-     * " ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action FROM ( "
-     * ;
-     */
+
 
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY wf_createdTime DESC,wf_id) offset_ FROM " + "({})"
@@ -61,24 +48,7 @@ public class WorkflowQueryBuilder {
 
     private static final String COUNT_WRAPPER = "select count(DISTINCT wf_id) from ({INTERNAL_QUERY}) as count";
 
-    /**
-     * Creates the query according to the search params
-     *
-     * @param criteria         The criteria containg fields to search on
-     * @param preparedStmtList The List of object to store the search params
-     * @return
-     */
-/*	public String getProcessInstanceSearchQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
 
-		String queryWithoutPagination = getProcessInstanceSearchQueryWithoutPagination(criteria, preparedStmtList);
-
-        String query = addPaginationWrapper(queryWithoutPagination,preparedStmtList,criteria);
-        query = query + ORDERBY_CREATEDTIME;
-
-
-        return query;
-
-    }*/
 
     private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 

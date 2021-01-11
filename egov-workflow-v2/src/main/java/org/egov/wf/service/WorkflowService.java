@@ -119,14 +119,6 @@ public class WorkflowService {
 
         return processInstances;
 
-        /*
-        List<ProcessInstance> processInstancesForAssignee = workflowRepository.getProcessInstancesForAssignee(criteria);
-        List<ProcessInstance> processInstancesForStatus = new LinkedList<>();
-        if(!config.getAssignedOnly())
-            processInstancesForStatus = workflowRepository.getProcessInstancesForStatus(criteria);
-        Set<ProcessInstance> processInstanceSet = new LinkedHashSet<>(processInstancesForStatus);
-        processInstanceSet.addAll(processInstancesForAssignee);
-        return new LinkedList<>(processInstanceSet);*/
     }
 
 
