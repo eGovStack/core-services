@@ -5,8 +5,6 @@ import { Chat } from '@progress/kendo-react-conversational-ui';
 import { interpret } from 'xstate';
 import chatbotMachine from '../../nodejs/src/machine/seva';
 
-import * as marked from 'marked';
-
 function MessageTemplate(props) {
     let message = props.item.text;
     // console.log(message);
@@ -36,9 +34,10 @@ class App extends React.Component {
     componentDidMount() {
         this.chatbotService = interpret(chatbotMachine.withContext ({  
             chatInterface: this,
-            user: {
-                mobileNumber: "9284726483",
-                uuid: "81528b1a-5795-43a7-a6e2-8c64ff145c3d",
+            user: {"authToken":"xxxxx","refreshToken":"yyyyy","userInfo":{"id":24,"uuid":"xxxxx","userName":"9123123123","name":"John Doe","mobileNumber":"9123123123","emailId":"abcd@gmail.com","locale":"en_IN","type":"CITIZEN","roles":[{"name":"Citizen","code":"CITIZEN","tenantId":"pb"}],"active":true,"tenantId":"pb"},"userId":"xxxxx","mobileNumber":"9123123123","name":"John Doe","locale":"en_IN"},
+            extraInfo: {
+                tenantId: 'pb',
+                whatsAppBusinessNumber: "917834811114"
             },
             slots: {pgr: {}, bills: {}, receipts: {}}
         }));
