@@ -133,14 +133,14 @@ ServiceMaps:
         - inJsonPath: $.@timestamp
           outJsonPath: $.Data.@timestamp
         externalUriMapping:
-        - path: http://egov-hrms.egov:8080/egov-hrms/employees/_search
+        - path: http://hrms.egov:8080/hrms/employees/_search
           queryParam: tenantId=$.tenantId,ids=$.assignee
           apiRequest: {"RequestInfo": {"apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654", "requesterId": "61",
           "authToken": "750d4aa9-2436-4bc4-a8f4-3796e3bfd465","userInfo":{"id":73}}}
           uriResponseMapping:
           - inJsonPath: $.Employees[0].user.name
             outJsonPath: $.Data.assignee
-        - path: http://egov-hrms.egov:8080/egov-hrms/employees/_search
+        - path: http://hrms.egov:8080/hrms/employees/_search
           queryParam: tenantId=$.tenantId,ids=$.gro
           apiRequest: {"RequestInfo": {"apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654", "requesterId": "61",
           "authToken": "750d4aa9-2436-4bc4-a8f4-3796e3bfd465","userInfo":{"id":73}}}
@@ -246,21 +246,21 @@ ServiceMaps:
         - inJsonPath: $.@timestamp
           outJsonPath: $.Data.@timestamp
         externalUriMapping:
-        - path: http://egov-hrms.egov:8080/egov-hrms/employees/_search
+        - path: http://hrms.egov:8080/hrms/employees/_search
           queryParam: tenantId=$.tenantId,id=$.assignee
           apiRequest: {"RequestInfo": {"apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654", "requesterId": "61",
           "authToken": "750d4aa9-2436-4bc4-a8f4-3796e3bfd465","userInfo":{"id":73}}}
           uriResponseMapping:
           - inJsonPath: $.Employee[0].name
             outJsonPath: $.Data.assignee
-        - path: http://egov-hrms.egov:8080/egov-hrms/employees/_search
+        - path: http://hrms.egov:8080/hrms/employees/_search
           queryParam: tenantId=$.tenantId,ids=$.assignee
           apiRequest: {"RequestInfo": {"apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654", "requesterId": "61",
           "authToken": "750d4aa9-2436-4bc4-a8f4-3796e3bfd465","userInfo":{"id":73}}}
           uriResponseMapping:
           - inJsonPath: $.Employees[0].user.name
             outJsonPath: $.Data.assignee
-        - path: http://egov-hrms.egov:8080/egov-hrms/employees/_search
+        - path: http://hrms.egov:8080/hrms/employees/_search
           queryParam: tenantId=$.tenantId,ids=$.gro
           apiRequest: {"RequestInfo": {"apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654", "requesterId": "61",
           "authToken": "750d4aa9-2436-4bc4-a8f4-3796e3bfd465","userInfo":{"id":73}}}
