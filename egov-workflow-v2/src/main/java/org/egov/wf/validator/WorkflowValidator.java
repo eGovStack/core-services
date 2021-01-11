@@ -151,8 +151,10 @@ public class WorkflowValidator {
                 isAssigneeUserInfo = processStateAndAction.getProcessInstanceFromDb().getAssignes().stream().map(User::getUuid).collect(Collectors.toList())
                         .contains(requestInfo.getUserInfo().getUuid());
             }
-            if(!isStateChanging && !isAssigneeUserInfo && !isRoleAvailableForTransition)
-                throw new CustomException("INVALID MARK ACTION","The processInstanceFromRequest cannot be marked by the user");
+
+            // FIX ME
+            /*if(!isStateChanging && !isAssigneeUserInfo && !isRoleAvailableForTransition)
+                throw new CustomException("INVALID MARK ACTION","The processInstanceFromRequest cannot be marked by the user");*/
 
             /**
              * Checks if in case of action causing transition the assignee has role that can take some action
