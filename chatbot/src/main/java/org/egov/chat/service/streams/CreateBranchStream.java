@@ -60,10 +60,16 @@ public class CreateBranchStream extends CreateStream {
                 EgovChatSerdes.getSerde()));
         KStream<String, EgovChat>[] kStreamBranches = answerKStream.branch(predicates.toArray(new Predicate[predicates.size()]));
 
-        kStreamBranches[0].mapValues(chatNode -> {
-            chatNode.setAddErrorMessage(true);
-            answerStore.saveAnswer(config, chatNode);
-            return chatNode;
+        kStreamBranches[0].flatMapValues(chatNode -> {
+            try {
+                chatNode.setAddErrorMessage(true);
+                answerStore.saveAnswer(config, chatNode);
+                return Collections.singletonList(chatNode);
+            } catch (Exception e) {
+                log.error("error in branch stream", e);
+                commonAPIErrorMessage.resetFlowDuetoError(chatNode);
+                return Collections.emptyList();
+            }
         }).to(questionTopic, Produced.with(Serdes.String(), EgovChatSerdes.getSerde()));
 
         for (int i = 1; i < kStreamBranches.length; i++) {
