@@ -47,7 +47,7 @@ public class IndexerUtils {
 
 	private Version defaultSemVer;
 
-	@Value("${default.version}")
+	@Value("${default.service.map.version}")
 	private String defaultVersion;
 
 
