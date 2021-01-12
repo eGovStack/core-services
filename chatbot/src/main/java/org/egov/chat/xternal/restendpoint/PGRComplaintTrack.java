@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,7 +71,10 @@ public class PGRComplaintTrack implements RestEndpoint {
         request.set("$.RequestInfo.authToken", authToken);
         request.set("$.RequestInfo.userInfo", userInfo.json());
 
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(pgrHost + pgrSearchComplaintPath);
+        URL baseUrl = new URL(pgrHost);
+        URL relativeUrl = new URL( baseUrl, pgrSearchComplaintPath);
+
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(relativeUrl.toString());
         uriComponents.queryParam("limit", numberOfRecentComplaints);
         uriComponents.queryParam("applicationStatus", pgrShowComplaintForStatusArray);
         JsonNode requestObject = objectMapper.readTree(request.jsonString());
