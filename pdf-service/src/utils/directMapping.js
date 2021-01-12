@@ -1,6 +1,7 @@
 import get from "lodash/get";
 import logger from "../config/logger";
 import axios from "axios";
+import envVariables from "../EnvironmentVariables";
 import {
   findAndUpdateLocalisation,
   getDateInRequiredFormat,
@@ -9,6 +10,7 @@ import {
 
 var jp = require("jsonpath");
 
+let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 /**
  *
  * @param {*} req - current module object, picked from request body
@@ -17,6 +19,14 @@ var jp = require("jsonpath");
  * @param {*} localisationMap - Map to store localisation key, value pair
  * @param {*} requestInfo - request info from request body
  */
+
+function escapeRegex(string) {
+  if(typeof string == "string")
+  return string.replace(/[\\"]/g, '\\$&'); 
+   else
+    return string;
+  }
+
 export const directMapping = async (
   req,
   dataconfig,
@@ -67,7 +77,11 @@ export const directMapping = async (
         directArr[i].valJsonPath
       );
       variableTovalueMap[directArr[i].jPath] = directArr[i].val;
-    } else if (directArr[i].type == "function") {
+    } 
+    else if (directArr[i].type == "external_host") {
+      variableTovalueMap[directArr[i].jPath] = externalHost;
+    }
+    else if (directArr[i].type == "function") {
       var fun = Function("type", directArr[i].format);
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
@@ -100,14 +114,15 @@ export const directMapping = async (
         let ownerObject = {};
         for (let k = 0; k < scema.length; k++) {
           let fieldValue = get(val[j], scema[k].value, "NA");
+          fieldValue = fieldValue == null ? "NA" : fieldValue;
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
-              ownerObject[scema[k].key] = "NA";
+              ownerObject[scema[k].variable] = "NA";
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue);
+              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
-              ownerObject[scema[k].key] = replaceValue;
+              ownerObject[scema[k].variable] = replaceValue;
             }
           } else {
             if (
@@ -129,7 +144,12 @@ export const directMapping = async (
                 loc.delimiter
               );
             }
-            ownerObject[scema[k].variable] = fieldValue;
+            let currentValue = fieldValue;
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+
+          currentValue= escapeRegex(currentValue);
+          ownerObject[scema[k].variable] = currentValue;
           }
           // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));
           // x += 2;
@@ -153,13 +173,14 @@ export const directMapping = async (
       for (let j = 0; j < val.length; j++) {
         let arrayOfItems = [];
         for (let k = 0; k < scema.length; k++) {
-          let fieldValue = get(val[j], scema[k].key, "NA");
+          let fieldValue = get(val[j], scema[k].value, "NA");
+          fieldValue = fieldValue == null ? "NA" : fieldValue;
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
               arrayOfItems.push("NA");
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue);
+              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               arrayOfItems.push(replaceValue);
             }
@@ -238,7 +259,7 @@ export const directMapping = async (
       if (isNaN(myDate) || directArr[i].val[0] === 0) {
         variableTovalueMap[directArr[i].jPath] = "NA";
       } else {
-        let replaceValue = getDateInRequiredFormat(directArr[i].val[0]);
+        let replaceValue = getDateInRequiredFormat(directArr[i].val[0],directArr[i].format);
         variableTovalueMap[directArr[i].jPath] = replaceValue;
       }
     } else {
@@ -267,7 +288,15 @@ export const directMapping = async (
           directArr[i].localisation.isSubTypeRequired,
           directArr[i].localisation.delimiter
         );
-      else variableTovalueMap[directArr[i].jPath] = directArr[i].val;
+      else{
+        let currentValue = directArr[i].val;
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+          
+         // currentValue=currentValue.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+        currentValue= escapeRegex(currentValue);
+        variableTovalueMap[directArr[i].jPath] = currentValue;
+      } 
       if (directArr[i].uCaseNeeded) {
         let currentValue = variableTovalueMap[directArr[i].jPath];
         if (typeof currentValue == "object" && currentValue.length > 0)

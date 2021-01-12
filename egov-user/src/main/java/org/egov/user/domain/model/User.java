@@ -1,40 +1,61 @@
 package org.egov.user.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.lang3.time.DateUtils;
+import org.egov.user.config.*;
 import org.egov.user.domain.exception.InvalidUserCreateException;
 import org.egov.user.domain.exception.InvalidUserUpdateException;
 import org.egov.user.domain.model.enums.BloodGroup;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Builder(toBuilder = true)
 public class User {
 
     private Long id;
     private String uuid;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_TENANT)
+    @Size(max = 50)
     private String tenantId;
     private String username;
     private String title;
     private String password;
     private String salutation;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     private String guardian;
+
     private GuardianRelation guardianRelation;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
+    @Size(max = 50)
     private String name;
     private Gender gender;
     private String mobileNumber;
+
+    @Email
     private String emailId;
     private String altContactNumber;
     private String pan;
@@ -80,8 +101,12 @@ public class User {
     }
 
     public void validateNewUser() {
+        validateNewUser(true);
+    }
+
+    public void validateNewUser(boolean createUserValidateName) {
         if (isUsernameAbsent()
-                || isNameAbsent()
+                || (createUserValidateName && isNameAbsent())
                 || isMobileNumberAbsent()
                 || isActiveIndicatorAbsent()
                 || isTypeAbsent()
@@ -103,50 +128,62 @@ public class User {
         }
     }
 
+    @JsonIgnore
     public boolean isCorrespondenceAddressInvalid() {
         return correspondenceAddress != null && correspondenceAddress.isInvalid();
     }
 
+    @JsonIgnore
     public boolean isPermanentAddressInvalid() {
         return permanentAddress != null && permanentAddress.isInvalid();
     }
 
+    @JsonIgnore
     public boolean isOtpReferenceAbsent() {
         return otpValidationMandatory && isEmpty(otpReference);
     }
 
+    @JsonIgnore
     public boolean isTypeAbsent() {
         return isEmpty(type);
     }
 
+    @JsonIgnore
     public boolean isActiveIndicatorAbsent() {
         return isEmpty(active);
     }
 
+    @JsonIgnore
     public boolean isMobileNumberAbsent() {
         return mobileValidationMandatory && isEmpty(mobileNumber);
     }
 
+    @JsonIgnore
     public boolean isNameAbsent() {
         return isEmpty(name);
     }
 
+    @JsonIgnore
     public boolean isUsernameAbsent() {
         return isEmpty(username);
     }
 
+    @JsonIgnore
     public boolean isTenantIdAbsent() {
         return isEmpty(tenantId);
     }
 
+    @JsonIgnore
     public boolean isPasswordAbsent() {
         return isEmpty(password);
     }
 
+    @JsonIgnore
     public boolean isRolesAbsent() {
         return CollectionUtils.isEmpty(roles) || roles.stream().anyMatch(r -> isEmpty(r.getCode()));
     }
 
+    @JsonIgnore
     public boolean isIdAbsent() {
         return id == null;
     }
@@ -162,6 +199,7 @@ public class User {
         accountLockedDate = null;
     }
 
+    @JsonIgnore
     public boolean isLoggedInUserDifferentFromUpdatedUser() {
         return !id.equals(loggedInUserId);
     }
@@ -175,6 +213,7 @@ public class User {
         password = newPassword;
     }
 
+    @JsonIgnore
     public OtpValidationRequest getOtpValidationRequest() {
         return OtpValidationRequest.builder()
                 .mobileNumber(mobileNumber)
@@ -183,6 +222,7 @@ public class User {
                 .build();
     }
 
+    @JsonIgnore
     public List<Address> getPermanentAndCorrespondenceAddresses() {
         final ArrayList<Address> addresses = new ArrayList<>();
         if (correspondenceAddress != null && correspondenceAddress.isNotEmpty()) {

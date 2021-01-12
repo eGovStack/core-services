@@ -37,7 +37,10 @@ public class PGRCustomDecorator {
 	
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
+	@Value("${egov.statelevel.tenantId}")
+	private  String stateLevelTenantId ;
+
 	/**
 	 * Builds a custom object for PGR that is common for core index and legacy index,
 	 * 
@@ -45,9 +48,9 @@ public class PGRCustomDecorator {
 	 * @return
 	 */
 	public PGRIndexObject dataTransformationForPGR(ServiceResponse serviceResponse) {
-		PGRIndexObject indexObject = new PGRIndexObject();
+		PGRIndexObject pgrIndexObject = new PGRIndexObject();
 		ObjectMapper mapper = indexerUtils.getObjectMapper();
-		List<ServiceIndexObject> indexObjects = new ArrayList<>();
+		List<ServiceIndexObject> serviceIndexObjects = new ArrayList<>();
 		for(int i = 0; i < serviceResponse.getServices().size(); i++) {
 			ServiceIndexObject object = new ServiceIndexObject();
 			object = mapper.convertValue(serviceResponse.getServices().get(i), ServiceIndexObject.class);
@@ -67,10 +70,10 @@ public class PGRCustomDecorator {
 			}
 			object.setDepartment(getDepartment(serviceResponse.getServices().get(i)));
 			object.setComplaintCategory(indexerUtils.splitCamelCase(serviceResponse.getServices().get(i).getServiceCode()));
-			indexObjects.add(object);
+			serviceIndexObjects.add(object);
 		}
-		indexObject.setServiceRequests(indexObjects);
-		return indexObject;
+		pgrIndexObject.setServiceRequests(serviceIndexObjects);
+		return pgrIndexObject;
 	}
 	
 	/**
@@ -81,7 +84,7 @@ public class PGRCustomDecorator {
 	 */
 	public String getDepartment(Service service) {
 		StringBuilder uri = new StringBuilder();
-		MdmsCriteriaReq request = prepareMdMsRequestForDept(uri, "pb", service.getServiceCode(), new RequestInfo());
+		MdmsCriteriaReq request = prepareMdMsRequestForDept(uri, stateLevelTenantId, service.getServiceCode(), new RequestInfo());
 		try {
 			Object response = restTemplate.postForObject(uri.toString(), request, Map.class);
 			List<String> depts = JsonPath.read(response, "$.MdmsRes.RAINMAKER-PGR.ServiceDefs");
