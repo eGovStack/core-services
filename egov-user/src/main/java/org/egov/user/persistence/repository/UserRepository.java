@@ -257,8 +257,14 @@ public class UserRepository {
         }
         updateuserInputs.put("Guardian", user.getGuardian());
 
+        List<Enum> enumValues = Arrays.asList(GuardianRelation.values());
         if (user.getGuardianRelation() != null) {
-            if (GuardianRelation.FATHER.toString().equals(user.getGuardianRelation().toString())) {
+            if(enumValues.contains(user.getGuardianRelation()))
+                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+            else {
+                updateuserInputs.put("GuardianRelation", "");
+            }
+            /*if (GuardianRelation.FATHER.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
             } else if (GuardianRelation.MOTHER.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
@@ -268,7 +274,7 @@ public class UserRepository {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
             } else {
                 updateuserInputs.put("GuardianRelation", "");
-            }
+            }*/
         } else {
             updateuserInputs.put("GuardianRelation", "");
         }
@@ -520,7 +526,16 @@ public class UserRepository {
             userInputs.put("type", "");
         }
 
+        List<Enum> enumValues = Arrays.asList(GuardianRelation.values());
         userInputs.put("guardian", entityUser.getGuardian());
+        if (entityUser.getGuardianRelation() != null) {
+            if (enumValues.contains(entityUser.getGuardianRelation()))
+                userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
+            else {
+                userInputs.put("guardianrelation", "");
+            }
+        }
+        /*userInputs.put("guardian", entityUser.getGuardian());
         if (GuardianRelation.FATHER.equals(entityUser.getGuardianRelation())) {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
         } else if (GuardianRelation.MOTHER.equals(entityUser.getGuardianRelation())) {
@@ -531,7 +546,7 @@ public class UserRepository {
             userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
         } else {
             userInputs.put("guardianrelation", "");
-        }
+        }*/
         userInputs.put("signature", entityUser.getSignature());
         userInputs.put("accountlocked", entityUser.getAccountLocked());
         if (BloodGroup.A_NEGATIVE.equals(entityUser.getBloodGroup())) {
