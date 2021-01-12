@@ -1,13 +1,36 @@
-const config = require('../env-variables');
-const localisationService = require('../machine/util/localisation-service');
+const config = require('../../env-variables');
+const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
-const valueFirst = require('./value-first');
+const valueFirst = require('../../channel/value-first');        // TODO: import channel
 const fetch = require("node-fetch");
-const { complaintSearchLimit } = require('../env-variables');
+const { complaintSearchLimit } = require('../../env-variables');
+
+const consumerGroup = require('../../session/kafka/kafka-consumer');
+
+const kafka = require('kafka-node');
 
 let citizenKeywordLocalization = "chatbot.template.citizen";
 let localisationPrefix = 'SERVICEDEFS.';
 class PGRStatusUpdateEventFormatter{
+
+    constructor() {
+        let self = this;
+        consumerGroup.addTopics(config.pgrUpdateTopic, function(err, added) {
+            console.log(added);
+            consumerGroup.on('message', function(message) {
+                if(message.topic === config.pgrUpdateTopic) {
+                    self.templateMessgae(JSON.parse(message.value))
+                    .then(() => {
+                        console.log("template message sent to citizen");        // TODO: Logs to be removed
+                    })
+                    .catch(error => {
+                        console.error('error while sending event message');
+                        console.error(error.stack || error);
+                    });
+                }
+            });
+        });
+    }
 
     async templateMessgae(request){
         let serviceWrappers = request.ServiceWrappers;
@@ -72,7 +95,7 @@ class PGRStatusUpdateEventFormatter{
             }
         }
 
-        await valueFirst.getTransformMessageForTemplate(reformattedMessage);
+        await valueFirst.getTransformMessageForTemplate(reformattedMessage);        // TODO: Use channel.sendMessageToUser()
 
     }
 
@@ -306,4 +329,7 @@ class PGRStatusUpdateEventFormatter{
     }
 
 }
-module.exports = new  PGRStatusUpdateEventFormatter();
+
+let pgrStatusUpdateEvents = new PGRStatusUpdateEventFormatter();
+
+module.exports = pgrStatusUpdateEvents;

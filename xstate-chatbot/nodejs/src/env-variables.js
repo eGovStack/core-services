@@ -23,6 +23,8 @@ const envVariables = {
 
     kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVER || 'localhost:9092',
 
+    kafkaConsumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID || 'xstate-chatbot',
+
     chatbotTelemetryTopic: process.env.CHATBOT_TELEMETRY_TOPIC || 'chatbot-telemetry-v2',
 
     pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
@@ -36,7 +38,7 @@ const envVariables = {
 
     supportedLocales: process.env.SUPPORTED_LOCALES || 'en_IN,hi_IN',
 
-    externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-dev.egovernments.org/',
+    externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-qa.egovernments.org/',
 
     egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
 
