@@ -84,6 +84,22 @@ public class WorkflowService {
         List<ProcessStateAndAction> processStateAndActions = enrichmentService.enrichNextActionForSearch(requestInfo,processInstances);
     //    workflowValidator.validateSearch(requestInfo,processStateAndActions);
         enrichmentService.enrichAndUpdateSlaForSearch(processInstances);
+        processInstances.forEach(processInstance -> {
+            List<Action> actionsList = processInstance.getNextActions();
+            List<Action> uniqueActionList = new ArrayList<>();
+            Map<String, Action> uniqueActionsMap = new HashMap<>();
+            for(Action action : actionsList){
+                if(uniqueActionsMap.containsKey(action.getAction())){
+                    continue;
+                }else{
+                    uniqueActionsMap.put(action.getAction(), action);
+                }
+            }
+            for(String action : uniqueActionsMap.keySet()){
+                uniqueActionList.add(uniqueActionsMap.get(action));
+            }
+            processInstance.setNextActions(uniqueActionList);
+        });
         return processInstances;
     }
 
