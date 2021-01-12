@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,10 +90,11 @@ public class PGRComplaintCreate implements RestEndpoint {
         requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-        String url = pgrHost + pgrCreateComplaintPath;
-        url = url.replaceAll("(?<!http:)//", "/");
+        
+        URL baseUrl = new URL(pgrHost);
+        URL relativeUrl = new URL( baseUrl, pgrCreateComplaintPath);
 
-        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(url,
+        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(relativeUrl.toString(),
                 requestObject, ObjectNode.class);
         responseMessage = makeMessageForResponse(response, mobileNumber);
         responseMessage.put("timestamp", System.currentTimeMillis());
