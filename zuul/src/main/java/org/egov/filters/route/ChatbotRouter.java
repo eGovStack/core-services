@@ -71,16 +71,16 @@ public class ChatbotRouter extends ZuulFilter {
 
         String mobileNumber = get10DigitMobileNumber(request);
         
-        log.info("chatbot user is "+ mobileNumber);
+        log.debug("chatbot user is "+ mobileNumber);
 
         boolean isIsolatedUser = isHomeIsolatedUser(mobileNumber);
         
-        log.info("isolatedUser "+ isIsolatedUser);
+        log.debug("isolatedUser "+ isIsolatedUser);
 
         if(isIsolatedUser) {
             URL url = new URL(homeIsolationChatbotHost);
             context.setRouteHost(url);
-            log.info("Redirecting user to home isolation chatbot");
+            log.debug("Redirecting user to home isolation chatbot");
         }
 
         return null;
@@ -102,7 +102,7 @@ public class ChatbotRouter extends ZuulFilter {
         request.put("mobileNumber", mobileNumber);
         JsonNode response = restTemplate.postForObject(isolationUserServiceHost + userSearchPath, request,
             JsonNode.class);
-        log.info("user response is", response.toString());
+        log.debug("user response is", response.toString());
         
         JsonNode users = response.get("user");
        
