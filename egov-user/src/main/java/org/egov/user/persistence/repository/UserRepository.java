@@ -191,47 +191,20 @@ public class UserRepository {
         updateuserInputs.put("Active", user.getActive());
         updateuserInputs.put("AltContactNumber", user.getAltContactNumber());
 
+        List<Enum> bloodGroupEnumValues = Arrays.asList(BloodGroup.values());
         if (user.getBloodGroup() != null) {
-            if (BloodGroup.A_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
+            if (bloodGroupEnumValues.contains(user.getBloodGroup()))
                 updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.A_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.AB_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.AB_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.O_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.O_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.B_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else if (BloodGroup.B_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            } else {
+            else
                 updateuserInputs.put("BloodGroup", "");
-            }
-        } else if (oldUser != null && oldUser.getBloodGroup() != null) {
-            if (BloodGroup.A_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+        }
+        else if (oldUser != null && oldUser.getBloodGroup() != null) {
+            if (bloodGroupEnumValues.contains(oldUser.getBloodGroup()))
                 updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.A_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.AB_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.AB_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.O_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.O_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.B_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else if (BloodGroup.B_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
-                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            } else {
+            else
                 updateuserInputs.put("BloodGroup", "");
-            }
-        } else {
+        }
+        else {
             updateuserInputs.put("BloodGroup", "");
         }
 
@@ -264,17 +237,7 @@ public class UserRepository {
             else {
                 updateuserInputs.put("GuardianRelation", "");
             }
-            /*if (GuardianRelation.FATHER.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.MOTHER.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.HUSBAND.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.OTHER.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else {
-                updateuserInputs.put("GuardianRelation", "");
-            }*/
+            
         } else {
             updateuserInputs.put("GuardianRelation", "");
         }
@@ -305,21 +268,19 @@ public class UserRepository {
         updateuserInputs.put("Signature", user.getSignature());
         updateuserInputs.put("Title", user.getTitle());
 
+
+        List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
         if (user.getType() != null) {
-            if (UserType.BUSINESS.toString().equals(user.getType().toString())) {
+            if (userTypeEnumValues.contains(user.getType()))
                 updateuserInputs.put("Type", user.getType().toString());
-            } else if (UserType.CITIZEN.toString().equals(user.getType().toString())) {
-                updateuserInputs.put("Type", user.getType().toString());
-            } else if (UserType.EMPLOYEE.toString().equals(user.getType().toString())) {
-                updateuserInputs.put("Type", user.getType().toString());
-            } else if (UserType.SYSTEM.toString().equals(user.getType().toString())) {
-                updateuserInputs.put("Type", user.getType().toString());
-            } else {
+            else {
                 updateuserInputs.put("Type", "");
             }
-        } else {
-            updateuserInputs.put("Type", oldUser.getType().toString());
         }
+        else {
+            updateuserInputs.put("Type", "");
+        }
+
         updateuserInputs.put("LastModifiedDate", new Date());
         updateuserInputs.put("LastModifiedBy", 1);
 
@@ -502,6 +463,7 @@ public class UserRepository {
         userInputs.put("emailid", entityUser.getEmailId());
         userInputs.put("active", entityUser.getActive());
         userInputs.put("name", entityUser.getName());
+
         if (Gender.FEMALE.equals(entityUser.getGender())) {
             userInputs.put("gender", 1);
         } else if (Gender.MALE.equals(entityUser.getGender())) {
@@ -514,15 +476,16 @@ public class UserRepository {
 
         userInputs.put("pan", entityUser.getPan());
         userInputs.put("aadhaarnumber", entityUser.getAadhaarNumber());
-        if (UserType.BUSINESS.equals(entityUser.getType())) {
-            userInputs.put("type", entityUser.getType().toString());
-        } else if (UserType.CITIZEN.equals(entityUser.getType())) {
-            userInputs.put("type", entityUser.getType().toString());
-        } else if (UserType.EMPLOYEE.equals(entityUser.getType())) {
-            userInputs.put("type", entityUser.getType().toString());
-        } else if (UserType.SYSTEM.equals(entityUser.getType())) {
-            userInputs.put("type", entityUser.getType().toString());
-        } else {
+
+        List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
+        if (entityUser.getType() != null) {
+            if (userTypeEnumValues.contains(entityUser.getType()))
+                userInputs.put("type", entityUser.getType().toString());
+            else {
+                userInputs.put("type", "");
+            }
+        }
+        else {
             userInputs.put("type", "");
         }
 
@@ -535,35 +498,25 @@ public class UserRepository {
                 userInputs.put("guardianrelation", "");
             }
         }
-        /*userInputs.put("guardian", entityUser.getGuardian());
-        if (GuardianRelation.FATHER.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.MOTHER.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.HUSBAND.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.OTHER.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else {
+        else {
             userInputs.put("guardianrelation", "");
-        }*/
+        }
         userInputs.put("signature", entityUser.getSignature());
         userInputs.put("accountlocked", entityUser.getAccountLocked());
-        if (BloodGroup.A_NEGATIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else if (BloodGroup.A_POSITIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else if (BloodGroup.AB_NEGATIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else if (BloodGroup.AB_POSITIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else if (BloodGroup.O_NEGATIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else if (BloodGroup.O_POSITIVE.equals(entityUser.getBloodGroup())) {
-            userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
-        } else {
+
+
+        List<Enum> bloodGroupEnumValues = Arrays.asList(BloodGroup.values());
+        if(entityUser.getBloodGroup() != null){
+            if (bloodGroupEnumValues.contains(entityUser.getBloodGroup()))
+                userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
+            else {
+                userInputs.put("bloodgroup", "");
+            }
+        }
+        else {
             userInputs.put("bloodgroup", "");
         }
+
         userInputs.put("photo", entityUser.getPhoto());
         userInputs.put("identificationmark", entityUser.getIdentificationMark());
         userInputs.put("createddate", entityUser.getCreatedDate());
