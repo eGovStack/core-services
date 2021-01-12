@@ -89,7 +89,10 @@ public class PGRComplaintCreate implements RestEndpoint {
         requestObject = objectMapper.readTree(request.jsonString());
         ObjectNode responseMessage = objectMapper.createObjectNode();
         responseMessage.put("type", "text");
-        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(pgrHost + pgrCreateComplaintPath,
+        String url = pgrHost + pgrCreateComplaintPath;
+        url = url.replaceAll("(?<!http:)//", "/");
+
+        ResponseEntity<ObjectNode> response = restTemplate.postForEntity(url,
                 requestObject, ObjectNode.class);
         responseMessage = makeMessageForResponse(response, mobileNumber);
         responseMessage.put("timestamp", System.currentTimeMillis());

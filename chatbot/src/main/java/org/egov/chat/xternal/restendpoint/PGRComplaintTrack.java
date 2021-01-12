@@ -69,8 +69,10 @@ public class PGRComplaintTrack implements RestEndpoint {
         DocumentContext request = JsonPath.parse(pgrRequestBody);
         request.set("$.RequestInfo.authToken", authToken);
         request.set("$.RequestInfo.userInfo", userInfo.json());
+        String url = pgrHost + pgrSearchComplaintPath;
+        url = url.replaceAll("(?<!http:)//", "/");
 
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(pgrHost + pgrSearchComplaintPath);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(url);
         uriComponents.queryParam("limit", numberOfRecentComplaints);
         uriComponents.queryParam("applicationStatus", pgrShowComplaintForStatusArray);
         JsonNode requestObject = objectMapper.readTree(request.jsonString());
