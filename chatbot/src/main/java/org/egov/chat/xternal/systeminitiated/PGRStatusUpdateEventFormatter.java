@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import static org.egov.chat.util.ChatBotConstants.SERVICECODE_PATH;
+import static org.egov.chat.util.ChatBotConstants.SERVICEREQUESTID_PATH;
+
 @Slf4j
 @Component
 public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormatter {
@@ -46,8 +49,6 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     private LocalizationService localizationService;
     @Autowired
     private URLShorteningSevice urlShorteningSevice;
-    @Autowired
-    private ChatBotConstants chatBotConstants;
 
     private String complaintCategoryLocalizationPrefix = "pgr.complaint.category.";
 
@@ -320,8 +321,8 @@ public class PGRStatusUpdateEventFormatter implements SystemInitiatedEventFormat
     }
 
     private JsonNode responseForResolvedStatus(JsonNode event, String citizenName, String mobileNumber) throws UnsupportedEncodingException {
-        String serviceRequestId = event.at(chatBotConstants.SERVICEREQUESTID_PATH).asText();
-        String serviceCode = event.at(chatBotConstants.SERVICECODE_PATH).asText();
+        String serviceRequestId = event.at(SERVICEREQUESTID_PATH).asText();
+        String serviceCode = event.at(SERVICECODE_PATH).asText();
         ObjectNode extraInfo = objectMapper.createObjectNode();
         ArrayNode params = objectMapper.createArrayNode();
         String complaintCategory = localizationService.getMessageForCode(complaintCategoryLocalizationPrefix + serviceCode);
