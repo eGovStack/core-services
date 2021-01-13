@@ -181,10 +181,8 @@ class PGRService {
     let complaintType = slots.complaint;
     let locality = slots.locality;
     let city = slots.city;
-    let userInfo = user.userInfo;
 
     requestBody["RequestInfo"]["authToken"] = authToken;
-    requestBody["RequestInfo"]["userInfo"] = userInfo;
     requestBody["service"]["tenantId"] = city;
     requestBody["service"]["address"]["city"] = city;
     requestBody["service"]["address"]["locality"]["code"] = locality;
