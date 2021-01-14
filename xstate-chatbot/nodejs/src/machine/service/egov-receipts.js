@@ -170,6 +170,8 @@ class ReceiptService {
     }
     
     validateparamInput(service, searchParamOption, paramInput) {
+      var state=config.rootTenantId;
+      state=state.toUpperCase();
 
       if(searchParamOption === 'mobile') {
         let regexp = new RegExp('^[0-9]{10}$');
