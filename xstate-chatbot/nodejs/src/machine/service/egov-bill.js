@@ -1,6 +1,10 @@
 const config = require('../../env-variables');
 const fetch = require("node-fetch");
 const moment = require("moment-timezone");
+const localisationService = require('../util/localisation-service');
+
+let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fireNoc\",\"WS\" : \"ws-services\",\"SW\" : \"sw-services\",\"PT\" : \"PT\",\"BPA\" : \"bpa-services\"}";
+
 class BillService {
 
   constructor() {
@@ -15,47 +19,62 @@ class BillService {
     let services = this.services;
     let messageBundle = {
       WS: {
-        en_IN: 'Water and Sewerage Bill'
+        en_IN: 'Water and Sewerage Bill',
+        hi_IN: 'पानी और सीवरेज बिल'
       },
       PT: {
-        en_IN: 'Property Tax'
+        en_IN: 'Property Tax',
+        hi_IN: 'संपत्ति कर'
       },
       TL: {
-        en_IN: 'Trade License Fees'
+        en_IN: 'Trade License Fees',
+        hi_IN: 'ट्रेड लाइसेंस शुल्क'
       },
       FIRENOC: {
-        en_IN: 'Fire NOC Fees'
+        en_IN: 'Fire NOC Fees',
+        hi_IN: 'फायर एनओसी फीस'
       },
       BPA: {
-        en_IN: 'Building Plan Scrutiny Fees'
+        en_IN: 'Building Plan Scrutiny Fees',
+        hi_IN: 'बिल्डिंग प्लान स्क्रूटनी फीस'
       }
     }
     
     return { services, messageBundle };
   }
+  
 
   getSearchOptionsAndMessageBundleForService(service) {
     let messageBundle = {
       mobile: {
-        en_IN: 'Search 🔎 using Mobile No.📱'
+        en_IN: 'Search 🔎 using Mobile No.📱',
+        hi_IN: 'मोबाइल नंबर 📱का उपयोग करके 🔎खोजें'
       },
       connectionNumber: {
-        en_IN: 'Search 🔎 using Connection No.'
+        en_IN: 'Search 🔎 using Connection No.',
+        hi_IN: 'कनेक्शन नंबर का उपयोग करके 🔎 खोजें'
       },
       consumerNumber: {
-        en_IN: 'Search 🔎 using Consumer Number'
+        en_IN: 'Search 🔎 using Consumer Number',
+        hi_IN: 'उपभोक्ता नंबर का उपयोग करके 🔎 खोजें'
+
       },
       propertyId: {
-        en_IN: 'Search 🔎 using Property ID'
+        en_IN: 'Search 🔎 using Property ID',
+        hi_IN: 'संपत्ति आईडी का उपयोग करके 🔎 खोजें'
+
       },
       tlApplicationNumber: {
-        en_IN: 'Search 🔎 using Trade License Application Number'
+        en_IN: 'Search 🔎 using Trade License Application Number',
+        hi_IN: 'ट्रेड लाइसेंस आवेदन संख्या का उपयोग करके 🔎 खोजें'
       },
       nocApplicationNumber: {
-        en_IN: 'Search 🔎 using NOC Application Number'
+        en_IN: 'Search 🔎 using NOC Application Number',
+        hi_IN: 'एनओसी आवेदन संख्या का उपयोग करके 🔎 खोजें'
       },
       bpaApplicationNumber: {
-        en_IN: 'Search 🔎 using BPA Application Number'
+        en_IN: 'Search 🔎 using BPA Application Number',
+        hi_IN: 'बिल्डिंग प्लान आवेदन संख्या का उपयोग करके 🔎खोजें'
       }
     }
     let searchOptions = [];
@@ -79,64 +98,78 @@ class BillService {
 
     if(searchParamOption === 'mobile'){
       option = {
-        en_IN: 'Mobile Number'
+        en_IN: 'Mobile Number',
+        hi_IN: 'मोबाइल नंबर'
       };
       example = {
-        en_IN: 'Do not use +91 or 0 before mobile number.'
+        en_IN: 'Do not use +91 or 0 before mobile number.',
+        hi_IN: 'मोबाइल नंबर से पहले +91 या 0 का उपयोग न करें।'
       }
     }
 
     if(searchParamOption === 'consumerNumber'){
       option = {
-        en_IN: 'Consumer Number'
+        en_IN: 'Consumer Number',
+        hi_IN: 'उपभोक्ता संख्या'
       };
       example = {
-        en_IN: ' '
+        en_IN: ' ',
+        hi_IN: ' '
       }
     }
 
     if(searchParamOption === 'connectionNumber'){
       option = {
-        en_IN: 'Connection Number'
+        en_IN: 'Connection Number',
+        hi_IN: 'कनेक्शन नंबर'
       };
       example = {
-       en_IN: ' '
+       en_IN: ' ',
+       hi_IN: ' '
       }
     }
 
     if(searchParamOption === 'propertyId'){
       option = {
-        en_IN: 'Property ID'
+        en_IN: 'Property ID',
+        hi_IN: 'संपत्ति आईडी'
       };
       example = {
-       en_IN: ' '
+       en_IN: ' ',
+       hi_IN: ' '
       }
     }
 
     if(searchParamOption === 'tlApplicationNumber'){
       option = {
-        en_IN: 'Trade License Application Number'
+        en_IN: 'Trade License Application Number',
+        hi_IN: 'ट्रेड लाइसेंस आवेदन संख्या'
       };
       example = {
-       en_IN: ' '
+       en_IN: ' ',
+       hi_IN: ' '
       }
     }
 
     if(searchParamOption === 'nocApplicationNumber'){
       option = {
-        en_IN: 'Fire Noc Application Number'
+        en_IN: 'Fire Noc Application Number',
+        hi_IN: 'फायर एनओसी एप्लीकेशन नंबर'
       };
       example = {
-       en_IN: ' '
+       en_IN: ' ',
+       hi_IN: ' '
       }
     }
 
     if(searchParamOption === 'bpaApplicationNumber'){
       option = {
-        en_IN: 'BPA Application Number'
+        en_IN: 'BPA Application Number',
+        hi_IN: 'बिल्डिंग प्लान आवेदन संख्या'
       };
       example = {
-       en_IN: ' '
+       en_IN: ' ',
+       hi_IN: ' '
       }
     }
 
@@ -184,7 +217,7 @@ class BillService {
   }
 
 
-  async prepareBillResult(responseBody){
+  async prepareBillResult(responseBody,authToken,locale){
     let results=responseBody.Bill;
     let billLimit = config.billSearchLimit;
 
@@ -194,6 +227,8 @@ class BillService {
     var Bills = {};
     Bills['Bills'] = [];
     var count =0;
+    var tenantIdList=[];
+    var consumerCodeList = [];
 
     let self = this;
     for(let result of results){
@@ -214,17 +249,52 @@ class BillService {
           dueAmount: result.totalAmount,
           dueDate: dueDate,
           period: billPeriod,
+          tenantId: tenantId,
           paymentLink: link
-        }
+        };
+        tenantId = "TENANT_TENANTS_" + tenantId.toUpperCase().replace('.','_');
+        if(!tenantIdList.includes(tenantId))
+          tenantIdList.push(tenantId);
+
         Bills['Bills'].push(data);
+        consumerCodeList.push(result.consumerCode);
         count = count + 1;
       } 
+    }
+
+    var stateLevelCode = "TENANT_TENANTS_"+config.rootTenantId.toUpperCase();
+    var businessService = Bills['Bills'][0].service;
+    tenantIdList.push(stateLevelCode);
+    var businessServiceList = ['WS','SW'];
+    let cosumerCodeToLocalityMap;
+    
+    if(businessServiceList.includes(businessService))
+      cosumerCodeToLocalityMap = await this.getApplicationNumber(Bills['Bills'], businessService, authToken, locale);
+    
+    else
+      cosumerCodeToLocalityMap = await this.getLocality(consumerCodeList, authToken, businessService, locale);
+    
+    let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(tenantIdList, config.rootTenantId);
+
+    for(var i=0;i<Bills['Bills'].length;i++){
+
+      if( !(Object.keys(cosumerCodeToLocalityMap).length === 0) && cosumerCodeToLocalityMap[Bills['Bills'][i].id]){
+        let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
+        Bills['Bills'][i].secondaryInfo = cosumerCodeToLocalityMap[Bills['Bills'][i].id] + ", " + localisedMessages[tenantIdCode][locale];
+
+      }      
+      else{
+        let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
+        Bills['Bills'][i].secondaryInfo = localisedMessages[tenantIdCode][locale] + ", " + localisedMessages[stateLevelCode][locale];
+      }
+    }
+
+
+
+    return Bills['Bills'];  
   }
 
-  return Bills['Bills'];  
-  }
-
-  async searchBillsForUser(user, locale) {
+  async searchBillsForUser(user) {
 
     let requestBody = {
       RequestInfo: {
@@ -265,7 +335,7 @@ class BillService {
 
     if(response.status === 201) {
       let responseBody = await response.json();
-      results=await this.prepareBillResult(responseBody);
+      results = await this.prepareBillResult(responseBody, user.authToken, user.locale);
       totalBillSize=responseBody.Bill.length;
       pendingBillSize=results.length;
       
@@ -397,6 +467,133 @@ class BillService {
     var finalPath = UIHost + paymentPath;
     var link = await this.getShortenedURL(finalPath);
     return link;
+  }
+
+  async getLocality(consumerCodes, authToken, businessService, locale){
+
+    let supportedService = JSON.parse(supportedServiceForLocality);
+    businessService = supportedService[businessService];
+
+    if(!businessService)
+      businessService = supportedService["BPA"];
+    
+
+    let requestBody = {
+      RequestInfo: {
+        authToken: authToken
+      },
+      searchCriteria: {
+        referenceNumber: consumerCodes,
+        limit: 5000,
+        offset: 0
+      }
+    };
+
+    let locationUrl = config.searcherHost + 'egov-searcher/locality/'+businessService+'/_get';
+
+    let options = {
+      method: 'POST',
+      origin: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    }
+
+    let response = await fetch(locationUrl,options);
+    let localitySearchResults;
+
+    if(response.status === 200) {
+      localitySearchResults = await response.json();
+    } else {
+      console.error('Error in fetching the Locality data');
+      return undefined;
+    }
+
+    let localities = [];
+    for(let result of localitySearchResults.Localities){
+      if(!localities.includes(result.locality))
+        localities.push(result.locality);
+    }
+
+    let localitiesLocalisationCodes = [];
+    for(let locality of localities) {
+      let localisationCode = 'admin.locality.' + locality;
+      localitiesLocalisationCodes.push(localisationCode);
+    }
+
+    let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(localitiesLocalisationCodes, config.rootTenantId);
+
+    let messageBundle = {};
+    for(let result of localitySearchResults.Localities) {
+      let localisationCode = 'admin.locality.' + result.locality;
+      messageBundle[result.referencenumber] = localisedMessages[localisationCode][locale];
+    }
+
+  return messageBundle;
+
+  }
+
+  async getApplicationNumber(Bills, businessService, authToken, locale){
+
+    let requestBody = {
+      RequestInfo: {
+        authToken: authToken
+      }
+    };
+
+    let options = {
+      method: 'POST',
+      origin: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    }
+
+    
+    let applicationNumbersList = [];
+    let consumerCodeToApplicationMapping={};
+
+    for(let bill of Bills){
+      let url = config.externalHost;
+      if(businessService === 'WS'){
+        url = url + config.waterConnectionSearch;
+      }
+      if(businessService === 'SW'){
+        url = url + config.sewerageConnectionSearch;
+      }
+
+      url = url + '&tenantId='+bill.tenantId;
+      url = url + '&connectionNumber='+bill.id;
+      let response = await fetch(url,options);
+      let searchResults;
+      
+      if(response.status === 200) {
+        searchResults = await response.json();
+        let applicationNumber;
+        if(businessService === 'WS'){
+          applicationNumber = searchResults.WaterConnection[0].applicationNo
+          applicationNumbersList.push(applicationNumber);
+        }
+        if(businessService === 'SW'){
+          applicationNumber = searchResults.SewerageConnections[0].applicationNo
+          applicationNumbersList.push(applicationNumber);
+        }
+        consumerCodeToApplicationMapping[applicationNumber] = bill.id;
+      }
+    }
+
+    let cosumerCodeToLocalityMap = await this.getLocality(applicationNumbersList, authToken, businessService,locale);
+
+    let messageBundle = {};
+    for(var i=0;i<applicationNumbersList.length;i++){
+      let applicationNo = applicationNumbersList[i];
+      if(!(Object.keys(cosumerCodeToLocalityMap).length === 0) && cosumerCodeToLocalityMap[applicationNo])
+        messageBundle[consumerCodeToApplicationMapping[applicationNo]] = cosumerCodeToLocalityMap[applicationNo];
+    }
+    
+    return messageBundle;  
   }
 
 }

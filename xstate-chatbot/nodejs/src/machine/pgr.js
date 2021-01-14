@@ -166,7 +166,7 @@ const pgr =  {
                   states: {
                     question: {
                       invoke:  {                  
-                        src: (context) => pgrService.fetchComplaintItemsForCategory(context.intention),
+                        src: (context) => pgrService.fetchComplaintItemsForCategory(context.intention,context.extraInfo.tenantId),
                         id: 'fetchComplaintItemsForCategory',
                         onDone: {
                           actions: assign((context, event) => {
@@ -543,10 +543,12 @@ let messages = {
     }, // geoLocation 
     confirmLocation: {
       confirmCityAndLocality: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nLocality: {{locality}}\nPlease send "*No*", if it is incorrect'
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nLocality: {{locality}}\nPlease send "No", if it is incorrect',
+        hi_IN: 'क्या यह शिकायत का सही स्थान है?\nशहर: {{city}} \n स्थान: {{locality}} \n अगर यह गलत है तो कृपया "No" भेजें ।'
       },
       confirmCity: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "*No*", if it is incorrect'
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "*No*", if it is incorrect',
+        hi_IN: 'क्या यह शिकायत का सही स्थान है? \nशहर: {{city}}\n अगर यह गलत है तो कृपया "*No*" भेजें ।'
       }
     },
     city: {
@@ -566,19 +568,23 @@ let messages = {
       }
     }, // locality
     persistComplaint: {
-      en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : {{complaintNumber}}\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n\nPlease type and send “mseva” whenever you need my assistance.'
+      en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : {{complaintNumber}}\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
+      hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
     }
   }, // fileComplaint
   trackComplaint: {
     noRecords: {
-      en_IN: 'There are no open complaints.\nPlease type and send mseva to go to the main menu options.'
+      en_IN: 'There are no open complaints.\nPlease type and send mseva to go to the main menu options.',
+      hi_IN: 'अब आपके द्वारा पंजीकृत कोई खुली शिकायत नहीं है।\nमुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     results: {
       preamble: {
-        en_IN: 'Your Open Complaints'
+        en_IN: 'Your Open Complaints',
+        hi_IN: 'आपकी पंजीकृत ओपन शिकायतें'
       },
       complaintTemplate: {
-        en_IN: '*{{complaintType}}*\nComplaint No: {{complaintId}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}'
+        en_IN: '*{{complaintType}}*\nComplaint No: {{complaintId}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}',
+        hi_IN: '*{{complaintType}}*\nशिकायत संख्या: {{complaintId}}\nदायर तिथि: {{filedDate}}\nशिकायत की स्थिति: *{{complaintStatus}}*\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
       }
     }
   }
