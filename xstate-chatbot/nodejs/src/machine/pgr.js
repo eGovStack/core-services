@@ -126,6 +126,12 @@ const pgr =  {
                             let { complaintCategories, messageBundle } = event.data;
                             let preamble = dialog.get_message(messages.fileComplaint.complaintType2Step.category.question.preamble, context.user.locale);
                             let {prompt, grammer} = dialog.constructListPromptAndGrammer(complaintCategories, messageBundle, context.user.locale);
+
+                            let lengthOfList = grammer.length;
+                            let otherTypeGrammer = { intention: 'other', recognize: [ (lengthOfList + 1).toString() ] };
+                            prompt += `\n${lengthOfList + 1}. ` + dialog.get_message(messages.fileComplaint.complaintType2Step.category.question.otherType, context.user.locale);
+                            grammer.push(otherTypeGrammer);
+
                             context.grammer = grammer; // save the grammer in context to be used in next step
                             dialog.sendMessage(context, `${preamble}${prompt}`);
                           }),
@@ -143,6 +149,10 @@ const pgr =  {
                         context.intention = dialog.get_intention(context.grammer, event, true) 
                       }),
                       always: [
+                        {
+                          target: '#location',
+                          cond: (context) => context.intention == 'other'
+                        },
                         {
                           target: '#complaintItem',
                           cond: (context) => context.intention != dialog.INTENTION_UNKOWN
@@ -527,6 +537,10 @@ let messages = {
             en_IN : 'Please enter the number for your complaint category',
             hi_IN : 'अपनी शिकायत श्रेणी के लिए नंबर दर्ज करें'
           },
+          otherType: {
+            en_IN: 'Others',
+            hi_IN: 'अन्य'
+          }
         }
       },
       item: {

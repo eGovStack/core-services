@@ -56,6 +56,7 @@ class PGRService {
   async fetchComplaintCategories(tenantId) {
     let complaintCategories = await this.fetchMdmsData(tenantId, "RAINMAKER-PGR", "ServiceDefs", "$.[?(@.active == true)].menuPath");
     complaintCategories = [...new Set(complaintCategories)];
+    complaintCategories = complaintCategories.filter(complaintCategory => complaintCategory != "");   // To remove any empty category
     let localisationPrefix = 'SERVICEDEFS.';
     let messageBundle = {};
     for(let complaintCategory of complaintCategories) {
@@ -263,7 +264,7 @@ class PGRService {
     let response = await fetch(url, options);
     let data = await response.text();
     return data;
-}
+  }
 
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
@@ -271,7 +272,7 @@ class PGRService {
     let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
-}
+  }
   
 }
 
