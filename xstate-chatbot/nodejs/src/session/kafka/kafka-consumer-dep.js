@@ -1,6 +1,6 @@
 const kafka = require('kafka-node');
 const config = require('../../env-variables');
-const pgrStatusUpdate = require('../../channel/PGRStatusUpdateEventFormatter');
+const pgrStatusUpdate = require('../../machine/service/pgr-status-update-events');
 
 let receiveJob = config.pgrUpdateTopic;
 
@@ -16,8 +16,8 @@ let payload = [
 
 var options = {
   groupId: 'chatbot-pgr-v2-consumer-group',
-  fromOffset: 'earliest',
-  autoCommit: false
+  fromOffset: 'latest',
+  autoCommit: true
 };
 
 const consumer = new Consumer(

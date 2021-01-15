@@ -5,13 +5,14 @@ const dummyBillService = require('./dummy-bill');
 const egovBillService = require('./egov-bill');
 const dummyReceiptService = require('./dummy-receipts');
 const egovReceiptService = require('./egov-receipts');
-//const consumer = require('../../session/kafka/kafka-consumer');
+const pgrStatusUpdateEvents = require('./pgr-status-update-events');
 
 if(config.serviceProvider === 'eGov') {
     console.log("Using eGov Services");
     module.exports.pgrService = egovPGRService;
     module.exports.billService = egovBillService;
     module.exports.receiptService = egovReceiptService;
+    module.exports.pgrStatusUpdateEvents = pgrStatusUpdateEvents;
 }
 else {
     console.log("Using Dummy Services");
