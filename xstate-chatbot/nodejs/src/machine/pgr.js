@@ -388,6 +388,9 @@ const pgr =  {
                         context.grammer = dialog.constructLiteralGrammer(localities, messageBundle, context.user.locale);
                         dialog.sendMessage(context, message);
                       })
+                    },
+                    onError: {
+                      target: '#system_error'
                     }
                   },
                   on: {
