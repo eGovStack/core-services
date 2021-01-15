@@ -1,7 +1,7 @@
 const config = require('../../env-variables');
 const kafka = require('kafka-node');
 
-var options = {
+var consumerGroupOptions = {
     kafkaHost: config.kafkaHost,
     groupId: config.kafkaConsumerGroupId,
     autoCommit: true,
@@ -9,7 +9,5 @@ var options = {
     fromOffset: "latest",
     outOfRangeOffset: "earliest"
 };
-  
-var consumerGroup = new kafka.ConsumerGroup(options, '');
 
-module.exports = consumerGroup;
+module.exports = consumerGroupOptions;

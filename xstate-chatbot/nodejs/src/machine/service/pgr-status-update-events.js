@@ -5,7 +5,7 @@ const valueFirst = require('../../channel/value-first');        // TODO: import 
 const fetch = require("node-fetch");
 const { complaintSearchLimit } = require('../../env-variables');
 
-const consumerGroup = require('../../session/kafka/kafka-consumer');
+const consumerGroupOptions = require('../../session/kafka/kafka-consumer-group-options');
 
 const kafka = require('kafka-node');
 
@@ -14,21 +14,19 @@ let localisationPrefix = 'SERVICEDEFS.';
 class PGRStatusUpdateEventFormatter{
 
     constructor() {
+        let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, config.pgrUpdateTopic);
         let self = this;
-        consumerGroup.addTopics(config.pgrUpdateTopic, function(err, added) {
-            console.log(added);
-            consumerGroup.on('message', function(message) {
-                if(message.topic === config.pgrUpdateTopic) {
-                    self.templateMessgae(JSON.parse(message.value))
-                    .then(() => {
-                        console.log("template message sent to citizen");        // TODO: Logs to be removed
-                    })
-                    .catch(error => {
-                        console.error('error while sending event message');
-                        console.error(error.stack || error);
-                    });
-                }
-            });
+        consumerGroup.on('message', function(message) {
+            if(message.topic === config.pgrUpdateTopic) {
+                self.templateMessgae(JSON.parse(message.value))
+                .then(() => {
+                    console.log("template message sent to citizen");        // TODO: Logs to be removed
+                })
+                .catch(error => {
+                    console.error('error while sending event message');
+                    console.error(error.stack || error);
+                });
+            }
         });
     }
 
