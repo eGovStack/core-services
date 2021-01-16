@@ -151,7 +151,10 @@ const pgr =  {
                       always: [
                         {
                           target: '#location',
-                          cond: (context) => context.intention == 'other'
+                          cond: (context) => context.intention == 'other',
+                          actions: assign((context, event) => {
+                            context.slots.pgr["complaint"] = context.intention;
+                          })
                         },
                         {
                           target: '#complaintItem',
