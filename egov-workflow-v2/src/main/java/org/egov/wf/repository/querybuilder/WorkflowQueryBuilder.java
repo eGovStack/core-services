@@ -240,6 +240,11 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
+        if(!StringUtils.isEmpty(criteria.getBusinessService())){
+            with_query_builder.append(" AND pi_outer.businessservice =? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
         with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
         addPagination(with_query_builder,preparedStmtList,criteria);
