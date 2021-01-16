@@ -178,7 +178,6 @@ public class DataTransformationService {
         }
         documentContext = enrichDataUsingExternalServices(documentContext, customJsonMappings, kafkaJson);
         documentContext = denormalizeDataFromMDMS(documentContext, customJsonMappings, kafkaJson);
-
         return documentContext.jsonString().toString(); // jsonString has to be converted to string
     }
 
@@ -258,6 +257,7 @@ public class DataTransformationService {
 
                     if (null == response)
                         continue;
+
                 } catch (Exception e) {
                     log.error("Exception while trying to hit: " + uri);
 					log.info("MDMS Request failure: " + e);
@@ -274,6 +274,10 @@ public class DataTransformationService {
                                 value = ((List) value).get(0);
                             }
                         }
+                        //Enriches department code in kafkaJson in order to replace it with department name later.
+                        if(uriMapping.getModuleName().equals(IndexerConstants.RAINMAKER_PGR_MODULE_NAME) && uriMapping.getMasterName().equals(IndexerConstants.PGR_SERVICE_DEFS)){
+                            kafkaJson = kafkaJson.replace(IndexerConstants.DEPT_CODE, value.toString());
+                        }
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
                     } catch (Exception e) {
                         log.error("Value: " + fieldMapping.getInjsonpath() + " is not found!");
@@ -286,6 +290,12 @@ public class DataTransformationService {
             }
         }
         return documentContext;
+    }
 
+    public String prepareCustomJsonForPgrServices(String value) {
+        StringBuilder builder = new StringBuilder(value);
+        builder.deleteCharAt(builder.length()-1);
+        builder.append(",").append(IndexerConstants.DEPARTMENT_PLACEHOLDER).append(":").append(IndexerConstants.DEPT_CODE_PLACEHOLDER).append("}");
+        return(builder.toString());
     }
 }
