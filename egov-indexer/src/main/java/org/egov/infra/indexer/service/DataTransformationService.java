@@ -274,10 +274,6 @@ public class DataTransformationService {
                                 value = ((List) value).get(0);
                             }
                         }
-                        //Enriches department code in kafkaJson in order to replace it with department name later.
-                        if(uriMapping.getModuleName().equals(IndexerConstants.RAINMAKER_PGR_MODULE_NAME) && uriMapping.getMasterName().equals(IndexerConstants.PGR_SERVICE_DEFS)){
-                            kafkaJson = kafkaJson.replace(IndexerConstants.DEPT_CODE, value.toString());
-                        }
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
                     } catch (Exception e) {
                         log.error("Value: " + fieldMapping.getInjsonpath() + " is not found!");
@@ -292,10 +288,4 @@ public class DataTransformationService {
         return documentContext;
     }
 
-    public String prepareCustomJsonForPgrServices(String value) {
-        StringBuilder builder = new StringBuilder(value);
-        builder.deleteCharAt(builder.length()-1);
-        builder.append(",").append(IndexerConstants.DEPARTMENT_PLACEHOLDER).append(":").append(IndexerConstants.DEPT_CODE_PLACEHOLDER).append("}");
-        return(builder.toString());
-    }
 }
