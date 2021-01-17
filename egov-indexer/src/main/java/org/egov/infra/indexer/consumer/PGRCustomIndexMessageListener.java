@@ -43,7 +43,9 @@ public class PGRCustomIndexMessageListener implements MessageListener<String, St
 		log.info("Topic: " + data.topic());
 
 		if(data.topic().equals(IndexerConstants.SAVE_PGR_TOPIC)){
-			String kafkaJson = transformationService.prepareCustomJsonForPgrServices(data.value());
+			String kafkaJson = pgrCustomDecorator.enrichDepartmentPlaceholderInPgrRequest(data.value());
+			String deptCode = pgrCustomDecorator.getDepartmentCodeForPgrRequest(kafkaJson);
+			kafkaJson = kafkaJson.replace(IndexerConstants.DEPT_CODE, deptCode);
 			try {
 				indexerService.esIndexer(data.topic(), kafkaJson);
 			}catch(Exception e){
