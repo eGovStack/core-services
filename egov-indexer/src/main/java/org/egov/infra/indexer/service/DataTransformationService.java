@@ -178,6 +178,7 @@ public class DataTransformationService {
         }
         documentContext = enrichDataUsingExternalServices(documentContext, customJsonMappings, kafkaJson);
         documentContext = denormalizeDataFromMDMS(documentContext, customJsonMappings, kafkaJson);
+
         return documentContext.jsonString().toString(); // jsonString has to be converted to string
     }
 
@@ -257,7 +258,6 @@ public class DataTransformationService {
 
                     if (null == response)
                         continue;
-
                 } catch (Exception e) {
                     log.error("Exception while trying to hit: " + uri);
 					log.info("MDMS Request failure: " + e);
@@ -286,6 +286,6 @@ public class DataTransformationService {
             }
         }
         return documentContext;
-    }
 
+    }
 }
