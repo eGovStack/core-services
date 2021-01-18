@@ -85,8 +85,7 @@ public class PGRCustomIndexConsumerConfig implements ApplicationRunner {
     	topics[1] = pgrUpdateTopic;
     	topics[2] = pgrLegacyTopic;
 		topics[3] = pgrServicesCreateTopic;
-		topics[4] = pgrServicesUpdateTopic;
-		topics[5] = pgrServicesLegacyTopic;
+		topics[4] = pgrServicesLegacyTopic;
 
     	this.topics = topics;  
     	
