@@ -30,71 +30,67 @@ class PGRStatusUpdateEventFormatter{
         });
     }
 
-    async templateMessgae(request){
-        let serviceWrappers = request.ServiceWrappers;
+    async templateMessgae(serviceWrapper){
         let reformattedMessage = [];
         
 
-        for( let serviceWrapper of serviceWrappers){
-            if(serviceWrapper.service.source == 'whatsapp'){
-                let status = serviceWrapper.service.applicationStatus;
-                let action = serviceWrapper.workflow.action;
-                let comments = serviceWrapper.workflow.comments;
-                let citizenName = serviceWrapper.service.citizen.name;
-                let mobileNumber = serviceWrapper.service.citizen.mobileNumber;
+        if(serviceWrapper.service.source == 'whatsapp'){
+            let status = serviceWrapper.service.applicationStatus;
+            let action = serviceWrapper.workflow.action;
+            let comments = serviceWrapper.workflow.comments;
+            let citizenName = serviceWrapper.service.citizen.name;
+            let mobileNumber = serviceWrapper.service.citizen.mobileNumber;
 
-                if(!citizenName){
-                    let tenantId = serviceWrapper.service.tenantId;
-                    tenantId = tenantId.split(".")[0];
-                    let localisationCode = [];
-                    localisationCode.push(citizenKeywordLocalization);
-                    let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-                    citizenName = localisationMessages[localisationCode].en_IN;
-                }
-                let userChatNodeForStatusUpdate = this.createResponseForUser(serviceWrapper);
-
-                if(!status && !action && comments){
-                    let userChatNodeForComment = userChatNodeForStatusUpdate;
-                    userChatNodeForComment.extraInfo = await this.createResponseForComment(serviceWrapper, comments, citizenName);
-                    reformattedMessage.push(userChatNodeForComment);
-
-                }
-
-                let extraInfo = null;
-
-                if(status){
-
-                    if (status === "rejected") {
-                        extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName);
-                    } 
-                    
-                    else if ((action + "-" + status) === "reassign-assigned") {
-                        extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
-                    } 
-                    
-                    else if (status === "PENDINGATLME") {
-                        if(action === "REASSIGN"){
-                            extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
-                        }
-                        else{
-                            extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber);
-                        }
-
-                    } else if (status === "RESOLVED") {
-                        extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber);
-                    }
-                }
-
-                if(extraInfo){
-                    userChatNodeForStatusUpdate.extraInfo = extraInfo;
-                    reformattedMessage.push(userChatNodeForStatusUpdate);
-                }
-                
+            if(!citizenName){
+                let tenantId = serviceWrapper.service.tenantId;
+                tenantId = tenantId.split(".")[0];
+                let localisationCode = citizenKeywordLocalization;
+                let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+                citizenName = localisationMessages.en_IN;
             }
+            let userChatNodeForStatusUpdate = this.createResponseForUser(serviceWrapper);
+
+            if(!status && !action && comments){
+                let userChatNodeForComment = userChatNodeForStatusUpdate;
+                userChatNodeForComment.extraInfo = await this.createResponseForComment(serviceWrapper, comments, citizenName);
+                reformattedMessage.push(userChatNodeForComment);
+            }
+
+            let extraInfo = null;
+
+            if(status){
+
+                if (status === "rejected") {
+                    extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName);
+                } 
+                    
+                else if ((action + "-" + status) === "reassign-assigned") {
+                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                } 
+                    
+                else if (status === "PENDINGATLME") {
+                    if(action === "REASSIGN"){
+                        extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                    }
+                    else{
+                        extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber);
+                    }
+
+                } 
+                
+                else if (status === "RESOLVED") {
+                    extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber);
+                }
+            }
+
+            if(extraInfo){
+                userChatNodeForStatusUpdate.extraInfo = extraInfo;
+                reformattedMessage.push(userChatNodeForStatusUpdate);
+            }
+
+            await valueFirst.getTransformMessageForTemplate(reformattedMessage);        // TODO: Use channel.sendMessageToUser()       
         }
-
-        await valueFirst.getTransformMessageForTemplate(reformattedMessage);        // TODO: Use channel.sendMessageToUser()
-
+        
     }
 
     async responseForRejectedStatus(serviceWrapper, comments, citizenName){
@@ -105,10 +101,9 @@ class PGRStatusUpdateEventFormatter{
 
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
-        let localisationCode = [];
-        localisationCode.push(localisationPrefix + serviceCode.toUpperCase());
-        let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-        let complaintCategory = localisationMessages[localisationCode].en_IN;
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintCategory = localisationMessages.en_IN;
         
         let extraInfo = {};
         let params=[];
@@ -135,10 +130,9 @@ class PGRStatusUpdateEventFormatter{
 
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
-        let localisationCode = [];
-        localisationCode.push(localisationPrefix + serviceCode.toUpperCase());
-        let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-        let complaintCategory = localisationMessages[localisationCode].en_IN;
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintCategory = localisationMessages.en_IN;
 
         let extraInfo = {};
         let params=[];
@@ -164,10 +158,9 @@ class PGRStatusUpdateEventFormatter{
         let assigneeName = assignee.name;
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
-        let localisationCode = [];
-        localisationCode.push(localisationPrefix + serviceCode.toUpperCase());
-        let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-        let complaintCategory = localisationMessages[localisationCode].en_IN;
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintCategory = localisationMessages.en_IN;
 
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
         let extraInfo = {};
@@ -193,10 +186,9 @@ class PGRStatusUpdateEventFormatter{
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
-        let localisationCode = [];
-        localisationCode.push(localisationPrefix + serviceCode.toUpperCase());
-        let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-        let complaintCategory = localisationMessages[localisationCode].en_IN;
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintCategory = localisationMessages.en_IN;
 
         let extraInfo = {};
         let params=[];
@@ -245,10 +237,9 @@ class PGRStatusUpdateEventFormatter{
 
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
-        let localisationCode = [];
-        localisationCode.push(localisationPrefix + serviceCode.toUpperCase());
-        let localisationMessages = await localisationService.getMessagesForCodesAndTenantId(localisationCode,tenantId);
-        let complaintCategory = localisationMessages[localisationCode].en_IN;
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintCategory = localisationMessages.en_IN;
 
         let extraInfo = {};
         let params=[];
