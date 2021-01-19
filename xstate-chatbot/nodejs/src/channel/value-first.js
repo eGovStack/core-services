@@ -251,7 +251,7 @@ class ValueFirstWhatsAppProvider {
         let response = await fetch(url,request);
         if(response.status === 200){
             let messageBack = await response.json();
-            if(typeof messageBack.MESSAGEACK.Err){
+            if(messageBack.MESSAGEACK.Err){
                 console.error(messageBack.MESSAGEACK.Err.Desc);
                 return messageBack;
             }
