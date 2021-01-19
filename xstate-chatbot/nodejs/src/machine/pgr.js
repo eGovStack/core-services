@@ -10,7 +10,7 @@ const pgr =  {
   initial: 'pgrmenu',
   onEntry: assign((context, event) => {
     context.slots.pgr = {}
-    context.pgr = {};
+    context.pgr = {slots: {}};
   }),
   states: {
     pgrmenu : {

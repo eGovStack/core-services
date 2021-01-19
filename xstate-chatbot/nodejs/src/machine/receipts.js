@@ -10,6 +10,7 @@ const receipts = {
       services: {
         id: 'services',
         onEntry: assign((context, event) => {
+          context.slots.receipts = {};
           context.receipts = {slots: {}};
         }),
         initial: 'receiptQuestion',

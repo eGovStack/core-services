@@ -9,7 +9,8 @@ const bills = {
   states: {
     start: {
       onEntry: assign((context, event) => {
-        context.bills = {};
+        context.slots.bills = {};
+        context.bills = {slots: {}};
       }),
       invoke: {
         id: 'fetchBillsForUser',
