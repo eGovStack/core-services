@@ -168,7 +168,8 @@ class ValueFirstWhatsAppProvider {
             origin: '*'
         }
 
-        let response = await (await fetch(url,options)).json();
+        let response = await fetch(url,options);
+        response = await(response).json();
         var fileURL = response['fileStoreIds'][0]['url'].split(",");
         var fileName = geturl.parse(fileURL[0]);
         fileName = path.basename(fileName.pathname);
@@ -205,7 +206,7 @@ class ValueFirstWhatsAppProvider {
                 if(messages[i].type && messages[i].type==="pdf")
                     type="pdf";
 
-                if(message[i].message)
+                if(messages[i].hasOwnProperty('message'))
                     message = messages[i].message;
             }
                 
@@ -222,6 +223,10 @@ class ValueFirstWhatsAppProvider {
                 const base64Image = await this.getFileForFileStoreId(fileStoreId);
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);
+                if(type === 'pdf'){
+                    messageBody['@TYPE'] = 'document';
+                    messageBody['@CONTENTTYPE'] = 'application/pdf';
+                }
                 messageBody['@TEXT'] = base64Image;
                 messageBody['@ID'] = uniqueImageMessageId;
 
