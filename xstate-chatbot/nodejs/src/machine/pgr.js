@@ -128,7 +128,7 @@ const pgr =  {
                             let {prompt, grammer} = dialog.constructListPromptAndGrammer(complaintCategories, messageBundle, context.user.locale);
 
                             let lengthOfList = grammer.length;
-                            let otherTypeGrammer = { intention: 'other', recognize: [ (lengthOfList + 1).toString() ] };
+                            let otherTypeGrammer = { intention: 'Others', recognize: [ (lengthOfList + 1).toString() ] };
                             prompt += `\n${lengthOfList + 1}. ` + dialog.get_message(messages.fileComplaint.complaintType2Step.category.question.otherType, context.user.locale);
                             grammer.push(otherTypeGrammer);
 
@@ -151,7 +151,7 @@ const pgr =  {
                       always: [
                         {
                           target: '#location',
-                          cond: (context) => context.intention == 'other',
+                          cond: (context) => context.intention == 'Others',
                           actions: assign((context, event) => {
                             context.slots.pgr["complaint"] = context.intention;
                           })
