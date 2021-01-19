@@ -29,6 +29,8 @@ const envVariables = {
 
     pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
 
+    paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
+
     mdmsHost: process.env.MDMS_HOST || 'https://egov-micro-dev.egovernments.org/',
 
     localisationServiceHost: process.env.LOCALISATION_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',

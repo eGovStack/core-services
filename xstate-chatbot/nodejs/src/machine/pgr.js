@@ -453,8 +453,8 @@ const pgr =  {
               actions: assign((context, event) => {
                 let complaintDetails = event.data;
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
-                message = message.replace('{{complaintNumber}}', complaintDetails.ServiceWrappers[0].service.serviceRequestId);
-                message = message.replace('{{complaintLink}}', complaintDetails.ServiceWrappers[0].complaintUrl);
+                message = message.replace('{{complaintNumber}}', complaintDetails.complaintNumber);
+                message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
                 dialog.sendMessage(context, message, false);
               })
             }
@@ -471,30 +471,21 @@ const pgr =  {
           {
             target: '#endstate',
             cond: (context, event) => {
-              return event.data.ServiceWrappers.length>0;
+              return event.data.length>0;
             },
             actions: assign((context, event) => {     
-              let complaints = event.data.ServiceWrappers;
-              let complaintLimit = config.complaintSearchLimit;
-
-              if(complaints.length < complaintLimit)
-                complaintLimit = complaints.length;
+              let complaints = event.data;
   
               let message = dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale);
-              let localisationPrefix = 'SERVICEDEFS.';
               message += '\n';
-              for(let i = 0; i < complaintLimit; i++) {
+              for(let i = 0; i < complaints.length; i++) {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
-                let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + complaints[i].service.serviceCode.toUpperCase());
-                let applicationStatus = localisationService.getMessageBundleForCode( complaints[i].service.applicationStatus);
-                let filedDate = complaints[i].service.auditDetails.createdTime;
-                filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
-                
-                template = template.replace('{{complaintType}}',serviceCode.en_IN);
-                template = template.replace('{{complaintId}}', complaints[i].service.serviceRequestId);
-                template = template.replace('{{filedDate}}', filedDate);
-                template = template.replace('{{complaintStatus}}', applicationStatus.en_IN);
-                template = template.replace('{{complaintLink}}', complaints[i].complaintUrl);
+                let complaint = complaints[i];
+                template = template.replace('{{complaintType}}',complaint.complaintType);
+                template = template.replace('{{complaintNumber}}', complaint.complaintNumber);
+                template = template.replace('{{filedDate}}', complaint.filedDate);
+                template = template.replace('{{complaintStatus}}', complaint.complaintStatus);
+                template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
               dialog.sendMessage(context, message, false);
@@ -603,8 +594,8 @@ let messages = {
         hi_IN: 'आपकी पंजीकृत ओपन शिकायतें'
       },
       complaintTemplate: {
-        en_IN: '*{{complaintType}}*\nComplaint No: {{complaintId}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}',
-        hi_IN: '*{{complaintType}}*\nशिकायत संख्या: {{complaintId}}\nदायर तिथि: {{filedDate}}\nशिकायत की स्थिति: *{{complaintStatus}}*\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
+        en_IN: '*{{complaintType}}*\nComplaint No: {{complaintNumber}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}',
+        hi_IN: '*{{complaintType}}*\nशिकायत संख्या: {{complaintNumber}}\nदायर तिथि: {{filedDate}}\nशिकायत की स्थिति: *{{complaintStatus}}*\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
       }
     }
   }

@@ -6,6 +6,7 @@ const egovBillService = require('./egov-bill');
 const dummyReceiptService = require('./dummy-receipts');
 const egovReceiptService = require('./egov-receipts');
 const pgrStatusUpdateEvents = require('./pgr-status-update-events');
+const paymentStatusUpdateEvents = require('./payment-status-update-event');
 
 if(config.serviceProvider === 'eGov') {
     console.log("Using eGov Services");
@@ -13,6 +14,7 @@ if(config.serviceProvider === 'eGov') {
     module.exports.billService = egovBillService;
     module.exports.receiptService = egovReceiptService;
     module.exports.pgrStatusUpdateEvents = pgrStatusUpdateEvents;
+    module.exports.paymentStatusUpdateEvents = paymentStatusUpdateEvents;
 }
 else {
     console.log("Using Dummy Services");

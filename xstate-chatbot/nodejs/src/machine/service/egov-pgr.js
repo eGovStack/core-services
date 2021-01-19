@@ -3,6 +3,8 @@ const config = require('../../env-variables');
 const getCityAndLocality = require('./util/google-maps-util');
 const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
+const dialog = require('../util/dialog');
+const moment = require("moment-timezone");
 
 let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
 
@@ -158,19 +160,42 @@ class PGRService {
     return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
-  async preparePGRResult(responseBody){
+  async preparePGRResult(responseBody,locale){
     let serviceWrappers = responseBody.ServiceWrappers;
     var results = {};
     results['ServiceWrappers'] = [];
+    let localisationPrefix = 'SERVICEDEFS.';
+
+    let complaintLimit = config.complaintSearchLimit;
+
+    if(serviceWrappers.length < complaintLimit)
+        complaintLimit = serviceWrappers.length;
+    var count =0;
 
     for( let serviceWrapper of serviceWrappers){
-      let mobileNumber = serviceWrapper.service.citizen.mobileNumber;
-      let serviceRequestId = serviceWrapper.service.serviceRequestId;
-      let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId,mobileNumber);
-      serviceWrapper.complaintUrl = complaintURL;
-      results['ServiceWrappers'].push(serviceWrapper);
+      if(count<complaintLimit){
+        let mobileNumber = serviceWrapper.service.citizen.mobileNumber;
+        let serviceRequestId = serviceWrapper.service.serviceRequestId;
+        let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId,mobileNumber);
+        let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + serviceWrapper.service.serviceCode.toUpperCase());
+        let filedDate = serviceWrapper.service.auditDetails.createdTime;
+        filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
+        let applicationStatus = localisationService.getMessageBundleForCode( serviceWrapper.service.applicationStatus);
+        var data ={
+          complaintType: dialog.get_message(serviceCode,locale),
+          complaintNumber: serviceRequestId,
+          filedDate: filedDate,
+          complaintStatus: dialog.get_message(applicationStatus,locale),
+          complaintLink: complaintURL
+        }
+        count ++;
+        results['ServiceWrappers'].push(data);
+      }
+      else
+        break;
+      
     }
-    return results;
+    return results['ServiceWrappers'];
   }
 
   async persistComplaint(user,slots,extraInfo) {
@@ -206,12 +231,12 @@ class PGRService {
     let results;
     if(response.status === 200) {
       let responseBody = await response.json();
-      results = await this.preparePGRResult(responseBody);
+      results = await this.preparePGRResult(responseBody,user.locale);
     } else {
       console.error('Error in fetching the bill');
       return undefined;
     }
-    return results;
+    return results[0];
   }
 
   async fetchOpenComplaints(user){
@@ -239,7 +264,7 @@ class PGRService {
     let results;
     if(response.status === 200) {
       let responseBody = await response.json();
-      results=await this.preparePGRResult(responseBody);
+      results=await this.preparePGRResult(responseBody,user.locale);
     } else {
       console.error('Error in fetching the bill');
       return undefined;

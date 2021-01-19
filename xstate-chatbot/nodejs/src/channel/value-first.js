@@ -191,13 +191,24 @@ class ValueFirstWhatsAppProvider {
         requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
 
         for(let i = 0; i < messages.length; i++) {
-            let message = messages[i];
+            let message;
             let type;
-            if(message.type && message.type==="image")
-                type="image";
-            else    
+            if(typeof messages[i] == 'string'){
                 type="text";
+                message = messages[i];
+            }
             
+            if(typeof messages[i] == 'object'){
+                if(messages[i].type && messages[i].type==="image")
+                    type="image";
+
+                if(messages[i].type && messages[i].type==="pdf")
+                    type="pdf";
+
+                if(message[i].message)
+                    message = messages[i].message;
+            }
+                
             let messageBody;
             if(type === 'text') {
                 messageBody = JSON.parse(textMessageBody);
@@ -240,21 +251,11 @@ class ValueFirstWhatsAppProvider {
         let response = await fetch(url,request);
         if(response.status === 200){
             let messageBack = await response.json();
-            if(Array.isArray(messageBack.MESSAGEACK.GUID)){
-                if(typeof messageBack.MESSAGEACK.GUID[0].ERROR != "undefined"){
-                    if(messageBack.MESSAGEACK.GUID[0].ERROR.CODE === 28680)
-                        console.error('Invalid Credentials. UserName or Password is incorrect');
-                    return messageBack;
-                }
+            if(typeof messageBack.MESSAGEACK.Err){
+                console.error(messageBack.MESSAGEACK.Err.Desc);
+                return messageBack;
             }
-            else{
-                if(typeof messageBack.MESSAGEACK.GUID.ERROR != 'undefined'){
-                    if(messageBack.MESSAGEACK.GUID.ERROR.CODE === 28680)
-                        console.error('Invalid Credentials. UserName or Password is incorrect');
-                    return messageBack;
-                }
 
-            }
             
             return messageBack
         }         

@@ -113,14 +113,14 @@ class DummyPGRService {
       return [
         {
           complaintType: 'Streetlight not working',
-          complaintId: '04/11/2020/081478',
+          complaintNumber: '04/11/2020/081478',
           filedDate: '30/11/2020',
           complaintStatus: 'Pending for Assignment',
           complaintLink: 'https://mseva.org/complaint/081478'
         },
         {
           complaintType: 'Garbage not cleared',
-          complaintId: '04/11/2020/081479',
+          complaintNumber: '04/11/2020/081479',
           filedDate: '30/11/2020',
           complaintStatus: 'Pending for Assignment',
           complaintLink: 'https://mseva.org/complaint/081479'
