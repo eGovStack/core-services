@@ -76,7 +76,7 @@ class PaymentStatusUpdateEventFormatter{
         let extraInfo = {
           whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
           filestoreId: responseBody.filestoreIds[0],
-          fileName: key+"-"+Date.now()+".pdf"
+          fileName: key+"-"+Date.now()
         };
 
         let messages = await this.prepareSucessMessage(payment);
