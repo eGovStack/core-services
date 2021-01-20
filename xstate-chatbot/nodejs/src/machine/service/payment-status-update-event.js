@@ -28,13 +28,28 @@ class PaymentStatusUpdateEventFormatter{
 
   async paymentStatusMessage(request){
     let payment = request.Payment;
-    var reformattedMessage = {};
   
     if(payment.additionalDetails && payment.additionalDetails.isWhatsapp){
       let tenantId = payment.tenantId;
       tenantId = tenantId.split(".")[0]; 
+
+      let businessService = payment.paymentDetails[0].businessService;
+      let key;
+      if(businessService === 'TL')
+        key = 'tradelicense-receipt';
+
+      else if(businessService === 'PT')
+        key = 'property-receipt';
+      
+      else if(businessService === 'WS' || businessService === 'SW')
+        key = 'ws-onetime-receipt';
+
+      else
+        key = 'consolidatedreceipt';
+   
+
       let pdfUrl = config.externalHost + 'pdf-service/v1/_create';
-      pdfUrl = pdfUrl + '?key=consolidatedreceipt' + '&tenantId=' + tenantId;
+      pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let requestBody = {
         RequestInfo: {
@@ -60,7 +75,8 @@ class PaymentStatusUpdateEventFormatter{
         };
         let extraInfo = {
           whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
-          filestoreId: responseBody.filestoreIds[0]
+          filestoreId: responseBody.filestoreIds[0],
+          fileName: key+"-"+Date.now()+".pdf"
         };
 
         let messages = await this.prepareSucessMessage(payment);

@@ -227,7 +227,7 @@ class ValueFirstWhatsAppProvider {
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);
                 if(type === 'pdf'){
-                    messageBody['@TYPE'] = 'document';
+                    messageBody['@TYPE'] = 'document~'+extraInfo.fileName;
                     messageBody['@CONTENTTYPE'] = 'application/pdf';
                 }
                 messageBody['@TEXT'] = base64Image;
