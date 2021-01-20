@@ -26,7 +26,7 @@ class PaymentStatusUpdateEventFormatter{
 }
 
   async paymentStatusMessage(request){
-    let payment = request.Payments;
+    let payment = request.Payment;
     var reformattedMessage = {};
   
     if(payment.additionalDetails && payment.additionalDetails.isWhatsapp){
