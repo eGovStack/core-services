@@ -206,6 +206,9 @@ class ValueFirstWhatsAppProvider {
                 if(messages[i].type && messages[i].type==="pdf")
                     type="pdf";
 
+                if(messages[i].type && messages[i].type==="text")
+                    type="text";
+
                 if(messages[i].hasOwnProperty('message'))
                     message = messages[i].message;
             }

@@ -1,6 +1,7 @@
 const config = require('../../env-variables');
 const valueFirst = require('../../channel/value-first');        // TODO: import channel
 const fetch = require("node-fetch");
+const dialog = require('../util/dialog');
 
 const consumerGroupOptions = require('../../session/kafka/kafka-consumer-group-options');
 
@@ -54,38 +55,53 @@ class PaymentStatusUpdateEventFormatter{
       let response = await fetch(pdfUrl, options);
       if(response.status == 201){
         let responseBody = await response.json();
-        reformattedMessage = await this.prepareMessage(responseBody,payment);
-        let user = reformattedMessage.user;
-        let messages = reformattedMessage.message;
-        let extraInfo = reformattedMessage.extraInfo;
+        let user = {
+          mobileNumber: payment.mobileNumber
+        };
+        let extraInfo = {
+          whatsAppBusinessNumber: config.whatsAppBusinessNumber,
+          filestoreId: responseBody.filestoreIds[0]
+        };
+
+        let messages = await this.prepareSucessMessage(payment);
+    
         await valueFirst.sendMessageToUser(user, messages,extraInfo);
       }
     }
 
   }
 
-  async prepareMessage(response,payment){
-    let reformattedMessage = {};
+  async prepareSucessMessage(payment){
+    let message=[];
+    let locale = "en_IN";
+    let template = dialog.get_message(messageBundle.paymentSucess,locale);
+    template = template.replace('{{transaction_number}}',payment.transactionNumber);
 
-    reformattedMessage.user = {
-      mobileNumber: payment.mobileNumber
-    };
-
-    reformattedMessage.message=[];
     var content = {
+      message:template,
+      type: "text"
+    };
+    message.push(content);
+
+    var pdfContent ={
       type: "pdf"
     };
-    reformattedMessage.message.push(content);
+    message.push(pdfContent);
 
-    reformattedMessage.extraInfo = {
-      whatsAppBusinessNumber: config.whatsAppBusinessNumber,
-      filestoreId: response.filestoreIds[0]
-    };
-
-    return reformattedMessage;
+    return message;
   }
 
 }
+
+let messageBundle = {
+  paymentSucess:{
+    en_IN: "Thank you😃! You have successfully paid your bill through mSeva Punjab. Your transaction number is {{transaction_number}}.\n\nPlease find attached receipt for your reference.\n"
+  },
+  paymentFail:{
+    en_IN: "Sorry😥! The Payment Transaction has failed due to authentication failure. Your transaction reference number is {{transaction_number}}.\nIf the amount is debited from your account please give us 2-3 hours to get confirmation on payment.\nIf the amount is  not deducted from your account you can retry using the following payment link:\n{{link}}"
+  }
+
+};
 
 let paymentStatusUpdateEvents = new PaymentStatusUpdateEventFormatter();
 
