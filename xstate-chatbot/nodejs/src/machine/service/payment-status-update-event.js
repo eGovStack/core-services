@@ -59,7 +59,7 @@ class PaymentStatusUpdateEventFormatter{
           mobileNumber: payment.mobileNumber
         };
         let extraInfo = {
-          whatsAppBusinessNumber: config.whatsAppBusinessNumber,
+          whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
           filestoreId: responseBody.filestoreIds[0]
         };
 
