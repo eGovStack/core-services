@@ -507,8 +507,8 @@ const pgr =  {
 let messages = {
   pgrmenu: {
     question: {
-      en_IN : 'Please type\n\n1 to File New Complaint.\n2 to Track Your Complaints',
-      hi_IN: 'कृप्या टाइप करे\n\n1 यदि आप शिकायत दर्ज करना चाहते हैं\n2 यदि आप अपनी शिकायतों की स्थिति देखना चाहते हैं'
+      en_IN : 'Please type\n\n1. File New Complaint.\n2. Track Your Complaints.',
+      hi_IN: 'कृप्या टाइप करे\n\n1. यदि आप शिकायत दर्ज करना चाहते हैं\n2. यदि आप अपनी शिकायतों की स्थिति देखना चाहते हैं'
     }
   },
   fileComplaint: {

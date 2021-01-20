@@ -303,8 +303,8 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'Please type and send the number of your option from the list given 👇 below:\n\n1 File or Track Complaints.\n2 Pay Bills and Fees.\n3 View Payments Receipts.\n4 Change Language.',
-      hi_IN: 'कृप्या टाइप करे\n\n1 शिकायतों के लिए\n2 बिलों के लिए\n3 रसीदों के लिए\n4 भाषा बदलने के लिए'
+      en_IN : 'Please type and send the number of your option from the list given 👇 below:\n\n1. File or Track Complaints.\n2. Pay Bills and Fees.\n3. View Payments Receipts.\n4. Change Language.',
+      hi_IN: 'कृप्या टाइप करे\n\n1. शिकायतों के लिए\n2. बिलों के लिए\n3. रसीदों के लिए\n4. भाषा बदलने के लिए'
     }
   },
   endstate: {
