@@ -31,6 +31,8 @@ const envVariables = {
 
     paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
 
+    pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',
+
     mdmsHost: process.env.MDMS_HOST || 'https://egov-micro-dev.egovernments.org/',
 
     localisationServiceHost: process.env.LOCALISATION_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',

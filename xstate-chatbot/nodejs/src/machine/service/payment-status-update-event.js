@@ -10,7 +10,10 @@ const kafka = require('kafka-node');
 class PaymentStatusUpdateEventFormatter{
 
   constructor() {
-    let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, config.paymentUpdateTopic);
+    let topicList = [];
+    topicList.push(config.pgUpdateTransaction);
+    topicList.push(config.paymentUpdateTopic);
+    let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, topicList);
     let self = this;
     consumerGroup.on('message', function(message) {
         if(message.topic === config.paymentUpdateTopic) {
@@ -22,6 +25,19 @@ class PaymentStatusUpdateEventFormatter{
                 console.error('error while sending event message');
                 console.error(error.stack || error);
             });
+        }
+
+        if(message.topic === config.pgUpdateTransaction){
+
+          self.prepareTransactionFailedMessage(JSON.parse(message.value))
+            .then(() => {
+                console.log("transaction failed message sent to citizen");        // TODO: Logs to be removed
+            })
+            .catch(error => {
+                console.error('error while sending event message');
+                console.error(error.stack || error);
+            });
+
         }
     });
 }
@@ -105,6 +121,64 @@ class PaymentStatusUpdateEventFormatter{
     message.push(pdfContent);
 
     return message;
+  }
+
+  async prepareTransactionFailedMessage(request){
+    let status = request.Transaction.txnStatus;
+    if(status === 'FAILURE'){
+      let transactionNumber = request.Transaction.txnId;
+      let consumerCode = request.Transaction.consumerCode;
+      let tenantId = request.Transaction.tenantId;
+      let businessService = request.Transaction.module;
+      let link = await this.getPaymentLink(consumerCode,tenantId,businessService);
+
+      let user = {
+        mobileNumber: request.Transaction.user.mobileNumber
+      };
+
+      let extraInfo = {
+        whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
+      };
+
+      let message = [];
+      let locale = "en_IN";
+      let template = dialog.get_message(messageBundle.paymentFail,locale);
+      template = template.replace('{{transaction_number}}',transactionNumber);
+      template = template.replace('{{link}}',link);
+      message.push(template);
+      await valueFirst.sendMessageToUser(user, message,extraInfo);
+
+    }
+
+  }
+
+  async getShortenedURL(finalPath){
+    var urlshortnerHost = config.externalHost;
+    var url = urlshortnerHost + 'egov-url-shortening/shortener';
+    var request = {};
+    request.url = finalPath; 
+    var options = {
+      method: 'POST',
+      body: JSON.stringify(request),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+    let response = await fetch(url, options);
+    let data = await response.text();
+    return data;
+  }
+  
+  async getPaymentLink(consumerCode,tenantId,businessService){
+    var UIHost = config.externalHost;
+    var paymentPath = config.msgpaylink;
+    paymentPath = paymentPath.replace(/\$consumercode/g,consumerCode);
+    paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
+    paymentPath = paymentPath.replace(/\$businessservice/g,businessService);
+    paymentPath = paymentPath.replace(/\$redirectNumber/g,"+"+config.whatsAppBusinessNumber);
+    var finalPath = UIHost + paymentPath;
+    var link = await this.getShortenedURL(finalPath);
+    return link;
   }
 
 }
