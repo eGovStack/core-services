@@ -102,7 +102,10 @@ const envVariables = {
     dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
     timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
 
-    billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL, FIRENOC, BPA'
+    billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL, FIRENOC, BPA',
+    
+    informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || 'a64dd415-3603-4044-bb2b-3e3f98bd4d52'
+
 }
 
 module.exports = envVariables;
