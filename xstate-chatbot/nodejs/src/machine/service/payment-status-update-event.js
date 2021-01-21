@@ -125,7 +125,7 @@ class PaymentStatusUpdateEventFormatter{
 
   async prepareTransactionFailedMessage(request){
     let status = request.Transaction.txnStatus;
-    if(status === 'FAILURE'){
+    if(status === 'FAILURE' && additionalDetails.isWhatsapp){
       let transactionNumber = request.Transaction.txnId;
       let consumerCode = request.Transaction.consumerCode;
       let tenantId = request.Transaction.tenantId;

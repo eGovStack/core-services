@@ -2,6 +2,7 @@ const config = require('../../env-variables');
 const fetch = require("node-fetch");
 const moment = require("moment-timezone");
 const localisationService = require('../util/localisation-service');
+const dialog = require('../util/dialog');
 
 let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fireNoc\",\"WS\" : \"ws-services\",\"SW\" : \"sw-services\",\"PT\" : \"PT\",\"BPA\" : \"bpa-services\"}";
 
@@ -219,6 +220,7 @@ class ReceiptService {
       Payments['Payments'] = [];
       var count =0;
       var lookup=[];
+      let localisationServicePrefix = "BILLINGSERVICE_BUSINESSSERVICE_"
 
       let self = this;
       for(let result of results) {
@@ -229,8 +231,10 @@ class ReceiptService {
           var receiptNumber = result.paymentDetails[0].receiptNumber;
           var businessService = result.paymentDetails[0].businessService;
           var mobileNumber = result.mobileNumber;
+          let serviceCode = localisationService.getMessageBundleForCode(localisationServicePrefix + businessService);
+          
           var data={
-            service: businessService,
+            service: dialog.get_message(serviceCode,locale),
             id: consumerCode,
             locality: undefined, //to do
             city: tenantId, //to do

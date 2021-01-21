@@ -2,6 +2,7 @@ const config = require('../../env-variables');
 const fetch = require("node-fetch");
 const moment = require("moment-timezone");
 const localisationService = require('../util/localisation-service');
+const dialog = require('../util/dialog');
 
 let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fireNoc\",\"WS\" : \"ws-services\",\"SW\" : \"sw-services\",\"PT\" : \"PT\",\"BPA\" : \"bpa-services\"}";
 
@@ -229,6 +230,7 @@ class BillService {
     var count =0;
     var tenantIdList=[];
     var consumerCodeList = [];
+    let localisationServicePrefix = "BILLINGSERVICE_BUSINESSSERVICE_"
 
     let self = this;
     for(let result of results){
@@ -241,9 +243,10 @@ class BillService {
         let billPeriod = fromMonth+" "+fromBillYear+"-"+toMonth+" "+toBillYear;
         let tenantId= result.tenantId;
         let link = await self.getPaymentLink(result.consumerCode,tenantId,result.businessService);
-        
+        let serviceCode = localisationService.getMessageBundleForCode(localisationServicePrefix + result.businessService.toUpperCase());
+
         var data={
-          service: result.businessService,
+          service: dialog.get_message(serviceCode,locale),
           id: result.consumerCode,
           secondaryInfo: 'Ajit Nagar,  Phagwara', //to do
           dueAmount: result.totalAmount,
