@@ -262,35 +262,36 @@ class BillService {
       } 
     }
 
-    var stateLevelCode = "TENANT_TENANTS_"+config.rootTenantId.toUpperCase();
-    var businessService = Bills['Bills'][0].service;
-    tenantIdList.push(stateLevelCode);
-    var businessServiceList = ['WS','SW'];
-    let cosumerCodeToLocalityMap;
+    if(Bills['Bills'].length>0){
+      var stateLevelCode = "TENANT_TENANTS_"+config.rootTenantId.toUpperCase();
+      var businessService = Bills['Bills'][0].service;
+      tenantIdList.push(stateLevelCode);
+      var businessServiceList = ['WS','SW'];
+      let cosumerCodeToLocalityMap;
     
-    if(businessServiceList.includes(businessService))
-      cosumerCodeToLocalityMap = await this.getApplicationNumber(Bills['Bills'], businessService, authToken, locale);
+      if(businessServiceList.includes(businessService))
+        cosumerCodeToLocalityMap = await this.getApplicationNumber(Bills['Bills'], businessService, authToken, locale);
     
-    else
-      cosumerCodeToLocalityMap = await this.getLocality(consumerCodeList, authToken, businessService, locale);
+      else
+        cosumerCodeToLocalityMap = await this.getLocality(consumerCodeList, authToken, businessService, locale);
     
-    let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(tenantIdList, config.rootTenantId);
+      let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(tenantIdList, config.rootTenantId);
 
-    for(var i=0;i<Bills['Bills'].length;i++){
+      for(var i=0;i<Bills['Bills'].length;i++){
 
-      if( !(Object.keys(cosumerCodeToLocalityMap).length === 0) && cosumerCodeToLocalityMap[Bills['Bills'][i].id]){
-        let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
-        Bills['Bills'][i].secondaryInfo = cosumerCodeToLocalityMap[Bills['Bills'][i].id] + ", " + localisedMessages[tenantIdCode][locale];
+        if( !(Object.keys(cosumerCodeToLocalityMap).length === 0) && cosumerCodeToLocalityMap[Bills['Bills'][i].id]){
+          let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
+          Bills['Bills'][i].secondaryInfo = cosumerCodeToLocalityMap[Bills['Bills'][i].id] + ", " + localisedMessages[tenantIdCode][locale];
 
-      }      
-      else{
-        let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
-        Bills['Bills'][i].secondaryInfo = localisedMessages[tenantIdCode][locale] + ", " + localisedMessages[stateLevelCode][locale];
+        }      
+        else{
+          let tenantIdCode = "TENANT_TENANTS_" + Bills['Bills'][i].tenantId.toUpperCase().replace('.','_');
+          Bills['Bills'][i].secondaryInfo = localisedMessages[tenantIdCode][locale] + ", " + localisedMessages[stateLevelCode][locale];
+        }
       }
+
     }
-
-
-
+    
     return Bills['Bills'];  
   }
 
