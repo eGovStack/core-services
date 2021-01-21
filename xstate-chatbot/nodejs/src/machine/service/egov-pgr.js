@@ -299,14 +299,6 @@ class PGRService {
     return shortURL;
   }
 
-  async getImage(){
-    let message =[];
-    var data = {
-      type: 'image'
-    };
-    message.push(data);
-    return message;
-  }
   
 }
 

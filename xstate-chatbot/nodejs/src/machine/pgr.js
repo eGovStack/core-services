@@ -238,9 +238,13 @@ const pgr =  {
             geoLocationSharingInfo: {
               id: 'geoLocationSharingInfo',
               onEntry: assign( (context, event) => {
-                let image = pgrService.getImage();
-                context.extraInfo = config.informationImageFilestoreId;
-                dialog.sendMessage(context, image, false);
+                let message =[];
+                var data = {
+                  type: 'image'
+                };
+                message.push(data);
+                context.extraInfo.filestoreId = config.informationImageFilestoreId;
+                dialog.sendMessage(context, message, false);
               }),
               always: 'geoLocation'
             },
