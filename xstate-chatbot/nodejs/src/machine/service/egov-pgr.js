@@ -298,6 +298,15 @@ class PGRService {
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
   }
+
+  async getImage(){
+    let message =[];
+    var data = {
+      type: 'image'
+    };
+    message.push(data);
+    return message;
+  }
   
 }
 
