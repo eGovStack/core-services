@@ -17,7 +17,11 @@ class PaymentStatusUpdateEventFormatter{
     let self = this;
     consumerGroup.on('message', function(message) {
         if(message.topic === config.paymentUpdateTopic) {
-            self.paymentStatusMessage(JSON.parse(message.value))
+          let paymentRequest = JSON.parse(message.value);
+
+          if(paymentRequest.Payment.additionalDetails && paymentRequest.Payment.additionalDetails.isWhatsapp){
+
+            self.paymentStatusMessage(paymentRequest)
             .then(() => {
                 console.log("payment message sent to citizen");        // TODO: Logs to be removed
             })
@@ -25,20 +29,27 @@ class PaymentStatusUpdateEventFormatter{
                 console.error('error while sending event message');
                 console.error(error.stack || error);
             });
+
+          }
+
         }
 
         if(message.topic === config.pgUpdateTransaction){
+          let transactionRequest = JSON.parse(message.value);
+          let status = transactionRequest.Transaction.txnStatus;
 
-          self.prepareTransactionFailedMessage(JSON.parse(message.value))
-            .then(() => {
+          if(status === 'FAILURE' && transactionRequest.Transaction.additionalDetails.isWhatsapp){
+              self.prepareTransactionFailedMessage(transactionRequest)
+              .then(() => {
                 console.log("transaction failed message sent to citizen");        // TODO: Logs to be removed
-            })
-            .catch(error => {
+              })
+              .catch(error => {
                 console.error('error while sending event message');
                 console.error(error.stack || error);
             });
-
+          } 
         }
+
     });
 }
 
@@ -124,32 +135,27 @@ class PaymentStatusUpdateEventFormatter{
   }
 
   async prepareTransactionFailedMessage(request){
-    let status = request.Transaction.txnStatus;
-    if(status === 'FAILURE' && additionalDetails.isWhatsapp){
-      let transactionNumber = request.Transaction.txnId;
-      let consumerCode = request.Transaction.consumerCode;
-      let tenantId = request.Transaction.tenantId;
-      let businessService = request.Transaction.module;
-      let link = await this.getPaymentLink(consumerCode,tenantId,businessService);
+    let transactionNumber = request.Transaction.txnId;
+    let consumerCode = request.Transaction.consumerCode;
+    let tenantId = request.Transaction.tenantId;
+    let businessService = request.Transaction.module;
+    let link = await this.getPaymentLink(consumerCode,tenantId,businessService);
 
-      let user = {
-        mobileNumber: request.Transaction.user.mobileNumber
-      };
+    let user = {
+      mobileNumber: request.Transaction.user.mobileNumber
+    };
 
-      let extraInfo = {
-        whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
-      };
+    let extraInfo = {
+      whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
+    };
 
-      let message = [];
-      let locale = "en_IN";
-      let template = dialog.get_message(messageBundle.paymentFail,locale);
-      template = template.replace('{{transaction_number}}',transactionNumber);
-      template = template.replace('{{link}}',link);
-      message.push(template);
-      await valueFirst.sendMessageToUser(user, message,extraInfo);
-
-    }
-
+    let message = [];
+    let locale = "en_IN";
+    let template = dialog.get_message(messageBundle.paymentFail,locale);
+    template = template.replace('{{transaction_number}}',transactionNumber);
+    template = template.replace('{{link}}',link);
+    message.push(template);
+    await valueFirst.sendMessageToUser(user, message,extraInfo);
   }
 
   async getShortenedURL(finalPath){
