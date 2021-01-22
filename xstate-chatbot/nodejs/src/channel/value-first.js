@@ -17,6 +17,8 @@ let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPT
 
 let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
+let invalidInputMessage = "Sorry..\nPlease enter the correct option \n\nमाफ़ करना..\nकृपया सही विकल्प दर्ज करें";
+
 class ValueFirstWhatsAppProvider {
 
     async checkForMissedCallNotification(requestBody){
@@ -28,17 +30,41 @@ class ValueFirstWhatsAppProvider {
 
     async getMissedCallValues(requestBody){
         let reformattedMessage={};
+
+        reformattedMessage.messages = [];
         
-        reformattedMessage.message = {
+        var content = {
             input: "mseva",
             type: "text"
-        }
+        };
+        reformattedMessage.messages.push(content);
+
         reformattedMessage.user = {
             mobileNumber: requestBody.mobile_number.slice(2)
         };
         reformattedMessage.extraInfo = {
             recipient: config.whatsAppBusinessNumber,
             missedCall: true
+        };
+        return reformattedMessage;
+    }
+
+    async getInavlidInputMessage(requestBody){
+        let reformattedMessage={};
+        
+        reformattedMessage.messages = [];
+        
+        var content = {
+            input: invalidInputMessage,
+            type: "text"
+        };
+        reformattedMessage.messages.push(content);
+
+        reformattedMessage.user = {
+            mobileNumber: requestBody.mobile_number.slice(2)
+        };
+        reformattedMessage.extraInfo = {
+            recipient: config.whatsAppBusinessNumber.slice(2)
         };
         return reformattedMessage;
     }
@@ -81,7 +107,6 @@ class ValueFirstWhatsAppProvider {
         let type = requestBody.media_type;
         let input;
         if(type === "location") {
-            //let location = requestBody..location;
             input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
         } 
         else if(type === 'image'){
@@ -282,10 +307,16 @@ class ValueFirstWhatsAppProvider {
             
         var requestValidation= await this.isValid(requestBody);
 
-        if(requestValidation)
-            reformattedMessage= await this.getTransformedRequest(requestBody);
+        if(requestValidation){
+            reformattedMessage = await this.getTransformedRequest(requestBody);
+            return reformattedMessage;
+        }
 
-        return reformattedMessage;
+        else{
+            reformattedMessage = await this.getInavlidInputMessage(requestBody);
+            await this.sendMessageToUser(reformattedMessage.user,reformattedMessage.messages,reformattedMessage.extraInfo);
+        }
+
     }
 
     async sendMessageToUser(user, messages,extraInfo) {
