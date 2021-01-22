@@ -157,6 +157,18 @@ const sevaMachine = Machine({
       }),
       always: '#sevamenu'
     },
+    updateLocale: {
+      id: 'updateLocale',
+      onEntry: assign((context, event) => {
+        var message = dialog.get_message(messages.updateLocaleMessage, context.user.locale);
+        if(context.user.name)
+          message = message.replace('{{name}}', context.user.name);
+        else 
+          message = message.replace(' {{name}}', '');
+        dialog.sendMessage(context, message, false);
+      }),
+      always: '#sevamenu'
+    },
     locale: {
       id: 'locale',
       initial: 'question',
@@ -186,11 +198,18 @@ const sevaMachine = Machine({
               }
               return userProfileService.updateUser(context.user, context.extraInfo.tenantId);
             },
-            onDone: {
-              target: '#welcome'
-            },
+            onDone: [
+              {
+                target: '#updateLocale',
+                cond: (context) => context.intention != dialog.INTENTION_UNKOWN
+              },
+              {
+                target: '#sevamenu',
+                cond: (context) => context.intention === dialog.INTENTION_UNKOWN
+              }
+            ],
             onError: {
-              target: '#welcome'
+              target: '#welcome',
             }
           }
         }
@@ -310,6 +329,10 @@ let messages = {
   endstate: {
     en_IN: 'Goodbye. Say hi to start another conversation',
     hi_IN: 'अलविदा। एक और बातचीत शुरू करने के लिए नमस्ते कहें'
+  },
+  updateLocaleMessage:{
+    en_IN: 'Thank you {{name}} for updating the Language of your choice.\n',
+    hi_IN: 'अपनी पसंद की भाषा को अपडेट करने के लिए धन्यवाद {{name}} ।\n'
   }
 }
 
