@@ -61,10 +61,10 @@ class ValueFirstWhatsAppProvider {
         reformattedMessage.messages.push(content);
 
         reformattedMessage.user = {
-            mobileNumber: requestBody.mobile_number.slice(2)
+            mobileNumber: requestBody.from.slice(2)
         };
         reformattedMessage.extraInfo = {
-            recipient: config.whatsAppBusinessNumber.slice(2)
+            recipient: requestBody.to.slice(2)
         };
         return reformattedMessage;
     }
