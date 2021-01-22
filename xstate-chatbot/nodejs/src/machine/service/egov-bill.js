@@ -194,7 +194,7 @@ class BillService {
         }
         if(service === 'WS'){
           //todo
-          let regexp = new RegExp('WS/\\d{3}/\\d{4}-\\d{2}/\\d+$');
+          let regexp = new RegExp('^(WS|SW)/\\d{3}/\\d{4}-\\d{2}/\\d+$');
           return regexp.test(paramInput);
         }
     }
