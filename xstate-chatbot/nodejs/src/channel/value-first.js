@@ -17,8 +17,6 @@ let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPT
 
 let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
-let invalidInputMessage = "Sorry..\nPlease enter the correct option \n\nमाफ़ करना..\nकृपया सही विकल्प दर्ज करें";
-
 class ValueFirstWhatsAppProvider {
 
     async checkForMissedCallNotification(requestBody){
@@ -46,27 +44,6 @@ class ValueFirstWhatsAppProvider {
             whatsAppBusinessNumber: config.whatsAppBusinessNumber,
             tenantId: config.rootTenantId,
             missedCall: true
-        };
-        return reformattedMessage;
-    }
-
-    async getInavlidInputMessage(requestBody){
-        let reformattedMessage={};
-        
-        reformattedMessage.messages = [];
-        
-        var content = {
-            input: invalidInputMessage,
-            type: "text"
-        };
-        reformattedMessage.messages.push(content);
-
-        reformattedMessage.user = {
-            mobileNumber: requestBody.from.slice(2)
-        };
-        reformattedMessage.extraInfo = {
-            whatsAppBusinessNumber: requestBody.to.slice(2),
-            tenantId: config.rootTenantId
         };
         return reformattedMessage;
     }
@@ -106,8 +83,13 @@ class ValueFirstWhatsAppProvider {
 
     async getUserMessage(requestBody){
         let reformattedMessage={};
-        let type = requestBody.media_type;
+        let type;
         let input;
+        if(requestBody.media_type)
+            type = requestBody.media_type;
+        else
+            type = "unknown";
+
         if(type === "location") {
             input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
         } 
@@ -115,6 +97,8 @@ class ValueFirstWhatsAppProvider {
             var imageInBase64String = requestBody.media_data;
             input = await this.convertFromBase64AndStore(imageInBase64String);
         }
+        else if(type === 'unknown')
+            input = ' ';
         else {
             input = requestBody.text;
         }
@@ -307,17 +291,12 @@ class ValueFirstWhatsAppProvider {
         if(Object.keys(requestBody).length === 0)
             requestBody  = req.body; 
             
-        var requestValidation= await this.isValid(requestBody);
+        //var requestValidation= await this.isValid(requestBody);
 
-        if(requestValidation){
-            reformattedMessage = await this.getTransformedRequest(requestBody);
-            return reformattedMessage;
-        }
-
-        else{
-            reformattedMessage = await this.getInavlidInputMessage(requestBody);
-            await this.sendMessageToUser(reformattedMessage.user,reformattedMessage.messages,reformattedMessage.extraInfo);
-        }
+        //if(requestValidation){
+        reformattedMessage = await this.getTransformedRequest(requestBody);
+        return reformattedMessage;
+        //}
 
     }
 
