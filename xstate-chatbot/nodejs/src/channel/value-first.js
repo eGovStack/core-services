@@ -43,7 +43,8 @@ class ValueFirstWhatsAppProvider {
             mobileNumber: requestBody.mobile_number.slice(2)
         };
         reformattedMessage.extraInfo = {
-            recipient: config.whatsAppBusinessNumber,
+            whatsAppBusinessNumber: config.whatsAppBusinessNumber,
+            tenantId: config.rootTenantId,
             missedCall: true
         };
         return reformattedMessage;
@@ -64,7 +65,8 @@ class ValueFirstWhatsAppProvider {
             mobileNumber: requestBody.from.slice(2)
         };
         reformattedMessage.extraInfo = {
-            recipient: requestBody.to.slice(2)
+            whatsAppBusinessNumber: requestBody.to.slice(2),
+            tenantId: config.rootTenantId
         };
         return reformattedMessage;
     }
