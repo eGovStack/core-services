@@ -88,10 +88,6 @@ public class RazorpayGateway implements Gateway{
 	        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	        fields.forEach(params::add);
 
-	        params.add("vpc_SecureHash", secureHash);
-	        String ENCRYPTION_TYPE = "SHA256";
-	        params.add("vpc_SecureHashType", ENCRYPTION_TYPE);
-
 	        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).queryParams
 	                (params).build().encode();
 	        return uriComponents.toUri();
