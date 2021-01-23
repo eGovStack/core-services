@@ -2,8 +2,8 @@ const config = require('../../env-variables');
 const kafka = require('kafka-node');
 
 var consumerGroupOptions = {
-    kafkaHost: config.kafkaHost,
-    groupId: config.kafkaConsumerGroupId,
+    kafkaHost: config.kafka.kafkaBootstrapServer,
+    groupId: config.kafka.kafkaConsumerGroupId,
     autoCommit: true,
     protocol: ["roundrobin"],
     fromOffset: "latest",

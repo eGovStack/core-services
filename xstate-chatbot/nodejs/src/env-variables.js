@@ -13,12 +13,30 @@ const envVariables = {
 
     repoProvider: process.env.REPO_PROVIDER || 'PostgreSQL',
 
+    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
+
+    rootTenantId: process.env.ROOT_TENANTID || 'pb',
+
+    supportedLocales: process.env.SUPPORTED_LOCALES || 'en_IN,hi_IN',
+
+    googleAPIKey: process.env.GOOGLE_MAPS_API_KEY || '',
+
+    dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
+    timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
+
     postgresConfig: {
         dbHost: process.env.DB_HOST || 'localhost',
         dbPort: process.env.DB_PORT || '5432',
         dbName: process.env.DB_NAME || 'chat',
         dbUsername: process.env.DB_USER || 'postgres',
         dbPassword: process.env.DB_PASSWORD || ''
+    },
+
+    kafka: {
+        kafkaBootstrapServer: process.env.KAFKA_BOOTSTRAP_SERVER || 'localhost:9092',
+        chatbotTelemetryTopic: process.env.CHATBOT_TELEMETRY_TOPIC || 'chatbot-telemetry-v2',
+
+        kafkaConsumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID || 'xstate-chatbot',
     },
 
     valueFirstWhatsAppProvider: {
@@ -82,23 +100,6 @@ const envVariables = {
         paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
         pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',
     },
-
-    kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVER || 'localhost:9092',
-
-    kafkaConsumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID || 'xstate-chatbot',
-
-    chatbotTelemetryTopic: process.env.CHATBOT_TELEMETRY_TOPIC || 'chatbot-telemetry-v2',
-
-    rootTenantId: process.env.ROOT_TENANTID || 'pb',
-
-    supportedLocales: process.env.SUPPORTED_LOCALES || 'en_IN,hi_IN',
-
-    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
-    
-    googleAPIKey: process.env.GOOGLE_MAPS_API_KEY || '',
-
-    dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
-    timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
 
 }
 

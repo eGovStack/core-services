@@ -15,7 +15,7 @@ class Telemetry {
         // console.log('Telemetry: ' + JSON.stringify(object));
 
         let payloads = [ {
-            topic: config.chatbotTelemetryTopic,
+            topic: config.kafka.chatbotTelemetryTopic,
             messages: JSON.stringify(object)
         } ]
 
