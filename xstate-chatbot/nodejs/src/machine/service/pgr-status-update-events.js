@@ -113,7 +113,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(rejectReason);
 
-        extraInfo.templateId = config.valuefirstNotificationRejectedTemplateid;
+        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationRejectedTemplateid;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -143,7 +143,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(assigneeName);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valuefirstNotificationReassignedTemplateid;
+        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationReassignedTemplateid;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -172,7 +172,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(assigneeName);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valuefirstNotificationAssignedTemplateid;
+        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationAssignedTemplateid;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -198,7 +198,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valuefirstNotificationResolvedTemplateid;
+        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationResolvedTemplateid;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -250,7 +250,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(comments);
 
-        extraInfo.templateId = config.valuefirstNotificationCommentedTemplateid
+        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationCommentedTemplateid
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 

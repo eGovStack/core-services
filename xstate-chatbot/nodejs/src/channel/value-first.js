@@ -255,7 +255,7 @@ class ValueFirstWhatsAppProvider {
     }
 
     async sendMessage(requestBody) {
-        let url = config.valueFirstURL;
+        let url = config.valueFirstWhatsAppProvider.valueFirstURL;
 
         let headers = {
             'Content-Type': 'application/json',
@@ -309,8 +309,8 @@ class ValueFirstWhatsAppProvider {
     async getTransformMessageForTemplate(reformattedMessages){
         if(reformattedMessages.length>0){
             let requestBody = JSON.parse(valueFirstRequestBody);
-            requestBody["USER"]["@USERNAME"] = config.valueFirstUsername;
-            requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
+            requestBody["USER"]["@USERNAME"] = config.valueFirstWhatsAppProvider.valueFirstUsername;
+            requestBody["USER"]["@PASSWORD"] = config.valueFirstWhatsAppProvider.valueFirstPassword;
 
             for(let message of reformattedMessages){
                 let messageBody = JSON.parse(templateMessageBody);
