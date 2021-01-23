@@ -11,8 +11,7 @@ let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-    var mdmsHost = config.mdmsHost;
-    var url = mdmsHost + 'egov-mdms-service/v1/_search';
+    var url = config.mdmsHost + config.mdmsSearchPath;
     var request = {
       "RequestInfo": {},
       "MdmsCriteria": {

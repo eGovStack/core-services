@@ -47,6 +47,7 @@ const envVariables = {
     pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',
 
     mdmsHost: process.env.MDMS_HOST || 'https://egov-micro-dev.egovernments.org/',
+    mdmsSearchPath: process.env.MDMS_SEARCH_PATH || 'egov-mdms-service/v1/_search',
 
     localisationServiceHost: process.env.LOCALISATION_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
     localisationServiceSearchPath: process.env.LOCALISATION_SERVICE_SEARCH_PATH || 'localization/messages/v1/_search',
