@@ -8,7 +8,7 @@ class DummyPGRService {
     // Please mark the method async if the actual app-service method would involve api calls
 
     async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-      var url = config.egovServicesHost + config.mdmsSearchPath;
+      var url = config.egovServices.egovServicesHost + config.egovServices.mdmsSearchPath;
       var request = {
         "RequestInfo": {},
         "MdmsCriteria": {
@@ -48,7 +48,7 @@ class DummyPGRService {
         // return this.cities.tenantInfo.map(el=>el.code.replace(`${tenantId}.`, ""));
     }
     getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-      return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
+      return config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
     }
     async fetchLocalities(tenantId) {
       let moduleName = 'egov-location';
@@ -74,7 +74,7 @@ class DummyPGRService {
       return { localities, messageBundle };
     }
     getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-      return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
+      return config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
     }
     async getCityAndLocalityForGeocode(geocode, tenantId) {
         let latlng = geocode.substring(1, geocode.length - 1); // Remove braces

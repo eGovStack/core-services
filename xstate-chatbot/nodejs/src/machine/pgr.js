@@ -243,7 +243,7 @@ const pgr =  {
                   type: 'image'
                 };
                 message.push(data);
-                context.extraInfo.filestoreId = config.informationImageFilestoreId;
+                context.extraInfo.filestoreId = config.pgrUseCase.informationImageFilestoreId;
                 dialog.sendMessage(context, message, false);
               }),
               always: 'geoLocation'

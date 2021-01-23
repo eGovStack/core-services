@@ -10,7 +10,7 @@ class BillService {
 
   constructor() {
     this.services = [];
-    let supportedModules = config.billSupportedModules.split(',');
+    let supportedModules = config.billsAndReceiptsUseCase.billSupportedModules.split(',');
     for(let module of supportedModules) {
       this.services.push(module.trim());
     }
@@ -220,7 +220,7 @@ class BillService {
 
   async prepareBillResult(responseBody,authToken,locale){
     let results=responseBody.Bill;
-    let billLimit = config.billSearchLimit;
+    let billLimit = config.billsAndReceiptsUseCase.billSearchLimit;
 
     if(results.length < billLimit)
       billLimit = results.length;
@@ -306,7 +306,7 @@ class BillService {
       }
     };
 
-    let billUrl = config.egovServicesHost + config.billServiceSearchPath;
+    let billUrl = config.egovServices.egovServicesHost + config.egovServices.billServiceSearchPath;
     billUrl = billUrl + '?tenantId=' + config.rootTenantId;
     
 
@@ -413,7 +413,7 @@ class BillService {
     }
 
     let finalResult = [];
-    let billLimit = config.billSearchLimit;
+    let billLimit = config.billsAndReceiptsUseCase.billSearchLimit;
 
     if(billResults.pendingBills.length < billLimit)
       billLimit = billResults.pendingBills.length;
@@ -444,7 +444,7 @@ class BillService {
   
   async getShortenedURL(finalPath)
   {
-    var url = config.egovServicesHost + config.urlShortnerEndpoint;
+    var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {
@@ -461,8 +461,8 @@ class BillService {
 
   async getPaymentLink(consumerCode,tenantId,businessService)
   {
-    var UIHost = config.externalHost;
-    var paymentPath = config.msgpaylink;
+    var UIHost = config.egovServices.externalHost;
+    var paymentPath = config.egovServices.msgpaylink;
     paymentPath = paymentPath.replace(/\$consumercode/g,consumerCode);
     paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
     paymentPath = paymentPath.replace(/\$businessservice/g,businessService);
@@ -492,7 +492,7 @@ class BillService {
       }
     };
 
-    let locationUrl = config.searcherHost + 'egov-searcher/locality/'+businessService+'/_get';
+    let locationUrl = config.egovServices.searcherHost + 'egov-searcher/locality/'+businessService+'/_get';
 
     let options = {
       method: 'POST',
@@ -559,12 +559,12 @@ class BillService {
     let consumerCodeToApplicationMapping={};
 
     for(let bill of Bills){
-      let url = config.externalHost;
+      let url = config.egovServices.externalHost;
       if(businessService === 'WS'){
-        url = url + config.waterConnectionSearch;
+        url = url + config.egovServices.waterConnectionSearch;
       }
       if(businessService === 'SW'){
-        url = url + config.sewerageConnectionSearch;
+        url = url + config.egovServices.sewerageConnectionSearch;
       }
 
       url = url + '&tenantId='+bill.tenantId;

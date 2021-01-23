@@ -50,7 +50,7 @@ class ValueFirstWhatsAppProvider {
 
     async fileStoreAPICall(fileName,fileData){
 
-        var url = config.egovServicesHost+config.egov_filestore_service_upload_endpoint;
+        var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceUploadEndpoint;
         var form = new FormData();
         form.append("file", fileData, {
             filename: fileName,
@@ -168,7 +168,7 @@ class ValueFirstWhatsAppProvider {
       }
 
     async getFileForFileStoreId(filestoreId){
-        var url = config.egovServicesHost+config.egov_filestore_service_download_endpoint;
+        var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceDownloadEndpoint;
         url = url + '?';
         url = url + 'tenantId='+config.rootTenantId;
         url = url + '&';

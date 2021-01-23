@@ -11,7 +11,7 @@ let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-    var url = config.egovServicesHost + config.mdmsSearchPath;
+    var url = config.egovServices.egovServicesHost + config.egovServices.mdmsSearchPath;
     var request = {
       "RequestInfo": {},
       "MdmsCriteria": {
@@ -128,7 +128,7 @@ class PGRService {
   }
 
   getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    return config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async fetchLocalities(tenantId) {
@@ -156,7 +156,7 @@ class PGRService {
   }
 
   getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    return config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async preparePGRResult(responseBody,locale){
@@ -165,7 +165,7 @@ class PGRService {
     results['ServiceWrappers'] = [];
     let localisationPrefix = 'SERVICEDEFS.';
 
-    let complaintLimit = config.complaintSearchLimit;
+    let complaintLimit = config.pgrUseCase.complaintSearchLimit;
 
     if(serviceWrappers.length < complaintLimit)
         complaintLimit = serviceWrappers.length;
@@ -214,7 +214,7 @@ class PGRService {
     requestBody["service"]["serviceCode"] = complaintType;
     requestBody["service"]["accountId"] = userId;
 
-    var url = config.egovServicesHost+config.pgrCreateEndpoint;
+    var url = config.egovServices.egovServicesHost+config.egovServices.pgrCreateEndpoint;
 
     var options = {
       method: 'POST',
@@ -245,7 +245,7 @@ class PGRService {
       }
     };
 
-    var url = config.egovServicesHost+config.pgrSearchEndpoint;
+    var url = config.egovServices.egovServicesHost+config.egovServices.pgrSearchEndpoint;
     url = url + '?tenantId=' + config.rootTenantId;
     url+='&';
     url+='mobileNumber='+user.mobileNumber;
@@ -274,7 +274,7 @@ class PGRService {
   }
 
   async getShortenedURL(finalPath){
-    var url = config.egovServicesHost + config.urlShortnerEndpoint;
+    var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {
@@ -292,7 +292,7 @@ class PGRService {
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
-    let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
+    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
   }

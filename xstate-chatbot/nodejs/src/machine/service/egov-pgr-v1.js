@@ -10,7 +10,7 @@ const moment = require("moment-timezone");
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-    var url = config.egovServicesHost + config.mdmsSearchPath;
+    var url = config.egovServices.egovServicesHost + config.egovServices.mdmsSearchPath;
     var request = {
       "RequestInfo": {},
       "MdmsCriteria": {
@@ -127,7 +127,7 @@ class PGRService {
   }
 
   getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    return config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async fetchLocalities(tenantId) {
@@ -155,7 +155,7 @@ class PGRService {
   }
 
   getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.externalHost + config.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    return config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async preparePGRResult(responseBody,locale){
@@ -172,7 +172,7 @@ class PGRService {
   }
 
   async getShortenedURL(finalPath){
-    var url = config.egovServicesHost + config.urlShortnerEndpoint;
+    var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {
@@ -191,7 +191,7 @@ class PGRService {
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
     //change the below url as per the PGR-V1 complaint page. Contact frontend developer 
-    let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
+    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
   }

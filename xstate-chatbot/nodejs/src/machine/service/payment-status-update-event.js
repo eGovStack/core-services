@@ -11,12 +11,12 @@ class PaymentStatusUpdateEventFormatter{
 
   constructor() {
     let topicList = [];
-    topicList.push(config.pgUpdateTransaction);
-    topicList.push(config.paymentUpdateTopic);
+    topicList.push(config.billsAndReceiptsUseCase.pgUpdateTransaction);
+    topicList.push(config.billsAndReceiptsUseCase.paymentUpdateTopic);
     let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, topicList);
     let self = this;
     consumerGroup.on('message', function(message) {
-        if(message.topic === config.paymentUpdateTopic) {
+        if(message.topic === config.billsAndReceiptsUseCase.paymentUpdateTopic) {
           let paymentRequest = JSON.parse(message.value);
 
           if(paymentRequest.Payment.additionalDetails && paymentRequest.Payment.additionalDetails.isWhatsapp){
@@ -34,7 +34,7 @@ class PaymentStatusUpdateEventFormatter{
 
         }
 
-        if(message.topic === config.pgUpdateTransaction){
+        if(message.topic === config.billsAndReceiptsUseCase.pgUpdateTransaction){
           let transactionRequest = JSON.parse(message.value);
           let status = transactionRequest.Transaction.txnStatus;
 
@@ -75,7 +75,7 @@ class PaymentStatusUpdateEventFormatter{
         key = 'consolidatedreceipt';
    
 
-      let pdfUrl = config.externalHost + 'pdf-service/v1/_create';
+      let pdfUrl = config.egovServices.externalHost + 'pdf-service/v1/_create';
       pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let requestBody = {
@@ -159,7 +159,7 @@ class PaymentStatusUpdateEventFormatter{
   }
 
   async getShortenedURL(finalPath){
-    var url = config.egovServicesHost + config.urlShortnerEndpoint;
+    var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {
@@ -175,8 +175,8 @@ class PaymentStatusUpdateEventFormatter{
   }
   
   async getPaymentLink(consumerCode,tenantId,businessService){
-    var UIHost = config.externalHost;
-    var paymentPath = config.msgpaylink;
+    var UIHost = config.egovServices.externalHost;
+    var paymentPath = config.egovServices.msgpaylink;
     paymentPath = paymentPath.replace(/\$consumercode/g,consumerCode);
     paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
     paymentPath = paymentPath.replace(/\$businessservice/g,businessService);

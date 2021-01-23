@@ -211,7 +211,7 @@ class ReceiptService {
 
     async preparePaymentResult(responseBody,authToken,locale,isMultipleRecords){
       let results=responseBody.Payments;
-      let receiptLimit = config.receiptSearchLimit;
+      let receiptLimit = config.billsAndReceiptsUseCase.receiptSearchLimit;
 
       if(results.length < receiptLimit)
         receiptLimit = results.length;
@@ -306,9 +306,9 @@ class ReceiptService {
           authToken: user.authToken
         }
       };
-       var searchEndpoint = config.collectonServicSearchEndpoint;
+       var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
        searchEndpoint= searchEndpoint.replace(/\$module/g,service);
-      let paymentUrl = config.externalHost + searchEndpoint;
+      let paymentUrl = config.egovServices.externalHost + searchEndpoint;
       paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       
       if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
@@ -395,9 +395,9 @@ class ReceiptService {
         }
       };
 
-      var searchEndpoint = config.collectonServicSearchEndpoint;
+      var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
       searchEndpoint= searchEndpoint.replace(/\$module/g,service);
-      let paymentUrl = config.egovServicesHost + searchEndpoint;
+      let paymentUrl = config.egovServices.egovServicesHost + searchEndpoint;
       paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       paymentUrl+='&';
       paymentUrl +='consumerCodes='+consumerCodes;
@@ -428,7 +428,7 @@ class ReceiptService {
 
     async getShortenedURL(finalPath)
     {
-      var url = config.egovServicesHost + config.urlShortnerEndpoint;
+      var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
       var request = {};
       request.url = finalPath; 
       var options = {
@@ -445,8 +445,8 @@ class ReceiptService {
 
     async receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber)
     {
-      var UIHost = config.externalHost;
-      var paymentPath = config.receiptdownladlink;
+      var UIHost = config.egovServices.externalHost;
+      var paymentPath = config.egovServices.receiptdownladlink;
       paymentPath = paymentPath.replace(/\$consumercode/g,consumerCode);
       paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
       paymentPath = paymentPath.replace(/\$receiptnumber/g,receiptNumber)
@@ -478,7 +478,7 @@ class ReceiptService {
         }
       };
   
-      let locationUrl = config.searcherHost + 'egov-searcher/locality/'+businessService+'/_get';
+      let locationUrl = config.egovServices.searcherHost + 'egov-searcher/locality/'+businessService+'/_get';
   
       let options = {
         method: 'POST',
@@ -545,12 +545,12 @@ class ReceiptService {
       let consumerCodeToApplicationMapping={};
   
       for(let Payment of Payments){
-        let url = config.externalHost;
+        let url = config.egovServices.externalHost;
         if(businessService === 'WS'){
-          url = url + config.waterConnectionSearch;
+          url = url + config.egovServices.waterConnectionSearch;
         }
         if(businessService === 'SW'){
-          url = url + config.sewerageConnectionSearch;;
+          url = url + config.egovServices.sewerageConnectionSearch;;
         }
         
         url = url + '&tenantId='+Payment.city;

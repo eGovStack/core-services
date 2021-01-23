@@ -3,7 +3,6 @@ const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
 const valueFirst = require('../../channel/value-first');        // TODO: import channel
 const fetch = require("node-fetch");
-const { complaintSearchLimit } = require('../../env-variables');
 
 const consumerGroupOptions = require('../../session/kafka/kafka-consumer-group-options');
 
@@ -14,10 +13,10 @@ let localisationPrefix = 'SERVICEDEFS.';
 class PGRStatusUpdateEventFormatter{
 
     constructor() {
-        let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, config.pgrUpdateTopic);
+        let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, config.pgrUseCase.pgrUpdateTopic);
         let self = this;
         consumerGroup.on('message', function(message) {
-            if(message.topic === config.pgrUpdateTopic) {
+            if(message.topic === config.pgrUseCase.pgrUpdateTopic) {
                 self.templateMessgae(JSON.parse(message.value))
                 .then(() => {
                     console.log("template message sent to citizen");        // TODO: Logs to be removed
@@ -259,7 +258,7 @@ class PGRStatusUpdateEventFormatter{
 
     async searchUser(serviceWrapper, assigneeId){
 
-        let url = config.egovServicesHost + 'user/_search'
+        let url = config.egovServices.egovServicesHost + 'user/_search'
 
         let requestBody = {
             RequestInfo: {},
@@ -294,7 +293,7 @@ class PGRStatusUpdateEventFormatter{
     }
 
     async getShortenedURL(finalPath){
-        var url = config.egovServicesHost + config.urlShortnerEndpoint;
+        var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
         var request = {};
         request.url = finalPath; 
         var options = {
@@ -311,7 +310,7 @@ class PGRStatusUpdateEventFormatter{
 
     async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
         let encodedPath = urlencode(serviceRequestId, 'utf8');
-        let url = config.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
+        let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
         let shortURL = await this.getShortenedURL(url);
         return shortURL;
     }
