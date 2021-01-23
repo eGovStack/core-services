@@ -10,7 +10,7 @@ const moment = require("moment-timezone");
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-    var url = config.mdmsHost + config.mdmsSearchPath;
+    var url = config.egovServicesHost + config.mdmsSearchPath;
     var request = {
       "RequestInfo": {},
       "MdmsCriteria": {
@@ -172,8 +172,7 @@ class PGRService {
   }
 
   async getShortenedURL(finalPath){
-    var urlshortnerHost = config.externalHost;
-    var url = urlshortnerHost + 'egov-url-shortening/shortener';
+    var url = config.egovServicesHost + config.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {

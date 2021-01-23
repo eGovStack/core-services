@@ -397,7 +397,7 @@ class ReceiptService {
 
       var searchEndpoint = config.collectonServicSearchEndpoint;
       searchEndpoint= searchEndpoint.replace(/\$module/g,service);
-      let paymentUrl = config.collectonServiceHost + searchEndpoint;
+      let paymentUrl = config.egovServicesHost + searchEndpoint;
       paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       paymentUrl+='&';
       paymentUrl +='consumerCodes='+consumerCodes;
@@ -428,8 +428,7 @@ class ReceiptService {
 
     async getShortenedURL(finalPath)
     {
-      var urlshortnerHost = config.externalHost;
-      var url = urlshortnerHost + 'egov-url-shortening/shortener';
+      var url = config.egovServicesHost + config.urlShortnerEndpoint;
       var request = {};
       request.url = finalPath; 
       var options = {

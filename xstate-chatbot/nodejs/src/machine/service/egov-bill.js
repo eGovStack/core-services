@@ -306,7 +306,7 @@ class BillService {
       }
     };
 
-    let billUrl = config.externalHost + config.billServiceSearchPath;
+    let billUrl = config.egovServicesHost + config.billServiceSearchPath;
     billUrl = billUrl + '?tenantId=' + config.rootTenantId;
     
 
@@ -443,22 +443,21 @@ class BillService {
   }
   
   async getShortenedURL(finalPath)
-{
-  var urlshortnerHost = config.externalHost;
-  var url = urlshortnerHost + 'egov-url-shortening/shortener';
-  var request = {};
-  request.url = finalPath; 
-  var options = {
-    method: 'POST',
-    body: JSON.stringify(request),
-    headers: {
-      'Content-Type': 'application/json'
+  {
+    var url = config.egovServicesHost + config.urlShortnerEndpoint;
+    var request = {};
+    request.url = finalPath; 
+    var options = {
+      method: 'POST',
+      body: JSON.stringify(request),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }
+    let response = await fetch(url, options);
+    let data = await response.text();
+    return data;
   }
-  let response = await fetch(url, options);
-  let data = await response.text();
-  return data;
-}
 
   async getPaymentLink(consumerCode,tenantId,businessService)
   {

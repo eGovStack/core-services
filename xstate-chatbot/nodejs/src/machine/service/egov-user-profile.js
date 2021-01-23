@@ -13,7 +13,7 @@ class UserProfileService {
       },
       user: user.userInfo
     };
-    let url = config.userServiceHost + config.userServiceUpdateProfilePath + '?tenantId=' + tenantId;
+    let url = config.egovServicesHost + config.userServiceUpdateProfilePath + '?tenantId=' + tenantId;
 
     let options = {
       method: 'POST',

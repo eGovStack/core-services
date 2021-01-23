@@ -11,7 +11,7 @@ let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}
 class PGRService {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-    var url = config.mdmsHost + config.mdmsSearchPath;
+    var url = config.egovServicesHost + config.mdmsSearchPath;
     var request = {
       "RequestInfo": {},
       "MdmsCriteria": {
@@ -214,7 +214,7 @@ class PGRService {
     requestBody["service"]["serviceCode"] = complaintType;
     requestBody["service"]["accountId"] = userId;
 
-    var url = config.externalHost+config.pgrCreateEndpoint;
+    var url = config.egovServicesHost+config.pgrCreateEndpoint;
 
     var options = {
       method: 'POST',
@@ -245,7 +245,7 @@ class PGRService {
       }
     };
 
-    var url = config.externalHost+config.pgrSearchEndpoint;
+    var url = config.egovServicesHost+config.pgrSearchEndpoint;
     url = url + '?tenantId=' + config.rootTenantId;
     url+='&';
     url+='mobileNumber='+user.mobileNumber;
@@ -274,8 +274,7 @@ class PGRService {
   }
 
   async getShortenedURL(finalPath){
-    var urlshortnerHost = config.externalHost;
-    var url = urlshortnerHost + 'egov-url-shortening/shortener';
+    var url = config.egovServicesHost + config.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {

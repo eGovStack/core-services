@@ -159,8 +159,7 @@ class PaymentStatusUpdateEventFormatter{
   }
 
   async getShortenedURL(finalPath){
-    var urlshortnerHost = config.externalHost;
-    var url = urlshortnerHost + 'egov-url-shortening/shortener';
+    var url = config.egovServicesHost + config.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
     var options = {

@@ -8,7 +8,7 @@ class DummyPGRService {
     // Please mark the method async if the actual app-service method would involve api calls
 
     async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
-      var url = config.mdmsHost + config.mdmsSearchPath;
+      var url = config.egovServicesHost + config.mdmsSearchPath;
       var request = {
         "RequestInfo": {},
         "MdmsCriteria": {
