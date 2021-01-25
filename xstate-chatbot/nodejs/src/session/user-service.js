@@ -74,7 +74,7 @@ class UserService {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: requestBody
+      body: JSON.stringify(requestBody)
     }
 
     let response = await fetch(url, options);
