@@ -81,10 +81,6 @@ public class RazorpayGateway implements Gateway{
 	        fields.put("vpc_ReturnURL", transaction.getCallbackUrl());
 	        fields.put("vpc_MerchTxnRef", transaction.getTxnId());
 	        fields.put("vpc_OrderInfo", (String) transaction.getAdditionalFields().get(BANK_ACCOUNT_NUMBER));
-	        
-
-	        String secureHash = Utils.SHAhashAllFields(fields, SECURE_SECRET);
-
 	        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	        fields.forEach(params::add);
 
