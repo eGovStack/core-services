@@ -199,8 +199,8 @@ class ValueFirstWhatsAppProvider {
             console.error("Receipient number can not be empty");
 
         let requestBody = JSON.parse(valueFirstRequestBody);
-        requestBody["USER"]["@USERNAME"] = config.valueFirstUsername;
-        requestBody["USER"]["@PASSWORD"] = config.valueFirstPassword;
+        requestBody["USER"]["@USERNAME"] = config.valueFirstWhatsAppProvider.valueFirstUsername;
+        requestBody["USER"]["@PASSWORD"] = config.valueFirstWhatsAppProvider.valueFirstPassword;
 
         for(let i = 0; i < messages.length; i++) {
             let message;
