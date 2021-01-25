@@ -206,24 +206,15 @@ class ValueFirstWhatsAppProvider {
             let message;
             let type;
             if(typeof messages[i] == 'string'){
-                type="text";
+                type = "text";
                 message = messages[i];
             }
             
             if(typeof messages[i] == 'object'){
-                if(messages[i].type && messages[i].type==="image")
-                    type="image";
-
-                if(messages[i].type && messages[i].type==="pdf")
-                    type="pdf";
-
-                if(messages[i].type && messages[i].type==="text")
-                    type="text";
-
-                if(messages[i].hasOwnProperty('message'))
-                    message = messages[i].message;
+                type = messages[i].type;
+                message = messages[i].output;
             }
-                
+            
             let messageBody;
             if(type === 'text') {
                 messageBody = JSON.parse(textMessageBody);
