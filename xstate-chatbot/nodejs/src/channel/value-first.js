@@ -223,8 +223,8 @@ class ValueFirstWhatsAppProvider {
             } else {
                 // TODO for non-textual messages
                 let fileStoreId;
-                if(extraInfo.filestoreId)
-                    fileStoreId = extraInfo.filestoreId;
+                if(message)
+                    fileStoreId = message;
                 const base64Image = await this.getFileForFileStoreId(fileStoreId);
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);

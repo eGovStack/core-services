@@ -102,11 +102,10 @@ class PaymentStatusUpdateEventFormatter{
         };
         let extraInfo = {
           whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
-          filestoreId: responseBody.filestoreIds[0],
           fileName: key
         };
 
-        let messages = await this.prepareSucessMessage(payment);
+        let messages = await this.prepareSucessMessage(payment,responseBody.filestoreIds[0]);
     
         await valueFirst.sendMessageToUser(user, messages,extraInfo);
       }
@@ -114,19 +113,20 @@ class PaymentStatusUpdateEventFormatter{
 
   }
 
-  async prepareSucessMessage(payment){
+  async prepareSucessMessage(payment,filestoreId){
     let message=[];
     let locale = "en_IN";
     let template = dialog.get_message(messageBundle.paymentSucess,locale);
     template = template.replace('{{transaction_number}}',payment.transactionNumber);
 
     var content = {
-      message:template,
+      output:template,
       type: "text"
     };
     message.push(content);
 
-    var pdfContent ={
+    var pdfContent = {
+      output: filestoreId,
       type: "pdf"
     };
     message.push(pdfContent);

@@ -161,7 +161,7 @@ class PGRStatusUpdateEventFormatter{
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
         let assigneeName = "the concerned employee";
-        if(serviceWrapper.workflow.assignes.length > 0){
+        if( serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
             let assignee = await this.getAssignee(serviceWrapper);
             assigneeName = assignee.name;
         }
