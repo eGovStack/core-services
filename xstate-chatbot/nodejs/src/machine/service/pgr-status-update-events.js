@@ -59,11 +59,15 @@ class PGRStatusUpdateEventFormatter{
 
             if(status){
 
-                if (status === "rejected") {
+                if (status === "REJECTED") {
                     extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName);
                 } 
                     
                 else if ((action + "-" + status) === "reassign-assigned") {
+                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                }
+
+                else if(status === "PENDINGFORREASSIGNMENT"){
                     extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
                 } 
                     
@@ -123,8 +127,11 @@ class PGRStatusUpdateEventFormatter{
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let assignee = await this.getAssignee(serviceWrapper);
-        let assigneeName = assignee.name;
+        let assigneeName = "the concerned employee";
+        if(serviceWrapper.workflow.assignes.length > 0){
+            let assignee = await this.getAssignee(serviceWrapper);
+            assigneeName = assignee.name;
+        }
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
 
         let tenantId = serviceWrapper.service.tenantId;
@@ -153,8 +160,11 @@ class PGRStatusUpdateEventFormatter{
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let assignee = await this.getAssignee(serviceWrapper);
-        let assigneeName = assignee.name;
+        let assigneeName = "the concerned employee";
+        if(serviceWrapper.workflow.assignes.length > 0){
+            let assignee = await this.getAssignee(serviceWrapper);
+            assigneeName = assignee.name;
+        }
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
@@ -231,8 +241,11 @@ class PGRStatusUpdateEventFormatter{
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let assignee = await this.getAssignee(serviceWrapper);
-        let commentorName = assignee.name;
+        let commentorName = "the concerned employee";
+        if(serviceWrapper.workflow.assignes.length > 0){
+            let assignee = await this.getAssignee(serviceWrapper);
+            commentorName = assignee.name;
+        }
 
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];

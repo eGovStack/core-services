@@ -17,7 +17,7 @@ class UserService {
     let user = await this.loginUser(mobileNumber, tenantId);
     if(user === undefined) {
       await this.createUser(mobileNumber, tenantId);
-      let user = await this.loginUser(mobileNumber, tenantId);
+      user = await this.loginUser(mobileNumber, tenantId);
     }
     return user;
   }
