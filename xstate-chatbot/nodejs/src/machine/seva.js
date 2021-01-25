@@ -272,7 +272,7 @@ const sevaMachine = Machine({
       always: 'start',
       // type: 'final', //Make it a final state so session manager kills this machine and creates a new one when user types again
       onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.endstate, context.user.locale));
+        //dialog.sendMessage(context, dialog.get_message(messages.endstate, context.user.locale));
       })
     },
     system_error: {

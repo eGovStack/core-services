@@ -99,6 +99,8 @@ class PGRStatusUpdateEventFormatter{
     async responseForRejectedStatus(serviceWrapper, comments, citizenName){
         let rejectReason = comments.split(";");
         rejectReason = rejectReason[0];
+        if(rejectReason)
+            rejectReason = "Invalid Complaint";
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
 
