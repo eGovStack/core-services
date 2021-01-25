@@ -325,7 +325,7 @@ const pgr =  {
                   }),
                   always: [
                     {
-                      target: '#persistComplaint',
+                      target: '#other',
                       cond: (context, event) => context.slots.pgr["locationConfirmed"]  && context.slots.pgr["locality"]
                     },
                     {
@@ -420,7 +420,7 @@ const pgr =  {
                   }),
                   always : [
                     {
-                      target: '#persistComplaint',
+                      target: '#other',
                       cond: (context) => context.intention != dialog.INTENTION_UNKOWN,
                       actions: assign((context, event) => context.slots.pgr["locality"] = context.intention)
                     },
@@ -445,7 +445,33 @@ const pgr =  {
         },
         other: {
           // get other info
-
+          id: 'other',
+          initial: 'imageUpload',
+          states: {
+            imageUpload: {
+              id: 'imageUpload',
+              initial: 'question',
+              states: {
+                question: {
+                  onEntry: assign((context, event) => {
+                    let message = dialog.get_message(messages.fileComplaint.imageUpload.question, context.user.locale);
+                    dialog.sendMessage(context, message);
+                  }),
+                  on: {
+                    USER_MESSAGE: 'process'
+                  }
+                },
+                process: {
+                  onEntry: assign((context, event) => {
+                    if(dialog.validateInputType(event, 'image')) {
+                      context.slots.pgr.image = event.message.input;
+                    }
+                  }),
+                  always: '#persistComplaint'
+                }
+              }
+            }
+          }
         },
         persistComplaint: {
           id: 'persistComplaint',
@@ -582,6 +608,11 @@ let messages = {
         }
       }
     }, // locality
+    imageUpload: {
+      question: {
+        en_IN: 'Please attach a picture of the complaint. Else, type and send "No"'
+      }
+    },
     persistComplaint: {
       en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : {{complaintNumber}}\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
       hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
