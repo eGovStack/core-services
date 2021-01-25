@@ -466,8 +466,33 @@ const pgr =  {
                     if(dialog.validateInputType(event, 'image')) {
                       context.slots.pgr.image = event.message.input;
                     }
+                    else{
+                      let parsed = event.message.input;
+                      let isValid = (parsed === "No" || parsed === "no");
+                      context.message = {
+                        isValid: isValid,
+                        messageContent: event.message.input
+                      };
+                    }
                   }),
-                  always: '#persistComplaint'
+                  always:[
+                    {
+                      target: 'error',
+                      cond: (context, event) => {
+                        return ! context.message.isValid;
+                      }
+                    },
+                    {
+                      target: '#persistComplaint'
+                    }
+                  ] 
+                },
+                error: {
+                  onEntry: assign( (context, event) => {
+                    let message = dialog.get_message(messages.fileComplaint.imageUpload.error, context.user.locale);
+                    dialog.sendMessage(context, message, false);
+                  }),
+                  always : 'question'
                 }
               }
             }
@@ -610,7 +635,12 @@ let messages = {
     }, // locality
     imageUpload: {
       question: {
-        en_IN: 'Please attach a picture of the complaint. Else, type and send "No"'
+        en_IN: 'Please attach a picture of the complaint. Otherwise, type and send "No"',
+        hi_IN: 'कृपया शिकायत की एक तस्वीर भेजें। अन्यथा टाइप करें "No" और भेजें ।'
+      },
+      error:{
+        en_IN : 'Sorry, I didn\'t understand',
+        hi_IN: 'क्षमा करें, मुझे समझ नहीं आया ।',
       }
     },
     persistComplaint: {
