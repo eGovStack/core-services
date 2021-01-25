@@ -485,7 +485,7 @@ const pgr =  {
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
                 message = message.replace('{{complaintNumber}}', complaintDetails.complaintNumber);
                 message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
-                dialog.sendMessage(context, message, false);
+                dialog.sendMessage(context, message);
               })
             }
           }
@@ -518,14 +518,14 @@ const pgr =  {
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
-              dialog.sendMessage(context, message, false);
+              dialog.sendMessage(context, message);
             })
           },
           {
             target: '#endstate',
             actions: assign((context, event) => {
               let message = dialog.get_message(messages.trackComplaint.noRecords, context.user.locale);
-              dialog.sendMessage(context, message, false);
+              dialog.sendMessage(context, message);
             })
           }
         ]
