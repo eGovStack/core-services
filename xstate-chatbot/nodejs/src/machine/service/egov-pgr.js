@@ -201,7 +201,6 @@ class PGRService {
     let requestBody = JSON.parse(pgrCreateRequestBody);
 
     let authToken = user.authToken;
-    let mobileNumber = user.mobileNumber;
     let userId = user.userId;
     let complaintType = slots.complaint;
     let locality = slots.locality;
@@ -213,6 +212,15 @@ class PGRService {
     requestBody["service"]["address"]["locality"]["code"] = locality;
     requestBody["service"]["serviceCode"] = complaintType;
     requestBody["service"]["accountId"] = userId;
+
+    if(slots.image){
+      var content = {
+        documentType: "PHOTO",
+        filestoreId:slots.image
+      };
+      requestBody["workflow"]["verificationDocuments"].push(content);
+    }
+
 
     var url = config.egovServices.egovServicesHost+config.egovServices.pgrCreateEndpoint;
 

@@ -128,7 +128,7 @@ class PGRStatusUpdateEventFormatter{
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
         let assigneeName = "the concerned employee";
-        if(serviceWrapper.workflow.assignes.length > 0){
+        if(serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
             let assignee = await this.getAssignee(serviceWrapper);
             assigneeName = assignee.name;
         }
@@ -242,7 +242,7 @@ class PGRStatusUpdateEventFormatter{
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
         let commentorName = "the concerned employee";
-        if(serviceWrapper.workflow.assignes.length > 0){
+        if(serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
             let assignee = await this.getAssignee(serviceWrapper);
             commentorName = assignee.name;
         }
@@ -323,7 +323,7 @@ class PGRStatusUpdateEventFormatter{
 
     async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
         let encodedPath = urlencode(serviceRequestId, 'utf8');
-        let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "?source=whatsapp";
+        let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
         let shortURL = await this.getShortenedURL(url);
         return shortURL;
     }
