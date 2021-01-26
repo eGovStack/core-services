@@ -15,6 +15,8 @@ let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@TEMPL
 
 let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
+let pdfMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@MEDIADATA\":\"\",\"@MSGTYPE\":\"3\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"1\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
+
 let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
 class ValueFirstWhatsAppProvider {
@@ -167,7 +169,7 @@ class ValueFirstWhatsAppProvider {
         })
       }
 
-    async getFileForFileStoreId(filestoreId){
+    async getFileForFileStoreId(filestoreId,type){
         var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceDownloadEndpoint;
         url = url + '?';
         url = url + 'tenantId='+config.rootTenantId;
@@ -182,6 +184,10 @@ class ValueFirstWhatsAppProvider {
         let response = await fetch(url,options);
         response = await(response).json();
         var fileURL = response['fileStoreIds'][0]['url'].split(",");
+
+        if(type === 'pdf')
+            return fileURL[0].toString();
+
         var fileName = geturl.parse(fileURL[0]);
         fileName = path.basename(fileName.pathname);
         fileName = fileName.substring(13);
@@ -225,15 +231,20 @@ class ValueFirstWhatsAppProvider {
                 let fileStoreId;
                 if(message)
                     fileStoreId = message;
-                const base64Image = await this.getFileForFileStoreId(fileStoreId);
+                const base64Image = await this.getFileForFileStoreId(fileStoreId,type);
                 var uniqueImageMessageId = uuid();
-                messageBody = JSON.parse(imageMessageBody);
                 if(type === 'pdf'){
-                    messageBody['@TYPE'] = "document";
+                    messageBody = JSON.parse(pdfMessageBody);
+                    messageBody['@TYPE'] = 'document~receipt.pdf';
                     messageBody['@CONTENTTYPE'] = 'application/pdf';
+                    messageBody['@MEDIADATA'] = base64Image;
                 }
-                messageBody['@TEXT'] = base64Image;
-                messageBody['@ID'] = uniqueImageMessageId;
+                else{
+                    messageBody = JSON.parse(imageMessageBody);
+                    messageBody['@TEXT'] = base64Image;
+                    messageBody['@ID'] = uniqueImageMessageId;
+                }
+                
 
             }
             messageBody["ADDRESS"][0]["@FROM"] = fromMobileNumber;
