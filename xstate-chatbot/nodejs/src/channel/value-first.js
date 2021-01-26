@@ -231,6 +231,7 @@ class ValueFirstWhatsAppProvider {
                 if(type === 'pdf'){
                     messageBody['@TYPE'] = "document";
                     messageBody['@CONTENTTYPE'] = 'application/pdf';
+                    messageBody['@CAPTION'] = extraInfo.fileName+'-'+Date.now();
                 }
                 messageBody['@TEXT'] = base64Image;
                 messageBody['@ID'] = uniqueImageMessageId;
