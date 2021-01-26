@@ -186,7 +186,7 @@ class ValueFirstWhatsAppProvider {
         var fileURL = response['fileStoreIds'][0]['url'].split(",");
 
         if(type === 'pdf')
-            return fileURL[0].toString();
+            return fileURL[0];
 
         var fileName = geturl.parse(fileURL[0]);
         fileName = path.basename(fileName.pathname);
@@ -238,6 +238,7 @@ class ValueFirstWhatsAppProvider {
                     messageBody['@TYPE'] = 'document~receipt.pdf';
                     messageBody['@CONTENTTYPE'] = 'application/pdf';
                     messageBody['@MEDIADATA'] = base64Image;
+                    messageBody['@TEXT'] = "Refer below document";
                 }
                 else{
                     messageBody = JSON.parse(imageMessageBody);
