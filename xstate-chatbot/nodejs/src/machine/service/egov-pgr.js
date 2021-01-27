@@ -368,7 +368,9 @@ class PGRService {
     fileName = path.basename(fileName.pathname);
     fileName = fileName.substring(13);
     await this.downloadImage(fileURL[0].toString(),fileName);
-    const fileData = fs.readFileSync(fileName,'base64');
+    let imageInBase64String = fs.readFileSync(fileName,'base64');
+    imageInBase64String = imageInBase64String.replace(/ /g,'+');
+    let fileData = Buffer.from(imageInBase64String, 'base64');
     var filestoreId = await this.fileStoreAPICall(fileName,fileData,tenantId);
     fs.unlinkSync(fileName);
     return filestoreId;
