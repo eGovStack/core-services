@@ -5,11 +5,12 @@ const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
 const dialog = require('../util/dialog');
 const moment = require("moment-timezone");
-var geturl = require("url");
-var path = require("path");
 const fs = require('fs');
 const axios = require('axios');
 var FormData = require("form-data");
+var geturl = require("url");
+var path = require("path");
+require('url-search-params-polyfill');
 
 let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
 
@@ -367,8 +368,9 @@ class PGRService {
     fileName = path.basename(fileName.pathname);
     fileName = fileName.substring(13);
     await this.downloadImage(fileURL[0].toString(),fileName);
-    const file = fs.readFileSync(fileName,'base64');
-    var filestoreId = await this.fileStoreAPICall(fileName,file,tenantId);
+    const fileData = fs.readFileSync(fileName,'base64');
+    var filestoreId = await this.fileStoreAPICall(fileName,fileData,tenantId);
+    fs.unlinkSync(fileName);
     return filestoreId;
   }
   
