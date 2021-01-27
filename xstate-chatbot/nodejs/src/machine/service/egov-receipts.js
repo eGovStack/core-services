@@ -8,8 +8,16 @@ let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fir
 
 class ReceiptService {
 
+  constructor() {
+    this.services = [];
+    let supportedModules = config.billsAndReceiptsUseCase.billSupportedModules.split(',');
+    for(let module of supportedModules) {
+      this.services.push(module.trim());
+    }
+  }
+
     getSupportedServicesAndMessageBundle() {
-        let services = [ 'WS', 'PT', 'TL', 'FIRENOC', 'BPA' ];
+        let services = this.services;
         let messageBundle = {
           WS: {
             en_IN: 'Water and Sewerage',

@@ -362,7 +362,8 @@ let messages = {
       }      
     },
     onboardingNameConfirmation: {
-      en_IN: "Please confirm your name {{name}} by typing “Yes” or send “No” to change your name."
+      en_IN: "Please confirm your name {{name}} by typing “Yes” or send “No” to change your name.",
+      hi_IN: "कृपया “Yes” लिखकर या अपना नाम बदलने के लिए “No” लिखकर अपने नाम {{name}} की पुष्टि करें।"
     },
     onboardingThankYou: {
       en_IN: 'Thank you so much {{name}} for the details, we are happy to serve you.',

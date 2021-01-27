@@ -528,14 +528,35 @@ const receipts = {
           process: {
             onEntry: assign((context, event) => {
               let parsed = parseInt(event.message.input.trim());
+              let isValid = (parsed >= 1 && parsed <= context.receipts.slots.searchresults.length);
+              context.message = {
+                isValid: isValid,
+                messageContent: event.message.input
+              };
               context.receipts.slots.receiptNumber=parsed;
             }),
             always: [
               {
-                target: '#multipleRecordReceipt'
+                target: '#multipleRecordReceipt',
+                cond: (context, event) => {
+                  return context.message.isValid;
+                }
+              },
+              {
+                target: 'error',
+                cond: (context, event) => {
+                  return !context.message.isValid;
+                }
               }
             ]
           },
+          error: {
+            onEntry: assign( (context, event) => {
+              let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
+              dialog.sendMessage(context, message , false);
+            }),
+            always : '#services'
+          }
         },
       },
       multipleRecordReceipt:{

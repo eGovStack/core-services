@@ -468,7 +468,7 @@ const pgr =  {
                     }
                     else{
                       let parsed = event.message.input;
-                      let isValid = (parsed === "No" || parsed === "no");
+                      let isValid = (parsed === "No" && dialog.validateInputType(event, 'text'));
                       context.message = {
                         isValid: isValid,
                         messageContent: event.message.input
@@ -510,6 +510,8 @@ const pgr =  {
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
                 message = message.replace('{{complaintNumber}}', complaintDetails.complaintNumber);
                 message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
+                let closingStatement = dialog.get_message(messages.fileComplaint.closingStatement, context.user.locale);
+                message = message + closingStatement;
                 dialog.sendMessage(context, message);
               })
             }
@@ -543,6 +545,8 @@ const pgr =  {
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
+              let closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
+              message = message +'\n'+ closingStatement;
               dialog.sendMessage(context, message);
             })
           },
