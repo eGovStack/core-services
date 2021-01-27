@@ -214,9 +214,10 @@ class PGRService {
     requestBody["service"]["accountId"] = userId;
 
     if(slots.image){
+      let filestoreId = await this.getFileForFileStoreId(slots.image,city);
       var content = {
         documentType: "PHOTO",
-        filestoreId:slots.image
+        filestoreId:filestoreId
       };
       requestBody["workflow"]["verificationDocuments"].push(content);
     }
@@ -305,6 +306,66 @@ class PGRService {
     return shortURL;
   }
 
+  async downloadImage(url,filename) {  
+    const writer = fs.createWriteStream(filename);
+  
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream'
+      });
+  
+    response.data.pipe(writer);
+  
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    })
+  }
+
+  async fileStoreAPICall(fileName,fileData,tenantId){
+
+    var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceUploadEndpoint;
+    url = url+'&tenantId='+tenantId;
+    var form = new FormData();
+    form.append("file", fileData, {
+        filename: fileName,
+        contentType: "image/jpg"
+    });
+    let response = await axios.post(url, form, {
+        headers: {
+            ...form.getHeaders()
+        }
+    });
+    
+    var filestore = response.data;
+    return filestore['files'][0]['fileStoreId'];
+  }
+
+
+  async getFileForFileStoreId(filestoreId,tenantId){
+    var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceDownloadEndpoint;
+    url = url + '?';
+    url = url + 'tenantId='+config.rootTenantId;
+    url = url + '&';
+    url = url + 'fileStoreIds='+filestoreId;
+
+    var options = {
+        method: "GET",
+        origin: '*'
+    }
+
+    let response = await fetch(url,options);
+    response = await(response).json();
+    var fileURL = response['fileStoreIds'][0]['url'].split(",");
+    var fileName = geturl.parse(fileURL[0]);
+    fileName = path.basename(fileName.pathname);
+    fileName = fileName.substring(13);
+    await this.downloadImage(fileURL[0].toString(),fileName);
+    const file = fs.readFileSync(fileName,'base64');
+    var filestoreId = await this.fileStoreAPICall(fileName,file,tenantId);
+    return filestoreId;
+  }
   
 }
 
