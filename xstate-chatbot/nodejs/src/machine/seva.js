@@ -10,8 +10,8 @@ const sevaMachine = Machine({
   initial: 'start',
   on: {
     USER_RESET: {
-      target: 'sevamenu',
-      actions: assign( (context, event) => dialog.sendMessage(context, dialog.get_message(messages.reset, context.user.locale), false))
+      target: 'start',
+      // actions: assign( (context, event) => dialog.sendMessage(context, dialog.get_message(messages.reset, context.user.locale), false))
     }
   },
   states: {
@@ -326,10 +326,10 @@ const sevaMachine = Machine({
     endstate: {
       id: 'endstate',
       always: 'start',
-      // type: 'final', //Make it a final state so session manager kills this machine and creates a new one when user types again
-      onEntry: assign((context, event) => {
-        //dialog.sendMessage(context, dialog.get_message(messages.endstate, context.user.locale));
-      })
+      // type: 'final', //Another approach: Make it a final state so session manager kills this machine and creates a new one when user types again
+      // onEntry: assign((context, event) => {
+      //   dialog.sendMessage(context, dialog.get_message(messages.endstate, context.user.locale));
+      // })
     },
     system_error: {
       id: 'system_error',
