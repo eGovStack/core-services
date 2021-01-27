@@ -10,7 +10,7 @@ const sevaMachine = Machine({
   initial: 'start',
   on: {
     USER_RESET: {
-      target: 'start',
+      target: '#welcome',
       // actions: assign( (context, event) => dialog.sendMessage(context, dialog.get_message(messages.reset, context.user.locale), false))
     }
   },
