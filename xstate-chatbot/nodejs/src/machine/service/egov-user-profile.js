@@ -2,10 +2,10 @@ const config = require('../../env-variables');
 const fetch = require('node-fetch');
 
 class UserProfileService {
-  async updateUser(user, tenantId) {
-    user.userInfo.locale = user.locale;
-    if(user.name)
-      user.userInfo.name = user.name;
+  async updateUser(user, slots, tenantId) {
+    user.userInfo.locale = slots.locale;
+    if(slots.name)
+      user.userInfo.name = slots.name;
 
     let requestBody = {
       RequestInfo: {
