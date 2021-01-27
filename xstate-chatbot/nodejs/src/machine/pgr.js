@@ -465,6 +465,9 @@ const pgr =  {
                   onEntry: assign((context, event) => {
                     if(dialog.validateInputType(event, 'image')) {
                       context.slots.pgr.image = event.message.input;
+                      context.message = {
+                        isValid: true
+                      };
                     }
                     else{
                       let parsed = event.message.input;
@@ -483,7 +486,10 @@ const pgr =  {
                       }
                     },
                     {
-                      target: '#persistComplaint'
+                      target: '#persistComplaint',
+                      cond: (context, event) => {
+                        return context.message.isValid;
+                      }
                     }
                   ] 
                 },
