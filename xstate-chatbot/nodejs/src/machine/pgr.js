@@ -510,6 +510,7 @@ const pgr =  {
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
                 message = message.replace('{{complaintNumber}}', complaintDetails.complaintNumber);
                 message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
+                message = message + dialog.get_message(messages.fileComplaint.closingStatement, context.user.locale);
                 dialog.sendMessage(context, message);
               })
             }
@@ -543,6 +544,7 @@ const pgr =  {
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
+              message = message + dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
               dialog.sendMessage(context, message);
             })
           },
@@ -646,6 +648,10 @@ let messages = {
     persistComplaint: {
       en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : {{complaintNumber}}\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
       hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
+    },
+    closingStatement: {
+      en_IN: '\nPlease type and send “mseva” whenever you need my assistance',
+      hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
     }
   }, // fileComplaint
   trackComplaint: {
@@ -661,6 +667,10 @@ let messages = {
       complaintTemplate: {
         en_IN: '*{{complaintType}}*\nComplaint No: {{complaintNumber}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}',
         hi_IN: '*{{complaintType}}*\nशिकायत संख्या: {{complaintNumber}}\nदायर तिथि: {{filedDate}}\nशिकायत की स्थिति: *{{complaintStatus}}*\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
+      },
+      closingStatement: {
+        en_IN: '\nPlease type and send “mseva” whenever you need my assistance',
+        hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
       }
     }
   }

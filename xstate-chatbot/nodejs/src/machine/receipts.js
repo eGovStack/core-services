@@ -550,10 +550,11 @@ const receipts = {
               src: (context, event) => {
                 var receiptIndex = context.receipts.slots.receiptNumber;
                 var consumerCode;
+                var businessService;
                 if(context.receipts.slots.searchresults)
                   consumerCode = context.receipts.slots.searchresults[receiptIndex-1].id;
-
-                return receiptService.multipleRecordReceipt(context.user,context.receipts.slots.service,consumerCode);
+                  businessService = context.receipts.slots.searchresults[receiptIndex-1].businessService;
+                return receiptService.multipleRecordReceipt(context.user,businessService,consumerCode);
               },
               onDone:[
                 {
