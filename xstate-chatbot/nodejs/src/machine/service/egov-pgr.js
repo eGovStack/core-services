@@ -5,6 +5,11 @@ const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
 const dialog = require('../util/dialog');
 const moment = require("moment-timezone");
+var geturl = require("url");
+var path = require("path");
+const fs = require('fs');
+const axios = require('axios');
+var FormData = require("form-data");
 
 let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
 
