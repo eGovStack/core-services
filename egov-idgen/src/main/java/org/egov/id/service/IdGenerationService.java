@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import sun.util.resources.cldr.chr.CalendarData_chr_US;
@@ -75,6 +76,9 @@ public class IdGenerationService {
     public IdGenerationResponse generateIdResponse(IdGenerationRequest idGenerationRequest) throws Exception {
 
         RequestInfo requestInfo = idGenerationRequest.getRequestInfo();
+        if(ObjectUtils.isEmpty(requestInfo)){
+            throw new CustomException("AUTHORIZATION_ERROR", "RequestInfo can't be empty.");
+        }
         List<IdRequest> idRequests = idGenerationRequest.getIdRequests();
         List<IdResponse> idResponses = new LinkedList<>();
 
