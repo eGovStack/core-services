@@ -468,7 +468,7 @@ const pgr =  {
                     }
                     else{
                       let parsed = event.message.input;
-                      let isValid = (parsed === "No" && dialog.validateInputType(event, 'text'));
+                      let isValid = (parsed === "No");
                       context.message = {
                         isValid: isValid,
                         messageContent: event.message.input

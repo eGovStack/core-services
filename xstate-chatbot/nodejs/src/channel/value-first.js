@@ -98,7 +98,7 @@ class ValueFirstWhatsAppProvider {
             var imageInBase64String = requestBody.media_data;
             input = await this.convertFromBase64AndStore(imageInBase64String);
         }
-        else if(type === 'unknown')
+        else if(type === 'unknown' || type === 'document')
             input = ' ';
         else {
             input = requestBody.text;
