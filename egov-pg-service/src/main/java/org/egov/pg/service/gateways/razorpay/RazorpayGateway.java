@@ -35,17 +35,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RazorpayGateway implements Gateway{
 
-	private static final String GATEWAY_NAME = "RAZORPAY";
+    private static final String GATEWAY_NAME = "RAZORPAY";
     private final String MERCHANT_ID;
     private final String SECURE_SECRET;
     private final String LOCALE;
     private final String CURRENCY;
     private RazorpayClient client;
     private final RestTemplate restTemplate;
-    private ObjectMapper objectMapper;
     private final String MERCHANT_URL_PAY;
     private final String MERCHANT_URL_STATUS;
-    
+    private final String PAYMENT_CAPTURE;
     private final boolean ACTIVE;
     
  
@@ -53,7 +52,6 @@ public class RazorpayGateway implements Gateway{
     @Autowired
     public RazorpayGateway(RestTemplate restTemplate, ObjectMapper objectMapper, Environment environment) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
         
         ACTIVE = Boolean.valueOf(environment.getRequiredProperty("razorpay.active"));
         CURRENCY = environment.getRequiredProperty("razorpay.currency");
@@ -62,6 +60,7 @@ public class RazorpayGateway implements Gateway{
         SECURE_SECRET = environment.getRequiredProperty("razorpay.merchant.secret.key");
         MERCHANT_URL_PAY = environment.getRequiredProperty("razorpay.url.debit");
         MERCHANT_URL_STATUS = environment.getRequiredProperty("razorpay.url.status");
+    	PAYMENT_CAPTURE = environment.getRequiredProperty("razorpay.payment_capture");
         try {
             this.client = new RazorpayClient(this.MERCHANT_ID, this.SECURE_SECRET);
           } catch (RazorpayException e) {
@@ -73,19 +72,50 @@ public class RazorpayGateway implements Gateway{
     
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
-		  Map<String, String> fields = new HashMap<>();
-		  fields.put("vpc_Amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
-	        fields.put("vpc_Merchant", MERCHANT_ID);
-	        fields.put("vpc_Locale", LOCALE);
-	        fields.put("vpc_Currency", CURRENCY);
-	        fields.put("vpc_ReturnURL", transaction.getCallbackUrl());
-	        fields.put("vpc_MerchTxnRef", transaction.getTxnId());
-	        fields.put("vpc_OrderInfo", (String) transaction.getAdditionalFields().get(BANK_ACCOUNT_NUMBER));
+		 Map<String, String> fields = new HashMap<>();
+	  	fields.put("vpc_Amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+		fields.put("vpc_Merchant", MERCHANT_ID);
+		fields.put("vpc_Locale", LOCALE);
+		fields.put("vpc_Currency", CURRENCY);
+		fields.put("vpc_ReturnURL", transaction.getCallbackUrl());
+		fields.put("vpc_MerchTxnRef", transaction.getTxnId());
+		fields.put("vpc_OrderInfo", (String) transaction.getAdditionalFields().get(BANK_ACCOUNT_NUMBER));
+	        
+	        JSONObject request = new JSONObject();
+			request.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+			request.put("payment_capture", PAYMENT_CAPTURE);
+			request.put("currency", CURRENCY);
+			JSONArray transfers = new JSONArray();
+			JSONObject transfer = new JSONObject();
+			transfer.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+			transfer.put("currency", CURRENCY);
+			transfer.put("account", "acc_GUEHwDC08s1AgU");
+			JSONObject notesData=new JSONObject();
+	        notesData.put("Address","Moali");
+	        notesData.put("ConsumerNumber","123");
+	        notesData.put("ConsumerName","Aarif");
+//	        notesData.put("ServiceType",receiptHeader.getDisplayMsg());
+//	        notesData.put("ReceiptId",receiptHeader.getId().toString());
+	        request.put("notes", notesData);
+	     	transfers.put(transfer);
+			request.put("transfers", transfers);
+
+			Order order = null;
+			try {
+				order = client.Orders.create(request);
+			} catch (RazorpayException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 	        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	        fields.forEach(params::add);
-
+	        String ENCRYPTION_TYPE = "SHA256";
+	        params.add("vpc_SecureHashType", ENCRYPTION_TYPE);
+	     
 	        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).queryParams
 	                (params).build().encode();
+	       
 	        return uriComponents.toUri();
 	}
 
