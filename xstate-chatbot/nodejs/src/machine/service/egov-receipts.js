@@ -240,6 +240,7 @@ class ReceiptService {
             city: tenantId, //to do
             amount: result.totalDue,
             date: transactionDate,
+            businessService: businessService,
             transactionNumber: result.transactionNumber,
             receiptDocumentLink: await this.receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber)
           }
