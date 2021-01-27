@@ -510,7 +510,6 @@ const pgr =  {
                 let message = dialog.get_message(messages.fileComplaint.persistComplaint, context.user.locale);
                 message = message.replace('{{complaintNumber}}', complaintDetails.complaintNumber);
                 message = message.replace('{{complaintLink}}', complaintDetails.complaintLink);
-                message = message + dialog.get_message(messages.fileComplaint.closingStatement, context.user.locale);
                 dialog.sendMessage(context, message);
               })
             }
@@ -544,7 +543,6 @@ const pgr =  {
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 message += '\n\n' + (i + 1) + '. ' + template;
               }
-              message = message + dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
               dialog.sendMessage(context, message);
             })
           },
