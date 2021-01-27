@@ -70,6 +70,21 @@ public class WorkflowController {
                         .build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
+        
+        
+        
+        /**
+         * Returns the count of records matching the given criteria
+         * @param requestInfoWrapper
+         * @param criteria
+         * @return
+         */
+        @RequestMapping(value="/process/_count", method = RequestMethod.POST)
+            public ResponseEntity<Integer> count(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                                  @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+                Integer count = workflowService.count(requestInfoWrapper.getRequestInfo(),criteria);
+                return new ResponseEntity<>(count,HttpStatus.OK);
+            }
 
 
 

@@ -87,6 +87,18 @@ public class WorkflowService {
     }
 
 
+    
+    public Integer count(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        Integer count;
+        if(criteria.isNull()){
+            enrichSearchCriteriaFromUser(requestInfo, criteria);
+            count = workflowRepository.getInboxCount(criteria);
+        }
+        else count = workflowRepository.getProcessInstancesCount(criteria);
+
+        return count;
+    }
+    
     /**
      * Searches the processInstances based on user and its roles
      * @param requestInfo The RequestInfo of the search request
@@ -95,12 +107,56 @@ public class WorkflowService {
      */
     private List<ProcessInstance> getUserBasedProcessInstances(RequestInfo requestInfo,
                                        ProcessInstanceSearchCriteria criteria){
+        enrichSearchCriteriaFromUser(requestInfo, criteria);
+
+        List<ProcessInstance> processInstances = workflowRepository.getProcessInstancesForUserInbox(criteria);
+        processInstances = filterDuplicates(processInstances);
+
+        return processInstances;
+        
+        /*
+        List<ProcessInstance> processInstancesForAssignee = workflowRepository.getProcessInstancesForAssignee(criteria);
+        List<ProcessInstance> processInstancesForStatus = new LinkedList<>();
+        if(!config.getAssignedOnly())
+            processInstancesForStatus = workflowRepository.getProcessInstancesForStatus(criteria);
+        Set<ProcessInstance> processInstanceSet = new LinkedHashSet<>(processInstancesForStatus);
+        processInstanceSet.addAll(processInstancesForAssignee);
+        return new LinkedList<>(processInstanceSet);
+        */
+    }
+
+    /**
+     * Removes duplicate businessId which got created due to simultaneous request
+     * @param processInstances
+     * @return
+     */
+    private List<ProcessInstance> filterDuplicates(List<ProcessInstance> processInstances){
+
+        if(CollectionUtils.isEmpty(processInstances))
+            return processInstances;
+
+        Map<String,ProcessInstance> businessIdToProcessInstanceMap = new LinkedHashMap<>();
+
+        for(ProcessInstance processInstance : processInstances){
+            businessIdToProcessInstanceMap.put(processInstance.getBusinessId(), processInstance);
+        }
+
+        return new LinkedList<>(businessIdToProcessInstanceMap.values());
+    }
+
+    /**
+     * Enriches processInstance search criteria based on requestInfo
+     * @param requestInfo
+     * @param criteria
+     */
+    private void enrichSearchCriteriaFromUser(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+
         BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
 
         /*
-        * If tenantId is sent in query param processInstances only for that tenantId is returned
-        * else all tenantIds for which the user has roles are returned
-        * */
+         * If tenantId is sent in query param processInstances only for that tenantId is returned
+         * else all tenantIds for which the user has roles are returned
+         * */
         if(criteria.getTenantId()!=null)
             businessServiceSearchCriteria.setTenantIds(Collections.singletonList(criteria.getTenantId()));
         else
@@ -110,14 +166,9 @@ public class WorkflowService {
         List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         criteria.setStatus(actionableStatuses);
-        List<ProcessInstance> processInstancesForAssignee = workflowRepository.getProcessInstancesForAssignee(criteria);
-        List<ProcessInstance> processInstancesForStatus = new LinkedList<>();
-        if(!config.getAssignedOnly())
-            processInstancesForStatus = workflowRepository.getProcessInstancesForStatus(criteria);
-        Set<ProcessInstance> processInstanceSet = new LinkedHashSet<>(processInstancesForStatus);
-        processInstanceSet.addAll(processInstancesForAssignee);
-        return new LinkedList<>(processInstanceSet);
+
     }
+
 
 
 
