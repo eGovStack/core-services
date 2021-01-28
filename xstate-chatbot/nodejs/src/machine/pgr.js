@@ -346,12 +346,11 @@ const pgr =  {
                 question: {
                   invoke: {
                     id: 'fetchCities',
-                    src: (context, event) => pgrService.fetchCities(context.extraInfo.tenantId),
+                    src: (context, event) => pgrService.fetchCitiesAndWebpageLink(context.extraInfo.tenantId,context.extraInfo.whatsAppBusinessNumber),
                     onDone: {
                       actions: assign((context, event) => {
-                        let { cities, messageBundle } = event.data;
+                        let { cities, messageBundle, link } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.city.question.preamble, context.user.locale);
-                        let link = pgrService.getCityExternalWebpageLink(context.extraInfo.tenantId, context.extraInfo.whatsAppBusinessNumber);
                         let message = preamble + '\n' + link;
                         context.grammer = dialog.constructLiteralGrammer(cities, messageBundle, context.user.locale);
                         dialog.sendMessage(context, message);
@@ -395,12 +394,11 @@ const pgr =  {
                 question: {
                   invoke: {
                     id: 'fetchLocalities',
-                    src: (context) => pgrService.fetchLocalities(context.slots.pgr.city),
+                    src: (context) => pgrService.fetchLocalitiesAndWebpageLink(context.slots.pgr.city,context.extraInfo.whatsAppBusinessNumber),
                     onDone: {
                       actions: assign((context, event) => {
-                        let { localities, messageBundle } = event.data;
+                        let { localities, messageBundle,link } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.locality.question.preamble, context.user.locale);
-                        let link = pgrService.getLocalityExternalWebpageLink(context.slots.pgr.city, context.extraInfo.whatsAppBusinessNumber);
                         let message = preamble + '\n' + link;
                         context.grammer = dialog.constructLiteralGrammer(localities, messageBundle, context.user.locale);
                         dialog.sendMessage(context, message);
