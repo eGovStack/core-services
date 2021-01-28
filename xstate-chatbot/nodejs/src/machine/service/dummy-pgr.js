@@ -40,6 +40,12 @@ class DummyPGRService {
     
       return data["MdmsRes"][moduleName][masterName];
     }
+    async fetchCitiesAndWebpageLink(tenantId,whatsAppBusinessNumber)
+    {
+      let {cities,messageBundle} = await this.fetchCities(tenantId);
+      let link = await this.getCityExternalWebpageLink(tenantId,whatsAppBusinessNumber);
+      return {cities,messageBundle,link};
+    }
     async fetchCities(tenantId) {
         let cities = this.cities.tenantInfo.map(el=>el.code);
         let messageBundle = this.citiesMessageBundle;
@@ -47,9 +53,21 @@ class DummyPGRService {
         // let tenantId = this.cities.tenantId;
         // return this.cities.tenantInfo.map(el=>el.code.replace(`${tenantId}.`, ""));
     }
-    getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-      return config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
+    async getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+      var url = config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+      var shorturl = await this.getShortenedURL(url);
+      return shorturl;
     }
+    async fetchLocalitiesAndWebpageLink(tenantId,whatsAppBusinessNumber){
+      let {localities,messageBundle} = await this.fetchLocalities(tenantId);
+      let link = await this.getLocalityExternalWebpageLink(tenantId,whatsAppBusinessNumber);
+      return {localities,messageBundle,link};
+    }
+    async getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+      var url = config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+      var shorturl = await this.getShortenedURL(url);
+      return shorturl;
+  }
     async fetchLocalities(tenantId) {
       let moduleName = 'egov-location';
       let masterName = 'TenantBoundary';
@@ -73,9 +91,7 @@ class DummyPGRService {
       }
       return { localities, messageBundle };
     }
-    getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-      return config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=' + whatsAppBusinessNumber;
-    }
+    
     async getCityAndLocalityForGeocode(geocode, tenantId) {
         let latlng = geocode.substring(1, geocode.length - 1); // Remove braces
         let cityAndLocality = await getCityAndLocality(latlng);
