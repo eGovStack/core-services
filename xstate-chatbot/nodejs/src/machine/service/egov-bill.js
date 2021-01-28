@@ -82,7 +82,7 @@ class BillService {
     if(service === 'WS') {
       searchOptions = [ 'mobile', 'connectionNumber', 'consumerNumber' ];
     } else if(service === 'PT') {
-      searchOptions = [ 'mobile', 'propertyId', 'consumerNumber' ];
+      searchOptions = [ 'mobile'];
     } else if(service === 'TL') {
       searchOptions = [ 'mobile', 'tlApplicationNumber' ];
     } else if(service === 'FIRENOC') {
