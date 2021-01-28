@@ -96,7 +96,7 @@ const envVariables = {
         billSearchLimit: process.env.BILL_SEARCH_LIMIT || 5,
         receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 3,
 
-        billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL, FIRENOC, BPA',
+        billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL',
 
         paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
         pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',
