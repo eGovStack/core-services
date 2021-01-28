@@ -123,6 +123,13 @@ class PGRService {
     return undefined;    // No matching city found
   }
 
+  async fetchCitiesAndWebpageLink(tenantId,whatsAppBusinessNumber)
+  {
+    let {cities,messageBundle} = await this.fetchCities(tenantId);
+    let link = await this.getCityExternalWebpageLink(tenantId,whatsAppBusinessNumber);
+    return {cities,messageBundle,link};
+  }
+
   async fetchCities(tenantId){
     let cities = await this.fetchMdmsData(tenantId, "tenant", "citymodule", "$.[?(@.module=='PGR.WHATSAPP')].tenants.*.code");
     let messageBundle = {};
@@ -133,8 +140,23 @@ class PGRService {
     return {cities, messageBundle};
   }
 
-  getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+  async getCityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+    var url = config.egovServices.externalHost + config.egovServices.cityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    var shorturl = await this.getShortenedURL(url);
+    return shorturl;
+  }
+
+  async fetchLocalitiesAndWebpageLink(tenantId,whatsAppBusinessNumber)
+  {
+    let {localities,messageBundle} = await this.fetchLocalities(tenantId);
+    let link = await this.getLocalityExternalWebpageLink(tenantId,whatsAppBusinessNumber);
+    return {localities,messageBundle,link};
+  }
+
+  async getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
+    var url = config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
+    var shorturl = await this.getShortenedURL(url);
+    return shorturl;
   }
 
   async fetchLocalities(tenantId) {
@@ -159,10 +181,6 @@ class PGRService {
       messageBundle[locality] = localisedMessages[localisationCode]
     }
     return { localities, messageBundle };
-  }
-
-  getLocalityExternalWebpageLink(tenantId, whatsAppBusinessNumber) {
-    return config.egovServices.externalHost + config.egovServices.localityExternalWebpagePath + '?tenantId=' + tenantId + '&phone=+91' + whatsAppBusinessNumber;
   }
 
   async preparePGRResult(responseBody,locale){
