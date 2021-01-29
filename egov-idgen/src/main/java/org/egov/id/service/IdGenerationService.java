@@ -76,9 +76,6 @@ public class IdGenerationService {
     public IdGenerationResponse generateIdResponse(IdGenerationRequest idGenerationRequest) throws Exception {
 
         RequestInfo requestInfo = idGenerationRequest.getRequestInfo();
-        if(ObjectUtils.isEmpty(requestInfo)){
-            throw new CustomException("AUTHORIZATION_ERROR", "RequestInfo can't be empty.");
-        }
         List<IdRequest> idRequests = idGenerationRequest.getIdRequests();
         List<IdResponse> idResponses = new LinkedList<>();
 
@@ -315,7 +312,8 @@ public class IdGenerationService {
 
         } catch (Exception e) {
 
-            throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
+            throw new CustomException("INVALID_FORMAT", "Error while generating financial year in provided format. Given format invalid.");
+            //throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
 
         }
     }
@@ -340,7 +338,8 @@ public class IdGenerationService {
 
         } catch (Exception e) {
 
-            throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
+            throw new CustomException("INVALID_FORMAT", "Error while generating current year in provided format. Given format invalid.");
+            //throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
 
         }
     }
@@ -359,7 +358,8 @@ public class IdGenerationService {
         try {
             Pattern.compile(regex);
         } catch (Exception e) {
-            throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
+            throw new CustomException("INVALID_REGEX", "Random text could not be generated. Invalid regex provided.");
+            //throw new InvalidIDFormatException(propertiesManager.getInvalidIdFormat(), requestInfo);
         }
         Matcher matcher = Pattern.compile("\\{(.*?)\\}").matcher(regex);
         while (matcher.find()) {
