@@ -104,6 +104,12 @@ public class SmsProperties {
     @Value("${sms.message.req.param.name}")
     private String messageParameterName;
 
+    @Value("${sms.entity.req.param.name}")
+    private String entityParameterName;
+
+    @Value("${sms.template.req.param.name}")
+    private String templateParameterName;
+    
     @Value("${mobile.number.prefix:}")
     private String mobileNumberPrefix;
 
