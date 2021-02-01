@@ -208,7 +208,24 @@ public class MsdpService implements SMSService {
         map.add(smsProperties.getUserParameterName(), smsProperties.getUserName());
         map.add(smsProperties.getSenderIdParameterName(), smsProperties.getSmsSender());
         map.add(smsProperties.getMobileNumberParameterName(), sms.getMobileNumber());
-        map.add(smsProperties.getMessageParameterName(), sms.getMessage());
+        //message is assumed to be splited in three parts first part is actual message, second part template_id and third part entity_code
+        String msgs[]=sms.getMessage().split("\\|"); 
+        String dlt_entity_id="1301157492438182299";
+        String dlt_template_id="123";
+        
+        String msg=msgs[0];
+        
+        if(msgs.length>1)
+            dlt_entity_id=msgs[1];
+        
+        if(msgs.length>2)
+            dlt_template_id=msgs[2];
+        
+        map.add(smsProperties.getMessageParameterName(),msg );
+        map.add(smsProperties.getEntityParameterName(),dlt_entity_id);
+        map.add(smsProperties.getTemplateParameterName(),dlt_template_id);
+         
+        
         map.add("smsservicetype", getPriority(sms));
         map.setAll(smsProperties.getExtraRequestParameters());
 
