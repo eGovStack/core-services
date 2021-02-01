@@ -2,7 +2,7 @@ serviceMaps:
   serviceName: PaymentGateway
   mappings:
   - version: 1.0
-    name: pg-service
+    name: payment-gateway
     description: Persists transactions
     fromTopic: save-pg-txns
     isTransaction: true
@@ -67,7 +67,7 @@ serviceMaps:
 
 
   - version: 1.0
-    name: pg-service
+    name: payment-gateway
     description: Persists transaction requests / response to and from gateways
     fromTopic: save-pg-txns-dump
     isTransaction: true

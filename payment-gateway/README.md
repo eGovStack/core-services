@@ -1,4 +1,4 @@
-# eGov Payment Gateway
+# Payment Gateway
 
 Module acts as a liaison between eGov apps and external payment gateways. It facilitates payments, reconciliation of payments and look up of transactions' status'.
 
@@ -15,7 +15,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/egov-pg-service.yml#!/) for egov-pg service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/egov-pg-service.yml#!/) for payment-gateway to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -47,7 +47,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 **Configurable Properties:**
 
-Following are the properties in application.properties file in egov-pg-service has to be added and set with default value after integrating with new payment gateway.
+Following are the properties in application.properties file in payment-gateway has to be added and set with default value after integrating with new payment gateway.
 In the below table properties for AXIS bank payment gateway is shown, same releveant propert needs to be add for other payment gateway.
 
 | Property                          | Remarks                                                  | 
@@ -67,7 +67,7 @@ In the below table properties for AXIS bank payment gateway is shown, same relev
 
 ### API Details
 
-`BasePath` /pg-service/transaction/v1/[API endpoint]
+`BasePath` /payment-gateway/transaction/v1/[API endpoint]
 
 ##### Method
 
@@ -90,7 +90,7 @@ In the below table properties for AXIS bank payment gateway is shown, same relev
 
 - Following are the Producer topic.
 
-    - `save-pg-txns` : egov-pg-services sends data to this topic to store the payment transaction details.
-    - `update-pg-txns` : egov-pg-services sends data to this topic to update the payment transaction details.
-    - `save-pg-txns-dump` : egov-pg-services sends data to this topic to store the payment transaction dump details.
-    - `update-pg-txns-dump` : egov-pg-services sends data to this topic to update the payment transaction dump details.
+    - `save-pg-txns` : payment-gateway sends data to this topic to store the payment transaction details.
+    - `update-pg-txns` : payment-gateway sends data to this topic to update the payment transaction details.
+    - `save-pg-txns-dump` : payment-gateway sends data to this topic to store the payment transaction dump details.
+    - `update-pg-txns-dump` : payment-gateway sends data to this topic to update the payment transaction dump details.

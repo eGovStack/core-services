@@ -110,13 +110,13 @@ config:
         image-name: "persister"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-pg-service"
+  - name: "builds/core-services/payment-gateway"
     build:
-      - work-dir: "egov-pg-service"
-        image-name: "egov-pg-service"
+      - work-dir: "payment-gateway"
+        image-name: "payment-gateway"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "egov-pg-service/src/main/resources/db"
-        image-name: "egov-pg-service-db"
+      - work-dir: "payment-gateway/src/main/resources/db"
+        image-name: "payment-gateway-db"
 
   - name: "builds/core-services/searcher"
     build:
