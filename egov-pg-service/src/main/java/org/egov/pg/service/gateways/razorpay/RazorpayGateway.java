@@ -74,13 +74,13 @@ public class RazorpayGateway implements Gateway{
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
 		 Map<String, String> fields = new HashMap<>();
-	  	fields.put("vpc_Amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
-		fields.put("vpc_Merchant", MERCHANT_ID);
-		fields.put("vpc_Locale", LOCALE);
-		fields.put("vpc_Currency", CURRENCY);
-		fields.put("vpc_ReturnURL", transaction.getCallbackUrl());
-		fields.put("vpc_MerchTxnRef", transaction.getTxnId());
-		fields.put("vpc_OrderInfo", (String) transaction.getAdditionalFields().get(BANK_ACCOUNT_NUMBER));
+	  	 fields.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+	        fields.put("merchant_key", MERCHANT_ID);
+	        fields.put("locale", LOCALE);
+	        fields.put("currency", CURRENCY);
+	        fields.put("returnURL", transaction.getCallbackUrl());
+	        fields.put("merchTxnRef", transaction.getTxnId());
+	        fields.put("payment_capture", PAYMENT_CAPTURE);
 	        
 	        JSONObject request = new JSONObject();
 			request.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
@@ -96,7 +96,7 @@ public class RazorpayGateway implements Gateway{
 	        notesData.put("ConsumerNumber","123");
 	        notesData.put("ConsumerName","Aarif");
 //	        notesData.put("ServiceType",receiptHeader.getDisplayMsg());
-//	        notesData.put("ReceiptId",receiptHeader.getId().toString());
+	        notesData.put("ReceiptId",transaction.getReceipt());
 	        request.put("notes", notesData);
 	     	transfers.put(transfer);
 			request.put("transfers", transfers);
@@ -112,8 +112,10 @@ public class RazorpayGateway implements Gateway{
 	        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	        fields.forEach(params::add);
 	        String ENCRYPTION_TYPE = "SHA256";
-	        params.add("vpc_SecureHashType", ENCRYPTION_TYPE);
-	     
+	        params.add("secureHashType", ENCRYPTION_TYPE);
+	        params.add("orderId", order.get("id"));
+	        params.add("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+	        
 	        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).queryParams
 	                (params).build().encode();
 	       
@@ -135,7 +137,7 @@ public class RazorpayGateway implements Gateway{
                     .build()
                     .toUriString();
 
-            ResponseEntity<RazorpayClient> response = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, RazorpayClient.class);
+            ResponseEntity<RazorpayClient> response = restTemplate.exchange("https://api.razorpay.com/v1/"+currentStatus.getTxnId(), HttpMethod.GET, httpEntity, RazorpayClient.class);
 
 
             return transformRawResponse(response.getBody(), currentStatus);
