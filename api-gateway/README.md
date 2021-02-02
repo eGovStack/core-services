@@ -1,8 +1,8 @@
-# Zuul Service
+# api-gateway Service
 ### API Gateway
 API Gateway provides a unified interface for a set of microservices so that clients do not need to know about all the details of microservices internals.
 
-Digit uses Zuul as an edge service that proxies requests to multiple back-end services. It provides a unified “front door” to our ecosystem.
+Digit uses api-gateway as an edge service that proxies requests to multiple back-end services. It provides a unified “front door” to our ecosystem.
 This allows any browser, mobile app or other user interface to consume underlying services.
 
 ### DB UML Diagram
@@ -25,9 +25,9 @@ This allows any browser, mobile app or other user interface to consume underlyin
 - Allows to refactor microservices without forcing the clients to refactor consuming logic
 - Can centralize cross-cutting concerns like security, monitoring, rate limiting etc
 
-**ZUUL Components**
+**api-gateway Components**
 
-Zuul has mainly four types of filters that enable us to intercept the traffic in different timeline of the request processing for any particular transaction.
+api-gateway has mainly four types of filters that enable us to intercept the traffic in different timeline of the request processing for any particular transaction.
 We can add any number of filters for a particular url pattern.
 
 - pre filters – are invoked before the request is routed.

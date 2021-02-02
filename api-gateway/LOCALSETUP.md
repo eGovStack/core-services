@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the Zuul service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the api-gateway service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the Zuul service in your local system, clone the [Core Service reposito
 
 ## Running Locally
 
-To run the Zuul services in your local system, you need to port forward below services
+To run the api-gateway services in your local system, you need to port forward below services
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

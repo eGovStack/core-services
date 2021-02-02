@@ -166,10 +166,10 @@ config:
         image-name: "user-otp"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/zuul"
+  - name: "builds/core-services/api-gateway"
     build:
-      - work-dir: "zuul"
-        image-name: "zuul"
+      - work-dir: "api-gateway"
+        image-name: "api-gateway"
         dockerfile: "build/maven/Dockerfile"
         
   - name: "builds/core-services/user-event"
