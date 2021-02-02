@@ -39,6 +39,7 @@ public class OtpSMSRepository {
 
 	public void send(OtpRequest otpRequest, String otpNumber) {
 		final String message = getMessage(otpNumber, otpRequest);
+		log.info("OTP message : " +  message);
 		if (smsEnabled) {
 			kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message));
 		}
