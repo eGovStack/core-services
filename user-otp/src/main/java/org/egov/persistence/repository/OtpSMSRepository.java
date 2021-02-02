@@ -27,6 +27,9 @@ public class OtpSMSRepository {
 	@Autowired
 	private LocalizationService localizationService;
 
+	@Value("${sms.enabled}")
+	private Boolean smsEnabled;
+	
 	@Autowired
 	public OtpSMSRepository(CustomKafkaTemplate<String, SMSRequest> kafkaTemplate,
 			@Value("${sms.topic}") String smsTopic) {
@@ -36,7 +39,9 @@ public class OtpSMSRepository {
 
 	public void send(OtpRequest otpRequest, String otpNumber) {
 		final String message = getMessage(otpNumber, otpRequest);
-		kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message));
+		if (smsEnabled) {
+			kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message));
+		}
 	}
 
 	private String getMessage(String otpNumber, OtpRequest otpRequest) {
