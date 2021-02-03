@@ -124,11 +124,9 @@ public class WorkflowValidator {
 
             if(!ObjectUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest()))
                 rating = processStateAndAction.getProcessInstanceFromRequest().getRating();
-            else if(!ObjectUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb()))
-                rating = processStateAndAction.getProcessInstanceFromDb().getRating();
 
             if(rating != null && !action.equals(RATE_ACTION)){
-                throw new CustomException("INVALID_ACTION", "Only RATE action allowed from current process instance state.");
+                throw new CustomException("INVALID_ACTION", "Rating can be given only upon taking RATE action.");
             }
 
             Boolean isRoleAvailable = util.isRoleAvailable(roles,action.getRoles());
