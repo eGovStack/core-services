@@ -124,27 +124,34 @@ public class RazorpayGateway implements Gateway{
 
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-        StringBuilder path = new StringBuilder();
-        path.append(MERCHANT_URL_STATUS).append("/").append(currentStatus.getTxnId());
-
+        Object generated_signature;
+		
         try {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+        	
+    		generated_signature = hmac_sha256(params.get("razorpayOrderId") + "|" + params.get("razorpayPaymentId"), SECURE_SECRET);
 
-            HttpEntity<String> httpEntity = new HttpEntity<>("", httpHeaders);
-
-            String uri = UriComponentsBuilder.newInstance().scheme("https").path(path.toString())
-                    .build()
-                    .toUriString();
-
-            ResponseEntity<RazorpayClient> response = restTemplate.exchange("https://api.razorpay.com/v1/"+currentStatus.getTxnId(), HttpMethod.GET, httpEntity, RazorpayClient.class);
-
-
-            return transformRawResponse(response.getBody(), currentStatus);
-        } catch (RestClientException e){
+			if (generated_signature.equals(params.get("razorpaySignature"))) 
+				{
+	            return Transaction.builder()
+	                    .txnId(currentStatus.getTxnId())
+	                    .txnAmount(currentStatus.getTxnAmount())
+	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+	                    .build();
+				}
+			else
+				{
+	            return Transaction.builder()
+	                    .txnId(currentStatus.getTxnId())
+	                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+	                    .build();
+				}
+        	
+			
+        } catch (Exception e){
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
 	}
+	
 
 	@Override
 	public boolean isActive() {
@@ -163,19 +170,4 @@ public class RazorpayGateway implements Gateway{
 		// TODO Auto-generated method stub
 		return "ORDERID";
 	}
-	
-	 private Transaction transformRawResponse(RazorpayClient resp, Transaction currentStatus) {
-	        Transaction.TxnStatusEnum status;
-
-	        {
-	            status = Transaction.TxnStatusEnum.SUCCESS;
-
-	            return Transaction.builder()
-	                    .txnId(currentStatus.getTxnId())
-	                    .txnStatus(status)
-	                    .responseJson(resp)
-	                    .build();
-	        }
-	    }
-
 }
