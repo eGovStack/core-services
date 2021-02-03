@@ -1,26 +1,25 @@
 package org.egov.pg.service.gateways.razorpay;
 
-import static org.egov.pg.constants.TransactionAdditionalFields.BANK_ACCOUNT_NUMBER;
-
 import java.net.URI;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
+import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.ServiceCallException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,16 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RazorpayGateway implements Gateway{
 
-    private static final String GATEWAY_NAME = "RAZORPAY";
-    private final String MERCHANT_ID;
-    private final String SECURE_SECRET;
+	private static final String GATEWAY_NAME = "RAZORPAY";
+    private final String MERCHANT_ID;//="rzp_test_kQ821qWPnYKZZr";
+    private final String SECURE_SECRET;//="b4An5RWnpy3GtjyP1PpCXdf9";
     private final String LOCALE;
     private final String CURRENCY;
+    private final String PAYMENT_CAPTURE;
     private RazorpayClient client;
     private final RestTemplate restTemplate;
+    //private ObjectMapper objectMapper;
     private final String MERCHANT_URL_PAY;
     private final String MERCHANT_URL_STATUS;
-    private final String PAYMENT_CAPTURE;
+    
     private final boolean ACTIVE;
     
  
@@ -53,6 +54,7 @@ public class RazorpayGateway implements Gateway{
     @Autowired
     public RazorpayGateway(RestTemplate restTemplate, ObjectMapper objectMapper, Environment environment) {
         this.restTemplate = restTemplate;
+        //this.objectMapper = objectMapper;
         
         ACTIVE = Boolean.valueOf(environment.getRequiredProperty("razorpay.active"));
         CURRENCY = environment.getRequiredProperty("razorpay.currency");
@@ -61,9 +63,9 @@ public class RazorpayGateway implements Gateway{
         SECURE_SECRET = environment.getRequiredProperty("razorpay.merchant.secret.key");
         MERCHANT_URL_PAY = environment.getRequiredProperty("razorpay.url.debit");
         MERCHANT_URL_STATUS = environment.getRequiredProperty("razorpay.url.status");
-    	PAYMENT_CAPTURE = environment.getRequiredProperty("razorpay.payment_capture");
+        PAYMENT_CAPTURE = environment.getRequiredProperty("razorpay.payment_capture");
         try {
-            this.client = new RazorpayClient(this.MERCHANT_ID, this.SECURE_SECRET);
+        	this.client = new RazorpayClient(this.MERCHANT_ID, this.SECURE_SECRET);
           } catch (RazorpayException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -73,8 +75,8 @@ public class RazorpayGateway implements Gateway{
     
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
-		 Map<String, String> fields = new HashMap<>();
-	  	 fields.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
+		  Map<String, String> fields = new HashMap<>();
+		  fields.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
 	        fields.put("merchant_key", MERCHANT_ID);
 	        fields.put("locale", LOCALE);
 	        fields.put("currency", CURRENCY);
@@ -118,7 +120,6 @@ public class RazorpayGateway implements Gateway{
 	        
 	        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).queryParams
 	                (params).build().encode();
-	       
 	        return uriComponents.toUri();
 	}
 
@@ -151,7 +152,6 @@ public class RazorpayGateway implements Gateway{
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
 	}
-	
 
 	@Override
 	public boolean isActive() {
@@ -170,4 +170,32 @@ public class RazorpayGateway implements Gateway{
 		// TODO Auto-generated method stub
 		return "ORDERID";
 	}
+	
+ 
+	    private Object hmac_sha256(String data, String secret) throws SignatureException {
+			// TODO Auto-generated method stub
+	    	String result;
+	        final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
+
+	        try {
+
+	            // get an hmac_sha256 key from the raw secret bytes
+	            SecretKeySpec signingKey = new SecretKeySpec(secret.getBytes(), HMAC_SHA256_ALGORITHM);
+
+	            // get an hmac_sha256 Mac instance and initialize with the signing key
+	            Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
+	            mac.init(signingKey);
+
+	            // compute the hmac on input data bytes
+	            byte[] rawHmac = mac.doFinal(data.getBytes());
+
+	            // base64-encode the hmac
+	            result = DatatypeConverter.printHexBinary(rawHmac).toLowerCase();
+
+	        } catch (Exception e) {
+	            throw new SignatureException("Failed to generate HMAC : " + e.getMessage());
+	        }
+	        return result;
+		}
+
 }
