@@ -11,11 +11,12 @@ import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.wf.util.WorkflowConstants.CITIZEN_TYPE;
-import static org.egov.wf.util.WorkflowConstants.SENDBACKTOCITIZEN;
+import static org.egov.wf.util.WorkflowConstants.*;
 
 
 @Component
@@ -118,6 +119,17 @@ public class WorkflowValidator {
             if(action==null && !processStateAndAction.getCurrentState().getIsTerminateState())
                 throw new CustomException("INVALID ACTION","Action not found for businessIds: "+
                         processStateAndAction.getCurrentState().getBusinessServiceId());
+
+            Integer rating = null;
+
+            if(!ObjectUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest()))
+                rating = processStateAndAction.getProcessInstanceFromRequest().getRating();
+            else if(!ObjectUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb()))
+                rating = processStateAndAction.getProcessInstanceFromDb().getRating();
+
+            if(rating != null && !action.equals(RATE_ACTION)){
+                throw new CustomException("INVALID_ACTION", "Only RATE action allowed from current process instance state.");
+            }
 
             Boolean isRoleAvailable = util.isRoleAvailable(roles,action.getRoles());
             Boolean isStateChanging = (action.getCurrentState().equalsIgnoreCase( action.getNextState())) ? false : true;
