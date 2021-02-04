@@ -29,13 +29,10 @@ class ValueFirstWhatsAppProvider {
     async getMissedCallValues(requestBody){
         let reformattedMessage={};
 
-        reformattedMessage.messages = [];
-        
-        var content = {
+        reformattedMessage.message = {
             input: "mseva",
             type: "text"
         };
-        reformattedMessage.messages.push(content);
 
         reformattedMessage.user = {
             mobileNumber: requestBody.mobile_number.slice(2)
