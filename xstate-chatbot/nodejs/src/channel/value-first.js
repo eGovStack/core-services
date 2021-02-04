@@ -38,7 +38,7 @@ class ValueFirstWhatsAppProvider {
             mobileNumber: requestBody.mobile_number.slice(2)
         };
         reformattedMessage.extraInfo = {
-            whatsAppBusinessNumber: config.whatsAppBusinessNumber,
+            whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
             tenantId: config.rootTenantId,
             missedCall: true
         };
