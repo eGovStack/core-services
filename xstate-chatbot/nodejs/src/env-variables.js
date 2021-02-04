@@ -56,7 +56,7 @@ const envVariables = {
     egovServices: {
         egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
         externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-qa.egovernments.org/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://localhost:8085/",
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
 
         userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
