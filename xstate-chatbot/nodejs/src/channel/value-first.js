@@ -20,7 +20,7 @@ let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@C
 class ValueFirstWhatsAppProvider {
 
     async checkForMissedCallNotification(requestBody){
-        if(requestBody.vmn_tollfree)
+        if(requestBody.Call_id || requestBody.operartor || requestBody.circle)
             return true;
         
         return false;
