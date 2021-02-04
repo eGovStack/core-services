@@ -56,7 +56,7 @@ const envVariables = {
     egovServices: {
         egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
         externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-qa.egovernments.org/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://localhost:8085/",
 
         userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
@@ -70,6 +70,8 @@ const envVariables = {
         egovFilestoreServiceDownloadEndpoint: process.env.EGOV_FILESTORE_SERVICE_DOWNLOAD_ENDPOINT || "filestore/v1/files/url",
         urlShortnerEndpoint: process.env.URL_SHORTNER_ENDPOINT || 'egov-url-shortening/shortener',
         collectonServicSearchEndpoint: process.env.COLLECTION_SERVICE_SEARCH_ENDPOINT || 'collection-services/payments/$module/_search',
+        pgrv1CreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'rainmaker-pgr/v1/requests/_create',
+        pgrv1SearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'rainmaker-pgr/v1/requests/_search',
         pgrCreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'pgr-services/v2/request/_create',
         pgrSearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'pgr-services/v2/request/_search',
         waterConnectionSearch: process.env.WATER_CONNECTION_SEARCH || 'ws-services/wc/_search?searchType=CONNECTION',
@@ -87,7 +89,7 @@ const envVariables = {
     },
 
     pgrUseCase: {
-        pgrVersion: process.env.PGR_VERSION || 'v2',
+        pgrVersion: process.env.PGR_VERSION || 'v1',
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 5,
         informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '1844872a-9cb7-4464-bcff-a1c8c9bb8799',
         pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',

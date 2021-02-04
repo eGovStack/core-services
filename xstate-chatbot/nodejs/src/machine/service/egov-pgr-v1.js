@@ -5,9 +5,16 @@ const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
 const dialog = require('../util/dialog');
 const moment = require("moment-timezone");
+const fs = require('fs');
+const axios = require('axios');
+var FormData = require("form-data");
+var geturl = require("url");
+var path = require("path");
+require('url-search-params-polyfill');
 
+let pgrv1CreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\"},\"actionInfo\":[{\"media\":[]}],\"services\":[{\"serviceCode\":\"\",\"description\":\"\",\"addressDetail\":{\"latitude\":\"\",\"longitude\":\"\",\"city\":\"\",\"mohalla\":\"\",\"houseNoAndStreetName\":\"\",\"landmark\":\"\"},\"address\":\"\",\"tenantId\":\"\",\"source\":\"whatsapp\",\"phone\":\"\"}]}";
 
-class PGRService {
+class PGRV1Service {
 
   async fetchMdmsData(tenantId, moduleName, masterName, filterPath) {
     var url = config.egovServices.egovServicesHost + config.egovServices.mdmsSearchPath;
@@ -177,10 +184,10 @@ class PGRService {
   }
 
   async preparePGRResult(responseBody,locale){
-    let serviceWrappers = responseBody.serviceWrappers;
+    let serviceWrappers = responseBody.services;
     var results = {};
     results['ServiceWrappers'] = [];
-    let localisationPrefix = 'SERVICEDEFS';
+    let localisationPrefix = 'SERVICEDEFS.';
 
     let complaintLimit = config.pgrUseCase.complaintSearchLimit;
 
@@ -190,13 +197,13 @@ class PGRService {
 
     for(let serviceWrapper of serviceWrappers){
       if(count<complaintLimit){
-        let mobileNumber = serviceWrapper.services.citizen.mobileNumber;
-        let serviceRequestId = serviceWrapper.services.serviceRequestId;
+        let mobileNumber = serviceWrapper.phone;
+        let serviceRequestId = serviceWrapper.serviceRequestId;
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId,mobileNumber);
-        let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + serviceWrapper.service.serviceCode.toUpperCase());
-        let filedDate = serviceWrapper.services.auditDetails.createdTime;
+        let serviceCode = localisationService.getMessageBundleForCode(localisationPrefix + serviceWrapper.serviceCode.toUpperCase());
+        let filedDate = serviceWrapper.auditDetails.createdTime;
         filedDate = moment(filedDate).tz(config.timeZone).format(config.dateFormat);
-        let applicationStatus = localisationService.getMessageBundleForCode( serviceWrapper.service.applicationStatus);
+        let applicationStatus = localisationService.getMessageBundleForCode( "reports.rainmaker-pgr.status."+ serviceWrapper.status);
         var data ={
           complaintType: dialog.get_message(serviceCode,locale),
           complaintNumber: serviceRequestId,
@@ -218,18 +225,27 @@ class PGRService {
     let requestBody = JSON.parse(pgrv1CreateRequestBody);
 
     let authToken = user.authToken;
-    let mobileNumber = user.mobileNumber;
     let userId = user.userId;
-    let complaintType = slots.complaintType;
-    let locality = slots.locality;
+    let complaintType = slots.complaint;
+    let mohalla = slots.locality;
     let city = slots.city;
+    let mobileNumber = user.mobileNumber;
 
     requestBody["RequestInfo"]["authToken"] = authToken;
-    requestBody["services"]["addressDetail"]["city"] = city;
-    requestBody["services"]["serviceCode"] = complaintType;
-    requestBody["services"]["addressDetail"]["locality"] = locality;
+    requestBody["services"][0]["tenantId"] = city;
+    requestBody["services"][0]["addressDetail"]["city"] = city;
+    requestBody["services"][0]["serviceCode"] = complaintType;
+    requestBody["services"][0]["addressDetail"]["mohalla"] = mohalla;
+    requestBody["services"][0]["accountId"] = userId;
+    requestBody["services"][0]["phone"] = mobileNumber;
+    
+    if(slots.image){
+      let filestoreId = await this.getFileForFileStoreId(slots.image,city);
+      requestBody["actionInfo"][0]["media"].push(filestoreId);
+    }
 
-    var url = config.egovServices.egovServicesHost+config.egovServices.pgrCreateEndpoint;
+    var url = config.egovServices.egovServicesHost+config.egovServices.pgrv1CreateEndpoint;
+    url = url + '?tenantId=' + config.rootTenantId;
 
     var options = {
       method: 'POST',
@@ -243,7 +259,7 @@ class PGRService {
 
 
     let results;
-    if(response.status === 200) {
+    if(response.status === 201) {
       let responseBody = await response.json();
       results = await this.preparePGRResult(responseBody,user.locale);
     } else {
@@ -260,8 +276,8 @@ class PGRService {
       }
     };
 
-    var url = config.egovServices.egovServicesHost + config.egovServices.pgrSearchEndpoint;
-    url = url + '?tenantId' + config.rootTenantId;
+    var url = config.egovServices.externalHost + config.egovServices.pgrv1SearchEndpoint;
+    url = url + '?tenantId=' + config.rootTenantId;
     url += '&' ;
     url +=  'mobileNumber=' + user.mobileNumber;
 
@@ -307,13 +323,75 @@ class PGRService {
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
-    //change the below url as per the PGR-V1 complaint page. Contact frontend developer 
-    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=digit-ui/citizen/pgr/complaints/" + encodedPath;
+    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
   }
 
+  async downloadImage(url,filename) {  
+    const writer = fs.createWriteStream(filename);
+  
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream'
+      });
+  
+    response.data.pipe(writer);
+  
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    })
+  }
+
+  async fileStoreAPICall(fileName,fileData,tenantId){
+
+    var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceUploadEndpoint;
+    url = url+'&tenantId='+tenantId;
+    var form = new FormData();
+    form.append("file", fileData, {
+        filename: fileName,
+        contentType: "image/jpg"
+    });
+    let response = await axios.post(url, form, {
+        headers: {
+            ...form.getHeaders()
+        }
+    });
+    
+    var filestore = response.data;
+    return filestore['files'][0]['fileStoreId'];
+  }
+
+
+  async getFileForFileStoreId(filestoreId,tenantId){
+    var url = config.egovServices.egovServicesHost+config.egovServices.egovFilestoreServiceDownloadEndpoint;
+    url = url + '?';
+    url = url + 'tenantId='+config.rootTenantId;
+    url = url + '&';
+    url = url + 'fileStoreIds='+filestoreId;
+
+    var options = {
+        method: "GET",
+        origin: '*'
+    }
+
+    let response = await fetch(url,options);
+    response = await(response).json();
+    var fileURL = response['fileStoreIds'][0]['url'].split(",");
+    var fileName = geturl.parse(fileURL[0]);
+    fileName = path.basename(fileName.pathname);
+    fileName = fileName.substring(13);
+    await this.downloadImage(fileURL[0].toString(),fileName);
+    let imageInBase64String = fs.readFileSync(fileName,'base64');
+    imageInBase64String = imageInBase64String.replace(/ /g,'+');
+    let fileData = Buffer.from(imageInBase64String, 'base64');
+    var filestoreId = await this.fileStoreAPICall(fileName,fileData,tenantId);
+    fs.unlinkSync(fileName);
+    return filestoreId;
+  }
   
 }
 
-module.exports = new PGRService();
+module.exports = new PGRV1Service();
