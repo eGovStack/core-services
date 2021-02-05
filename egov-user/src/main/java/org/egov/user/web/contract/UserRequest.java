@@ -26,7 +26,11 @@ import javax.validation.constraints.Size;
 public class UserRequest {
 
     private Long id;
+
+    @Size(max = 64)
     private String userName;
+
+    @Size(max = 5)
     private String salutation;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
@@ -41,20 +45,42 @@ public class UserRequest {
     private String mobileNumber;
 
     @Email
+    @Size(max = 128)
     private String emailId;
+
+    @Size(max = 50)
     private String altContactNumber;
+
+    @Size(max = 10)
     private String pan;
+
+    @Size(max = 20)
     private String aadhaarNumber;
+
+    @Size(max = 300)
     private String permanentAddress;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
     @Size(max = 50)
     private String permanentCity;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
+    @Size(max = 10)
     private String permanentPinCode;
+
+    @Size(max = 300)
     private String correspondenceAddress;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
+    @Size(max = 50)
     private String correspondenceCity;
+
+    @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
+    @Size(max = 10)
     private String correspondencePinCode;
     private Boolean active;
+
+    @Size(max = 16)
     private String locale;
     private UserType type;
     private Boolean accountLocked;
@@ -79,6 +105,7 @@ public class UserRequest {
 
     private Set<RoleRequest> roles;
 
+    @Size(max = 36)
     private String uuid;
 
 
