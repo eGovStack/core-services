@@ -73,7 +73,7 @@ const receipts = {
                 {
                   target: '#receiptSlip',
                   cond: (context, event) => {
-                    return event.data.length>0;
+                    return ( event .data && event.data.length>0);
                   },
                   actions: assign((context, event) => {
                     context.receipts.slots.searchresults = event.data;

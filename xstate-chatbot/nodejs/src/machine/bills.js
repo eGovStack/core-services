@@ -132,7 +132,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            let message = 'Sorry, I didn\'t understand';
+            let message = dialog.get_message(messages.searchBillInitiate.error, context.user.locale);
             dialog.sendMessage(context, message, false);
           }),
           always : 'question'
@@ -187,7 +187,7 @@ const bills = {
         },
         error: {
           onEntry: assign((context, event) => {
-            let message = 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.';
+            let message = dialog.get_message(messages.billServices.error, context.user.locale);
             dialog.sendMessage(context, message, false);
           }),
           always: 'question'
@@ -229,7 +229,7 @@ const bills = {
         },
         error: {
           onEntry: assign((context, event) => {
-            let message = 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.';
+            let message = dialog.get_message(messages.searchParamOptions.error, context.user.locale);
             dialog.sendMessage(context, message, false);
           }),
           always: 'question'
@@ -416,7 +416,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            let message = 'Sorry, I didn\'t understand';
+            let message = dialog.get_message(messages.paramInputInitiate.error, context.user.locale);
             dialog.sendMessage(context, message, false);
           }),
           always : 'question'
@@ -463,6 +463,10 @@ let messages = {
     question: {
       en_IN: '\nPlease type and send ‘1’ to Search and Pay for other bills or fees which are not linked with your mobile number. \nOr \'mseva\' to Go ⬅️ Back to the main menu.',
       hi_IN: '\nकृपया अन्य बिल या शुल्क के लिए खोज और भुगतान करें जो आपके मोबाइल नंबर से लिंक नहीं हैं, टाइप करें ‘1’ और भेजें। मुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
+    },
+    error:{
+      en_IN: "Sorry, I didn\'t understand",
+      hi_IN: "क्षमा करें, मुझे समझ में नहीं आया"
     }
   },
   billServices: {
@@ -471,6 +475,10 @@ let messages = {
         en_IN: 'Please type and send the number of your option from the list given 👇 below to search and pay:',
         hi_IN: 'कृपया खोज और भुगतान के लिए नीचे दी गई सूची से अपना विकल्प टाइप करें और भेजें:'
       }
+    },
+    error:{
+      en_IN: 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.',
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया दिए गए विकल्पों के लिए फिर से एक नंबर दर्ज करे।'
     }
   },
   searchParamOptions: {
@@ -479,6 +487,10 @@ let messages = {
         en_IN: 'Please type and send the number of your option from the list given 👇 below:',
         hi_IN: 'कृपया नीचे दिए गए सूची से अपना विकल्प टाइप करें और भेजें:'
       }
+    },
+    error:{
+      en_IN: 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.',
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया दिए गए विकल्पों के लिए फिर से एक नंबर दर्ज करे।'
     }
   },
   paramInput: {
@@ -521,6 +533,10 @@ let messages = {
     question: {
       en_IN: 'Please type and send ‘1’ to Enter {{searchParamOption}} again. \nOr \'mseva\' to Go ⬅️ Back to the main menu.',
       hi_IN: 'कृपया {{searchParamOption}} फिर से टाइप करने के लिए ’1’ टाइप करें और भेजें।\n\nमुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
+    },
+    error:{
+      en_IN: "Sorry, I didn\'t understand",
+      hi_IN: "क्षमा करें, मुझे समझ में नहीं आया"
     }
   }
 }
