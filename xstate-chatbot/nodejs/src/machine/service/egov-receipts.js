@@ -250,7 +250,7 @@ class ReceiptService {
             date: transactionDate,
             businessService: businessService,
             transactionNumber: result.transactionNumber,
-            receiptDocumentLink: await this.receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber)
+            receiptDocumentLink: await this.receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber,locale)
           }
           Payments['Payments'].push(data);
           lookup.push(consumerCode);
@@ -452,7 +452,7 @@ class ReceiptService {
       return data;
     }
 
-    async receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber)
+    async receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber,locale)
     {
       var UIHost = config.egovServices.externalHost;
       var paymentPath = config.egovServices.receiptdownladlink;
@@ -462,6 +462,7 @@ class ReceiptService {
       paymentPath = paymentPath.replace(/\$businessservice/g,businessService);
       paymentPath = paymentPath.replace(/\$mobilenumber/g,mobileNumber);
       paymentPath = paymentPath.replace(/\$whatsAppBussinessNumber/g,config.whatsAppBusinessNumber);
+      paymentPath = paymentPath.replace(/\$locale/g,locale)
       var finalPath = UIHost + paymentPath;
       var link = await this.getShortenedURL(finalPath);
       return link;

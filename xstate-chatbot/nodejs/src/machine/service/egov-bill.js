@@ -242,7 +242,7 @@ class BillService {
         let toBillYear = new Date(result.billDetails[result.billDetails.length-1].toPeriod).getFullYear();
         let billPeriod = fromMonth+" "+fromBillYear+"-"+toMonth+" "+toBillYear;
         let tenantId= result.tenantId;
-        let link = await self.getPaymentLink(result.consumerCode,tenantId,result.businessService);
+        let link = await self.getPaymentLink(result.consumerCode,tenantId,result.businessService,locale);
         let serviceCode = localisationService.getMessageBundleForCode(localisationServicePrefix + result.businessService.toUpperCase());
 
         var data={
@@ -459,7 +459,7 @@ class BillService {
     return data;
   }
 
-  async getPaymentLink(consumerCode,tenantId,businessService)
+  async getPaymentLink(consumerCode,tenantId,businessService,locale)
   {
     var UIHost = config.egovServices.externalHost;
     var paymentPath = config.egovServices.msgpaylink;
@@ -467,6 +467,7 @@ class BillService {
     paymentPath = paymentPath.replace(/\$tenantId/g,tenantId);
     paymentPath = paymentPath.replace(/\$businessservice/g,businessService);
     paymentPath = paymentPath.replace(/\$redirectNumber/g,"+"+config.whatsAppBusinessNumber);
+    paymentPath = paymentPath.replace(/\$locale/g,locale);
     var finalPath = UIHost + paymentPath;
     var link = await this.getShortenedURL(finalPath);
     return link;

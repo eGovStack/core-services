@@ -20,6 +20,12 @@ else {
 }
 
 if(config.kafka.kafkaConsumerEnabled) {
-    module.exports.pgrStatusUpdateEvents = require('./pgr-status-update-events');
+    if(config.pgrUseCase.pgrVersion == 'v2') {
+        console.log('Using PGR v2 status update');
+        module.exports.pgrStatusUpdateEvents = require('./pgr-status-update-events');
+    } else if(config.pgrUseCase.pgrVersion == 'v1') {
+        console.log('Using PGR v1 status update');
+        module.exports.pgrStatusUpdateEvents = require('./pgr-status-update-events'); // TODO: import pgr-v1-status-update-events
+    }
     module.exports.paymentStatusUpdateEvents = require('./payment-status-update-event');
 }
