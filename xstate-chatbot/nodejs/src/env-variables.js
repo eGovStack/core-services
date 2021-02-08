@@ -11,7 +11,7 @@ const envVariables = {
 
     serviceProvider: process.env.SERVICE_PROVIDER || 'eGov',
 
-    repoProvider: process.env.REPO_PROVIDER || 'InMemory',
+    repoProvider: process.env.REPO_PROVIDER || 'PostgreSQL',
 
     whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
 
@@ -54,11 +54,11 @@ const envVariables = {
     },
 
     egovServices: {
-        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-qa.egovernments.org/',
-        externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-qa.egovernments.org/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://localhost:8085/",
+        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
+        externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-dev.egovernments.org/',
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
 
-        userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-qa.egovernments.org/',
+        userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
         userServiceCreateCitizenPath: process.env.USER_SERVICE_CREATE_CITIZEN_PATH || 'user/citizen/_create',
         userServiceUpdateProfilePath: process.env.USER_SERVICE_UPDATE_PROFILE_PATH || 'user/profile/_update',
@@ -70,17 +70,17 @@ const envVariables = {
         egovFilestoreServiceDownloadEndpoint: process.env.EGOV_FILESTORE_SERVICE_DOWNLOAD_ENDPOINT || "filestore/v1/files/url",
         urlShortnerEndpoint: process.env.URL_SHORTNER_ENDPOINT || 'egov-url-shortening/shortener',
         collectonServicSearchEndpoint: process.env.COLLECTION_SERVICE_SEARCH_ENDPOINT || 'collection-services/payments/$module/_search',
-        pgrv1CreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'rainmaker-pgr/v1/requests/_create',
-        pgrv1SearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'rainmaker-pgr/v1/requests/_search',
         pgrCreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'pgr-services/v2/request/_create',
         pgrSearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'pgr-services/v2/request/_search',
+        pgrv1CreateEndpoint: process.env.PGR_CREATE_ENDPOINT || 'rainmaker-pgr/v1/requests/_create',
+        pgrv1SearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'rainmaker-pgr/v1/requests/_search',
         waterConnectionSearch: process.env.WATER_CONNECTION_SEARCH || 'ws-services/wc/_search?searchType=CONNECTION',
         sewerageConnectionSearch: process.env.SEWERAGE_CONNECTION_SEARCH || 'sw-services/swc/_search?searchType=CONNECTION',
 
         cityExternalWebpagePath: process.env.CITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/city',
         localityExternalWebpagePath: process.env.LOCALITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/locality',
-        receiptdownladlink: process.env.RECEIPT_DOWNLOAD_LINK || 'citizen/withoutAuth/egov-common/download-receipt?status=success&consumerCode=$consumercode&tenantId=$tenantId&receiptNumber=$receiptnumber&businessService=$businessservice&smsLink=true&mobileNo=$mobilenumber&channel=whatsapp&redirectNumber=+$whatsAppBussinessNumber',
-        msgpaylink: process.env.MSG_PAY_LINK || 'citizen/withoutAuth/egov-common/pay?consumerCode=$consumercode&tenantId=$tenantId&businessService=$businessservice&redirectNumber=$redirectNumber&channel=whatsapp',
+        receiptdownladlink: process.env.RECEIPT_DOWNLOAD_LINK || 'citizen/withoutAuth/egov-common/download-receipt?status=success&consumerCode=$consumercode&tenantId=$tenantId&receiptNumber=$receiptnumber&businessService=$businessservice&smsLink=true&mobileNo=$mobilenumber&channel=whatsapp&redirectNumber=+$whatsAppBussinessNumber&locale=$locale',
+        msgpaylink: process.env.MSG_PAY_LINK || 'citizen/withoutAuth/egov-common/pay?consumerCode=$consumercode&tenantId=$tenantId&businessService=$businessservice&redirectNumber=$redirectNumber&channel=whatsapp&locale=$locale',
     },
 
     userService: {
@@ -89,11 +89,10 @@ const envVariables = {
     },
 
     pgrUseCase: {
-        pgrVersion: process.env.PGR_VERSION || 'v1',
+        pgrVersion: process.env.PGR_VERSION || 'v2',
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 5,
-        informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '1844872a-9cb7-4464-bcff-a1c8c9bb8799',
-        //pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
-        pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-service',
+        informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '643bfd34-5b28-4ef6-ba80-af7f529fe69b',
+        pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
     },
 
     billsAndReceiptsUseCase: {

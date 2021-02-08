@@ -217,8 +217,8 @@ class PGRV1Service {
       else{
         break;
       }
-      return results['ServiceWrappers'];
     }
+    return results['ServiceWrappers'];
   }
 
   async persistComplaint(user,slots,extraInfo) {

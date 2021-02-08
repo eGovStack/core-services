@@ -33,7 +33,7 @@ class PGRV1StatusUpdateEventFormatter{
     async templateMessgae(serviceWrapper){
         let reformattedMessage = [];
         let actionInfoArray = serviceWrapper.actionInfo;
-        for(index in actionInfoArray)
+        for(let index in actionInfoArray)
         {
             if(serviceWrapper.services[index].source == 'whatsapp')
             {
@@ -289,12 +289,14 @@ class PGRV1StatusUpdateEventFormatter{
 
     async searchUser(serviceWrapper, assigneeId, index){
 
-        let url = config.egovServices.egovServicesHost + 'user/_search'
+        let url = config.egovServices.userServiceHost + 'user/v1/_search'
+        let ids =[];
+        ids.push(assigneeId);
 
         let requestBody = {
             RequestInfo: {},
             tenantId: serviceWrapper.services[index].tenantId,
-            uuid: assigneeId
+            id: ids
           };
 
           let options = {
