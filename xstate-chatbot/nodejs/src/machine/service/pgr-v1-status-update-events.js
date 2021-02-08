@@ -28,86 +28,99 @@ class PGRV1StatusUpdateEventFormatter{
             }
         });
     }
+    
 
     async templateMessgae(serviceWrapper){
         let reformattedMessage = [];
-        
-
-        if(serviceWrapper.services[0].source == 'whatsapp'){
-            let status = serviceWrapper.actionInfo[0].status;
-            let action = serviceWrapper.actionInfo[0].action;
-            let comments = serviceWrapper.actionInfo[0].comments;
-            let citizenName = serviceWrapper.services[0].citizen.name;
-            let mobileNumber = serviceWrapper.services[0].citizen.mobileNumber;
-
-            if(!citizenName){
-                let tenantId = serviceWrapper.services[0].tenantId;
-                tenantId = tenantId.split(".")[0];
-                let localisationCode = citizenKeywordLocalization;
-                let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-                citizenName = localisationMessages.en_IN;
-            }
-            let userChatNodeForStatusUpdate = this.createResponseForUser(serviceWrapper);
-
-            if(!status && !action && comments){
-                let userChatNodeForComment = userChatNodeForStatusUpdate;
-                userChatNodeForComment.extraInfo = await this.createResponseForComment(serviceWrapper, comments, citizenName);
-                reformattedMessage.push(userChatNodeForComment);
-            }
-
-            let extraInfo = null;
-
-            if(status){
-
-                if (status === "rejected") {
-                    extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName);
-                } 
-                    
-                else if ((action + "-" + status) === "reassign-assigned") {
-                    extraInfo = await this.responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber);
+        let actionInfoArray = serviceWrapper.actionInfo;
+        for(index in actionInfoArray)
+        {
+            if(serviceWrapper.services[index].source == 'whatsapp')
+            {
+                let status = serviceWrapper.actionInfo[index].status;
+                let action = serviceWrapper.actionInfo[index].action;
+                let comments = serviceWrapper.actionInfo[index].comments;
+                let citizenName = serviceWrapper.services[index].citizen.name;
+                let mobileNumber = serviceWrapper.services[index].citizen.mobileNumber;
+    
+                if(!citizenName)
+                {
+                    let tenantId = serviceWrapper.services[index].tenantId;
+                    tenantId = tenantId.split(".")[0];
+                    let localisationCode = citizenKeywordLocalization;
+                    let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+                    citizenName = localisationMessages.en_IN;
                 }
-
-                /*else if(status === "PENDINGFORREASSIGNMENT"){
-                    extraInfo = await this.responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber);
-                }*/
-                else if (status === "assigned") {
-                    extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber);
+                let userChatNodeForStatusUpdate = this.createResponseForUser(serviceWrapper, index);
+    
+                if(!status && !action && comments)
+                {
+                    let userChatNodeForComment = userChatNodeForStatusUpdate;
+                    userChatNodeForComment.extraInfo = await this.createResponseForComment(serviceWrapper, comments, citizenName);
+                    reformattedMessage.push(userChatNodeForComment);
                 }
-                    
-                else if (status === "PENDINGATLME") {
-                    if(action === "reassign"){
+    
+                let extraInfo = null;
+    
+                if(status)
+                {
+    
+                    if (status === "rejected") 
+                    {
+                        extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName, index);
+                    } 
+                        
+                    else if ((action + "-" + status) === "reassign-assigned") 
+                    {
+                        extraInfo = await this.responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber, index);
+                    }
+    
+                    /*else if(status === "PENDINGFORREASSIGNMENT"){
                         extraInfo = await this.responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber);
+                    }*/
+                    else if (status === "assigned") 
+                    {
+                        extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber, index);
                     }
-                    else{
-                        extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber);
+                        
+                    else if (status === "PENDINGATLME") 
+                    {
+                        if(action === "reassign")
+                        {
+                            extraInfo = await this.responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber, index);
+                        }
+                        else
+                        {
+                            extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber, index);
+                        }
+    
+                    } 
+                    
+                    else if (status === "resolved") 
+                    {
+                        extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber, index);
                     }
-
-                } 
-                
-                else if (status === "resolved") {
-                    extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber);
                 }
+    
+                if(extraInfo)
+                {
+                    userChatNodeForStatusUpdate.extraInfo = extraInfo;
+                    reformattedMessage.push(userChatNodeForStatusUpdate);
+                }       
             }
-
-            if(extraInfo){
-                userChatNodeForStatusUpdate.extraInfo = extraInfo;
-                reformattedMessage.push(userChatNodeForStatusUpdate);
-            }
-
-            await valueFirst.getTransformMessageForTemplate(reformattedMessage);        // TODO: Use channel.sendMessageToUser()       
         }
-        
+        await valueFirst.getTransformMessageForTemplate(reformattedMessage);
     }
 
-    async responseForRejectedStatus(serviceWrapper, comments, citizenName){
+    async responseForRejectedStatus(serviceWrapper, comments, citizenName, index){
         let rejectReason = comments.split(";");
         rejectReason = rejectReason[0];
         if(rejectReason)
             rejectReason = "Invalid Complaint";
-        let serviceRequestId = serviceWrapper.services[0].serviceRequestId;
-        let serviceCode = serviceWrapper.services[0].serviceCode;
+        let serviceRequestId = serviceWrapper.services[index].serviceRequestId;
+        let serviceCode = serviceWrapper.services[index].serviceCode;
 
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
@@ -128,18 +141,18 @@ class PGRV1StatusUpdateEventFormatter{
         return extraInfo;
     }
 
-    async responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber){
+    async responseForReassignedStatus(serviceWrapper, citizenName, mobileNumber, index){
 
-        let serviceRequestId = serviceWrapper.services[0].serviceRequestId;
-        let serviceCode = serviceWrapper.services[0].serviceCode;
+        let serviceRequestId = serviceWrapper.services[index].serviceRequestId;
+        let serviceCode = serviceWrapper.services[index].serviceCode;
         let assigneeName = "the concerned employee";
-        if(serviceWrapper.actionInfo[0].assignee){
-            let assignee = await this.getAssignee(serviceWrapper);
+        if(serviceWrapper.actionInfo[index].assignee){
+            let assignee = await this.getAssignee(serviceWrapper,index);
             assigneeName = assignee.name;
         }
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
 
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
@@ -161,16 +174,16 @@ class PGRV1StatusUpdateEventFormatter{
         return extraInfo;
     }
 
-    async responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber){
+    async responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber, index){
 
-        let serviceRequestId = serviceWrapper.services[0].serviceRequestId;
-        let serviceCode = serviceWrapper.services[0].serviceCode;
+        let serviceRequestId = serviceWrapper.services[index].serviceRequestId;
+        let serviceCode = serviceWrapper.services[index].serviceCode;
         let assigneeName = "the concerned employee";
-        if( serviceWrapper.actionInfo[0].assignee){
-            let assignee = await this.getAssignee(serviceWrapper);
+        if( serviceWrapper.actionInfo[index].assignee){
+            let assignee = await this.getAssignee(serviceWrapper,index);
             assigneeName = assignee.name;
         }
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
@@ -193,12 +206,12 @@ class PGRV1StatusUpdateEventFormatter{
         return extraInfo;
     }
 
-    async responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber){
+    async responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber, index){
         
-        let serviceRequestId = serviceWrapper.services[0].serviceRequestId;
-        let serviceCode = serviceWrapper.services[0].serviceCode;
+        let serviceRequestId = serviceWrapper.services[index].serviceRequestId;
+        let serviceCode = serviceWrapper.services[index].serviceCode;
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
@@ -219,13 +232,13 @@ class PGRV1StatusUpdateEventFormatter{
         return extraInfo;
     }
 
-    createResponseForUser(serviceWrapper){
+    createResponseForUser(serviceWrapper,index){
 
         let reformattedMessage={};
 
-        let mobileNumber = serviceWrapper.services[0].phone;
-        let uuid = serviceWrapper.services[0].addressDetail.uuid;
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let mobileNumber = serviceWrapper.services[index].citizen.mobileNumber;
+        let uuid = serviceWrapper.services[index].citizen.uuid;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".");
 
         reformattedMessage.tenantId = tenantId[0];
@@ -242,17 +255,17 @@ class PGRV1StatusUpdateEventFormatter{
         return reformattedMessage;
     }
 
-    async createResponseForComment(serviceWrapper, comments, citizenName){
+    async createResponseForComment(serviceWrapper, comments, citizenName, index){
 
-        let serviceRequestId = serviceWrapper.services[0].serviceRequestId;
-        let serviceCode = serviceWrapper.services[0].serviceCode;
+        let serviceRequestId = serviceWrapper.services[index].serviceRequestId;
+        let serviceCode = serviceWrapper.services[index].serviceCode;
         let commentorName = "the concerned employee";
-        if(serviceWrapper.actionInfo[0].assignee){
-            let assignee = await this.getAssignee(serviceWrapper);
+        if(serviceWrapper.actionInfo[index].assignee){
+            let assignee = await this.getAssignee(serviceWrapper,index);
             commentorName = assignee.name;
         }
 
-        let tenantId = serviceWrapper.services[0].tenantId;
+        let tenantId = serviceWrapper.services[index].tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
@@ -274,13 +287,13 @@ class PGRV1StatusUpdateEventFormatter{
         return extraInfo;
     }
 
-    async searchUser(serviceWrapper, assigneeId){
+    async searchUser(serviceWrapper, assigneeId, index){
 
         let url = config.egovServices.egovServicesHost + 'user/_search'
 
         let requestBody = {
             RequestInfo: {},
-            tenantId: serviceWrapper.services[0].tenantId,
+            tenantId: serviceWrapper.services[index].tenantId,
             uuid: assigneeId
           };
 
@@ -305,9 +318,9 @@ class PGRV1StatusUpdateEventFormatter{
 
     }
 
-    async getAssignee(serviceWrapper){
-        let assigneeId = serviceWrapper.actionInfo[0].assignee;
-        return await this.searchUser(serviceWrapper, assigneeId);
+    async getAssignee(serviceWrapper, index){
+        let assigneeId = serviceWrapper.actionInfo[index].assignee;
+        return await this.searchUser(serviceWrapper, assigneeId, index);
     }
 
     async getShortenedURL(finalPath){

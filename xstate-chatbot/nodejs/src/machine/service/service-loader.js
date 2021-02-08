@@ -20,6 +20,13 @@ else {
 }
 
 if(config.kafka.kafkaConsumerEnabled) {
-    module.exports.pgrStatusUpdateEvents = require('./pgr-status-update-events');
+    if(config.pgrUseCase.pgrVersion=='v2')
+    {
+        module.exports.pgrStatusUpdateEvents = require('./pgr-status-update-events');
+    }
+    else if(config.pgrUseCase.pgrVersion=='v1')
+    {
+        module.exports.pgrStatusUpdateEvents = require('./pgr-v1-status-update-events');
+    }
     module.exports.paymentStatusUpdateEvents = require('./payment-status-update-event');
 }

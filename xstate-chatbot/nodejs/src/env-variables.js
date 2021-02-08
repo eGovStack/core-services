@@ -11,7 +11,7 @@ const envVariables = {
 
     serviceProvider: process.env.SERVICE_PROVIDER || 'eGov',
 
-    repoProvider: process.env.REPO_PROVIDER || 'PostgreSQL',
+    repoProvider: process.env.REPO_PROVIDER || 'InMemory',
 
     whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
 
@@ -54,11 +54,11 @@ const envVariables = {
     },
 
     egovServices: {
-        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-dev.egovernments.org/',
+        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://egov-micro-qa.egovernments.org/',
         externalHost: process.env.EXTERNAL_HOST || 'https://egov-micro-qa.egovernments.org/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://localhost:8085/",
 
-        userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-dev.egovernments.org/',
+        userServiceHost: process.env.USER_SERVICE_HOST || 'https://egov-micro-qa.egovernments.org/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
         userServiceCreateCitizenPath: process.env.USER_SERVICE_CREATE_CITIZEN_PATH || 'user/citizen/_create',
         userServiceUpdateProfilePath: process.env.USER_SERVICE_UPDATE_PROFILE_PATH || 'user/profile/_update',
@@ -92,7 +92,8 @@ const envVariables = {
         pgrVersion: process.env.PGR_VERSION || 'v1',
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 5,
         informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '1844872a-9cb7-4464-bcff-a1c8c9bb8799',
-        pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
+        //pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
+        pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-service',
     },
 
     billsAndReceiptsUseCase: {
