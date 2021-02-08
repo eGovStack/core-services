@@ -238,6 +238,13 @@ class PGRV1Service {
     requestBody["services"][0]["addressDetail"]["mohalla"] = mohalla;
     requestBody["services"][0]["accountId"] = userId;
     requestBody["services"][0]["phone"] = mobileNumber;
+
+    if(slots.geocode){
+      let latlng = slots.geocode.substring(1, slots.geocode.length - 1);
+      latlng = latlng.split(',');
+      requestBody["services"][0]["addressDetail"]["latitude"] = latlng[0];
+      requestBody["services"][0]["addressDetail"]["longitude"] = latlng[1];
+    }
     
     if(slots.image){
       let filestoreId = await this.getFileForFileStoreId(slots.image,city);

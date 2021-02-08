@@ -12,7 +12,7 @@ var geturl = require("url");
 var path = require("path");
 require('url-search-params-polyfill');
 
-let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
+let pgrCreateRequestBody = "{\"RequestInfo\":{\"authToken\":\"\",\"userInfo\":{}},\"service\":{\"tenantId\":\"\",\"serviceCode\":\"\",\"description\":\"\",\"accountId\":\"\",\"source\":\"whatsapp\",\"address\":{\"landmark\":\"\",\"city\":\"\",\"geoLocation\":{\"latitude\": null, \"longitude\": null},\"locality\":{\"code\":\"\"}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]}}";
 
 class PGRService {
 
@@ -229,13 +229,20 @@ class PGRService {
     let complaintType = slots.complaint;
     let locality = slots.locality;
     let city = slots.city;
-
+    
     requestBody["RequestInfo"]["authToken"] = authToken;
     requestBody["service"]["tenantId"] = city;
     requestBody["service"]["address"]["city"] = city;
     requestBody["service"]["address"]["locality"]["code"] = locality;
     requestBody["service"]["serviceCode"] = complaintType;
     requestBody["service"]["accountId"] = userId;
+
+    if(slots.geocode){
+      let latlng = slots.geocode.substring(1, slots.geocode.length - 1);
+      latlng = latlng.split(',');
+      requestBody["service"]["address"]["geoLocation"]["latitude"] = latlng[0];
+      requestBody["service"]["address"]["geoLocation"]["longitude"] = latlng[1];
+    }
 
     if(slots.image){
       let filestoreId = await this.getFileForFileStoreId(slots.image,city);

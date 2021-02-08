@@ -716,7 +716,7 @@ let messages = {
     },
     error:{
       en_IN: 'Sorry, I didn\'t understand. Could please try again!.',
-      hi_IN: 'माफ कीजिये मैं कुछ समझा नहीं। कृपया पुन: प्रयास करें।'
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
     },
   },
   trackReceipts:{
@@ -756,7 +756,7 @@ let messages = {
     },
     error:{
       en_IN: 'Sorry, I didn\'t understand. Could please try again!.',
-      hi_IN: 'माफ कीजिये मैं कुछ समझा नहीं। कृपया पुन: प्रयास करें।'
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
     },
 
 
@@ -776,7 +776,7 @@ let messages = {
     },
     error:{
       en_IN: 'Sorry, I didn\'t understand. Could please try again!.',
-      hi_IN: 'माफ कीजिये मैं कुछ समझा नहीं। कृपया पुन: प्रयास करें।'
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
     },
 
   },
@@ -821,7 +821,7 @@ let messages = {
     },
     error:{
       en_IN: 'Sorry, I didn\'t understand. Could please try again!.',
-      hi_IN: 'माफ कीजिये मैं कुछ समझा नहीं। कृपया पुन: प्रयास करें।'
+      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
     },
 
   },
