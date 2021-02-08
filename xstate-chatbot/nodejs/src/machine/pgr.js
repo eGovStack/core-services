@@ -621,8 +621,8 @@ let messages = {
         hi_IN: 'क्या यह शिकायत का सही स्थान है?\nशहर: {{city}} \n स्थान: {{locality}} \n अगर यह गलत है तो कृपया "No" भेजें ।'
       },
       confirmCity: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "No", if it is incorrect',
-        hi_IN: 'क्या यह शिकायत का सही स्थान है? \nशहर: {{city}}\n अगर यह गलत है तो कृपया "No" भेजें ।'
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "No", if it is incorrect.\nOtherwise type any character and send to proceed.',
+        hi_IN: 'क्या यह शिकायत का सही स्थान है? \nशहर: {{city}}\n अगर यह गलत है तो कृपया "No" भेजें।\nअन्यथा किसी भी चरित्र को टाइप करें और आगे बढ़ने के लिए भेजें।'
       }
     },
     city: {
