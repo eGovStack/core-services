@@ -8,7 +8,10 @@ import chatbotMachine from '../../nodejs/src/machine/seva';
 function MessageTemplate(props) {
     let message = props.item.text;
     // console.log(message);
-    message = message.replaceAll('\n', '<br/>');
+    if(typeof message == 'string')
+        message = message.replaceAll('\n', '<br/>');
+    else if(typeof message == 'object')
+        message = JSON.stringify(message);
     let htmlToinsert = { __html: message };
     return (
         <div className="k-bubble">

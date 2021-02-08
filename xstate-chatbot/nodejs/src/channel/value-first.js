@@ -20,7 +20,7 @@ let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@C
 class ValueFirstWhatsAppProvider {
 
     async checkForMissedCallNotification(requestBody){
-        if(requestBody.vmn_tollfree)
+        if(requestBody.Call_id || requestBody.operartor || requestBody.circle)
             return true;
         
         return false;
@@ -29,19 +29,16 @@ class ValueFirstWhatsAppProvider {
     async getMissedCallValues(requestBody){
         let reformattedMessage={};
 
-        reformattedMessage.messages = [];
-        
-        var content = {
+        reformattedMessage.message = {
             input: "mseva",
             type: "text"
         };
-        reformattedMessage.messages.push(content);
 
         reformattedMessage.user = {
             mobileNumber: requestBody.mobile_number.slice(2)
         };
         reformattedMessage.extraInfo = {
-            whatsAppBusinessNumber: config.whatsAppBusinessNumber,
+            whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
             tenantId: config.rootTenantId,
             missedCall: true
         };
