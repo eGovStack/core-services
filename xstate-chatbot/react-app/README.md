@@ -32,3 +32,12 @@ npm start
 Open the website: `http://localhost:3000`
 
 Open the web browser console to see any logs.
+
+## Environment Variables
+
+As the react-app will be running in a web browser and not a server, a few of the functionalities will have to be disabled before we can run the app on the web browser. This can be achieved simply by modifying few environment variables.
+ 
+Please modify the following environment variables in [env-variables.js](../nodejs/src/env-variables.js) file before running the app:
+ 
+1. Disable kafka consumer by marking kafkaConsumerEnabled to be false
+2. In case of hostnames of services, the react-app picks it from the proxy configured in [package.json](./package.json). So configure a common hostname there and replace all egov hostnames(like, 'https://egov-micro-dev.egovernments.org/') from the env-variables.js with just '/'.
