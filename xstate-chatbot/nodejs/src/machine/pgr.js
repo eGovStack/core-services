@@ -352,7 +352,8 @@ const pgr =  {
                         let { cities, messageBundle, link } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.city.question.preamble, context.user.locale);
                         let message = preamble + '\n' + link;
-                        context.grammer = dialog.constructLiteralGrammer(cities, messageBundle, context.user.locale);
+                        let grammer = dialog.constructLiteralGrammer(cities, messageBundle, context.user.locale);
+                        context.grammer = grammer;
                         dialog.sendMessage(context, message);
                       })
                     },
@@ -400,7 +401,8 @@ const pgr =  {
                         let { localities, messageBundle,link } = event.data;
                         let preamble = dialog.get_message(messages.fileComplaint.locality.question.preamble, context.user.locale);
                         let message = preamble + '\n' + link;
-                        context.grammer = dialog.constructLiteralGrammer(localities, messageBundle, context.user.locale);
+                        let grammer = dialog.constructLiteralGrammer(localities, messageBundle, context.user.locale);
+                        context.grammer = grammer;
                         dialog.sendMessage(context, message);
                       })
                     },
