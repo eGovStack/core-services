@@ -11,7 +11,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
-import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.ServiceCallException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -125,25 +124,38 @@ public class RazorpayGateway implements Gateway{
 
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-        Object generated_signature;
+		boolean generated_signature;
+		JSONObject object = new JSONObject(params);
 		
         try {
-        	
-    		generated_signature = hmac_sha256(params.get("razorpayOrderId") + "|" + params.get("razorpayPaymentId"), SECURE_SECRET);
-
-			if (generated_signature.equals(params.get("razorpaySignature"))) 
+        	generated_signature = Utils.verifyPaymentSignature(object, SECURE_SECRET);
+    		
+        	Payment payment = client.Payments.fetch(params.get("razorpayPaymentId"));
+			if (generated_signature) 
 				{
+			
 	            return Transaction.builder()
 	                    .txnId(currentStatus.getTxnId())
 	                    .txnAmount(currentStatus.getTxnAmount())
 	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+	                    .gatewayTxnId(payment.get("id"))
+	                    .gatewayPaymentMode(payment.get("method"))
+	                    .gatewayStatusCode(payment.get("status"))
+	                    .gatewayStatusMsg(payment.get("description"))
+	                    .responseJson(payment)
 	                    .build();
 				}
 			else
 				{
 	            return Transaction.builder()
-	                    .txnId(currentStatus.getTxnId())
-	                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+	            		.txnId(currentStatus.getTxnId())
+	                    .txnAmount(currentStatus.getTxnAmount())
+	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+	                    .gatewayTxnId(payment.get("id"))
+	                    .gatewayPaymentMode(payment.get("method"))
+	                    .gatewayStatusCode(payment.get("status"))
+	                    .gatewayStatusMsg(payment.get("description"))
+	                    .responseJson(payment)
 	                    .build();
 				}
         	
@@ -171,31 +183,4 @@ public class RazorpayGateway implements Gateway{
 		return "ORDERID";
 	}
 	
- 
-	    private Object hmac_sha256(String data, String secret) throws SignatureException {
-			// TODO Auto-generated method stub
-	    	String result;
-	        final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
-
-	        try {
-
-	            // get an hmac_sha256 key from the raw secret bytes
-	            SecretKeySpec signingKey = new SecretKeySpec(secret.getBytes(), HMAC_SHA256_ALGORITHM);
-
-	            // get an hmac_sha256 Mac instance and initialize with the signing key
-	            Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
-	            mac.init(signingKey);
-
-	            // compute the hmac on input data bytes
-	            byte[] rawHmac = mac.doFinal(data.getBytes());
-
-	            // base64-encode the hmac
-	            result = DatatypeConverter.printHexBinary(rawHmac).toLowerCase();
-
-	        } catch (Exception e) {
-	            throw new SignatureException("Failed to generate HMAC : " + e.getMessage());
-	        }
-	        return result;
-		}
-
 }
