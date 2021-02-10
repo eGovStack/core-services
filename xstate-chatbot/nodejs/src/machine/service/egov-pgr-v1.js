@@ -270,7 +270,7 @@ class PGRV1Service {
       let responseBody = await response.json();
       results = await this.preparePGRResult(responseBody,user.locale);
     } else {
-      console.error('Error in fetching the bill');
+      console.error('Error in fetching the complaints');
       return undefined;
     }
     return results[0];
@@ -305,8 +305,8 @@ class PGRV1Service {
     }
     else
     {
-      console.error('Error in fetching bills');
-      return undefined;
+      console.error('Error in fetching complaints');
+      return [];
     }
     return results;
   }

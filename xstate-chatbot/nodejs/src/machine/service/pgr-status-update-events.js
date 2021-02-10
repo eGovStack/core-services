@@ -3,6 +3,9 @@ const localisationService = require('../util/localisation-service');
 const urlencode = require('urlencode');
 const valueFirst = require('../../channel/value-first');        // TODO: import channel
 const fetch = require("node-fetch");
+const userService = require('../../session/user-service');
+const chatStateRepository = require('../../session/repo');
+const dialog = require('../util/dialog');
 
 const consumerGroupOptions = require('../../session/kafka/kafka-consumer-group-options');
 
@@ -57,32 +60,40 @@ class PGRStatusUpdateEventFormatter{
 
             let extraInfo = null;
 
+            let localeList = config.supportedLocales.split(',');
+            let locale = localeList[0];
+            let user = await userService.getUserForMobileNumber(mobileNumber, config.rootTenantId);
+            let chatState = await chatStateRepository.getActiveStateForUserId(user.userId);
+            if(chatState)
+              locale = chatState.context.user.locale;
+            let localeIndex = localeList.indexOf(locale);     
+
             if(status){
 
                 if (status === "REJECTED") {
-                    extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName);
+                    extraInfo = await this.responseForRejectedStatus(serviceWrapper, comments, citizenName, localeIndex, locale);
                 } 
                     
                 else if ((action + "-" + status) === "reassign-assigned") {
-                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale);
                 }
 
                 else if(status === "PENDINGFORREASSIGNMENT"){
-                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                    extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale);
                 } 
                     
                 else if (status === "PENDINGATLME") {
                     if(action === "REASSIGN"){
-                        extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber);
+                        extraInfo = await this.responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale);
                     }
                     else{
-                        extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber);
+                        extraInfo = await this.responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale);
                     }
 
                 } 
                 
                 else if (status === "RESOLVED") {
-                    extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber);
+                    extraInfo = await this.responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale);
                 }
             }
 
@@ -96,19 +107,35 @@ class PGRStatusUpdateEventFormatter{
         
     }
 
-    async responseForRejectedStatus(serviceWrapper, comments, citizenName){
-        let rejectReason = comments.split(";");
-        rejectReason = rejectReason[0];
-        if(rejectReason)
-            rejectReason = "Invalid Complaint";
+    async responseForRejectedStatus(serviceWrapper, comments, citizenName, localeIndex, locale){
+        let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationRejectedTemplateid.split(',');
+        let localeList = config.supportedLocales.split(',');
+
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-        let complaintCategory = localisationMessages.en_IN;
+
+        let templateId, complaintCategory, rejectReason;
+        if(templateList[localeIndex]){
+            templateId = templateList[localeIndex];
+            complaintCategory = dialog.get_message(localisationMessages,locale);
+            rejectReason = dialog.get_message(messageBundle.defaultReason,locale);
+        }
+        else{
+            templateId = templateList[0];
+            complaintCategory = dialog.get_message(localisationMessages,localeList[0]);
+            rejectReason = dialog.get_message(messageBundle.defaultReason,localeList[0]);
+        }
+
+
+        let rejectComments = comments.split(";");
+        rejectComments = rejectComments[0];
+        if(rejectComments)
+            rejectReason = rejectComments;
+        
         
         let extraInfo = {};
         let params=[];
@@ -118,29 +145,41 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(rejectReason);
 
-        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationRejectedTemplateid;
+        extraInfo.templateId = templateId;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
         return extraInfo;
     }
 
-    async responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber){
+    async responseForReassignedtatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale){
+        let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationReassignedTemplateid.split(',');
+        let localeList = config.supportedLocales.split(',');
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let assigneeName = "the concerned employee";
+        let tenantId = serviceWrapper.service.tenantId;
+        tenantId = tenantId.split(".")[0];
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
+
+        let templateId, assigneeName, complaintCategory;
+        if(templateList[localeIndex]){
+            templateId = templateList[localeIndex];
+            assigneeName = dialog.get_message(messageBundle.defaultEmployeeName,locale);
+            complaintCategory = dialog.get_message(localisationMessages,locale);
+        }    
+        else{
+            templateId = templateList[0];
+            assigneeName = dialog.get_message(messageBundle.defaultEmployeeName,localeList[0]);
+            complaintCategory = dialog.get_message(localisationMessages,localeList[0]);
+        }
+
         if(serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
             let assignee = await this.getAssignee(serviceWrapper);
             assigneeName = assignee.name;
         }
-        let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
-
-        let tenantId = serviceWrapper.service.tenantId;
-        tenantId = tenantId.split(".")[0];
-        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
-        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-        let complaintCategory = localisationMessages.en_IN;
 
         let extraInfo = {};
         let params=[];
@@ -151,29 +190,43 @@ class PGRStatusUpdateEventFormatter{
         params.push(assigneeName);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationReassignedTemplateid;
+        extraInfo.templateId = templateId;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
         return extraInfo;
     }
 
-    async responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber){
+    async responseForAssignedStatus(serviceWrapper, citizenName, mobileNumber, localeIndex, locale){
+        let templateList = config.valueFirstWhatsAppProvider.valuefirstNotificationAssignedTemplateid.split(',');
+        let localeList = config.supportedLocales.split(',');
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let assigneeName = "the concerned employee";
+        let tenantId = serviceWrapper.service.tenantId;
+        tenantId = tenantId.split(".")[0];
+        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
+        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+        let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
+
+        let templateId, assigneeName,complaintCategory;
+        if(templateList[localeIndex]){
+            templateId = templateList[localeIndex];
+            assigneeName = dialog.get_message(messageBundle.defaultEmployeeName,locale);
+            complaintCategory = dialog.get_message(localisationMessages,locale);
+        }
+        else{
+            templateId = templateList[0];
+            assigneeName = dialog.get_message(messageBundle.defaultEmployeeName,localeList[0]);
+            complaintCategory = dialog.get_message(localisationMessages,localeList[0]);
+        }
+
+        
         if( serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
             let assignee = await this.getAssignee(serviceWrapper);
             assigneeName = assignee.name;
         }
-        let tenantId = serviceWrapper.service.tenantId;
-        tenantId = tenantId.split(".")[0];
-        let localisationCode = localisationPrefix + serviceCode.toUpperCase();
-        let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-        let complaintCategory = localisationMessages.en_IN;
 
-        let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
         let extraInfo = {};
         let params=[];
 
@@ -183,15 +236,18 @@ class PGRStatusUpdateEventFormatter{
         params.push(assigneeName);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationAssignedTemplateid;
+        extraInfo.templateId = templateId;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
         return extraInfo;
     }
 
-    async responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber){
-        
+    async responseForResolvedStatus(serviceWrapper, citizenName, mobileNumber,localeIndex, locale){
+
+        let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationResolvedTemplateid.split(',');
+        let localeList = config.supportedLocales.split(',');
+
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
         let complaintURL = await this.makeCitizenURLForComplaint(serviceRequestId, mobileNumber);
@@ -199,7 +255,16 @@ class PGRStatusUpdateEventFormatter{
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-        let complaintCategory = localisationMessages.en_IN;
+
+        let templateId,complaintCategory;
+        if(templateList[localeIndex]){
+            templateId = templateList[localeIndex];
+            complaintCategory = dialog.get_message(localisationMessages,locale);
+        }
+        else{
+            templateId = templateList[0];
+            complaintCategory = dialog.get_message(localisationMessages,localeList[0]);
+        }
 
         let extraInfo = {};
         let params=[];
@@ -209,7 +274,8 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(complaintURL);
 
-        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationResolvedTemplateid;
+
+        extraInfo.templateId = templateId;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -239,21 +305,35 @@ class PGRStatusUpdateEventFormatter{
         return reformattedMessage;
     }
 
-    async createResponseForComment(serviceWrapper, comments, citizenName){
+    async createResponseForComment(serviceWrapper, comments, citizenName, localeIndex, locale){
+
+        let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationCommentedTemplateid.split(',');
+        let localeList = config.supportedLocales.split(',');
 
         let serviceRequestId = serviceWrapper.service.serviceRequestId;
         let serviceCode = serviceWrapper.service.serviceCode;
-        let commentorName = "the concerned employee";
-        if(serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
-            let assignee = await this.getAssignee(serviceWrapper);
-            commentorName = assignee.name;
-        }
-
         let tenantId = serviceWrapper.service.tenantId;
         tenantId = tenantId.split(".")[0];
         let localisationCode = localisationPrefix + serviceCode.toUpperCase();
         let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-        let complaintCategory = localisationMessages.en_IN;
+
+        let templateId, complaintCategory, commentorName;
+        if(templateList[localeIndex]){
+            templateId = templateList[localeIndex];
+            complaintCategory = dialog.get_message(localisationMessages,locale);
+            commentorName = dialog.get_message(messageBundle.defaultEmployeeName,locale);
+
+        }
+        else{
+            templateId = templateList[0];
+            complaintCategory = dialog.get_message(localisationMessages,localeList[0]);
+            commentorName = dialog.get_message(messageBundle.defaultEmployeeName,localeList[0]);
+        }
+
+        if(serviceWrapper.workflow.assignes && serviceWrapper.workflow.assignes.length > 0){
+            let assignee = await this.getAssignee(serviceWrapper);
+            commentorName = assignee.name;
+        }
 
         let extraInfo = {};
         let params=[];
@@ -264,7 +344,7 @@ class PGRStatusUpdateEventFormatter{
         params.push(serviceRequestId);
         params.push(comments);
 
-        extraInfo.templateId = config.valueFirstWhatsAppProvider.valuefirstNotificationCommentedTemplateid
+        extraInfo.templateId = templateId;
         extraInfo.recipient = config.whatsAppBusinessNumber;
         extraInfo.params = params;
 
@@ -331,6 +411,17 @@ class PGRStatusUpdateEventFormatter{
     }
 
 }
+
+let messageBundle = {
+    defaultEmployeeName:{
+      en_IN: "the concerned employee",
+      hi_IN: "संबंधित कर्मचारी"
+    },
+    defaultReason:{
+        en_IN: "Invalid Complaint",
+        hi_IN: "अवैध शिकायत"
+    }
+  };
 
 let pgrStatusUpdateEvents = new PGRStatusUpdateEventFormatter();
 

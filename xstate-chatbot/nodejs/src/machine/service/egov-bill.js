@@ -253,7 +253,8 @@ class BillService {
           dueDate: dueDate,
           period: billPeriod,
           tenantId: tenantId,
-          paymentLink: link
+          paymentLink: link,
+          businessService: result.businessService
         };
         tenantId = "TENANT_TENANTS_" + tenantId.toUpperCase().replace('.','_');
         if(!tenantIdList.includes(tenantId))
@@ -267,7 +268,7 @@ class BillService {
 
     if(Bills['Bills'].length>0){
       var stateLevelCode = "TENANT_TENANTS_"+config.rootTenantId.toUpperCase();
-      var businessService = Bills['Bills'][0].service;
+      var businessService = Bills['Bills'][0].businessService;
       tenantIdList.push(stateLevelCode);
       var businessServiceList = ['WS','SW'];
       let cosumerCodeToLocalityMap;

@@ -258,7 +258,7 @@ class ReceiptService {
         }
       }
 
-      let service = Payments['Payments'][0].service;
+      let service = Payments['Payments'][0].businessService;
       var businessServiceList = ['WS','SW'];
       let consumerCodeToLocalityMapping;
     
