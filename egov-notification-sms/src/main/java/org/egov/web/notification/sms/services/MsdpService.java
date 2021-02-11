@@ -211,7 +211,7 @@ public class MsdpService implements SMSService {
         
         //message is assumed to be splited in three parts first part is actual message, second part template_id and third part entity_code
         
-        log.debug("actual message extracted",sms.getMessage());
+        log.info("actual message extracted: "+sms.getMessage());
         
         String msgs[]=sms.getMessage().split("\\|"); 
         String dlt_entity_id="1301157492438182299";
@@ -226,9 +226,9 @@ public class MsdpService implements SMSService {
         if(msgs.length>2)
             dlt_template_id=msgs[2];
        
-        log.debug("filetered message",msg);
-        log.debug("dlt_entity_id",dlt_entity_id);
-        log.debug("dlt_template_id",dlt_template_id);
+        log.info("filetered message:"+msg);
+        log.info("dlt_entity_id:"+dlt_entity_id);
+        log.info("dlt_template_id:"+dlt_template_id);
         
         
         map.add(smsProperties.getMessageParameterName(),msg );
