@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Component
 @Getter
@@ -138,7 +139,9 @@ public class SmsProperties {
         map.add(mobileNumberParameterName, getMobileNumberWithPrefix(sms.getMobileNumber()));
         //map.add(messageParameterName, sms.getMessage());
         //message is assumed to be splited in three parts first part is actual message, second part template_id and third part entity_code
-        
+        Logger log
+        = Logger.getLogger( 
+        		SmsProperties.class.getName()); 
         log.info("actual message extracted: "+sms.getMessage());
         
         String msgs[]=sms.getMessage().split("\\|"); 
