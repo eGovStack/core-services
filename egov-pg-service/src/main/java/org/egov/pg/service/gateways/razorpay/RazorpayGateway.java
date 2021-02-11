@@ -130,7 +130,7 @@ public class RazorpayGateway implements Gateway{
         try {
         	generated_signature = Utils.verifyPaymentSignature(object, SECURE_SECRET);
     		
-        	Payment payment = client.Payments.fetch(params.get("razorpayPaymentId"));
+        	Payment payment = client.Payments.fetch(params.get("razorpay_payment_id"));
 			if (generated_signature) 
 				{
 			
