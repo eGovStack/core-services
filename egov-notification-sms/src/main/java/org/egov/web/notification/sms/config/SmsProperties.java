@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Component
 @Getter
@@ -104,6 +105,12 @@ public class SmsProperties {
     @Value("${sms.message.req.param.name}")
     private String messageParameterName;
 
+    @Value("${sms.entity.req.param.name}")
+    private String entityParameterName;
+
+    @Value("${sms.template.req.param.name}")
+    private String templateParameterName;
+    
     @Value("${mobile.number.prefix:}")
     private String mobileNumberPrefix;
 
@@ -130,7 +137,34 @@ public class SmsProperties {
         map.add(passwordParameterName, password);
         map.add(senderIdParameterName, smsSender);
         map.add(mobileNumberParameterName, getMobileNumberWithPrefix(sms.getMobileNumber()));
-        map.add(messageParameterName, sms.getMessage());
+        //map.add(messageParameterName, sms.getMessage());
+        //message is assumed to be splited in three parts first part is actual message, second part template_id and third part entity_code
+        Logger log
+        = Logger.getLogger( 
+        		SmsProperties.class.getName()); 
+        log.info("actual message extracted: "+sms.getMessage());
+        
+        String msgs[]=sms.getMessage().split("\\|"); 
+        String dlt_entity_id="1301157492438182299";
+        String dlt_template_id="123";
+       
+        
+        String msg=msgs[0];
+        
+        if(msgs.length>1)
+            dlt_entity_id=msgs[1];
+        
+        if(msgs.length>2)
+            dlt_template_id=msgs[2];
+       
+        log.info("filetered message:"+msg);
+        log.info("dlt_entity_id:"+dlt_entity_id);
+        log.info("dlt_template_id:"+dlt_template_id);
+ 
+        map.add(messageParameterName,msg );
+        map.add("dlt_entity_id",dlt_entity_id);
+        map.add("dlt_template_id",dlt_template_id);
+        
         populateSmsPriority(sms.getPriority(), map);
         populateAdditionalSmsParameters(map);
 
