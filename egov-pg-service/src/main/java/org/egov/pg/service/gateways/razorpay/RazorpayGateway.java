@@ -120,7 +120,7 @@ public class RazorpayGateway implements Gateway{
         try {
         	generatedSignature = hmac_sha256(params.get("razorpayOrderId") + "|" + params.get("razorpayPaymentId"), SECURE_SECRET);
 			//Payment payment = client.Payments.fetch(params.get("razorpayPaymentId"));
-			if (generatedSignature==params.get("razorpaySignature")) 
+			if (generatedSignature.equals(params.get("razorpaySignature")))
 				{
 
 	            return Transaction.builder()
