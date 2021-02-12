@@ -11,6 +11,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
+import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.ServiceCallException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,10 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Razorpay Gateway implementation
  */
+
 @Component
 @Slf4j
 public class RazorpayGateway implements Gateway{
-
 	private static final String GATEWAY_NAME = "RAZORPAY";
     private final String MERCHANT_ID;//="rzp_test_kQ821qWPnYKZZr";
     private final String SECURE_SECRET;//="b4An5RWnpy3GtjyP1PpCXdf9";
@@ -41,27 +42,19 @@ public class RazorpayGateway implements Gateway{
     private final String CURRENCY;
     private final String PAYMENT_CAPTURE;
     private RazorpayClient client;
-    private final RestTemplate restTemplate;
-    //private ObjectMapper objectMapper;
     private final String MERCHANT_URL_PAY;
-    private final String MERCHANT_URL_STATUS;
     
     private final boolean ACTIVE;
     
  
-
     @Autowired
-    public RazorpayGateway(RestTemplate restTemplate, ObjectMapper objectMapper, Environment environment) {
-        this.restTemplate = restTemplate;
-        //this.objectMapper = objectMapper;
-        
+    public RazorpayGateway(ObjectMapper objectMapper, Environment environment) {
         ACTIVE = Boolean.valueOf(environment.getRequiredProperty("razorpay.active"));
         CURRENCY = environment.getRequiredProperty("razorpay.currency");
         LOCALE = environment.getRequiredProperty("razorpay.locale");
         MERCHANT_ID = environment.getRequiredProperty("razorpay.merchant.id");
         SECURE_SECRET = environment.getRequiredProperty("razorpay.merchant.secret.key");
         MERCHANT_URL_PAY = environment.getRequiredProperty("razorpay.url.debit");
-        MERCHANT_URL_STATUS = environment.getRequiredProperty("razorpay.url.status");
         PAYMENT_CAPTURE = environment.getRequiredProperty("razorpay.payment_capture");
         try {
         	this.client = new RazorpayClient(this.MERCHANT_ID, this.SECURE_SECRET);
@@ -101,7 +94,6 @@ public class RazorpayGateway implements Gateway{
 	        request.put("notes", notesData);
 	     	transfers.put(transfer);
 			request.put("transfers", transfers);
-
 			Order order = null;
 			try {
 				order = client.Orders.create(request);
@@ -109,11 +101,10 @@ public class RazorpayGateway implements Gateway{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 	        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	        fields.forEach(params::add);
-	        String ENCRYPTION_TYPE = "SHA256";
-	        params.add("secureHashType", ENCRYPTION_TYPE);
+	        final String encriptionType = "SHA256";
+	        params.add("secureHashType", encriptionType);
 	        params.add("orderId", order.get("id"));
 	        params.add("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
 	        
@@ -122,65 +113,78 @@ public class RazorpayGateway implements Gateway{
 	        return uriComponents.toUri();
 	}
 
+
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-		boolean generated_signature;
-		JSONObject object = new JSONObject(params);
-		
+       final Object generatedSignature;
         try {
-        	generated_signature = Utils.verifyPaymentSignature(object, SECURE_SECRET);
-    		
-        	Payment payment = client.Payments.fetch(params.get("razorpay_payment_id"));
-			if (generated_signature) 
+        	generatedSignature = hmac_sha256(params.get("razorpayOrderId") + "|" + params.get("razorpayPaymentId"), SECURE_SECRET);
+			//Payment payment = client.Payments.fetch(params.get("razorpayPaymentId"));
+			if (generatedSignature==params.get("razorpaySignature")) 
 				{
-			
+
 	            return Transaction.builder()
 	                    .txnId(currentStatus.getTxnId())
 	                    .txnAmount(currentStatus.getTxnAmount())
 	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
-	                    .gatewayTxnId(payment.get("id"))
-	                    .gatewayPaymentMode(payment.get("method"))
-	                    .gatewayStatusCode(payment.get("status"))
-	                    .gatewayStatusMsg(payment.get("description"))
-	                    .responseJson(payment)
 	                    .build();
 				}
 			else
 				{
 	            return Transaction.builder()
-	            		.txnId(currentStatus.getTxnId())
+	                    .txnId(currentStatus.getTxnId())
 	                    .txnAmount(currentStatus.getTxnAmount())
-	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
-	                    .gatewayTxnId(payment.get("id"))
-	                    .gatewayPaymentMode(payment.get("method"))
-	                    .gatewayStatusCode(payment.get("status"))
-	                    .gatewayStatusMsg(payment.get("description"))
-	                    .responseJson(payment)
-	                    .build();
+	                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+	            		.build();
 				}
-        	
+
 			
         } catch (Exception e){
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
 	}
-
 	@Override
 	public boolean isActive() {
 		// TODO Auto-generated method stub
 		return ACTIVE;
 	}
-
 	@Override
 	public String gatewayName() {
 		// TODO Auto-generated method stub
 		return GATEWAY_NAME;
 	}
-
+	
 	@Override
 	public String transactionIdKeyInResponse() {
-		// TODO Auto-generated method stub
 		return "ORDERID";
 	}
-	
+
+
+	    private Object hmac_sha256(String data, String secret) throws SignatureException {
+			// TODO Auto-generated method stub
+	    	String result;
+	        final String hmacSha256Algorithm = "HmacSHA256";
+
+	        try {
+
+	            // get an hmac_sha256 key from the raw secret bytes
+	            SecretKeySpec signingKey = new SecretKeySpec(secret.getBytes(), hmacSha256Algorithm);
+
+	            // get an hmac_sha256 Mac instance and initialize with the signing key
+	            Mac mac = Mac.getInstance(hmacSha256Algorithm);
+	            mac.init(signingKey);
+
+	            // compute the hmac on input data bytes
+	            byte[] rawHmac = mac.doFinal(data.getBytes());
+
+	            // base64-encode the hmac
+	            result = DatatypeConverter.printHexBinary(rawHmac).toLowerCase();
+
+	        } catch (Exception e) {
+	            throw new SignatureException("Failed to generate HMAC : " + e.getMessage());
+	        }
+	        return result;
+		}
+
+
 }
