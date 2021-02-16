@@ -129,5 +129,14 @@ public class EgovUserApplication {
 		return new SpringCache2kCacheManager("cache-" + hashCode())
 				.addCaches(b->b.name("cRolesByCode").expireAfterWrite(masterDataExpiry, TimeUnit.MINUTES).entryCapacity(50));
 	}
+	
+	 @Bean
+	    public JedisConnectionFactory connectionFactory() {
+	        return new JedisConnectionFactory(new JedisShardInfo(host));
+	    }
+
+	    public static void main(String[] args) {
+	        SpringApplication.run(EgovUserApplication.class, args);
+	    }
 
 }
