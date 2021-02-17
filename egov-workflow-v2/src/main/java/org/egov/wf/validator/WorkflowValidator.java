@@ -47,6 +47,7 @@ public class WorkflowValidator {
         BusinessService businessService = businessUtil.getBusinessService(tenantId,businessServiceCode);
         validateAction(requestInfo,processStateAndActions,businessService);
         validateDocuments(processStateAndActions);
+        validateAssignes(requestInfo, processStateAndActions);
     }
 
 
@@ -198,6 +199,41 @@ public class WorkflowValidator {
             });
         }
         return transitionRoles;
+    }
+
+
+    /**
+     * Validates if the citizen is in list of assignes
+     * @param requestInfo
+     * @param processStateAndActions
+     */
+    private void validateAssignes(RequestInfo requestInfo, List<ProcessStateAndAction> processStateAndActions){
+
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(CITIZEN_TYPE)){
+
+            String userUUID = requestInfo.getUserInfo().getUuid();
+            Map<String, String> errorMap = new HashMap<>();
+
+            for(ProcessStateAndAction processStateAndAction : processStateAndActions){
+
+                ProcessInstance processInstanceFromDb = processStateAndAction.getProcessInstanceFromDb();
+
+                if(processInstanceFromDb!=null){
+                    if(!CollectionUtils.isEmpty(processInstanceFromDb.getAssignes())){
+                        List<String> assignes = processInstanceFromDb.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+
+                        if(!assignes.contains(userUUID))
+                            errorMap.put("INVALID_USER","Citizen not authorized to perform action on application: "+processInstanceFromDb.getBusinessId());
+                    }
+                }
+
+            }
+
+            if(!errorMap.isEmpty())
+                throw new CustomException(errorMap);
+
+        }
+
     }
 
 
