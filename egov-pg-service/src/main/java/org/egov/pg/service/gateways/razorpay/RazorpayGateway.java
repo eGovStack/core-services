@@ -36,14 +36,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RazorpayGateway implements Gateway{
 	private static final String GATEWAY_NAME = "RAZORPAY";
-    private final String MERCHANT_ID;//="rzp_test_kQ821qWPnYKZZr";
-    private final String SECURE_SECRET;//="b4An5RWnpy3GtjyP1PpCXdf9";
+    private final String MERCHANT_ID;
+    private final String SECURE_SECRET;
     private final String LOCALE;
     private final String CURRENCY;
     private final String PAYMENT_CAPTURE;
     private RazorpayClient client;
     private final String MERCHANT_URL_PAY;
-    
     private final boolean ACTIVE;
     
  
@@ -84,12 +83,10 @@ public class RazorpayGateway implements Gateway{
 			JSONObject transfer = new JSONObject();
 			transfer.put("amount", String.valueOf(Utils.formatAmtAsPaise(transaction.getTxnAmount())));
 			transfer.put("currency", CURRENCY);
-			transfer.put("account", "acc_GUEHwDC08s1AgU");
+			transfer.put("account", transaction.getAdditionalFields().get(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER));
 			JSONObject notesData=new JSONObject();
-	        notesData.put("Address","Moali");
-	        notesData.put("ConsumerNumber","123");
-	        notesData.put("ConsumerName","Aarif");
-//	        notesData.put("ServiceType",receiptHeader.getDisplayMsg());
+	        notesData.put("ConsumerNumber",transaction.getUser().getMobileNumber());
+	        notesData.put("ConsumerName",transaction.getUser().getUserName());
 	        notesData.put("ReceiptId",transaction.getReceipt());
 	        request.put("notes", notesData);
 	     	transfers.put(transfer);
