@@ -89,7 +89,7 @@ public class RazorpayGateway implements Gateway{
 			notesData.put("ConsumerName",transaction.getUser().getName());
 			notesData.put("MobileNumber",transaction.getUser().getMobileNumber());
 			notesData.put("ServiceType",transaction.getBusinessService());
-			notesData.put("TenantId",transaction.getUser().getTenantId());
+			notesData.put("TenantId",transaction.getTenantId());
 			notesData.put("BillId",transaction.getBillId());
 	        	request.put("notes", notesData);
 	        
