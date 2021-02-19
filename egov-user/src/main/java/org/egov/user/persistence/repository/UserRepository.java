@@ -594,11 +594,16 @@ public class UserRepository {
      * @param user
      */
     private void updateRoles(User user) {
-        Map<String, Object> roleInputs = new HashMap<String, Object>();
-        roleInputs.put("user_id", user.getId());
-        roleInputs.put("user_tenantid", user.getTenantId());
-        namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
-        saveUserRoles(user);
+    	Map<String, Object> roleInputs = new HashMap<String, Object>();
+		List<String> roleCodes = user.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+		roleInputs.put("user_id", user.getId());
+		roleInputs.put("user_tenantid", user.getTenantId());
+
+		// Add roles filter as well, other wise during concurrent update call there is a
+		// null pointer exception due to delete of roles
+		roleInputs.put("roles", roleCodes);
+		namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
+		saveUserRoles(user);
     }
 
     private String getStateLevelTenant(String tenantId) {
