@@ -85,11 +85,15 @@ public class RazorpayGateway implements Gateway{
 			transfer.put("currency", CURRENCY);
 			transfer.put("account", transaction.getAdditionalFields().get(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER));
 			JSONObject notesData=new JSONObject();
-	        notesData.put("ConsumerNumber",transaction.getUser().getMobileNumber());
-	        notesData.put("ConsumerName",transaction.getUser().getUserName());
-	        notesData.put("ReceiptId",transaction.getReceipt());
-	        request.put("notes", notesData);
-	     	transfers.put(transfer);
+	         	notesData.put("ConsumerCode",transaction.getConsumerCode());
+			notesData.put("ConsumerName",transaction.getUser().getName());
+			notesData.put("MobileNumber",transaction.getUser().getMobileNumber());
+			notesData.put("ServiceType",transaction.getBusinessService());
+			notesData.put("TenantId",transaction.getUser().getTenantId());
+			notesData.put("BillId",transaction.getBillId());
+	        	request.put("notes", notesData);
+	        
+	     		transfers.put(transfer);
 			request.put("transfers", transfers);
 			Order order = null;
 			try {
