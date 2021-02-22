@@ -30,6 +30,7 @@ public class IdRequest {
 	@JsonProperty("tenantId")
 	private String tenantId;
 
+	@Size(max = 200)
 	@JsonProperty("format")
 	private String format;
 
