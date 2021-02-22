@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 import org.egov.boundary.domain.service.BoundaryTypeService;
 import org.egov.boundary.domain.service.HierarchyTypeService;
@@ -241,8 +242,8 @@ public class BoundaryTypeController {
 	@PostMapping(value = "/getByHierarchyType")
 	@ResponseBody
 	public ResponseEntity<?> getBoundaryTypesByHierarchyTypeName(
-			@RequestParam(value = "hierarchyTypeName", required = true) final String hierarchyTypeName,
-			@RequestParam(value = "tenantId", required = true) final String tenantId) {
+			@RequestParam(value = "hierarchyTypeName", required = true) @Size(max = 128) final String hierarchyTypeName,
+			@RequestParam(value = "tenantId", required = true) @Size(max = 256) final String tenantId) {
 		BoundaryTypeResponse boundaryTypeResponse = new BoundaryTypeResponse();
 		if (hierarchyTypeName != null && !hierarchyTypeName.isEmpty()) {
 			ResponseInfo responseInfo = new ResponseInfo();

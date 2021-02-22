@@ -68,6 +68,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import javax.validation.constraints.Size;
+
 @RestController
 @RequestMapping("/city")
 public class CityController {
@@ -79,8 +81,8 @@ public class CityController {
 	private ObjectMapper objectMapper;
 
 	@GetMapping
-	public String getCity(@RequestParam(value = "tenantId", required = true) String tenantId,
-			@RequestParam(value = "code", required = false) String code) {
+	public String getCity(@RequestParam(value = "tenantId", required = true) @Size(max = 256) String tenantId,
+			@RequestParam(value = "code", required = false) @Size(max = 4) String code) {
 		List<District> districts;
 		List<District> result = new ArrayList<>();
 		String jsonInString = "";

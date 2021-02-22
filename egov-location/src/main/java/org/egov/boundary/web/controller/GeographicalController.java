@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class GeographicalController {
      */
     @RequestMapping(value = "/geography/_search", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<GeographicalResponse> geographySearchPost(@RequestParam(value = "tenantId") String tenantId,
+    public ResponseEntity<GeographicalResponse> geographySearchPost(@RequestParam(value = "tenantId") @Size(max = 256) String tenantId,
                                                                     @RequestParam(value = "filter", required = false) final String
                                                                             filter,
                                                                     @Valid @RequestBody RequestInfoWrapper requestInfoWapper) {

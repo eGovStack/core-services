@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 import org.egov.boundary.domain.model.BoundarySearchRequest;
 import org.egov.boundary.domain.service.BoundaryService;
@@ -78,10 +79,10 @@ public class LocationBoundaryController {
 
 	@PostMapping(value = "/boundarys/_search")
 	@ResponseBody
-	public ResponseEntity<?> boundarySearch(@RequestParam(value = "tenantId", required = true) String tenantId,
-			@RequestParam(value = "hierarchyTypeCode", required = false) final String hierarchyType,
+	public ResponseEntity<?> boundarySearch(@RequestParam(value = "tenantId", required = true) @Size(max = 256) String tenantId,
+			@RequestParam(value = "hierarchyTypeCode", required = false) @Size(max = 128) final String hierarchyType,
 			@RequestParam(value = "codes", required = false) final List<String> codes,
-			@RequestParam(value = "boundaryType", required = false) final String boundaryType,
+			@RequestParam(value = "boundaryType", required = false) @Size(max = 64) final String boundaryType,
 			@RequestBody @Valid RequestInfo requestInfo) {
 		Long startTime;
 		Long endTime;
