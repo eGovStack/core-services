@@ -56,6 +56,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.constraints.Size;
+
 @Controller
 @RequestMapping(value = "/boundarytype/create")
 public class CreateBoundaryTypeController {
@@ -76,7 +78,7 @@ public class CreateBoundaryTypeController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String newForm(@RequestParam(value = "tenantId", required = true) String tenantId) {
+	public String newForm(@RequestParam(value = "tenantId", required = true) @Size(max = 256) String tenantId) {
 		if (tenantId != null && !tenantId.isEmpty()) {
 			HierarchyType hh = hierarchyTypeService.getHierarchyTypeByNameAndTenantId("Kmani", tenantId);
 			/*
