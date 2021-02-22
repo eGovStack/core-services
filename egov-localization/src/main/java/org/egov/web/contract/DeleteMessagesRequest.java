@@ -23,6 +23,7 @@ public class DeleteMessagesRequest {
 	private RequestInfo requestInfo;
 
 	@NotNull
+    @Size(max = 256)
 	private String tenantId;
 
 	@Valid
