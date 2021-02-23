@@ -7,6 +7,7 @@ import org.egov.domain.service.MessageService;
 import org.egov.web.contract.*;
 import org.egov.web.exception.InvalidMessageRequest;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@Validated
 @RequestMapping("/messages")
 public class MessageController {
 
@@ -33,7 +35,7 @@ public class MessageController {
 	}
 
 	@PostMapping("/v1/_search")
-	public MessagesResponse getMessages(@RequestParam("locale") String locale,
+	public MessagesResponse getMessages(@RequestParam("locale") @Size(max = 255) String locale,
 			@RequestParam(value = "module", required = false) @Size(max = 255) String module,
 			@RequestParam("tenantId") @Size(max = 256) String tenantId,@RequestParam(value = "codes",required = false) Set<String> codes) {
 		final MessageSearchCriteria searchCriteria = MessageSearchCriteria.builder().locale(locale)
