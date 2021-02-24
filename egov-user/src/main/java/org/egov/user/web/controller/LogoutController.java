@@ -30,7 +30,7 @@ public class LogoutController {
      */
     @PostMapping("/_logout")
     public ResponseInfo deleteToken(@RequestBody TokenWrapper tokenWrapper) throws Exception {
-        String accessToken = tokenWrapper.getAccess_token();
+        String accessToken = tokenWrapper.getAccessToken();
         OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
         tokenStore.removeAccessToken(redisToken);
         return new ResponseInfo("", "", new Date().toString(), "", "", "Logout successfully");
