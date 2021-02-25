@@ -67,6 +67,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +79,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/boundarytypes")
 public class BoundaryTypeController {
@@ -96,7 +98,7 @@ public class BoundaryTypeController {
 	private static final String[] taskAction = { "create", "update" };
 
 	@PostMapping()
-	public ResponseEntity<?> create(@RequestBody BoundaryTypeRequest boundaryTypeRequest, BindingResult errors) {
+	public ResponseEntity<?> create(@RequestBody @Valid BoundaryTypeRequest boundaryTypeRequest, BindingResult errors) {
 		if (errors.hasErrors()) {
 			ErrorResponse errRes = populateErrors(errors);
 			return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
@@ -183,7 +185,7 @@ public class BoundaryTypeController {
 	@GetMapping
 	@ResponseBody
 	public ResponseEntity<?> search(@Valid @RequestParam(value = "boundaryType", required = false) Long boundaryType,
-			@RequestParam(value = "tenantId", required = false) String tenantId,@ModelAttribute BoundaryTypeRequest boundaryTypeRequest,BindingResult errors) {
+			@RequestParam(value = "tenantId", required = false) @Size(max = 256) String tenantId,@ModelAttribute @Valid BoundaryTypeRequest boundaryTypeRequest,BindingResult errors) {
 		
 		if (errors.hasErrors()) {
 			LOGGER.info("BoundaryTypeRequest binding error: " + boundaryTypeRequest);
