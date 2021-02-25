@@ -39,6 +39,8 @@ public class Action {
 
 	@Size(max = 50)
 	private String serviceCode;
+
+	@Size(max = 50)
 	private String tenantId;
 
 	private Date createdDate;
