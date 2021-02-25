@@ -121,7 +121,7 @@ public class ReportApp implements EnvironmentAware {
                             rd = mapper.readValue(new InputStreamReader(oracle.openStream()), ReportDefinitions.class);
                         } catch (Exception e) {
                             log.info("Skipping the report definition " + yamlLocation);
-                            e.printStackTrace();
+                            log.error("Could not read the current report definition: " + e.getMessage());
 
                         }
                         localrd.addAll(rd.getReportDefinitions());
@@ -134,7 +134,7 @@ public class ReportApp implements EnvironmentAware {
                             rd = mapper.readValue(yamlFile, ReportDefinitions.class);
                         } catch (Exception e) {
                             log.info("Skipping the report definition " + yamlLocation);
-                            e.printStackTrace();
+                            log.error("Could not read the current report definition: " + e.getMessage());
                         }
                         localrd.addAll(rd.getReportDefinitions());
 
@@ -169,7 +169,7 @@ public class ReportApp implements EnvironmentAware {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IO exception while loading report definitions: " + e.getMessage());
 
         }
     }
