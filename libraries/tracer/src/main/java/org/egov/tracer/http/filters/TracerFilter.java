@@ -163,6 +163,9 @@ public class TracerFilter implements Filter {
         return httpRequest.getHeader(CORRELATION_ID_HEADER);
     }
 
+    private String getTenantIdFromHeader(HttpServletRequest httpRequest) {
+        return httpRequest.getHeader(CORRELATION_ID_HEADER);
+    }
 
     @SuppressWarnings("unchecked")
     private String getCorrelationIdFromBody(HttpServletRequest httpServletRequest) {
