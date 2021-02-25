@@ -79,6 +79,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,6 +93,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Validated
 @RestController
 @RequestMapping("/boundarys")
 @Slf4j
@@ -157,7 +159,7 @@ public class BoundaryController {
 	@PutMapping(value = "/{code}")
 	@ResponseBody
 	public ResponseEntity<?> update(@RequestBody @Valid BoundaryRequest boundaryRequest, BindingResult errors,
-			@PathVariable String code, @RequestParam(value = "tenantId", required = true) String tenantId) {
+			@PathVariable @Size(max = 22) String code, @RequestParam(value = "tenantId", required = true) @Size(max = 256) String tenantId) {
 
 		if (errors.hasErrors()) {
 			ErrorResponse errRes = populateErrors(errors);

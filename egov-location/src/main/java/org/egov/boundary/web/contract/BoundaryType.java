@@ -50,6 +50,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -70,9 +71,11 @@ public class BoundaryType {
 	@Size(max = 22)
 	private String code;
 
+	@Valid
 	@JsonProperty("hierarchyType")
 	private HierarchyType hierarchyType;
 
+	@Valid
 	@JsonProperty("parent")
 	private BoundaryType parent;
 
