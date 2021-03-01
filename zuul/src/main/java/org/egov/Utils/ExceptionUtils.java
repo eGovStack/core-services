@@ -130,7 +130,7 @@ public class ExceptionUtils {
                 _setExceptionBody(HttpStatus.INTERNAL_SERVER_ERROR, getErrorInfoObject(exceptionName, exceptionMessage, exceptionMessage));
             }
         } catch (Exception e1) {
-            e1.printStackTrace();
+            logger.error("Exception while raising filter exception: " + e1.getMessage());
         }
     }
 }
