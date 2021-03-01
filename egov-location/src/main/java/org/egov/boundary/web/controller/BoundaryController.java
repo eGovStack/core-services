@@ -256,6 +256,7 @@ public class BoundaryController {
 			}
 			return new ResponseEntity<List<Map<String, Object>>>(list, HttpStatus.OK);
 		} catch (final Exception e) {
+			log.error("Error while fetching location: " + e.getMessage());
 			return new ResponseEntity<String>("error in request", HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -352,6 +353,7 @@ public class BoundaryController {
 			return getFailureResponse(requestInfo);
 
 		} catch (final Exception e) {
+			LOGGER.error("Error while checking for shape file: " + e.getMessage());
 			return new ResponseEntity<String>("error in request", HttpStatus.BAD_REQUEST);
 		}
 	}
