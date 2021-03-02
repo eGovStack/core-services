@@ -21,12 +21,13 @@ import lombok.*;
 @NoArgsConstructor
 public class IdRequest {
 
+	@Size(max = 200)
 	@JsonProperty("idName")
 	@NotNull
 	private String idName;
 
 	@NotNull
-	@Size(max=256)
+	@Size(max=200)
 	@JsonProperty("tenantId")
 	private String tenantId;
 
