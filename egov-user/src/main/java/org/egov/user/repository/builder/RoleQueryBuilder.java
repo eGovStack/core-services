@@ -13,7 +13,7 @@ public class RoleQueryBuilder {
 			"ON CONFLICT (role_code, role_tenantid, user_id, user_tenantid) DO NOTHING";
 	
 	public static final String DELETE_USER_ROLES = "delete from eg_userrole_v1 where user_id=:user_id and " +
-			"user_tenantid=:user_tenantid and" +
+			"user_tenantid=:user_tenantid and " +
 			"role_code not in (:roles)";
 }
 
