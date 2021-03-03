@@ -1,5 +1,4 @@
 const express = require('express'),
-  cluster = require('express-cluster'),
   bodyParser = require('body-parser'),
   envVariables = require('./env-variables'),
   port = envVariables.port;

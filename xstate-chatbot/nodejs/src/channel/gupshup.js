@@ -1,6 +1,9 @@
 const fetch = require("node-fetch");
 require('url-search-params-polyfill');
 
+//This is a template file for whatsapp provider integration.
+//Refer to this file for onboarding of new whatsapp provider to the chatbot service.
+
 class GupShupWhatsAppProvider {
 
     processMessageFromUser(req) {
