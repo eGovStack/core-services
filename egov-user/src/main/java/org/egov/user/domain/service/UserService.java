@@ -10,20 +10,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
+import org.egov.user.domain.model.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
-import org.egov.user.domain.model.User;
-import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
-import org.egov.user.web.contract.Otp;
-import org.egov.user.web.contract.OtpValidateRequest;
+import org.egov.user.web.contract.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -322,7 +321,7 @@ public class UserService {
     public Boolean validateOtp(User user) {
         Otp otp = Otp.builder().otp(user.getOtpReference()).identity(user.getMobileNumber()).tenantId(user.getTenantId())
                 .userType(user.getType()).build();
-        RequestInfo requestInfo = RequestInfo.builder().action("validate").ts(new Date()).build();
+        RequestInfo requestInfo = RequestInfo.builder().action("validate").ts(new Date().getTime()).build();
         OtpValidateRequest otpValidationRequest = OtpValidateRequest.builder().requestInfo(requestInfo).otp(otp)
                 .build();
         return otpRepository.validateOtp(otpValidationRequest);
@@ -631,6 +630,40 @@ public class UserService {
         if (!CollectionUtils.isEmpty(errorMap.keySet())) {
             throw new CustomException(errorMap);
         }
+    }
+
+    /**
+     * Converts UserResponse to CitizenResponse
+     * @param userSearchResponse
+     * @return
+     */
+    public CitizenSearchResponse transfromUserToCitizenObj(UserSearchResponse userSearchResponse){
+
+        ResponseInfo responseInfo = userSearchResponse.getResponseInfo();
+        List<UserSearchResponseContent> users = userSearchResponse.getUserSearchResponseContent();
+
+        List<Citizen> citizens = new LinkedList<>();
+
+        for(UserSearchResponseContent user : users){
+
+            Citizen citizen = Citizen.builder().id(user.getId())
+                                            .uuid(user.getUuid())
+                                            .tenantId(user.getTenantId())
+                                            .gender(user.getGender())
+                                            .fatherOrHusbandName(user.getFatherOrHusbandName())
+                                            .relationship(user.getRelationship())
+                                            .name(user.getName())
+                                            .mobileNumber(user.getMobileNumber())
+                                            .emailId(user.getEmailId())
+                                            .userName(user.getUserName())
+                                            .build();
+            citizens.add(citizen);
+        }
+
+        CitizenSearchResponse citizenSearchResponse = CitizenSearchResponse.builder().citizens(citizens).responseInfo(responseInfo).build();
+
+        return citizenSearchResponse;
+
     }
 
 

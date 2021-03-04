@@ -134,6 +134,20 @@ public class UserController {
         return searchUsers(request, headers);
     }
 
+
+    /**
+     * end-point to search the citizens by providing userSearchRequest. In Request
+     * if there is no active filed value, it will fetch all(active & inactive)
+     * users.
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/owner/_search")
+    public CitizenSearchResponse getOwners(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
+        return userService.transfromUserToCitizenObj(searchUsers(request, headers));
+    }
+
     /**
      * end-point to fetch the user details by access-token
      *
