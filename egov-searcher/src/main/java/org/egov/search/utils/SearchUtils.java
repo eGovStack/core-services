@@ -153,8 +153,7 @@ public class SearchUtils {
 					} else if (operator.equals("NE")) {
 						operator = "!=";
 					} else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
-
-						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+						paramValue = "%" + paramValue + "%";
 					} else if (operator.equals("TOUPPERCASE")) {
 						
 						operator =  "=";
