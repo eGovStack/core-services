@@ -3,6 +3,7 @@ package org.egov.search.controller;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.search.model.SearchRequest;
 import org.egov.search.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
+@Slf4j
 public class SearchController {
 		
 	@Autowired
@@ -32,6 +34,7 @@ public class SearchController {
 		if(null == searchRequest.getSearchCriteria()) {
 			searchRequest.setSearchCriteria(queryParams);
 		}
+		log.info("######################### " + searchRequest.getSearchCriteria().toString());
 		Object searchResult = searchService.searchData(searchRequest,moduleName,searchName);
 		try {
 		    Type type = new TypeToken<Map<String, Object>>() {}.getType();

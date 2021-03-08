@@ -45,6 +45,7 @@ public class SearchRepository {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
+		log.info("preparedStatementValues: " + preparedStatementValues);
 		//log.debug("preparedStatementValues: " + preparedStatementValues);
 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
 
