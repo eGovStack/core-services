@@ -204,7 +204,7 @@ public class UserController {
      * @param headers
      * @return
      */
-    @PostMapping("/owner/_updatenovalidate")
+    @PostMapping("/owners/_updatenovalidate")
     public UpdateResponse updateOwnerWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
                                                       @RequestHeader HttpHeaders headers) {
         User user = createUserRequest.toDomain(false);
