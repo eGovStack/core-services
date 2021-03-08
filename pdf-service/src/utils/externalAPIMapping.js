@@ -4,7 +4,7 @@ import {
   httpRequest
 } from "../api/api";
 import {
-  findAndUpdateLocalisation,
+  updateLocalisation,
   getDateInRequiredFormat,
   getValue
 } from "./commons";
@@ -268,13 +268,10 @@ export const externalAPIMapping = async function (
                 scema[k].localisation.required
               ) {
                 let loc = scema[k].localisation;
-                fieldValue = await findAndUpdateLocalisation(
-                  requestInfo,
+                fieldValue = await updateLocalisation(
                   localisationMap,
                   loc.prefix,
                   fieldValue,
-                  loc.module,
-                  localisationModuleList,
                   loc.isCategoryRequired,
                   loc.isMainTypeRequired,
                   loc.isSubTypeRequired,
@@ -309,13 +306,10 @@ export const externalAPIMapping = async function (
         )
           variableTovalueMap[
             externalAPIArray[i].jPath[j].variable
-          ] = await findAndUpdateLocalisation(
-            requestInfo,
+          ] = await updateLocalisation(
             localisationMap,
             loc.prefix,
             replaceValue,
-            loc.module,
-            localisationModuleList,
             loc.isCategoryRequired,
             loc.isMainTypeRequired,
             loc.isSubTypeRequired,

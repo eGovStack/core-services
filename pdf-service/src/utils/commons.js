@@ -25,21 +25,10 @@ export const getTransformedLocale = (label) => {
  * @param {*} isMainTypeRequired  - ex:- "GOODS_RETAIL_TST-1" = get localisation for "RETAIL"
  * @param {*} isSubTypeRequired  - - ex:- "GOODS_RETAIL_TST-1" = get localisation for "GOODS_RETAIL_TST-1"
  */
-export const findAndUpdateLocalisation = async (
-  requestInfo,
-  localisationMap,
-  prefix,
-  key,
-  moduleName,
-  localisationModuleList,
-  isCategoryRequired,
-  isMainTypeRequired,
-  isSubTypeRequired,
-  delimiter = " / "
+export const findLocalisation = async (
+  requestInfo
 ) => {
-  let keyArray = [];
-  let localisedLabels = [];
-  let isArray = false;
+  let localisationMap = {};
   let locale = requestInfo.msgId;
   if (null != locale) {
     locale = locale.split("|");
@@ -53,6 +42,30 @@ export const findAndUpdateLocalisation = async (
     defaultTenant
   ).split(".")[0];
 
+  var res = await httpRequest(
+      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}`,
+      { RequestInfo: requestInfo }
+  );
+  res.messages.map((item) => {
+    localisationMap[item.code] = item.message;
+  });
+  return localisationMap;
+};
+
+export const updateLocalisation = async (
+  localisationMap,
+  prefix,
+  key,
+  isCategoryRequired,
+  isMainTypeRequired,
+  isSubTypeRequired,
+  delimiter = " / "
+) => {
+
+  let keyArray = [];
+  let localisedLabels = [];
+  let isArray = false;
+
   if (key == null) {
     return key;
   } else if (typeof key == "string" || typeof key == "number") {
@@ -62,16 +75,6 @@ export const findAndUpdateLocalisation = async (
     isArray = true;
   }
 
-  if (!localisationModuleList.includes(moduleName)) {
-    var res = await httpRequest(
-      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}&module=${moduleName}`,
-      { RequestInfo: requestInfo }
-    );
-    res.messages.map((item) => {
-      localisationMap[item.code] = item.message;
-    });
-    localisationModuleList.push(moduleName);
-  }
   keyArray.map((item) => {
     let labelFromKey = "";
 

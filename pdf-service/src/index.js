@@ -44,7 +44,8 @@ import {
   listenConsumer
 } from "./kafka/consumer";
 import {
-  convertFooterStringtoFunctionIfExist
+  convertFooterStringtoFunctionIfExist,
+  findLocalisation
 } from "./utils/commons";
 
 var jp = require("jsonpath");
@@ -810,8 +811,10 @@ const handlelogic = async (
   requestInfo
 ) => {
   let variableTovalueMap = {};
-  let localisationMap = {};
   let localisationModuleList = [];
+  let localisationMap = await findLocalisation(
+    requestInfo
+  );
   //direct mapping service
   await Promise.all([
     directMapping(
