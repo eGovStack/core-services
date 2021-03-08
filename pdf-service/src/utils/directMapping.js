@@ -3,7 +3,7 @@ import logger from "../config/logger";
 import axios from "axios";
 import envVariables from "../EnvironmentVariables";
 import {
-  findAndUpdateLocalisation,
+  updateLocalisation,
   getDateInRequiredFormat,
   getValue
 } from "./commons";
@@ -32,8 +32,7 @@ export const directMapping = async (
   dataconfig,
   variableTovalueMap,
   localisationMap,
-  requestInfo,
-  localisationModuleList
+  requestInfo
 ) => {
   var directArr = [];
   // using jp-jsonpath because loadash can not handele '*'
@@ -131,13 +130,10 @@ export const directMapping = async (
               scema[k].localisation.required
             ) {
               let loc = scema[k].localisation;
-              fieldValue = await findAndUpdateLocalisation(
-                requestInfo,
+              fieldValue = await updateLocalisation(
                 localisationMap,
                 loc.prefix,
                 fieldValue,
-                loc.module,
-                localisationModuleList,
                 loc.isCategoryRequired,
                 loc.isMainTypeRequired,
                 loc.isSubTypeRequired,
@@ -207,13 +203,10 @@ export const directMapping = async (
               scema[k].localisation.required
             ) {
               let loc = scema[k].localisation;
-              fieldValue = await findAndUpdateLocalisation(
-                requestInfo,
+              fieldValue = await updateLocalisation(
                 localisationMap,
                 loc.prefix,
                 fieldValue,
-                loc.module,
-                localisationModuleList,
                 loc.isCategoryRequired,
                 loc.isMainTypeRequired,
                 loc.isSubTypeRequired,
@@ -242,13 +235,10 @@ export const directMapping = async (
     }
     //setting value in pdf for no type direct mapping
     else if (directArr[i].type == "label") {
-      variableTovalueMap[directArr[i].jPath] = await findAndUpdateLocalisation(
-        requestInfo,
+      variableTovalueMap[directArr[i].jPath] = await updateLocalisation(
         localisationMap,
         directArr[i].localisation.prefix,
         directArr[i].valJsonPath,
-        directArr[i].localisation.module,
-        localisationModuleList,
         directArr[i].localisation.isCategoryRequired,
         directArr[i].localisation.isMainTypeRequired,
         directArr[i].localisation.isSubTypeRequired,
@@ -276,13 +266,10 @@ export const directMapping = async (
       )
         variableTovalueMap[
           directArr[i].jPath
-        ] = await findAndUpdateLocalisation(
-          requestInfo,
+        ] = await updateLocalisation(
           localisationMap,
           directArr[i].localisation.prefix,
           directArr[i].val,
-          directArr[i].localisation.module,
-          localisationModuleList,
           directArr[i].localisation.isCategoryRequired,
           directArr[i].localisation.isMainTypeRequired,
           directArr[i].localisation.isSubTypeRequired,
