@@ -251,9 +251,9 @@ public class UserController {
 
     private void validateOwner(User user){
         
-        if(user.getBloodGroup()!=null || user.getPermanentAddress()!=null || user.getPhoto()!=null
-           || user.getTitle()!=null || user.getOtpReference()!=null || user.getSignature()!=null || user.getSalutation()!=null
-           || user.getPan()!=null || user.getAadhaarNumber()!=null || user.getDob()!=null || user.getLocale()!=null || user.getAltContactNumber()!=null
+        if(user.getBloodGroup()!=null  || user.getPhoto()!=null || user.getTitle()!=null
+           || user.getOtpReference()!=null || user.getSignature()!=null || user.getSalutation()!=null
+           || user.getPan()!=null || user.getAadhaarNumber()!=null || user.getDob()!=null || user.getLocale()!=null
            || user.getIdentificationMark()!=null || user.getAddresses()!=null){
             throw new CustomException("INVALID_OWNER","Extra information is sent than required");
         }
