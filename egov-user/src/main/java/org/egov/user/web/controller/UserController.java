@@ -196,6 +196,25 @@ public class UserController {
         return createResponseforUpdate(updatedUser);
     }
 
+
+    /**
+     * end-point to update the user details without otp validations.
+     *
+     * @param createUserRequest
+     * @param headers
+     * @return
+     */
+    @PostMapping("/owner/_updatenovalidate")
+    public UpdateResponse updateOwnerWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
+                                                      @RequestHeader HttpHeaders headers) {
+        User user = createUserRequest.toDomain(false);
+        validateOwner(user);
+        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+        final User updatedUser = userService.updateWithoutOtpValidation(user, createUserRequest.getRequestInfo());
+        return createResponseforUpdate(updatedUser);
+    }
+
+
     /**
      * end-point to update user profile.
      *
