@@ -124,9 +124,9 @@ public class MDMSApplicationRunnerImpl {
             try {
                 masterDataJsonArray = JsonPath.read(objectMapper.writeValueAsString(map.get(masterName)),
                         "$");
-            } catch (JsonProcessingException | ClassCastException e) {
-                log.error("Error while parsing file", e);
-            }
+			} catch (JsonProcessingException | ClassCastException e) {
+				log.error("Error while parsing file with master : " + masterName, e.getMessage());
+			}
 
             if (!tenantMap.containsKey(tenantId)) {
                 Map<String, Map<String, JSONArray>> moduleMap = new HashMap<>();
