@@ -1,22 +1,20 @@
 package org.egov;
 
-import java.lang.reflect.*;
-import java.util.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.core.type.*;
-import org.apache.commons.io.*;
+import org.apache.commons.io.FilenameUtils;
 import org.egov.infra.mdms.utils.MDMSConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +23,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
@@ -125,7 +124,7 @@ public class MDMSApplicationRunnerImpl {
             try {
                 masterDataJsonArray = JsonPath.read(objectMapper.writeValueAsString(map.get(masterName)),
                         "$");
-            } catch (JsonProcessingException e) {
+            } catch (JsonProcessingException | ClassCastException e) {
                 log.error("Error while parsing file", e);
             }
 
