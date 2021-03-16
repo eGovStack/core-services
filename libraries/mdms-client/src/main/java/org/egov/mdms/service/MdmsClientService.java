@@ -64,7 +64,6 @@ public class MdmsClientService {
 			throw new ServiceCallException(excep);
 		} catch (Exception ex) {
 			log.info("Exception:" + ex.getMessage());
-			ex.printStackTrace();
 			throw new RuntimeException(ex);
 		}
 		return mdmsResponse;

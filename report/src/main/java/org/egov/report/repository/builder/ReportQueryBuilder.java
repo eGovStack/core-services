@@ -100,7 +100,7 @@ public class ReportQueryBuilder {
                     requestInfoJson = gson.toJson(map);
                 } catch (Exception e1) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    log.error("Exception while converting gson to JSON: " + e1.getMessage());
                 }
                 requestInfoJson = StringUtils.chop(requestInfoJson);
                 finalJson = jsonObjecttest.replaceAll("\\$RequestInfo", requestInfoJson);

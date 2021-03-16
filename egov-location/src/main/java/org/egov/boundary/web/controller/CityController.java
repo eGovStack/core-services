@@ -52,6 +52,8 @@ import org.egov.boundary.web.contract.City;
 import org.egov.boundary.web.contract.CityRequest;
 import org.egov.boundary.web.contract.CityResponse;
 import org.egov.common.contract.response.ResponseInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -78,6 +80,8 @@ public class CityController {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	public static final Logger logger = LoggerFactory.getLogger(CityController.class);
+
 	@GetMapping
 	public String getCity(@RequestParam(value = "tenantId", required = true) String tenantId,
 			@RequestParam(value = "code", required = false) String code) {
@@ -103,7 +107,7 @@ public class CityController {
 			else
 				jsonInString = objectMapper.writeValueAsString(districts);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while reading cities JSON: " + e.getMessage());
 		}
 
 		return jsonInString;
