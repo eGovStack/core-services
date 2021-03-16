@@ -297,7 +297,7 @@ public class UserService {
 
         } catch (Exception e) {
             log.error("Error occurred while logging-in via register flow", e);
-            throw e;
+            throw new CustomException("LOGIN_ERROR", "Error occurred while logging in via register flow: " + e.getMessage());
         }
     }
 
@@ -605,6 +605,7 @@ public class UserService {
                 fileStoreUrlList = fileRepository.getUrlByFileStoreId(userList.get(0).getTenantId(), fileStoreIds);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
+
                 log.error("Error while fetching fileStore url list: " + e.getMessage());
             }
 

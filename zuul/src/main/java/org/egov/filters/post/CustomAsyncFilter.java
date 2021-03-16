@@ -78,7 +78,7 @@ public class CustomAsyncFilter extends ZuulFilter {
 				responseBody = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
 			ctx.setResponseBody(responseBody);
 		} catch (IOException e) {
-			log.info("Error reading body", e);
+			log.error("Error reading body", e);
 		} catch (Exception e) {
 			log.error("Exception while reading response body: " + e.getMessage());
 		}

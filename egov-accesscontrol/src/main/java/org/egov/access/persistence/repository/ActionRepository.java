@@ -525,6 +525,7 @@ public List<Action> getAllMDMSActions(ActionRequest actionRequest) throws JSONEx
 		try {
 		res = restTemplate.postForObject(url, mcq, String.class);
 		} catch(Exception e){
+
 			LOGGER.error("Exception while fetching actions from MDMS: " + e.getMessage());
 		}
 
