@@ -83,7 +83,7 @@ public class MessageService {
 		if (searchCriteria.isModuleAbsent() && !CollectionUtils.isEmpty(searchCriteria.getCodes())) {
 
 		    /*if(!CollectionUtils.isEmpty(searchCriteria.getCodes()))
-		        throw new CustomException("INVALID_SEARCH_CRITERIA","code should be provided when searching on codes");*/
+		        throw new CustomException("INVALID_SEARCH_CRITERIA","ModuleName should be provided when searching on codes");*/
 
             Set<String> codes = searchCriteria.getCodes();
 
@@ -92,7 +92,12 @@ public class MessageService {
 							&& e.getTenant().equals(searchCriteria.getTenantId().getTenantId())
                             && codes.contains(e.getCode()))
 					.collect(Collectors.toList());
-		} else {
+		} else if(searchCriteria.isModuleAbsent() && CollectionUtils.isEmpty(searchCriteria.getCodes())){
+            return messages.parallelStream()
+                .filter(e -> e.getLocale().equals(searchCriteria.getLocale())
+                    && e.getTenant().equals(searchCriteria.getTenantId().getTenantId()))
+                .collect(Collectors.toList());
+        } else {
 			List<String> modules = Arrays.asList(searchCriteria.getModule().split("[,]"));
 
 			if(CollectionUtils.isEmpty(searchCriteria.getCodes()))
