@@ -23,10 +23,13 @@ public class UpdateMessageRequest {
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 	@NotEmpty
+    @Size(max = 256)
 	private String tenantId;
 	@NotEmpty
+    @Size(max = 255)
 	private String locale;
 	@NotEmpty
+    @Size(max = 255)
 	private String module;
 	@Size(min = 1)
 	@Valid

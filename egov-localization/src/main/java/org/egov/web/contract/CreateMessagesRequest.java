@@ -23,6 +23,7 @@ public class CreateMessagesRequest {
 	private RequestInfo requestInfo;
 
 	@NotEmpty
+    @Size(max = 256)
 	private String tenantId;
 
 	@Size(min = 1)
