@@ -605,7 +605,8 @@ public class UserService {
                 fileStoreUrlList = fileRepository.getUrlByFileStoreId(userList.get(0).getTenantId(), fileStoreIds);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
-                log.error("Error while fetching url by file store ID: " + e.getMessage());
+
+                log.error("Error while fetching fileStore url list: " + e.getMessage());
             }
 
             if (fileStoreUrlList != null && !fileStoreUrlList.isEmpty()) {

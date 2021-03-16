@@ -65,6 +65,7 @@ public class MdmsClientService {
 		} catch (Exception ex) {
 			log.error("Exception: " + ex.getMessage());
 			throw new CustomException("MDMS_RESPONSE_ERROR", "Error while fetching data from MDMS: " + ex.getMessage());
+
 		}
 		return mdmsResponse;
 	}

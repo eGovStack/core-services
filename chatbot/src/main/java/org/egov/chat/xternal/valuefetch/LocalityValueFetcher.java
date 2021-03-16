@@ -24,6 +24,8 @@ import java.util.Map;
 @Component
 public class LocalityValueFetcher implements ExternalValueFetcher {
 
+    private static final Logger logger = LoggerFactory.getLogger(LocalityValueFetcher.class);
+
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -86,7 +88,7 @@ public class LocalityValueFetcher implements ExternalValueFetcher {
         try {
             requestBody = (ObjectNode) mapper.readTree(request.jsonString());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception while reading request: " + e.getMessage());
         }
 
         ObjectNode locationData = restTemplate.postForObject(url, requestBody, ObjectNode.class);

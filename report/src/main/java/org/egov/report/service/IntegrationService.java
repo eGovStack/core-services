@@ -114,7 +114,7 @@ public class IntegrationService {
 
                         columnDetail.setDefaultValue(map);
                     } catch (Exception e) {
-                        log.error("Error while fetching metadata: " + e.getMessage());
+                        log.error("Exception while fetching data: " + e.getMessage());
                     }
 
                 }

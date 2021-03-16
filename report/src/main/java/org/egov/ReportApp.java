@@ -123,7 +123,6 @@ public class ReportApp implements EnvironmentAware {
                         } catch (Exception e) {
                             log.info("Skipping the report definition " + yamlLocation);
                             log.error("Error while loading report definition: " + e.getMessage());
-
                         }
                         localrd.addAll(rd.getReportDefinitions());
 
@@ -170,7 +169,7 @@ public class ReportApp implements EnvironmentAware {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IO exception while loading report definitions: " + e.getMessage());
 
         }
     }

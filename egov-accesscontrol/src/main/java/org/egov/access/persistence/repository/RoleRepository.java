@@ -137,7 +137,7 @@ public List<Role> getAllMDMSRoles(RoleSearchCriteria roleSearchCriteria) throws 
 		try {
 		res = restTemplate.postForObject(url, mcq, String.class);
 		} catch(Exception e){
-			LOGGER.error("Errow while fetching roles from MDMS: " + e.getMessage());
+			LOGGER.error("Error while fetching roles from MDMS: " + e.getMessage());
 		}
 
 		Object jsonObject = JsonPath.read(res,rolePath);
