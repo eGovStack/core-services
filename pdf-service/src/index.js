@@ -76,6 +76,7 @@ let formatConfigMap = {};
 let topicKeyMap = {};
 var topic = [];
 var datafileLength = dataConfigUrls.split(",").length;
+let unregisteredLocalisationCodes = [];
 
 var fontDescriptors = {
   Cambay: {
@@ -501,6 +502,64 @@ app.post(
   })
 );
 
+app.post(
+  "/pdf-service/v1/_getUnrigesteredCodes",
+  asyncHandler(async (req, res) => {
+    let requestInfo;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      res.status(200);
+      res.json({
+          ResponseInfo: requestInfo,
+          unregisteredLocalisationCodes: unregisteredLocalisationCodes,
+        });
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(500);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the codes",
+      });
+    }
+  })
+
+);
+
+app.post(
+  "/pdf-service/v1/_clearUnrigesteredCodes",
+  asyncHandler(async (req, res) => {
+    let requestInfo;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      let resposnseMap = await findLocalisation(
+        requestInfo,
+        [],
+        unregisteredLocalisationCodes
+      );
+
+      resposnseMap.messages.map((item) => {
+        if(unregisteredLocalisationCodes.includes(item.code)){
+          var index = unregisteredLocalisationCodes.indexOf(item.code);
+          unregisteredLocalisationCodes.splice(index, 1);
+        }
+      });
+      res.status(200);
+      res.json({
+          ResponseInfo: requestInfo,
+          unregisteredLocalisationCodes: unregisteredLocalisationCodes,
+        });
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(500);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the codes",
+      });
+    }
+  })
+
+);
+
 var i = 0;
 dataConfigUrls &&
   dataConfigUrls.split(",").map((item) => {
@@ -811,19 +870,14 @@ const handlelogic = async (
   requestInfo
 ) => {
   let variableTovalueMap = {};
-  let localisationModuleList = [];
-  let localisationMap = await findLocalisation(
-    requestInfo
-  );
   //direct mapping service
   await Promise.all([
     directMapping(
       moduleObject,
       dataconfig,
       variableTovalueMap,
-      localisationMap,
       requestInfo,
-      localisationModuleList
+      unregisteredLocalisationCodes
     ),
     //external API mapping
     externalAPIMapping(
@@ -831,9 +885,8 @@ const handlelogic = async (
       moduleObject,
       dataconfig,
       variableTovalueMap,
-      localisationMap,
       requestInfo,
-      localisationModuleList
+      unregisteredLocalisationCodes
     ),
   ]);
   await generateQRCodes(moduleObject, dataconfig, variableTovalueMap);

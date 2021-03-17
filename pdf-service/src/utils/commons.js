@@ -1,4 +1,4 @@
-import { httpRequest } from "../api/api";
+const fetch = require("node-fetch");
 import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
@@ -26,7 +26,9 @@ export const getTransformedLocale = (label) => {
  * @param {*} isSubTypeRequired  - - ex:- "GOODS_RETAIL_TST-1" = get localisation for "GOODS_RETAIL_TST-1"
  */
 export const findLocalisation = async (
-  requestInfo
+  requestInfo,
+  moduleList,
+  codeList
 ) => {
   let localisationMap = {};
   let locale = requestInfo.msgId;
@@ -42,18 +44,35 @@ export const findLocalisation = async (
     defaultTenant
   ).split(".")[0];
 
-  var res = await httpRequest(
-      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}`,
-      { RequestInfo: requestInfo }
-  );
-  res.messages.map((item) => {
-    localisationMap[item.code] = item.message;
-  });
-  return localisationMap;
+
+  let url = egovLocHost + '/localization/messages/v2/_search';
+
+  let request = { 
+    RequestInfo: requestInfo,
+    messageSearchCriteria:{
+      tenantId: statetenantid,
+      locale: locale,
+      codes: []
+    }
+  };
+
+  request.messageSearchCriteria.module = moduleList.toString();
+  request.messageSearchCriteria.codes = codeList.toString().split(",");
+
+  var options = {
+    method: 'POST',
+    body: JSON.stringify(request),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+  }
+
+  let response = await fetch(url, options);
+  let responseBody = await response.json();
+  return responseBody;
 };
 
-export const updateLocalisation = async (
-  localisationMap,
+export const getLocalisationkey = async (
   prefix,
   key,
   isCategoryRequired,
@@ -76,41 +95,38 @@ export const updateLocalisation = async (
   }
 
   keyArray.map((item) => {
-    let labelFromKey = "";
+    let codeFromKey = "";
 
     // append main category in the beginning
     if (isCategoryRequired) {
-      labelFromKey = getLocalisationLabel(
+        codeFromKey = getLocalisationLabel(
         item.split(".")[0],
-        localisationMap,
         prefix
       );
     }
 
     if (isMainTypeRequired) {
-      if (isCategoryRequired) labelFromKey = `${labelFromKey}${delimiter}`;
-      labelFromKey = getLocalisationLabel(
+     if (isCategoryRequired) codeFromKey = `${codeFromKey}${delimiter}`;
+        codeFromKey = getLocalisationLabel(
         item.split(".")[1],
-        localisationMap,
         prefix
       );
     }
 
     if (isSubTypeRequired) {
       if (isMainTypeRequired || isCategoryRequired)
-        labelFromKey = `${labelFromKey}${delimiter}`;
-      labelFromKey = `${labelFromKey}${getLocalisationLabel(
+        codeFromKey = `${codeFromKey}${delimiter}`;
+        codeFromKey = `${codeFromKey}${getLocalisationLabel(
         item,
-        localisationMap,
         prefix
       )}`;
     }
 
     if (!isCategoryRequired && !isMainTypeRequired && !isSubTypeRequired) {
-      labelFromKey = getLocalisationLabel(item, localisationMap, prefix);
+      codeFromKey = getLocalisationLabel(item, prefix);
     }
 
-    localisedLabels.push(labelFromKey === "" ? item : labelFromKey);
+    localisedLabels.push(codeFromKey === "" ? item : codeFromKey);
   });
   if (isArray) {
     return localisedLabels;
@@ -118,18 +134,12 @@ export const updateLocalisation = async (
   return localisedLabels[0];
 };
 
-const getLocalisationLabel = (key, localisationMap, prefix) => {
+const getLocalisationLabel = (key, prefix) => {
   if (prefix != undefined && prefix != "") {
     key = `${prefix}_${key}`;
   }
   key = getTransformedLocale(key);
-
-  if (localisationMap[key]) {
-    return localisationMap[key];
-  } else {
-    logger.error(`no localisation value found for key ${key}`);
-    return key;
-  }
+  return key;
 };
 
 export const getDateInRequiredFormat = (et, dateformat = "DD/MM/YYYY") => {
