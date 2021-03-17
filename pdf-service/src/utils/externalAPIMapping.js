@@ -364,17 +364,24 @@ export const externalAPIMapping = async function (
     }
   }
 
-  let resposnseMap = await findLocalisation(
-    requestInfo,
-    localisationModules,
-    localisationCodes
-  );
-
   let localisationMap = [];
-
-  resposnseMap.messages.map((item) => {
-    localisationMap[item.code + "_" + item.module] = item.message;
-  });
+  try{
+    let resposnseMap = await findLocalisation(
+      requestInfo,
+      localisationModules,
+      localisationCodes
+    );
+  
+    resposnseMap.messages.map((item) => {
+      localisationMap[item.code + "_" + item.module] = item.message;
+    });
+  }
+  catch (error) {
+    logger.error(error.stack || error);
+    throw{
+      message: `Error in localisation service call: ${error.Errors[0].message}`
+    }; 
+  }
 
   Object.keys(variableTovalueMap).forEach(function(key) {
     if(variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string'){

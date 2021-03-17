@@ -336,17 +336,26 @@ export const directMapping = async (
     }
   }
 
-  let resposnseMap = await findLocalisation(
-    requestInfo,
-    localisationModules,
-    localisationCodes
-  );
-
   let localisationMap = [];
+  try{
+    let resposnseMap = await findLocalisation(
+      requestInfo,
+      localisationModules,
+      localisationCodes
+    );
+  
+    resposnseMap.messages.map((item) => {
+      localisationMap[item.code + "_" + item.module] = item.message;
+    });
+  }
+  catch (error) {
+    logger.error(error.stack || error);
+    throw{
+      message: `Error in localisation service call: ${error.Errors[0].message}`
+    }; 
+  }
 
-  resposnseMap.messages.map((item) => {
-    localisationMap[item.code + "_" + item.module] = item.message;
-  });
+  
   
 
   Object.keys(variableTovalueMap).forEach(function(key) {

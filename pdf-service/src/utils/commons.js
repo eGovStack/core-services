@@ -1,11 +1,11 @@
-const fetch = require("node-fetch");
-import logger from "../config/logger";
+import axios from "axios";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
 var moment = require("moment-timezone");
 
 let datetimezone = envVariables.DATE_TIMEZONE;
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
+let egovLocSearchCall = envVariables.EGOV_LOCALISATION_SEARCH;
 let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 let defaultTenant = envVariables.DEFAULT_LOCALISATION_TENANT;
 export const getTransformedLocale = (label) => {
@@ -30,7 +30,6 @@ export const findLocalisation = async (
   moduleList,
   codeList
 ) => {
-  let localisationMap = {};
   let locale = requestInfo.msgId;
   if (null != locale) {
     locale = locale.split("|");
@@ -45,7 +44,7 @@ export const findLocalisation = async (
   ).split(".")[0];
 
 
-  let url = egovLocHost + '/localization/messages/v2/_search';
+  let url = egovLocHost + egovLocSearchCall;
 
   let request = { 
     RequestInfo: requestInfo,
@@ -59,19 +58,18 @@ export const findLocalisation = async (
   request.messageSearchCriteria.module = moduleList.toString();
   request.messageSearchCriteria.codes = codeList.toString().split(",");
 
-  var options = {
-    method: 'POST',
-    body: JSON.stringify(request),
-    headers: {
-        'Content-Type': 'application/json'
+  let headers = {
+    headers:{
+      "content-type": "application/json;charset=UTF-8",
+      accept: "application/json, text/plain, */*"
     }
-  }
+  };
 
-  let response = await fetch(url, options);
-  let responseBody = await response.json();
-  return responseBody;
-};
-
+  let responseBody = await axios.post(url,request,headers)
+  .catch((error) => {throw error.response.data });
+  
+  return responseBody.data;
+}
 export const getLocalisationkey = async (
   prefix,
   key,

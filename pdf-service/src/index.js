@@ -363,7 +363,7 @@ app.post(
           });
         },
         (error) => {
-          res.status(500);
+          res.status(400);
           // doc creation error
           res.json({
             ResponseInfo: requestInfo,
@@ -374,7 +374,7 @@ app.post(
       //
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "some unknown error while creating: " + error.message,
@@ -439,7 +439,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         message: "some unknown error while creating: " + error.message,
       });
@@ -493,7 +493,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "some unknown error while searching: " + error.message,
@@ -515,7 +515,7 @@ app.post(
         });
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the codes",
@@ -550,7 +550,7 @@ app.post(
         });
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the codes",
