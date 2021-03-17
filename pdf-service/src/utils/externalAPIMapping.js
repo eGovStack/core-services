@@ -1,10 +1,8 @@
 import get from "lodash/get";
 import axios from "axios";
 import {
-  httpRequest
-} from "../api/api";
-import {
-  findAndUpdateLocalisation,
+  getLocalisationkey,
+  findLocalisation,
   getDateInRequiredFormat,
   getValue
 } from "./commons";
@@ -31,9 +29,8 @@ export const externalAPIMapping = async function (
   req,
   dataconfig,
   variableTovalueMap,
-  localisationMap,
   requestInfo,
-  localisationModuleList
+  unregisteredLocalisationCodes
 ) {
   var jp = require("jsonpath");
   var objectOfExternalAPI = getValue(
@@ -51,6 +48,10 @@ export const externalAPIMapping = async function (
       val: ""
     };
   });
+
+  var localisationCodes = [];
+  var localisationModules = [];
+  var variableToModuleMap = {};
 
   var responses = [];
   var responsePromises = [];
@@ -268,18 +269,21 @@ export const externalAPIMapping = async function (
                 scema[k].localisation.required
               ) {
                 let loc = scema[k].localisation;
-                fieldValue = await findAndUpdateLocalisation(
-                  requestInfo,
-                  localisationMap,
-                  loc.prefix,
-                  fieldValue,
-                  loc.module,
-                  localisationModuleList,
-                  loc.isCategoryRequired,
-                  loc.isMainTypeRequired,
-                  loc.isSubTypeRequired,
-                  loc.delimiter
-                );
+              fieldValue = await getLocalisationkey(
+                loc.prefix,
+                fieldValue,
+                loc.isCategoryRequired,
+                loc.isMainTypeRequired,
+                loc.isSubTypeRequired,
+                loc.delimiter
+              );
+              if(!localisationCodes.includes(fieldValue))
+                localisationCodes.push(fieldValue);
+
+              if(!localisationModules.includes(loc.module))
+                localisationModules.push(loc.module);
+
+              variableToModuleMap[scema[k].variable] = loc.module;
               }
               //console.log("\nvalue-->"+fieldValue)
               let currentValue = fieldValue;
@@ -306,21 +310,34 @@ export const externalAPIMapping = async function (
           externalAPIArray[i].jPath[j].localisation &&
           externalAPIArray[i].jPath[j].localisation.required &&
           externalAPIArray[i].jPath[j].localisation.prefix
-        )
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = await findAndUpdateLocalisation(
-            requestInfo,
-            localisationMap,
+        ){
+          let currentValue= await getLocalisationkey(
             loc.prefix,
             replaceValue,
-            loc.module,
-            localisationModuleList,
             loc.isCategoryRequired,
             loc.isMainTypeRequired,
             loc.isSubTypeRequired,
             loc.delimiter
           );
+          if (typeof currentValue == "object" && currentValue.length > 0)
+            currentValue = currentValue[0];
+
+          //currentValue = escapeRegex(currentValue);
+          if(!localisationCodes.includes(currentValue))
+            localisationCodes.push(currentValue);
+
+          if(!localisationModules.includes(loc.module))
+            localisationModules.push(loc.module);
+
+          variableTovalueMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = currentValue;
+
+          variableToModuleMap[
+            externalAPIArray[i].jPath[j].variable
+          ] = loc.module;
+
+        }
         else {
           let currentValue = replaceValue;
           if (typeof currentValue == "object" && currentValue.length > 0)
@@ -346,4 +363,65 @@ export const externalAPIMapping = async function (
       }
     }
   }
+
+  let localisationMap = [];
+  try{
+    let resposnseMap = await findLocalisation(
+      requestInfo,
+      localisationModules,
+      localisationCodes
+    );
+  
+    resposnseMap.messages.map((item) => {
+      localisationMap[item.code + "_" + item.module] = item.message;
+    });
+  }
+  catch (error) {
+    logger.error(error.stack || error);
+    throw{
+      message: `Error in localisation service call: ${error.Errors[0].message}`
+    }; 
+  }
+
+  Object.keys(variableTovalueMap).forEach(function(key) {
+    if(variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string'){
+      var code = variableTovalueMap[key];
+      var module = variableToModuleMap[key];
+      if(localisationMap[code+"_"+module]){
+        variableTovalueMap[key] = localisationMap[code+"_"+module];
+        if(unregisteredLocalisationCodes.includes(code)){
+          var index = unregisteredLocalisationCodes.indexOf(code);
+          unregisteredLocalisationCodes.splice(index, 1);
+        }
+      }
+      else{
+        if(!unregisteredLocalisationCodes.includes(code))
+          unregisteredLocalisationCodes.push(code);
+      }
+    }
+
+    if(typeof variableTovalueMap[key] =='object'){
+      Object.keys(variableTovalueMap[key]).forEach(function(objectKey){
+        Object.keys(variableTovalueMap[key][objectKey]).forEach(function(objectItemkey) {
+          if(variableToModuleMap[objectItemkey]){
+            var module = variableToModuleMap[objectItemkey];
+            var code = variableTovalueMap[key][objectKey][objectItemkey];
+            if(localisationMap[code+"_"+module]){
+              variableTovalueMap[key][objectKey][objectItemkey] = localisationMap[code+"_"+module];
+              if(unregisteredLocalisationCodes.includes(code)){
+                var index = unregisteredLocalisationCodes.indexOf(code);
+                unregisteredLocalisationCodes.splice(index, 1);
+              }
+            }
+            else{
+              if(!unregisteredLocalisationCodes.includes(code))
+                unregisteredLocalisationCodes.push(code);
+            }
+          }
+        });
+      });    
+    }
+
+  });
+
 };
