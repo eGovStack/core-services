@@ -1,6 +1,10 @@
 
 All notable changes to this module will be documented in this file.
 
+## 1.2.2 - 2021-03-20
+- Add support for PATCH and PUT statements
+- Changed auth filter to not read body if Json content type is not specified
+
 ## 1.2.1 - 2021-02-26
 
 - Updated domain name in routes.properties
