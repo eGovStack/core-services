@@ -39,12 +39,15 @@ public class CloudFileMgrUtils {
 	@Value("${azure.sas.expiry.time.in.secs}")
 	private Integer azureSASExpiryinSecs;
 
+	@Value("${azure.sas.internal.expiry.time.in.secs}")
+	private Integer azureSASExpiryinSecsForInternalCall;
+
 	/**
 	 * This method creates different versions of an image. A single image will be
 	 * stored in small, medium and large formats along with the original image. This
 	 * is to facililate fasters searches on the app
 	 * 
-	 * @param file
+	 * @param inputStream
 	 * @param fileName
 	 * @return
 	 */
@@ -102,14 +105,20 @@ public class CloudFileMgrUtils {
 	 * Check -
 	 * https://docs.microsoft.com/en-us/azure/storage/blobs/storage-dotnet-shared-access-signature-part-2
 	 * 
-	 * @param resourceUri
-	 * @param keyName
-	 * @param key
+	 * @param azureBlobClient
+	 * @param absolutePath
+	 * @param isInternal
 	 * @return
 	 */
-	public String generateSASToken(CloudBlobClient azureBlobClient, String absolutePath) {
+	public String generateSASToken(CloudBlobClient azureBlobClient, String absolutePath, Boolean isInternal) {
 		String sasUrl = null;
 		try {
+
+			Integer expiryTime = azureSASExpiryinSecs;
+
+			if(isInternal)
+				expiryTime = azureSASExpiryinSecsForInternalCall;
+
 			int index = absolutePath.indexOf('/');
 			String containerName = absolutePath.substring(0, index);
 			String fileNameWithPath = absolutePath.substring(index + 1, absolutePath.length());
@@ -118,7 +127,7 @@ public class CloudFileMgrUtils {
 			SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
 			sasConstraints.setSharedAccessStartTime(new Date(System.currentTimeMillis()));
 			sasConstraints
-					.setSharedAccessExpiryTime(new Date(System.currentTimeMillis() + (azureSASExpiryinSecs * 1000)));
+					.setSharedAccessExpiryTime(new Date(System.currentTimeMillis() + (expiryTime * 1000)));
 			sasConstraints.setPermissionsFromString("r");
 			String sasBlobToken = blob.generateSharedAccessSignature(sasConstraints, null);
 			sasUrl = sasBlobToken;

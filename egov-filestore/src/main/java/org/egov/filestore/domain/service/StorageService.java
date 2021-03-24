@@ -158,14 +158,14 @@ public class StorageService {
 		return artifactRepository.findByTag(tag, tenantId);
 	}
 
-	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds) {
+	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds, Boolean isInternal) {
 		Map<String, String> urlMap = getUrlMap(
-				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
+				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds), isInternal);
 		return urlMap;
 	}
 
-	private Map<String, String> getUrlMap(List<org.egov.filestore.persistence.entity.Artifact> artifactList) {
-		return cloudFilesManager.getFiles(artifactList);
+	private Map<String, String> getUrlMap(List<org.egov.filestore.persistence.entity.Artifact> artifactList, Boolean isInternal) {
+		return cloudFilesManager.getFiles(artifactList, isInternal);
 	}
 
 	private String getFolderName(String module, String tenantId, Calendar calendar) {

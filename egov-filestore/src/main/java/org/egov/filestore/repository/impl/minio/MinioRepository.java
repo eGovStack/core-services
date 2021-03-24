@@ -139,7 +139,7 @@ public class MinioRepository implements CloudFilesManager {
 	}
 
 	@Override
-	public Map<String, String> getFiles(List<Artifact> artifacts) {
+	public Map<String, String> getFiles(List<Artifact> artifacts, Boolean isInternal) {
 
 		Map<String, String> mapOfIdAndSASUrls = new HashMap<>();
 
@@ -148,10 +148,10 @@ public class MinioRepository implements CloudFilesManager {
 			String fileLocation = artifact.getFileLocation().getFileName();
 			String fileName = fileLocation.
 					substring(fileLocation.indexOf('/') + 1, fileLocation.length());
-			String signedUrl = getSignedUrl(fileName);
+			String signedUrl = getSignedUrl(fileName, isInternal);
 			if (util.isFileAnImage(artifact.getFileName())) {
 				try {
-					signedUrl = setThumnailSignedURL(fileName, new StringBuilder(signedUrl));
+					signedUrl = setThumnailSignedURL(fileName, new StringBuilder(signedUrl), isInternal);
 				} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException
 						| InsufficientDataException | InternalException | InvalidBucketNameException
 						| InvalidExpiresRangeException | InvalidResponseException | NoSuchAlgorithmException
@@ -167,23 +167,28 @@ public class MinioRepository implements CloudFilesManager {
 		return mapOfIdAndSASUrls;
 	}
 		
-	private String setThumnailSignedURL(String fileName, StringBuilder url) throws InvalidKeyException, ErrorResponseException, IllegalArgumentException, InsufficientDataException, InternalException, InvalidBucketNameException, InvalidExpiresRangeException, InvalidResponseException, NoSuchAlgorithmException, XmlParserException, IOException {
+	private String setThumnailSignedURL(String fileName, StringBuilder url, Boolean isInternal) throws InvalidKeyException, ErrorResponseException, IllegalArgumentException, InsufficientDataException, InternalException, InvalidBucketNameException, InvalidExpiresRangeException, InvalidResponseException, NoSuchAlgorithmException, XmlParserException, IOException {
 		String[] imageFormats = { fileStoreConfig.get_large(), fileStoreConfig.get_medium(), fileStoreConfig.get_small() };
 		for (String  format : Arrays.asList(imageFormats)) {
 			url.append(",");
 			String replaceString = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
 			String path = fileName.replaceAll(replaceString, format + replaceString);
-			url.append(getSignedUrl(path));
+			url.append(getSignedUrl(path, isInternal));
 		}
 		return url.toString();
 	}
 	
-	private String getSignedUrl(String fileName) {
+	private String getSignedUrl(String fileName, Boolean isInternal) {
+
+		Integer expires = fileStoreConfig.getPreSignedUrlTimeOut();
+
+		if(isInternal)
+			expires = fileStoreConfig.getPreSignedUrlTimeOutForInternalCall();
 
 		String signedUrl = null;
 		try {
 			signedUrl = minioClient.getPresignedObjectUrl(io.minio.http.Method.GET, minioConfig.getBucketName(), fileName,
-					fileStoreConfig.getPreSignedUrlTimeOut(), new HashMap<String, String>());
+					expires, new HashMap<String, String>());
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
 				| InternalException | InvalidBucketNameException | InvalidExpiresRangeException
 				| InvalidResponseException | NoSuchAlgorithmException | XmlParserException | IOException e) {

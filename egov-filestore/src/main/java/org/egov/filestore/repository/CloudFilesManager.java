@@ -18,7 +18,8 @@ public interface CloudFilesManager {
 	
 	/**
 	 * Interface to fetch files from the cloud storage. 
-	 * Takes a map of filestoreid and file path as input and returns a map of filestoreid and urls with access permissions. 
+	 * Takes a map of filestoreid and file path as input and boolean flag which specifies if the API call is internal
+	 * and returns a map of filestoreid and urls with access permissions.
 	 * Current Implementations:
 	 * 1. Signed Urls from AWS S3
 	 * 2. SAS Urls from Azure
@@ -26,6 +27,6 @@ public interface CloudFilesManager {
 	 * @param mapOfIdAndFilePath
 	 * @return
 	 */
-	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts);
+	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts, Boolean isInternal);
 
 }

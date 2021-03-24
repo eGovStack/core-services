@@ -1,5 +1,6 @@
 package org.egov.filestore.web.controller;
 
+import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 import java.io.IOException;
@@ -26,12 +27,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -117,13 +113,21 @@ public class StorageController {
 	
 	@GetMapping("/url")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> getUrls(@RequestParam(value = "tenantId") String tenantId,
-			@RequestParam("fileStoreIds") List<String> fileStoreIds) {
-		
+	public ResponseEntity<Map<String, Object>> getUrls(@RequestHeader HttpHeaders headers, @RequestParam(value = "tenantId") String tenantId,
+													   @RequestParam("fileStoreIds") List<String> fileStoreIds) {
+
+		Boolean isInternal;
+
+		if (isInterServiceCall(headers)) {
+			isInternal = true;
+		}
+		else isInternal = false;
+
 		Map<String, Object> responseMap = new HashMap<>();
 		if (fileStoreIds.isEmpty())
 			return new ResponseEntity<>(new HashMap<>(), HttpStatus.OK);
-			Map<String, String> maps= storageService.getUrls(tenantId, fileStoreIds);
+
+		Map<String, String> maps= storageService.getUrls(tenantId, fileStoreIds, isInternal);
 			
 		List<FileStoreResponse> responses = new ArrayList<>();
 		for (Entry<String, String> entry : maps.entrySet()) {

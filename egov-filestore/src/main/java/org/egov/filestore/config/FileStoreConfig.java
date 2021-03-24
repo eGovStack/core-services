@@ -43,6 +43,9 @@ public class FileStoreConfig {
 	
 	@Value("${presigned.url.expiry.time.in.secs}")
 	private Integer preSignedUrlTimeOut;
+
+	@Value("${presigned.url.internal.expiry.time.in.secs}")
+	private Integer preSignedUrlTimeOutForInternalCall;
 	
 	@Value("#{'${image.formats}'.split(',')}") 
 	private List<String> imageFormats;

@@ -125,7 +125,7 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 	 * TODO: Change comma separated string to list of strings and test it with UI once their changes are done.
 	 */
 	
-	public Map<String, String> getFiles(Map<String, String> mapOfIdAndFilePath) {
+	public Map<String, String> getFiles(Map<String, String> mapOfIdAndFilePath, Boolean isInternal) {
 		if(null == azureBlobClient)
 			azureBlobClient = azureFacade.getAzureClient();
 		Map<String, String> mapOfIdAndSASUrls = new HashMap<>();
@@ -135,18 +135,18 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 				StringBuilder url = new StringBuilder();
 				/* Don't change the order of images within this if, it is index-based and UI will break.*/
 				String[] imageFormats = {_large, _medium, _small};
-				url.append(getSASURL(mapOfIdAndFilePath.get(id), util.generateSASToken(azureBlobClient, mapOfIdAndFilePath.get(id))));
+				url.append(getSASURL(mapOfIdAndFilePath.get(id), util.generateSASToken(azureBlobClient, mapOfIdAndFilePath.get(id), isInternal)));
 				String replaceString = mapOfIdAndFilePath.get(id).substring(mapOfIdAndFilePath.get(id).lastIndexOf('.'),
 						mapOfIdAndFilePath.get(id).length());
 				for(String format: Arrays.asList(imageFormats)) {
 					url.append(",");
 					String path = mapOfIdAndFilePath.get(id);
 					path = path.replaceAll(replaceString, format + replaceString);
-					url.append(getSASURL(path, util.generateSASToken(azureBlobClient, path)));
+					url.append(getSASURL(path, util.generateSASToken(azureBlobClient, path, isInternal)));
 				}
 				mapOfIdAndSASUrls.put(id, url.toString());
 			}else {
-				mapOfIdAndSASUrls.put(id, getSASURL(mapOfIdAndFilePath.get(id), util.generateSASToken(azureBlobClient, mapOfIdAndFilePath.get(id))));
+				mapOfIdAndSASUrls.put(id, getSASURL(mapOfIdAndFilePath.get(id), util.generateSASToken(azureBlobClient, mapOfIdAndFilePath.get(id), isInternal)));
 			}
 		});
 		return mapOfIdAndSASUrls;
@@ -173,7 +173,6 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 	 * 
 	 * @param container
 	 * @param completePath
-	 * @param file
 	 * @param image
 	 * @param extension
 	 */
@@ -195,7 +194,7 @@ public class AzureBlobStorageImpl implements CloudFilesManager {
 	}
 
 	@Override
-	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts) {
+	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts, Boolean isInternal) {
 		// TODO Auto-generated method stub
 		return null;
 	}
