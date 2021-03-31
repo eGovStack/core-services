@@ -158,10 +158,11 @@ public class TransitionService {
     private BusinessService getBusinessService(List<ProcessInstance> processInstances){
         BusinessServiceSearchCriteria criteria = new BusinessServiceSearchCriteria();
         String tenantId = processInstances.get(0).getTenantId();
+        Boolean isStateLevel = true;
         String businessService = processInstances.get(0).getBusinessService();
         criteria.setTenantIds(Collections.singletonList(tenantId));
         criteria.setBusinessServices(Collections.singletonList(businessService));
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
+        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria,isStateLevel);
         if(CollectionUtils.isEmpty(businessServices))
             throw new CustomException("BUSINESSSERVICE ERROR","No bussinessService object found for businessSerice: "+
                     businessService + " and tenantId: "+tenantId);

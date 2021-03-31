@@ -81,8 +81,8 @@ public class WorkflowConfig {
     @Value("${egov.wf.inbox.assignedonly}")
     private Boolean assignedOnly;
 
-    @Value("${egov.wf.statelevel}")
-    private Boolean isStateLevel;
+    @Value("${egov.wf.statelevel.tenantId}")
+    private String tenantId;
 
 
 

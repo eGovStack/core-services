@@ -110,6 +110,7 @@ public class BusinessServiceValidator {
         List<String> businessServiceCodes = new LinkedList<>();
         List<String> stateUuids = new LinkedList<>();
         List<String> actionUuids = new LinkedList<>();
+        Boolean isStateLevel = true;
 
         BusinessServiceSearchCriteria criteria = new BusinessServiceSearchCriteria();
         request.getBusinessServices().forEach(businessService -> {
@@ -126,7 +127,7 @@ public class BusinessServiceValidator {
         criteria.setTenantIds(Collections.singletonList(tenantId));
         criteria.setBusinessServices(businessServiceCodes);
 
-        List<BusinessService> businessServices = repository.getBusinessServices(criteria);
+        List<BusinessService> businessServices = repository.getBusinessServices(criteria,isStateLevel);
         return businessServices;
     }
 

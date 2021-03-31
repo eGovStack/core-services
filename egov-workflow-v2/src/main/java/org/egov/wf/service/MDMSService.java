@@ -1,90 +1,89 @@
 package org.egov.wf.service;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.repository.ServiceRequestRepository;
-import org.egov.wf.util.WorkflowConstants;
-import org.egov.wf.web.models.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 import static org.egov.wf.util.WorkflowConstants.*;
 
-@Service
+@Component
 public class MDMSService {
 
-   private WorkflowConfig config;
 
-   private ServiceRequestRepository serviceRequestRepository;
+    private WorkflowConfig config;
 
+    private ServiceRequestRepository serviceRequestRepository;
 
-   @Autowired
+    @Autowired
     public MDMSService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
     }
-
-
+    /**
+     * Calls MDMS service to fetch wf master data
+     * @param *request
+     * @return
+     */
+    public Object mDMSCall(){
+        String tenantId = config.getTenantId();
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(tenantId);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
 
     /**
-     * Creates MDMSCriteria
-     * @param requestInfo The RequestInfo of the request
-     * @param tenantId TenantId of the request
-     * @return MDMSCriteria for search call
+     * Returns mdms search criteria based on the tenantId
+     * @param *requestInfo
+     * @param tenantId
+     * @return
      */
-    private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId){
-        ModuleDetail wfModuleDetail = getWorkflowMDMSDetail();
+    public MdmsCriteriaReq getMDMSRequest(String tenantId){
+        List<ModuleDetail> wfModuleRequest = getWFModuleRequest();
 
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(wfModuleDetail))
-                .tenantId(tenantId)
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.addAll(wfModuleRequest);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
-                .requestInfo(requestInfo).build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).build();
         return mdmsCriteriaReq;
     }
-
-
     /**
-     * Creates MDMS ModuleDetail object for workflow
-     * @return ModuleDetail for workflow
+     * Creates request to search serviceDef from MDMS
+     * @return request to search UOM from MDMS
      */
-    private ModuleDetail getWorkflowMDMSDetail() {
+    private List<ModuleDetail> getWFModuleRequest() {
 
-        // master details for WF module
+
         List<MasterDetail> wfMasterDetails = new ArrayList<>();
 
-        wfMasterDetails.add(MasterDetail.builder().name(MDMS_BUSINESSSERVICE).build());
+
+        final String filterCode = "$.[?(@.active==true)]";
+
+        wfMasterDetails.add(MasterDetail.builder().name(MDMS_BUSINESSSERVICEMASTERCONFIG).filter(filterCode).build());
 
         ModuleDetail wfModuleDtls = ModuleDetail.builder().masterDetails(wfMasterDetails)
-                .moduleName(MDMS_WORKFLOW).build();
+                .moduleName(MDMS_HOST_NAME).build();
 
-        return wfModuleDtls;
+
+        return Collections.singletonList(wfModuleDtls);
+
     }
-
-
-
-
-
-
     /**
      * Returns the url for mdms search endpoint
+     *
      * @return url for mdms search endpoint
      */
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
-
-
-
-
-
-
-
 }
+

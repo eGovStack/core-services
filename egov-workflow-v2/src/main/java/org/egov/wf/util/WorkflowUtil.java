@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+
 import java.util.*;
 
 
@@ -20,11 +21,14 @@ public class WorkflowUtil {
 
     private WorkflowConfig config;
 
+    private Map<String, String> businessServicetoIsStateLevel;
+
 
     @Autowired
-    public WorkflowUtil(ObjectMapper mapper,WorkflowConfig config) {
+    public WorkflowUtil(ObjectMapper mapper,WorkflowConfig config,Map<String, String> businessServicetoIsStateLevel) {
         this.mapper = mapper;
         this.config = config;
+        this.businessServicetoIsStateLevel = businessServicetoIsStateLevel;
     }
 
     /**
@@ -155,7 +159,7 @@ public class WorkflowUtil {
      * @return List of status on which user from requestInfo can take action upon
      */
 
-    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
+    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria,Boolean isStateLevel){
 
         String tenantId;
         List<String> userRoleCodes;
@@ -167,7 +171,7 @@ public class WorkflowUtil {
         for(Map.Entry<String,List<String>> entry : tenantIdToUserRolesMap.entrySet()){
             if(entry.getKey().equals(criteria.getTenantId())){
                 List<BusinessService> businessServicesByTenantId ;
-                if(config.getIsStateLevel()){
+                if(businessServicetoIsStateLevel.containsValue(isStateLevel)){
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey().split("\\.")[0]);
                 }else{
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey());

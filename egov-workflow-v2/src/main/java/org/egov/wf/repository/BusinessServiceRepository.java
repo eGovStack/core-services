@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -26,25 +27,24 @@ public class BusinessServiceRepository {
 
     private WorkflowConfig config;
 
+    private Map<String, String> businessServicetoIsStateLevel;
+
+
 
     @Autowired
     public BusinessServiceRepository(BusinessServiceQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate,
-                                     BusinessServiceRowMapper rowMapper, WorkflowConfig config) {
+                                     BusinessServiceRowMapper rowMapper, WorkflowConfig config, Map<String, String> businessServicetoIsStateLevel) {
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.rowMapper = rowMapper;
         this.config = config;
+        this.businessServicetoIsStateLevel = businessServicetoIsStateLevel;
     }
 
-
-
-
-
-
-    public List<BusinessService> getBusinessServices(BusinessServiceSearchCriteria criteria){
+    public List<BusinessService> getBusinessServices(BusinessServiceSearchCriteria criteria, Boolean isStateLevel){
         List<Object> preparedStmtList = new ArrayList<>();
         String query;
-        if(config.getIsStateLevel()){
+        if(businessServicetoIsStateLevel.containsValue(isStateLevel)){
             BusinessServiceSearchCriteria stateLevelCriteria = new BusinessServiceSearchCriteria(criteria);
             stateLevelCriteria.setTenantIds(Collections.singletonList(criteria.getTenantIds().get(0).split("\\.")[0]));
             query = queryBuilder.getBusinessServices(stateLevelCriteria, preparedStmtList);

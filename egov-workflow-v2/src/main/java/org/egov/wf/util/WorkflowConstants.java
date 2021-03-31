@@ -14,7 +14,13 @@ public class WorkflowConstants {
 
     public static final String ALL_WF_JSONPATH_CODE = "$.MdmsRes.Workflow.BusinessService.*";
 
+    public static final String MDMS_DATA_JSONPATH = "$.MdmsRes.Workflow.BusinessServiceMasterConfig";
+
     public static final String MDMS_BUSINESSSERVICE= "BusinessService";
+
+    public static final String MDMS_HOST_NAME = "Workflow";
+
+    public static final String MDMS_BUSINESSSERVICEMASTERCONFIG= "BusinessServiceMasterConfig";
 
     public static final String MDMS_ALLOWED_ROLES_ALL_SERVICES = "$..roles";
 

@@ -12,6 +12,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
 
 @Service
 public class BusinessMasterService {
@@ -24,14 +26,17 @@ public class BusinessMasterService {
 
     private BusinessServiceRepository repository;
 
+    private Map<String, String> businessServicetoIsStateLevel;
+
 
     @Autowired
     public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService,
-                                 BusinessServiceRepository repository) {
+                                 BusinessServiceRepository repository,Map<String, String> businessServicetoIsStateLevel) {
         this.producer = producer;
         this.config = config;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
+        this.businessServicetoIsStateLevel = businessServicetoIsStateLevel;
     }
 
 
@@ -49,16 +54,30 @@ public class BusinessMasterService {
        return request.getBusinessServices();
     }
 
+
     /**
      * Fetches business service object from db
-     * @param criteria The search criteria
+     * @param *criteria The search criteria
      * @return Data fetched from db
      */
     @Cacheable(value = "businessService")
     public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
         String tenantId = criteria.getTenantIds().get(0);
-        List<BusinessService> businessServices = repository.getBusinessServices(criteria);
-        if(config.getIsStateLevel()){
+        Boolean isStateLevel = true;
+        List<BusinessService> businessServices = repository.getBusinessServices(criteria,isStateLevel);
+        if(businessServicetoIsStateLevel.containsValue(isStateLevel))
+        {
+            String updatedtenantId = new String();
+            for(int i=0;i<tenantId.length();i++)
+            {
+                if(tenantId.charAt(i)!='.')
+                    updatedtenantId += tenantId;
+                else
+                    break;
+            }
+            enrichmentService.enrichTenantIdForStateLevel(updatedtenantId,businessServices);
+        }
+        else{
             enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
         }
         return businessServices;

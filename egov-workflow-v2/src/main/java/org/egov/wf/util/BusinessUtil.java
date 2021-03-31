@@ -28,10 +28,11 @@ public class BusinessUtil {
      * @return BusinessService
      */
     public BusinessService getBusinessService(String tenantId,String businessService){
+        Boolean isStateLevel = true;
         BusinessServiceSearchCriteria criteria = new BusinessServiceSearchCriteria();
         criteria.setTenantIds(Collections.singletonList(tenantId));
         criteria.setBusinessServices(Collections.singletonList(businessService));
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
+        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria,isStateLevel);
         if(CollectionUtils.isEmpty(businessServices))
             throw new CustomException("INVALID REQUEST","No BusinessService found for businessService: "+criteria.getBusinessServices());
         return businessServices.get(0);

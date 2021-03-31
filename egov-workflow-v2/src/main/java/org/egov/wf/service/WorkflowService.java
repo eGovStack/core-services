@@ -150,6 +150,7 @@ public class WorkflowService {
 
         BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
 
+        Boolean isStateLevel = true;
         /*
          * If tenantId is sent in query param processInstances only for that tenantId is returned
          * else all tenantIds for which the user has roles are returned
@@ -159,8 +160,8 @@ public class WorkflowService {
         else
             businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
 
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
-        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
+        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria,isStateLevel);
+        List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria,isStateLevel);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         criteria.setStatus(actionableStatuses);
 
