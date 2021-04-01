@@ -283,7 +283,9 @@ class ReceiptService {
           tenantIdList.push(tenantId);
       }
       
-      let localisedMessages = await localisationService.getMessagesForCodesAndTenantId(tenantIdList, config.rootTenantId);
+      let localisedMessages = {}
+      for(let code of tenantIdList)
+        localisedMessages[code] = await localisationService.getMessageBundleForCode(code, config.rootTenantId);
 
       for(var i=0; i<Payments['Payments'].length;i++){
         let tenantId = Payments['Payments'][i].city;
