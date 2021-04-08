@@ -92,15 +92,25 @@ public class WorkflowService {
         Integer count;
         if(criteria.isNull()){
             enrichSearchCriteriaFromUser(requestInfo, criteria);
-            count = workflowRepository.getInboxCount(criteria);
+            count = workflowRepository.getInboxCount(criteria,Boolean.FALSE);
         }
-        else count = workflowRepository.getProcessInstancesCount(criteria);
+        else count = workflowRepository.getProcessInstancesCount(criteria,Boolean.FALSE);
 
         return count;
     }
 
 
 
+    public List statusCount(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        List result;
+        if(criteria.isNull()){
+            enrichSearchCriteriaFromUser(requestInfo, criteria);
+            result = workflowRepository.getInboxStatusCount(criteria,Boolean.TRUE);
+        }
+        else result = workflowRepository.getProcessInstancesStatusCount(criteria,Boolean.TRUE);
+
+        return result;
+    }
 
 
     /**

@@ -49,6 +49,7 @@ public class WorkflowQueryBuilder {
 
     private static final String COUNT_WRAPPER = "select count(DISTINCT wf_id) from ({INTERNAL_QUERY}) as count";
 
+    private static final String STATUS_COUNT_WRAPPER = "select  count(DISTINCT wf_id),cq.applicationStatus from ({INTERNAL_QUERY}) as cq GROUP BY cq.applicationStatus";
 
 
     private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
@@ -287,7 +288,7 @@ public class WorkflowQueryBuilder {
      * @param preparedStmtList
      * @return
      */
-    public String getInboxCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getInboxCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, boolean statuCount){
 
         String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 WHERE tenantid=? GROUP BY businessid)";
         preparedStmtList.add(criteria.getTenantId());
@@ -300,22 +301,33 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
             addToPreparedStatement(preparedStmtList,statuses);
-        }
-        else {
+        }else {
             builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        String countQuery = addCountWrapper(builder.toString());
+        String countQuery = null;
+        
+        if(statuCount) {
+        	countQuery =addStatusCountWrapper(builder.toString());
+        }else {
+        	countQuery = addCountWrapper(builder.toString());
+        }
 
         return countQuery;
     }
 
 
-    public String getProcessInstanceCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getProcessInstanceCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, boolean statuCount) {
         String finalQuery = getProcessInstanceSearchQueryWithoutPagination(criteria,preparedStmtList);
-        String countQuery = addCountWrapper(finalQuery);
+        String countQuery = null;
+        if(statuCount) {
+        	countQuery =addStatusCountWrapper(finalQuery);
+        }else {
+        	countQuery = addCountWrapper(finalQuery);
+        }
+        
         return countQuery;
     }
 
@@ -329,6 +341,15 @@ public class WorkflowQueryBuilder {
         String countQuery = COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         return countQuery;
     }
-
+    
+    /**
+     * Adds a count wrapper around the query
+     * @param query
+     * @return
+     */
+    private String addStatusCountWrapper(String query){
+        String countQuery = STATUS_COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        return countQuery;
+    }
 
 }

@@ -1,6 +1,7 @@
 package org.egov.wf.web.controllers;
 
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +85,18 @@ public class WorkflowController {
             return new ResponseEntity<>(count,HttpStatus.OK);
         }
 
-
+    /**
+     * Returns the count of each status of records matching the given criteria
+     * @param requestInfoWrapper
+     * @param criteria
+     * @return
+     */
+    @RequestMapping(value="/process/_statuscount", method = RequestMethod.POST)
+        public ResponseEntity<List> StatusCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+            List  result = workflowService.statusCount(requestInfoWrapper.getRequestInfo(),criteria);
+            return new ResponseEntity<>(result,HttpStatus.OK);
+        }
 
 
 
