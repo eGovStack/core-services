@@ -230,7 +230,7 @@ public class WorkflowValidator {
 
                         }
 
-                        if(!CollectionUtils.isEmpty(assignes) & !assignes.contains(userUUID))
+                        if(!CollectionUtils.isEmpty(assignes) && !assignes.contains(userUUID))
                             errorMap.put("INVALID_USER","Citizen not authorized to perform action on application: "+processInstanceFromDb.getBusinessId());
                     }
                 }
