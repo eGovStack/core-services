@@ -146,7 +146,7 @@ public class EnrichmentService {
                 enrichAssigner(processStateAndAction.getProcessInstanceFromRequest(), idToUserMap, errorMap);
 
             // Setting Assignes for previous processInstance
-            if(processStateAndAction.getProcessInstanceFromDb()!=null & !CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb().getAssignes())){
+            if(processStateAndAction.getProcessInstanceFromDb()!=null && !CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb().getAssignes())){
                 enrichAssignes(processStateAndAction.getProcessInstanceFromDb(), idToUserMap, errorMap);
             }
 
