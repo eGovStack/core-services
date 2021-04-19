@@ -10,6 +10,8 @@ import org.egov.domain.model.Tenant;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.Size;
+
 @Builder
 @Getter
 @AllArgsConstructor
@@ -17,16 +19,23 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class Message {
 	@NotEmpty
     @SafeHtml
-	private String code;
+    @Size(max = 255)
+    private String code;
+
 	@NotEmpty
     @SafeHtml
-	private String message;
+    @Size(max = 500)
+    private String message;
+
 	@NotEmpty
     @SafeHtml
-	private String module;
+    @Size(max = 255)
+    private String module;
+
 	@NotEmpty
     @SafeHtml
-	private String locale;
+    @Size(max = 255)
+    private String locale;
 
 	public Message(org.egov.domain.model.Message domainMessage) {
 		this.code = domainMessage.getCode();
