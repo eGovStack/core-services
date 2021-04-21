@@ -75,6 +75,9 @@ public class IndexerUtils {
 	@Value("${topic.push.enabled}")
 	private Boolean topicPushEnable;
 
+	@Value("${id.timezone}")
+	private String timezone;
+
 	@Autowired
 	private IndexerProducer producer;
 
@@ -511,7 +514,7 @@ public class IndexerUtils {
 			}
 			Date date = new Date(Long.valueOf(convertEpochToLong(epochValue)));
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatter.setTimeZone(TimeZone.getTimeZone(timezone));
 			context.put("$", "@timestamp", formatter.format(date));
 		} catch (Exception e) {
 			log.error("Exception while adding timestamp: ",e);
