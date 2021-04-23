@@ -3,6 +3,7 @@ package org.egov.pg.service.gateways.razorpay;
 import java.net.URI;
 import java.security.SignatureException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.Mac;
@@ -119,6 +120,10 @@ public class RazorpayGateway implements Gateway{
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
        final Object generatedSignature;
         try {
+        	RazorpayClient razorpay = null;
+     	   	Order order = null;
+     	   	List<Payment> ordernew = null;
+       	   int j=0,k=0;
         	generatedSignature = hmac_sha256(params.get("razorpayOrderId") + "|" + params.get("razorpayPaymentId"), SECURE_SECRET);
 			//Payment payment = client.Payments.fetch(params.get("razorpayPaymentId"));
 			if (generatedSignature.equals(params.get("razorpaySignature")))
@@ -128,22 +133,74 @@ public class RazorpayGateway implements Gateway{
 	                    .txnId(currentStatus.getTxnId())
 	                    .txnAmount(currentStatus.getTxnAmount())
 	                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+	                    .gatewayTxnId(params.get("razorpayOrderId"))
+	                    .gatewayPaymentMode(params.get("razorpayOrderId"))
 	                    .build();
 				}
 			else
 				{
-	            return Transaction.builder()
-	                    .txnId(currentStatus.getTxnId())
-	                    .txnAmount(currentStatus.getTxnAmount())
-	                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
-	            		.build();
+				razorpay = new RazorpayClient(MERCHANT_ID,SECURE_SECRET);
+				 order = razorpay.Orders.fetch(currentStatus.getGatewayTxnId());
+		       		order.get("status");
+		       		ordernew = razorpay.Orders.fetchPayments(currentStatus.getGatewayTxnId());
+		       		if(ordernew.isEmpty() ||(order.get("status")).equals("created")|| (order.get("status").equals("attempted")))
+		       		{
+			            return Transaction.builder()
+			                    .txnId(currentStatus.getTxnId())
+			                    .txnAmount(currentStatus.getTxnAmount())
+			                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+			                    .gatewayTxnId(currentStatus.getGatewayTxnId())
+			                    .gatewayPaymentMode(currentStatus.getGatewayTxnId())
+			            		.build();
+		       		}
+		       		if(!ordernew.isEmpty())
+		       		{
+					for(int i=0;i<ordernew.size();i++)
+			       		{
+			       			if(!ordernew.get(i).get("status").equals("failed"))
+			       				{
+			       				j=j+1;
+			       				k=i;
+			       				}
+			       		}
+				  if(ordernew.get(k).get("status").equals("failed"))
+					{
+			            return Transaction.builder()
+			                    .txnId(currentStatus.getTxnId())
+			                    .txnAmount(currentStatus.getTxnAmount())
+			                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+			                    .gatewayTxnId(currentStatus.getGatewayTxnId())
+			                    .gatewayPaymentMode(currentStatus.getGatewayTxnId())
+			            		.build();
 				}
-
+		       		}
+					else if((ordernew.get(k).get("status").equals("captured")) || (order.get("status")).equals("paid")||(ordernew.get(k).get("status").equals("paid")))
+					{
+			            return Transaction.builder()
+			                    .txnId(currentStatus.getTxnId())
+			                    .txnAmount(currentStatus.getTxnAmount())
+			                    .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+			                    .gatewayTxnId(currentStatus.getGatewayTxnId())
+			                    .gatewayPaymentMode(currentStatus.getGatewayTxnId())
+			                    .build();
+				  }
+	              }
+	        	
 			
         } catch (Exception e){
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
+	
+    return Transaction.builder()
+                  .txnId(currentStatus.getTxnId())
+                  .txnAmount(currentStatus.getTxnAmount())
+                  .txnStatus(Transaction.TxnStatusEnum.PENDING)
+                  .gatewayTxnId(currentStatus.getGatewayTxnId())
+                  .gatewayPaymentMode(currentStatus.getGatewayTxnId())
+	               .build();
+
 	}
+	
 	@Override
 	public boolean isActive() {
 		// TODO Auto-generated method stub
