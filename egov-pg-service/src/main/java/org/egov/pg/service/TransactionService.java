@@ -87,7 +87,11 @@ public class TransactionService {
         else{
             URI uri = gatewayService.initiateTxn(transaction);
             transaction.setRedirectUrl(uri.toString());
-
+            if(uri.getRawQuery()!=null) {
+            String param = uri.getRawQuery();
+            String[] orderId=param.split("orderId=");
+            transaction.setGatewayTxnId(orderId[1]);
+            }
             dump.setTxnRequest(uri.toString());
         }
 
