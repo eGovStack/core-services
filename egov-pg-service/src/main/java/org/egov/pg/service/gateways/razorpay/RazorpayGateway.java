@@ -173,7 +173,7 @@ public class RazorpayGateway implements Gateway{
 			                    .gatewayPaymentMode(currentStatus.getGatewayTxnId())
 			            		.build();
 				}
-		       		}
+		       		
 					else if((ordernew.get(k).get("status").equals("captured")) || (order.get("status")).equals("paid")||(ordernew.get(k).get("status").equals("paid")))
 					{
 			            return Transaction.builder()
@@ -185,7 +185,7 @@ public class RazorpayGateway implements Gateway{
 			                    .build();
 				  }
 	              }
-	        	
+			}
 			
         } catch (Exception e){
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
