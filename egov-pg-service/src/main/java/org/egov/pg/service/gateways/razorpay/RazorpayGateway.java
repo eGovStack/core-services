@@ -176,6 +176,7 @@ public class RazorpayGateway implements Gateway{
 		       		
 					else if((ordernew.get(k).get("status").equals("captured")) || (order.get("status")).equals("paid")||(ordernew.get(k).get("status").equals("paid")))
 					{
+						log.info("************ Inside captured and paid status ***************");
 			            return Transaction.builder()
 			                    .txnId(currentStatus.getTxnId())
 			                    .txnAmount(currentStatus.getTxnAmount())
