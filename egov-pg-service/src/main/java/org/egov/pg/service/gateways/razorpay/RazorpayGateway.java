@@ -142,9 +142,12 @@ public class RazorpayGateway implements Gateway{
 				razorpay = new RazorpayClient(MERCHANT_ID,SECURE_SECRET);
 				 order = razorpay.Orders.fetch(currentStatus.getGatewayTxnId());
 		       		order.get("status");
+				log.info("Order id :"+currentStatus.getGatewayTxnId());
+				log.info("Order id status:"+order.get("status"));
 		       		ordernew = razorpay.Orders.fetchPayments(currentStatus.getGatewayTxnId());
 		       		if(ordernew.isEmpty() ||(order.get("status")).equals("created")|| (order.get("status").equals("attempted")))
 		       		{
+					log.info("************ Inside created and attempted status ***************");
 			            return Transaction.builder()
 			                    .txnId(currentStatus.getTxnId())
 			                    .txnAmount(currentStatus.getTxnAmount())
@@ -191,7 +194,7 @@ public class RazorpayGateway implements Gateway{
         } catch (Exception e){
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
-	
+	log.info("************ Inside PENDING status ***************");
     return Transaction.builder()
                   .txnId(currentStatus.getTxnId())
                   .txnAmount(currentStatus.getTxnAmount())
