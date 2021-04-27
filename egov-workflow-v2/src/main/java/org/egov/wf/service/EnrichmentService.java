@@ -227,6 +227,7 @@ public class EnrichmentService {
                         action.setUuid(UUID.randomUUID().toString());
                         action.setCurrentState(state.getUuid());
                         action.setTenantId(tenantId);
+                        action.setActive(true);
                     });
             });
             enrichNextState(businessService);
