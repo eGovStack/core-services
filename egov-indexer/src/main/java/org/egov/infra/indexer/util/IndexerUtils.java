@@ -3,6 +3,8 @@ package org.egov.infra.indexer.util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
+import com.github.zafarkhaja.semver.UnexpectedCharacterException;
+import com.github.zafarkhaja.semver.Version;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -41,6 +44,12 @@ public class IndexerUtils {
 
 	@Autowired
 	private ReindexConsumerConfig kafkaConsumerConfig;
+
+	private Version defaultSemVer;
+
+	@Value("${default.service.map.version}")
+	private String defaultVersion;
+
 
 	@Value("${egov.infra.indexer.host}")
 	private String esHostUrl;
@@ -65,6 +74,9 @@ public class IndexerUtils {
 
 	@Value("${topic.push.enabled}")
 	private Boolean topicPushEnable;
+
+	@Value("${id.timezone}")
+	private String timezone;
 
 	@Autowired
 	private IndexerProducer producer;
@@ -174,6 +186,7 @@ public class IndexerUtils {
 							queryParam = queryParamExpression[1].trim();
 						}
 					} catch (Exception e) {
+						log.error("Error while building URI: " + e.getMessage());
 						continue;
 					}
 					StringBuilder resolvedParam = new StringBuilder();
@@ -474,8 +487,8 @@ public class IndexerUtils {
 					String expression = getProcessedJsonPath(fieldJsonPath);
 					context.put(expression, expressionArray[expressionArray.length - 1], "XXXXXXXX");
 				} catch (Exception e) {
-					log.info("Exception while masking field: ", e);
-					log.info("Data: " + context.jsonString());
+					log.error("Exception while masking field: ", e);
+					log.error("Data: " + context.jsonString());
 				}
 			}
 			return context;
@@ -501,11 +514,11 @@ public class IndexerUtils {
 			}
 			Date date = new Date(Long.valueOf(convertEpochToLong(epochValue)));
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatter.setTimeZone(TimeZone.getTimeZone(timezone));
 			context.put("$", "@timestamp", formatter.format(date));
 		} catch (Exception e) {
-			log.info("Exception while adding timestamp: ",e);
-			log.info("Time stamp field: "+index.getTimeStampField());
+			log.error("Exception while adding timestamp: ",e);
+			log.error("Time stamp field: "+index.getTimeStampField());
 		}
 
 		return context;
@@ -522,8 +535,8 @@ public class IndexerUtils {
 		try {
 			encodedString = getObjectMapper().writeValueAsString(stringToBeEncoded);
 		} catch (Exception e) {
-			log.info("Exception while encoding non ascii characters ", e);
-			log.info("Data: " + stringToBeEncoded);
+			log.error("Exception while encoding non ascii characters ", e);
+			log.error("Data: " + stringToBeEncoded);
 			encodedString = stringToBeEncoded;
 		}
 		return encodedString;
@@ -676,6 +689,26 @@ public class IndexerUtils {
 			} catch (IOException e) {
 				log.error("Failed pushing data to the ES topic: " + topicName);
 			}
+		}
+	}
+
+	@PostConstruct
+	private void init(){
+		defaultSemVer = Version.valueOf(defaultVersion);
+	}
+
+	public Version getSemVer(String version) {
+		try {
+			if(version == null || version.equals("")) {
+				log.info("No version present in the API request, falling back to default version: " + defaultSemVer.toString());
+				return defaultSemVer;
+			}
+			else {
+				log.info("Version found in API request: " + version);
+				return Version.valueOf(version);
+			}
+		}catch (UnexpectedCharacterException e){
+			return defaultSemVer;
 		}
 	}
 }

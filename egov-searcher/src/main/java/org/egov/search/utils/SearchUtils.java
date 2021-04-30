@@ -99,7 +99,6 @@ public class SearchUtils {
 				
 				
 				Params param = paramsList.get(i);
-				Boolean isParamOffsetOrLimit = param.getName().equalsIgnoreCase("offset") || param.getName().equalsIgnoreCase("limit");
 				Object paramValue = null;
 			
 				try {
@@ -116,15 +115,14 @@ public class SearchUtils {
 						continue;
 
 				} catch (Exception e) {
+					log.error("Error while building where clause: " + e.getMessage());
 					continue;
 				}
 				
 				/**
 				 * Add and clause if necessary
 				 */
-				if (isParamOffsetOrLimit) {
-					whereClause.append(" ");
-				} else if (i > 0) {
+				if (i > 0) {
 					whereClause.append(" " + condition + " ");
 				}
 				
@@ -147,9 +145,8 @@ public class SearchUtils {
 
 					if (!validOperators.contains(operator)) {
 						operator = "=";
-					} else if (isParamOffsetOrLimit) {
-						operator = "";
 					}
+					
 					if (operator.equals("GE")) {
 						operator = ">=";
 					} else if (operator.equals("LE")) {
@@ -160,10 +157,12 @@ public class SearchUtils {
 
 						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
 					} else if (operator.equals("TOUPPERCASE")) {
-
+						
+						operator =  "=";
 						paramValue = ((String) paramValue).toUpperCase();
 					} else if (operator.equals("TOLOWERCASE")) {
 
+						operator =  "=";
 						paramValue = ((String) paramValue).toLowerCase();
 					}
 					
@@ -260,6 +259,7 @@ public class SearchUtils {
 					try{
 						result.add(obj.getValue());
 					}catch(Exception e){
+						log.error("Errow while adding object value to result: " + e.getMessage());
 						throw e;
 					}
 				}

@@ -3,6 +3,7 @@ package org.egov.wf.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -24,6 +25,7 @@ import static org.egov.wf.util.WorkflowConstants.UUID_REGEX;
 
 
 @Service
+@Slf4j
 public class EnrichmentService {
 
 
@@ -114,10 +116,19 @@ public class EnrichmentService {
      */
     public void enrichUsers(RequestInfo requestInfo,List<ProcessStateAndAction> processStateAndActions){
         List<String> uuids = new LinkedList<>();
+
         processStateAndActions.forEach(processStateAndAction -> {
+
             if(!CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest().getAssignes()))
                 uuids.addAll(processStateAndAction.getProcessInstanceFromRequest().getAssignes().stream().map(User::getUuid).collect(Collectors.toSet()));
             uuids.add(processStateAndAction.getProcessInstanceFromRequest().getAssigner().getUuid());
+
+            if(processStateAndAction.getProcessInstanceFromDb() != null){
+                if(!CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb().getAssignes())){
+                    uuids.addAll(processStateAndAction.getProcessInstanceFromDb().getAssignes().stream().map(User::getUuid).collect(Collectors.toSet()));
+                }
+            }
+
         });
 
 
@@ -133,6 +144,11 @@ public class EnrichmentService {
             // Setting Assigner
             if(processStateAndAction.getProcessInstanceFromRequest().getAssigner()!=null)
                 enrichAssigner(processStateAndAction.getProcessInstanceFromRequest(), idToUserMap, errorMap);
+
+            // Setting Assignes for previous processInstance
+            if(processStateAndAction.getProcessInstanceFromDb()!=null && !CollectionUtils.isEmpty(processStateAndAction.getProcessInstanceFromDb().getAssignes())){
+                enrichAssignes(processStateAndAction.getProcessInstanceFromDb(), idToUserMap, errorMap);
+            }
 
         });
         if(!errorMap.isEmpty())
@@ -179,7 +195,7 @@ public class EnrichmentService {
             try{
              processStateAndActions.addAll(transitionService.getProcessStateAndActions(entry.getValue(),false));}
             catch (Exception e){
-                e.printStackTrace();
+                log.error("Error while creating processStateAndActions",e);
             }
         }
 

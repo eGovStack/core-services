@@ -1,7 +1,15 @@
 
-
-# Changelog
 All notable changes to this module will be documented in this file.
+
+## 1.2.1 - 2021-02-26
+
+- Updated domain name in routes.properties
+
+## 1.2.0 - 2021-01-12
+
+- ZUUL METRIC CAPTURING ADDED
+
+## 1.2.0 
 
 ## 1.1.0 - 2020-06-22
 - Added typescript definition generation plugin
