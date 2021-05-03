@@ -1,6 +1,11 @@
 
 All notable changes to this module will be documented in this file.
 
+
+## 1.1.1 - 2021-03-17
+
+- Enabled localisation message search across all module based on localisation codes.
+
 ## 1.1.0 - 2020-06-22
 
 - Added typescript definition generation plugin

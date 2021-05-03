@@ -2,14 +2,14 @@ package org.egov;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-import org.egov.search.model.Params;
+import org.apache.commons.io.IOUtils;
 import org.egov.search.model.SearchDefinition;
 import org.egov.search.model.SearchDefinitions;
 import org.slf4j.Logger;
@@ -133,23 +133,19 @@ public class SearchApplicationRunnerImpl implements ApplicationRunner {
 
             for (String yamlLocation : ymlUrlS) {
                 Resource resource = resourceLoader.getResource(yamlLocation);
+                InputStream inputStream = null;
                 try {
-                    searchDefinitions = mapper.readValue(resource.getInputStream(), SearchDefinitions.class);
+                    inputStream = resource.getInputStream();
+                    searchDefinitions = mapper.readValue(inputStream, SearchDefinitions.class);
                     logger.info("Parsed search definition : " + searchDefinitions.getSearchDefinition().getModuleName());
                     
-                    searchDefinitions.getSearchDefinition().getDefinitions().forEach(definition -> {
-                    	
-                    	List<Params> params  = definition.getSearchParams().getParams();
-                    	List<String> keyNames = params.stream().map(Params::getName).collect(Collectors.toList());
-                    	if(!keyNames.containsAll(OffsetAndLimit)){
-                    		addOffsetAndLimit(params);
-                    	}
-                    });
                     map.put(searchDefinitions.getSearchDefinition().getModuleName(),
                             searchDefinitions.getSearchDefinition());
                 } catch (IOException e) {
                     log.error("Failed to load file - " + yamlLocation, e);
                     failed = true;
+                } finally {
+                    IOUtils.closeQuietly(inputStream);
                 }
             }
 
@@ -166,31 +162,6 @@ public class SearchApplicationRunnerImpl implements ApplicationRunner {
         }
         searchDefinitionMap = map;
     }
-
-    /**
-     *  Adds offset and limit with defalult value to query
-     * @param params
-     */
-    private void addOffsetAndLimit(List<Params> params) {
-
-    	Params paramOffset = Params.builder()
-    			.name("OFFSET")
-    			.isMandatory(true)
-    			.jsonPath("$.searchCriteria.offset")
-    			.operator("=")
-    			.build();
-    	
-    	Params paramLimit = Params.builder()
-    			.name("LIMIT")
-    			.isMandatory(true)
-    			.jsonPath("$.searchCriteria.limit")
-    			.operator("=")
-    			.build();
-    	
-    	params.add(paramOffset);
-    	params.add(paramLimit);
-    	
-	}
 
 	public ConcurrentHashMap<String, SearchDefinition> getSearchDefinitionMap() {
         return searchDefinitionMap;
