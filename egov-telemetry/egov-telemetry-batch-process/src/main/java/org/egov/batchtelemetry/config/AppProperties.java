@@ -4,8 +4,10 @@ package org.egov.batchtelemetry.config;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -47,11 +49,14 @@ public class AppProperties {
         outputTelemetrySessionsIndex = System.getenv("ES_OUTPUT_TELEMETRY_BATCH_INDEX");
 
         Properties properties = new Properties();
-
+        InputStream inputStream = null;
         try {
-            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+            inputStream = getClass().getClassLoader().getResourceAsStream("application.properties");
+            properties.load(inputStream);
         } catch (IOException e) {
             log.error("Error reading application.properties");
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
 
         if(sessionTimeout == null)

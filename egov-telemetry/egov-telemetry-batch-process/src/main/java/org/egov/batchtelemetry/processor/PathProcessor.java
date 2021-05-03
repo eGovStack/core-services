@@ -25,7 +25,7 @@ public class PathProcessor {
     private String kafkaTopic;
     private Producer producer;
     private Configuration configuration;
-    private String timezone;
+    private static String timezone;
 
 
     private List<InputPath> inputPaths;
