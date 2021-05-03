@@ -24,7 +24,7 @@ public class WorkflowQueryBuilder {
     private static final String CONCAT = " CONCAT ";
 
     private static final String QUERY = " SELECT pi.*,st.*,ac.*,doc.*,pi.id as wf_id,pi.lastModifiedTime as wf_lastModifiedTime,pi.createdTime as wf_createdTime,"
-            + "       pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status,"
+            + "       pi.createdBy as wf_createdBy,pi.lastModifiedBy as wf_lastModifiedBy,pi.status as pi_status, pi.tenantid as pi_tenantid, "
             + "       doc.lastModifiedTime as doc_lastModifiedTime,doc.createdTime as doc_createdTime,doc.createdBy as doc_createdBy,"
             + "       doc.lastModifiedBy as doc_lastModifiedBy,doc.tenantid as doc_tenantid,doc.id as doc_id,asg.assignee as assigneeuuid,"
             + "       st.uuid as st_uuid,st.tenantId as st_tenantId, ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.action as ac_action"
@@ -49,7 +49,7 @@ public class WorkflowQueryBuilder {
 
     private static final String COUNT_WRAPPER = "select count(DISTINCT wf_id) from ({INTERNAL_QUERY}) as count";
 
-    private static final String STATUS_COUNT_WRAPPER = "select  count(DISTINCT wf_id),cq.applicationStatus from ({INTERNAL_QUERY}) as cq GROUP BY cq.applicationStatus";
+    private static final String STATUS_COUNT_WRAPPER = "select  count(DISTINCT wf_id),cq.applicationStatus,cq.PI_STATUS as statusId from ({INTERNAL_QUERY}) as cq GROUP BY cq.applicationStatus,cq.PI_STATUS";
 
 
     private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
@@ -77,6 +77,17 @@ public class WorkflowQueryBuilder {
         if (!CollectionUtils.isEmpty(businessIds)) {
             builder.append(" and pi.businessId IN (").append(createQuery(businessIds)).append(")");
             addToPreparedStatement(preparedStmtList, businessIds);
+        }
+        
+        if(!StringUtils.isEmpty(criteria.getBusinessService())){
+        	builder.append(" AND pi.businessservice =? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+        
+        List<String> statuses = criteria.getStatus();
+        if (!CollectionUtils.isEmpty(statuses)) {
+            builder.append(" and CONCAT (pi.tenantid,':',pi.status)  IN (").append(createQuery(statuses)).append(")");
+            addToPreparedStatement(preparedStmtList, statuses);
         }
 
         return builder.toString();
