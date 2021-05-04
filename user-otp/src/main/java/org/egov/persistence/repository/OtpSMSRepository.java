@@ -82,8 +82,8 @@ public class OtpSMSRepository {
      *  as per the tenantIdStripSuffixCount. 
      *  Example:- If provided tenantid is X.Y.Z and tenantIdStripSuffixCount = 1 
      *  then this function return X.Y as  required tenant id for localisation.
-     *  Depend on the value of tenantIdStripSuffixCount, the level of tenantid 
-     *  is removed from suffix.
+     *  Depend on the value of tenantIdStripSuffixCount, the level of tenantid
+     *  is removed from suffix of provided tenant id.
      * 
      *  For tenantIdStripSuffixCount = 2 returns tenatId as X
      *  Similarly, for tenantIdStripSuffixCount = 3 or any other higher value
