@@ -84,17 +84,17 @@ public class TransactionService {
             transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
             paymentsService.registerPayment(transactionRequest);
         }
-        else{
-            URI uri = gatewayService.initiateTxn(transaction);
-            transaction.setRedirectUrl(uri.toString());
-            if(uri.getRawQuery()!=null) {
-            String param = uri.getRawQuery();
-            System.out.println("Razor Pay Transaction>>>"+param);
-            String[] orderId=param.split("orderId=");
-            transaction.setGatewayTxnId(orderId[1]);
-            }
-            dump.setTxnRequest(uri.toString());
-        }
+		else {
+			URI uri = gatewayService.initiateTxn(transaction);
+			transaction.setRedirectUrl(uri.toString());
+			if (uri.getRawQuery() != null) {
+				String param = uri.getRawQuery();
+				String[] orderId = param.split("orderId=");
+				if (orderId.length > 0)
+					transaction.setGatewayTxnId(orderId[1]);
+			}
+			dump.setTxnRequest(uri.toString());
+		}
 
         // Persist transaction and transaction dump objects
         producer.push(appProperties.getSaveTxnTopic(), new org.egov.pg.models.TransactionRequest
