@@ -28,8 +28,8 @@ public class OtpSMSRepository {
     @Value("${expiry.time.for.otp: 4000}")
     private long maxExecutionTime=2000L;
 
-    @Value("${egov.tenantid.localisation.index}")
-    private int tenantIdIndex;
+    @Value("${egov.localisation.tenantid.strip.suffix.count}")
+    private int tenantIdStripSuffixCount;
 
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
     private String smsTopic;
@@ -77,18 +77,41 @@ public class OtpSMSRepository {
         return message;
     }
 
-    private String getRequiredTenantId(String tenantId){
+    /**
+     *  getRequiredTenantId() method return tenatid for loclisation 
+     *  as per the tenantIdStripSuffixCount. 
+     *  Example:- If provided tenantid is X.Y.Z and tenantIdStripSuffixCount = 1 
+     *  then this function return X.Y as  required tenant id for localisation.
+     *  Depend on the value of tenantIdStripSuffixCount, the level of tenantid 
+     *  is removed from suffix.
+     * 
+     *  For tenantIdStripSuffixCount = 2 returns tenatId as X
+     *  Similarly, for tenantIdStripSuffixCount = 3 or any other higher value
+     *  will return top level tenantId (In this case it will return X as tenantId) 
+     * 
+     *  For tenantIdStripSuffixCount = 0 return tenantId as X.Y.Z
+     *  here tenantIdStripSuffixCount as 0 means no cut from suffix.
+     *  
+     * 
+     * @param tenantId tenantId of the PT
+     *  
+     * @return Return tenantid for localisation
+     */
+
+    private String getRequiredTenantId(String tenantId) {
         String[] tenantList = tenantId.split("\\.");
-        if(tenantIdIndex>0 && tenantIdIndex<tenantList.length){   // handeled case if tenantIdIndex is in between 0 and tenantList size (excluding 0 & tenantList size)
-            int cutIndex = tenantList.length - tenantIdIndex;
-            String requriedTenantId = tenantList[0];
+        if(tenantIdStripSuffixCount>0 && tenantIdStripSuffixCount<tenantList.length) {    // handeled case if tenantIdStripSuffixCount 
+            int cutIndex = tenantList.length - tenantIdStripSuffixCount;                  // is in between 0 and tenantList size 
+            String requriedTenantId = tenantList[0];                                      // (excluding 0 & tenantList size)
             for(int idx =1; idx<cutIndex; idx++)
                 requriedTenantId = requriedTenantId + "." + tenantList[idx];
+
             return requriedTenantId;
         }
-        else if(tenantIdIndex>=tenantList.length)                // handled case if tenantIdIndex is greater than or equal to tenantList size
-            return tenantList[0];
-        else                                                    // handled case if tenantIdIndex is less than or equal to 0
-            return tenantId;
-    }
+        else if(tenantIdStripSuffixCount>=tenantList.length)                              // handled case if tenantIdStripSuffixCount
+            return tenantList[0];                                                         // is greater than or equal to tenantList size  
+        else                                                                            
+            return tenantId;                                                              // handled case if tenantIdStripSuffixCount    
+                                                                                          // is less than or equal to 0
+        }
 }
