@@ -28,12 +28,8 @@ public class OtpSMSRepository {
     @Value("${expiry.time.for.otp: 4000}")
     private long maxExecutionTime=2000L;
 
-    @Value("${egov.state.level.localisation.required}")
-    private Boolean isStateLevelLocalisationRequired;
-
-    @Value("${state.level.tenant.id}")
-    private String stateLevelTenantId;
-
+    @Value("${egov.tenantid.localisation.index}")
+    private int tenantIdIndex;
 
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
     private String smsTopic;
@@ -61,7 +57,7 @@ public class OtpSMSRepository {
     }
 
     private String getMessageFormat(OtpRequest otpRequest) {
-        String tenantId = isStateLevelLocalisationRequired ? stateLevelTenantId:otpRequest.getTenantId();
+        String tenantId = getRequiredTenantId(otpRequest.getTenantId());
         Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(tenantId, "en_IN", "egov-user");
         if (localisedMsgs.isEmpty()) {
             log.info("Localization Service didn't return any msgs so using default...");
@@ -79,5 +75,20 @@ public class OtpSMSRepository {
             message = localisedMsgs.get(LOCALIZATION_KEY_PWD_RESET_SMS);
 
         return message;
+    }
+
+    private String getRequiredTenantId(String tenantId){
+        String[] tenantList = tenantId.split("\\.");
+        if(tenantIdIndex>0 && tenantIdIndex<tenantList.length){   // handeled case if tenantIdIndex is in between 0 and tenantList size (excluding 0 & tenantList size)
+            int cutIndex = tenantList.length - tenantIdIndex;
+            String requriedTenantId = tenantList[0];
+            for(int idx =1; idx<cutIndex; idx++)
+                requriedTenantId = requriedTenantId + "." + tenantList[idx];
+            return requriedTenantId;
+        }
+        else if(tenantIdIndex>=tenantList.length)                // handled case if tenantIdIndex is greater than or equal to tenantList size
+            return tenantList[0];
+        else                                                    // handled case if tenantIdIndex is less than or equal to 0
+            return tenantId;
     }
 }
