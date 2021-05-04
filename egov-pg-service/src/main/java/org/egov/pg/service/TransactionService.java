@@ -89,6 +89,7 @@ public class TransactionService {
             transaction.setRedirectUrl(uri.toString());
             if(uri.getRawQuery()!=null) {
             String param = uri.getRawQuery();
+            System.out.println("Razor Pay Transaction>>>"+param);
             String[] orderId=param.split("orderId=");
             transaction.setGatewayTxnId(orderId[1]);
             }
