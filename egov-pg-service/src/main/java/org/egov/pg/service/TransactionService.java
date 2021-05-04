@@ -90,7 +90,7 @@ public class TransactionService {
 			if (uri.getRawQuery() != null) {
 				String param = uri.getRawQuery();
 				String[] orderId = param.split("orderId=");
-				if (orderId!=null && orderId.length > 0)
+				if (orderId!=null && orderId.length > 1)
 					transaction.setGatewayTxnId(orderId[1]);
 			}
 			dump.setTxnRequest(uri.toString());
