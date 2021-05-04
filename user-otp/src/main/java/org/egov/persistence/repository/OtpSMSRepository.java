@@ -28,6 +28,12 @@ public class OtpSMSRepository {
     @Value("${expiry.time.for.otp: 4000}")
     private long maxExecutionTime=2000L;
 
+    @Value("${egov.state.level.localisation.required}")
+    private Boolean isStateLevelLocalisationRequired;
+
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+
 
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
     private String smsTopic;
@@ -55,7 +61,8 @@ public class OtpSMSRepository {
     }
 
     private String getMessageFormat(OtpRequest otpRequest) {
-        Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(otpRequest.getTenantId(), "en_IN", "egov-user");
+        String tenantId = isStateLevelLocalisationRequired ? stateLevelTenantId:otpRequest.getTenantId();
+        Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(tenantId, "en_IN", "egov-user");
         if (localisedMsgs.isEmpty()) {
             log.info("Localization Service didn't return any msgs so using default...");
             localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
