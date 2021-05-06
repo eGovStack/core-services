@@ -1,6 +1,8 @@
 package org.egov.utils;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +47,7 @@ public class RoutingConfig {
 				}
 			}
 			log.info("loadYaml service: " + tenantRoutingConfigWrapper.toString());
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		// return teanantRoutingConfig;

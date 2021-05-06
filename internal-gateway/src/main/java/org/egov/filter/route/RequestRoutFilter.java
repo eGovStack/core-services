@@ -47,7 +47,6 @@ public class RequestRoutFilter extends ZuulFilter {
 							url = new URL(routingHost);
 							ctx.setRouteHost(url);
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						break;
