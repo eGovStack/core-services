@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.4 - 2021-05-11
+- Fixed security issue.
+
 ## 1.1.3 - 2021-03-17
 - Optimisied the service by reducing the localisation service call
 
