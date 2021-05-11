@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.3 - 2021-05-11
+
+- Changes to error handling
+- Added statelevel flag for localization
+
 ## 1.1.2 - 2021-05-04
 
 - Added environment variable `egov.localisation.tenantid.strip.suffix.count` to get required tenantid for localisation

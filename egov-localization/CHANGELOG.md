@@ -1,6 +1,9 @@
 
 All notable changes to this module will be documented in this file.
 
+## 1.1.2 - 2021-05-11
+
+- Added html and size valiations on input
 
 ## 1.1.1 - 2021-03-17
 

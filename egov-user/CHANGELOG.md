@@ -6,6 +6,8 @@ All notable changes to this module will be documented in this file.
 - added html validations on input fields
 - replaced OTHER with TRANSGENDER in gender enum
 - corrections to error handling
+- updated LOCALSETUP.md
+
 
 
 ## 1.2.3 - 2021-02-26
