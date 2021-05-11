@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.2.4 - 2021-05-11
+- added permanentCity in oAuth response
+- added html validations on input fields
+- replaced OTHER with TRANSGENDER in gender enum
+- corrections to error handling
+
+
 ## 1.2.3 - 2021-02-26
 - Updated domain name in application.properties
 - Added size validations
