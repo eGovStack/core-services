@@ -166,7 +166,7 @@ export const getValue = (value, defaultValue, path) => {
 
 export const convertFooterStringtoFunctionIfExist = (footer) => {
   if (footer != undefined) {
-    footer = eval(footer);
+    footer = Function(`'use strict'; return (${footer})`)();
   }
   return footer;
 };
