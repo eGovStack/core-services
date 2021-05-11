@@ -708,7 +708,7 @@ const handleDerivedMapping = (dataconfig, variableTovalueMap) => {
         variableTovalueMap
       )
       .replace(/NA/g, "0");
-    variableTovalueMap[mapping.variable] = eval(expression);
+    variableTovalueMap[mapping.variable] = Function(`'use strict'; return (${expression})`)();
   }
 };
 
