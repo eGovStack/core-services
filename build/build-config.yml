@@ -171,6 +171,12 @@ config:
       - work-dir: "zuul"
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/core-services/zuul"
+    build:
+      - work-dir: "zuul"
+        image-name: "zuul"
+        dockerfile: "build/maven/Dockerfile"
         
   - name: "builds/core-services/egov-user-event"
     build:
