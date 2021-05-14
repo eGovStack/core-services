@@ -39,9 +39,12 @@ public class MDMSService {
      * @return MDMSCriteria for search call
      */
     private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId){
-        ModuleDetail wfModuleDetail = getWorkflowMDMSDetail();
+        ModuleDetail escalationDetail = getAutoEscalationConfig();
+        ModuleDetail tenantDetail = getTenants();
 
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(wfModuleDetail))
+        List<ModuleDetail> moduleDetails = new LinkedList<>(Arrays.asList(escalationDetail,tenantDetail));
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails)
                 .tenantId(tenantId)
                 .build();
 
@@ -68,6 +71,39 @@ public class MDMSService {
         return wfModuleDtls;
     }
 
+    /**
+     * Creates MDMS ModuleDetail object for AutoEscalation
+     * @return ModuleDetail for AutoEscalation
+     */
+    private ModuleDetail getAutoEscalationConfig() {
+
+        // master details for WF module
+        List<MasterDetail> masterDetails = new ArrayList<>();
+
+        masterDetails.add(MasterDetail.builder().name(MDMS_AUTOESCALTION).build());
+
+        ModuleDetail wfModuleDtls = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(MDMS_WORKFLOW).build();
+
+        return wfModuleDtls;
+    }
+
+    /**
+     * Creates MDMS ModuleDetail object for tenants
+     * @return ModuleDetail for tenants
+     */
+    private ModuleDetail getTenants() {
+
+        // master details for WF module
+        List<MasterDetail> masterDetails = new ArrayList<>();
+
+        masterDetails.add(MasterDetail.builder().name(MDMS_TENANTS).build());
+
+        ModuleDetail wfModuleDtls = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(MDMS_MODULE_TENANT).build();
+
+        return wfModuleDtls;
+    }
 
 
 

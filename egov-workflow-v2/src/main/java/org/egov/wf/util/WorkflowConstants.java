@@ -16,6 +16,15 @@ public class WorkflowConstants {
 
     public static final String MDMS_BUSINESSSERVICE= "BusinessService";
 
+    public static final String MDMS_AUTOESCALTION= "AutoEscalation";
+
+    public static final String JSONPATH_AUTOESCALTION = "$.MdmsRes.Workflow.AutoEscalation";
+
+
+    public static final String MDMS_MODULE_TENANT= "tenant";
+
+    public static final String MDMS_TENANTS= "tenants";
+
     public static final String MDMS_ALLOWED_ROLES_ALL_SERVICES = "$..roles";
 
     public static final String MDMS_ALLOWED_ROLES= "$.BusinessService[?(@.businessService=='NewTL')]..roles";
