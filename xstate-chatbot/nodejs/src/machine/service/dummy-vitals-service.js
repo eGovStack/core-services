@@ -1,6 +1,6 @@
 class VitalsService {
 
-  async addVitals(vitals) {
+  async addVitals(user, vitals) {
     console.log(JSON.stringify(vitals));
   }
 
