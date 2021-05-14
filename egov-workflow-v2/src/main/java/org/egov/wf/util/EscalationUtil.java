@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.egov.wf.util.WorkflowConstants.JSONPATH_AUTOESCALTION;
+import static org.egov.wf.util.WorkflowConstants.JSONPATH_TEANANTIDS;
 
 @Component
 public class EscalationUtil {
@@ -55,14 +56,13 @@ public class EscalationUtil {
 
 
     /**
-     * Enriches the state uuid based on the statusCode sent
+     * Return the state uuid based on the statusCode sent
      * @param statusCode
-     * @param criteria
+     * @param tenantId
+     * @param businessService
      */
-    public void enrichStatusUUID(String statusCode, EscalationSearchCriteria criteria){
+    public String getStatusUUID(String statusCode, String tenantId, String businessService){
 
-        String tenantId = criteria.getTenantId();
-        String businessService = criteria.getBusinessService();
 
         BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
         businessServiceSearchCriteria.setTenantIds(Collections.singletonList(tenantId));
@@ -87,7 +87,7 @@ public class EscalationUtil {
             throw new CustomException("STATUS_NOT_FOUND","No uuid found for tenantId: "+tenantId+" and status: "+statusCode);
         }
 
-        criteria.setStatus(uuid);
+        return uuid;
 
     }
 
@@ -144,6 +144,18 @@ public class EscalationUtil {
         return escalations;
     }
 
+
+    /**
+     * Get's the list of tenantIds from tenant master data
+     * @param mdmsData
+     * @return
+     */
+    public List<String> getTenantIds(Object mdmsData){
+
+        List<String> tenantIds = JsonPath.read(mdmsData, JSONPATH_TEANANTIDS);
+        return tenantIds;
+
+    }
 
 
 }

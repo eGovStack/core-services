@@ -23,13 +23,29 @@ public class MDMSService {
 
    private ServiceRequestRepository serviceRequestRepository;
 
+   private WorkflowConfig workflowConfig;
 
-   @Autowired
-    public MDMSService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository) {
+
+    @Autowired
+    public MDMSService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository, WorkflowConfig workflowConfig) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.workflowConfig = workflowConfig;
     }
 
+
+
+
+    /**
+     * Calls MDMS service to fetch master data
+     * @param requestInfo
+     * @return
+     */
+    public Object mDMSCall(RequestInfo requestInfo){
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo,workflowConfig.getStateLevelTenantId());
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
 
 
     /**
