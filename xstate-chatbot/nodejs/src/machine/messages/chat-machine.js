@@ -20,7 +20,27 @@ let messages = {
       },
     },
   },
-  
+  menu: {
+    prompt: {
+      preamble: {
+        en_IN: 'What would you like to do?',
+      },
+      options: {
+        list: [ 'covidInfo', 'addVitals' ],
+        messageBundle: {
+          covidInfo: {
+            en_IN: 'Get Covid related information',
+          },
+          addVitals: {
+            en_IN: 'Register my vitals',
+          },
+        },
+      },
+    },
+  },
+  covidInfo: {
+    en_IN: 'Covid related information'
+  }
 };
 
 module.exports = messages;
