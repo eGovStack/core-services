@@ -206,7 +206,7 @@ const vitalsFlow = {
     addVitals: {
       id: 'addVitals',
       invoke: {
-        src: (context) => vitalsService.addVitals(context.slots.vitals),
+        src: (context) => vitalsService.addVitals(context.user, context.slots.vitals),
         onDone: {
           actions: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.addVitals, context.user.locale));
