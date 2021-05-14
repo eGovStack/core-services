@@ -38,6 +38,12 @@ const envVariables = {
         apikey: process.env.GUPSHUP_API_KEY || ''
     },
 
+    valueFirstWhatsAppProvider: {
+        valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
+        valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
+        valueFirstURL: process.env.VALUEFIRST_SEND_MESSAGE_URL || 'https://api.myvaluefirst.com/psms/servlet/psms.JsonEservice',
+    },
+
     kafka: {
         kafkaBootstrapServer: process.env.KAFKA_BOOTSTRAP_SERVER || 'localhost:9092',
         chatbotTelemetryTopic: process.env.CHATBOT_TELEMETRY_TOPIC || 'chatbot-telemetry-v2',
