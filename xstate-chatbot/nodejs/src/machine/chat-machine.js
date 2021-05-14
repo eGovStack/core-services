@@ -5,9 +5,6 @@ const messages = require('./messages/chat-machine');
 
 const chatStateMachine = Machine({
   id: 'chatMachine',
-  onEntry: assign((context, event) => {
-    console.log('asd');
-  }),
   initial: 'start',
   on: {
     USER_RESET: {
@@ -18,6 +15,9 @@ const chatStateMachine = Machine({
   states: {
     start: {
       id: 'start',
+      onEntry: assign((context, event) => {
+        context.slots = {};
+      }),
       on: {
         USER_MESSAGE: 'selectLanguage'
       }
@@ -115,7 +115,7 @@ const chatStateMachine = Machine({
     vitalsFlow: vitalsFlow,
     endstate: {
       id: 'endstate',
-      always: 'start'
+      always: '#start'
     }
   }
 });

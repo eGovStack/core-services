@@ -2,7 +2,7 @@ let messages = {
   selectLanguage: {
     prompt: {
       preamble: {
-        en_IN: 'Hi there! Welcome to the Punjab Cova! Please select your preferred language.',
+        en_IN: 'Hi there! Welcome to the Cova! Please select your preferred language.',
       },
       options: {
         list: [ 'en_IN', 'hi_IN', 'pa_IN' ],
