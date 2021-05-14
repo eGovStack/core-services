@@ -14,7 +14,7 @@ let messages = {
             en_IN: 'हिंदी',
           },
           pa_IN: {
-            en_IN: 'ਪੰਜਾਬੀ'
+            en_IN: 'ਪੰਜਾਬੀ',
           },
         },
       },
@@ -39,7 +39,7 @@ let messages = {
     },
   },
   covidInfo: {
-    en_IN: 'Covid related information'
+    en_IN: 'Covid related information',
   }
 };
 

@@ -34,7 +34,7 @@ const envVariables = {
     },
 
     gupshup: {
-        botname: process.env.GUPSHUP_BOT_NAME || 'SwasthAppBot',
+        botname: process.env.GUPSHUP_BOT_NAME || 'CovaChatbot',
         apikey: process.env.GUPSHUP_API_KEY || ''
     },
 
