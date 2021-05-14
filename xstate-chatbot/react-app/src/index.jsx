@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Chat } from '@progress/kendo-react-conversational-ui';
 
 import { interpret } from 'xstate';
-import chatbotMachine from '../../nodejs/src/machine/seva';
+import chatbotMachine from '../../nodejs/src/machine/chat-machine';
 
 function MessageTemplate(props) {
     let message = props.item.text;

@@ -21,7 +21,7 @@ class Telemetry {
             messages: JSON.stringify(object)
         } ]
 
-        producer.send(payloads, function(err, data) {});
+        // producer.send(payloads, function(err, data) {});
     }
 };
 

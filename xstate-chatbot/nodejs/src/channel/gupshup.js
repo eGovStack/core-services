@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 require('url-search-params-polyfill');
+const config = require('../env-variables');
 
 //This is a template file for whatsapp provider integration.
 //Refer to this file for onboarding of new whatsapp provider to the chatbot service.
@@ -9,6 +10,10 @@ class GupShupWhatsAppProvider {
     processMessageFromUser(req) {
         let reformattedMessage = {}
         let requestBody = req.body;
+
+        if(requestBody.type != 'message') {
+            return undefined;
+        }
         
         let type = requestBody.payload.type;
         let input;
@@ -30,7 +35,7 @@ class GupShupWhatsAppProvider {
         return reformattedMessage;
     }
 
-    sendMessageToUser(user, outputMessages) {
+    async sendMessageToUser(user, outputMessages) {
         if(!Array.isArray(outputMessages)) {
             let message = outputMessages;
             outputMessages = [ message ];
@@ -43,15 +48,15 @@ class GupShupWhatsAppProvider {
 
             let headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'apiKey': ""
+                'apiKey': config.gupshup.apikey
             }
 
             var urlSearchParams = new URLSearchParams();
             
             urlSearchParams.append("channel", "whatsapp");
-            urlSearchParams.append("source", "917834811114");
+            urlSearchParams.append("source", config.whatsAppBusinessNumber);
             urlSearchParams.append("destination", '91' + phone);
-            urlSearchParams.append("src.name", "mSevaChatbot");
+            urlSearchParams.append("src.name", config.gupshup.botname);
             urlSearchParams.append("message", message);
 
             var request = {
@@ -60,7 +65,7 @@ class GupShupWhatsAppProvider {
                 body: urlSearchParams
             }
 
-            fetch(url, request);
+            await fetch(url, request);
         }
     }
 }

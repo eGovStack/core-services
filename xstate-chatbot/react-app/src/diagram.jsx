@@ -4,7 +4,7 @@ import { Chat } from '@progress/kendo-react-conversational-ui';
 
 import { interpret } from 'xstate';
 import { inspect } from '@xstate/inspect';
-import chatbotMachine from '../../nodejs/src/machine/seva';
+import chatbotMachine from '../../nodejs/src/machine/chat-machine';
 
 import * as marked from 'marked';
 

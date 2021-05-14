@@ -3,16 +3,30 @@ const express = require('express'),
     config = require('../../env-variables'),
     sessionManager = require('../../session/session-manager'),
     channelProvider = require('../');
+    remindersService = require('../../machine/notifications/reminders-service');
 
 router.post('/message', async (req, res) =>  {
+    processHttpRequest(req, res);
+});
+
+router.get('/message', async (req, res) =>  {
+    processHttpRequest(req, res);
+});
+
+router.post('/reminder', async (req, res) =>  {
+  remindersService.triggerReminders();
+});
+
+async function processHttpRequest(req, res) {
     try {
         let reformattedMessage = await channelProvider.processMessageFromUser(req);
-        sessionManager.fromUser(reformattedMessage);
+        if(reformattedMessage)
+            sessionManager.fromUser(reformattedMessage);
     } catch(e) {
         console.log(e);
     }
     res.end();
-});
+}
 
 router.get('/health', (req, res) => res.sendStatus(200));
 
