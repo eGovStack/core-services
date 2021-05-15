@@ -21,33 +21,44 @@ const messages = {
     }
   },
   symptoms: {
-    preamble: {
-      en_IN: 'Are you experienceing any of the following symptoms',
+    lossOfSmellTaste: {
+      prompt: {
+        en_IN: 'Are you experiencing loss of smell or taste?',
+      },
     },
-    postscript: {
-      en_IN: '\n\nPlease enter the numbers corresponding to your symptoms separated by comma(,). If you aren\'t experiencing any of the symptoms, please enter 0.'
+    fluLikeSymptoms: {
+      prompt: {
+        en_IN: 'Do you have any flu like symptoms?',
+      },
     },
-    options: {
-      list: [ 'lostSmellTaste', 'flu', 'respiratory', 'comorbidities' ],
-      messageBundle: {
-        lostSmellTaste: {
-          en_IN: 'Loss of smell and taste',
-        },
-        flu: {
-          en_IN: 'Flu like symptoms',
-        },
-        respiratory: {
-          en_IN: 'Respiratory symptoms',
-        },
-        comorbidities: {
-          en_IN: 'Comorbidities',
-        }
-      }
-    }
+    respiratoryIssues: {
+      prompt: {
+        en_IN: 'Are you having any respiratory issues?',
+      },
+    },
+    comorbidities: {
+      prompt: {
+        en_IN: 'Do you have any comorbidities?',
+      },
+    },
   },
   addVitals: {
     en_IN: 'Your vitals have been registered successfully'
   }
 };
 
-module.exports = messages;
+const grammers = {
+  binaryChoice: {
+    prompt: {
+      en_IN: '\n1. Yes\n2. No',
+      hi_IN: '\n1. हाँ \n2. नहीं',
+    },
+    grammer: [
+      { intention: true, recognize: ['1'] },
+      { intention: false, recognize: ['2'] },
+    ],
+  },
+};
+
+module.exports.messages = messages;
+module.exports.grammers = grammers;

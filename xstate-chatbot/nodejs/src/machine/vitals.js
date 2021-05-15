@@ -1,6 +1,6 @@
 const { assign, actions } = require('xstate');
 const dialog = require('./util/dialog');
-const messages = require('./messages/vitals');
+const { messages, grammers } = require('./messages/vitals');
 const { personService, vitalsService } = require('./service/service-loader');
 
 const vitalsFlow = {
@@ -154,53 +154,171 @@ const vitalsFlow = {
     }, // spo2
     symptoms: {
       id: 'symptoms',
-      initial: 'prompt',
+      initial: 'lossOfSmellTaste',
+      onEntry: assign((context, event) => {
+        context.slots.vitals.symptoms = {};
+      }),
       states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            let message = dialog.get_message(messages.symptoms.preamble, context.user.locale);
-            let { prompt, grammer } = dialog.constructListPromptAndGrammer(messages.symptoms.options.list, messages.symptoms.options.messageBundle, context.user.locale);
-            context.grammer = grammer;
-            message += prompt;
-            message += dialog.get_message(messages.symptoms.postscript, context.user.locale);
-            dialog.sendMessage(context, message);
-          }),
-          on: {
-            USER_MESSAGE: 'process'
+        lossOfSmellTaste: {
+          id: 'lossOfSmellTaste',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                context.grammer = grammers.binaryChoice.grammer;
+                let message = dialog.get_message(messages.symptoms.lossOfSmellTaste.prompt, context.user.locale);
+                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.lossOfSmellTaste = context.intention;
+                  }),
+                  target: '#fluLikeSymptoms'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
           }
         },
-        process: {
-          onEntry: assign((context, event) => {
-            let input = dialog.get_input(event);
-            if(input == '0') {
-              context.slots.vitals.symptoms = [];
-            } else {
-              let choices = input.split(',');
-              let symptoms = [];
-              for(let choice of choices) {
-                let intention = dialog.get_intention(context.grammer, {message: {input: choice}}, true);
-                symptoms.push(intention);
+        fluLikeSymptoms: {
+          id: 'fluLikeSymptoms',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                context.grammer = grammers.binaryChoice.grammer;
+                let message = dialog.get_message(messages.symptoms.fluLikeSymptoms.prompt, context.user.locale);
+                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
               }
-              if(!symptoms.includes(dialog.INTENTION_UNKOWN))
-                context.slots.vitals.symptoms = symptoms;
-            }
-          }),
-          always: [
-            {
-              cond: (context) => context.slots.vitals.symptoms !== undefined,
-              target: '#addVitals'
             },
-            {
-              target: 'error'
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.fluLikeSymptoms = context.intention;
+                  }),
+                  target: '#respiratoryIssues'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
             }
-          ]
+          }
         },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
-          }),
-          always: 'prompt'
-        }
+        respiratoryIssues: {
+          id: 'respiratoryIssues',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                context.grammer = grammers.binaryChoice.grammer;
+                let message = dialog.get_message(messages.symptoms.respiratoryIssues.prompt, context.user.locale);
+                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                  }),
+                  target: '#comorbidities'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
+        comorbidities: {
+          id: 'comorbidities',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                context.grammer = grammers.binaryChoice.grammer;
+                let message = dialog.get_message(messages.symptoms.comorbidities.prompt, context.user.locale);
+                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.comorbidities = context.intention;
+                  }),
+                  target: '#addVitals'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
       }
     }, // symptoms
     addVitals: {

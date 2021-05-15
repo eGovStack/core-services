@@ -19,10 +19,10 @@ class VitalsService {
     urlSearchParams.append("pulserate",         vitals.pulse);
     urlSearchParams.append("spo2level",         vitals.spo2);
     urlSearchParams.append("current_temp",      vitals.temprature);
-    urlSearchParams.append("Comorbidities",     vitals.comorbidities);
-    urlSearchParams.append("FluLikeSymptoms",   symptoms.has("flu"));
-    urlSearchParams.append("LossOfSmellTaste",  symptoms.has("lostSmellTaste"));
-    urlSearchParams.append("RespiratoryIssues", symptoms.has("respiratoryIssues"));
+    urlSearchParams.append("Comorbidities",     symptoms.comorbidities);
+    urlSearchParams.append("FluLikeSymptoms",   symptoms.fluLikeSymptoms);
+    urlSearchParams.append("LossOfSmellTaste",  symptoms.lossOfSmellTaste);
+    urlSearchParams.append("RespiratoryIssues", symptoms.respiratoryIssues);
     urlSearchParams.append("NeedsDoctorCall",   vitals.NeedsDoctorCall);
     urlSearchParams.append("Remarks",           vitals.remarks);
 
