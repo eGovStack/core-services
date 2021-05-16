@@ -1,5 +1,6 @@
 const { Machine, assign, actions } = require('xstate');
 const dialog = require('./util/dialog.js');
+const covidInfoFlow = require('./covid-info');
 const vitalsFlow = require('./vitals');
 const messages = require('./messages/chat-machine');
 
@@ -86,7 +87,7 @@ const chatStateMachine = Machine({
           always: [
             {
               cond: (context) => context.intention == 'covidInfo',
-              target: '#covidInfo'
+              target: '#covidInfoFlow'
             },
             {
               cond: (context) => context.intention == 'addVitals',
@@ -105,13 +106,7 @@ const chatStateMachine = Machine({
         }
       }
     }, // menu
-    covidInfo: {
-      id: 'covidInfo',
-      onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.covidInfo, context.user.locale));
-      }),
-      always: '#endstate'
-    },
+    covidInfoFlow: covidInfoFlow,
     vitalsFlow: vitalsFlow,
     endstate: {
       id: 'endstate',

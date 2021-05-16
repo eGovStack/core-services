@@ -4,7 +4,7 @@ const messages = {
   },
   temperature: {
     prompt: {
-      en_IN: 'Please enter your temperature',
+      en_IN: 'Please enter your body temperature',
     },
     error: {
       en_IN: 'Temperature should be between 92 and 108',
@@ -17,7 +17,7 @@ const messages = {
   },
   spo2: {
     prompt: {
-      en_IN: 'Please enter your SpO2 level',
+      en_IN: 'Please enter your SpO2 level. In case Oximeter is not available send 0.',
     }
   },
   symptoms: {
@@ -33,12 +33,12 @@ const messages = {
     },
     respiratoryIssues: {
       prompt: {
-        en_IN: 'Are you having any respiratory issues?',
+        en_IN: 'Are you having any respiratory issues? (Note time by holding your breath. If it is less than before please report)',
       },
     },
     comorbidities: {
       prompt: {
-        en_IN: 'Do you have any comorbidities?',
+        en_IN: 'Do you have any comorbidities? (Pre existing medical Conditions like Diabetes, Heart Problem, Hypertension or any other disease)',
       },
     },
   },

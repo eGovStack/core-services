@@ -1,3 +1,6 @@
+const fetch = require("node-fetch");
+const config = require("../../env-variables");
+
 class VitalsService {
 
   async addVitals(user, vitals) {

@@ -87,7 +87,7 @@ const vitalsFlow = {
         process: {
           onEntry: assign((context, event) => {
             let pulse = parseInt(dialog.get_input(event));
-            if(pulse >= 50 && pulse <= 300) {
+            if(pulse >= 10 && pulse <= 500) {
               context.isValid = true;
               context.slots.vitals.pulse = pulse;
             } else {
@@ -127,7 +127,7 @@ const vitalsFlow = {
         process: {
           onEntry: assign((context, event) => {
             let spo2 = parseInt(dialog.get_input(event));
-            if(spo2 >= 50 && spo2 <= 100) {
+            if(spo2 >= 0 && spo2 <= 100) {
               context.isValid = true;
               context.slots.vitals.spo2 = spo2;
             } else {

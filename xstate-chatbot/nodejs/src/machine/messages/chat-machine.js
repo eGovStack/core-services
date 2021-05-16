@@ -2,10 +2,10 @@ let messages = {
   selectLanguage: {
     prompt: {
       preamble: {
-        en_IN: 'Hi there! Welcome to the Cova! Please select your preferred language.',
+        en_IN: 'Sat Sri Akal ! Welcome to the COVID-19 Chatbot of Punjab Government Fateh Mission (For more information please download COVA app). Fateh Mission has set me up to assist you with your COVID-19 questions and concerns. Please select your preferred language.',
       },
       options: {
-        list: [ 'en_IN', 'hi_IN', 'pa_IN' ],
+        list: [ 'pa_IN', 'en_IN', ],
         messageBundle: {
           en_IN: {
             en_IN: 'English',
@@ -29,7 +29,7 @@ let messages = {
         list: [ 'covidInfo', 'addVitals' ],
         messageBundle: {
           covidInfo: {
-            en_IN: 'Get Covid related information',
+            en_IN: ' Get information about Covid',
           },
           addVitals: {
             en_IN: 'Register my vitals',
@@ -38,9 +38,6 @@ let messages = {
       },
     },
   },
-  covidInfo: {
-    en_IN: 'Covid related information',
-  }
 };
 
 module.exports = messages;
