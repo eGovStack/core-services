@@ -27,7 +27,7 @@ const messages = {
     en_IN: 'You can find detailed information regarding Self Care in COVID-19 here https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf. \nPlease follow these simple tips to stay healthy and safe!'
   },
   fatehKitInfo: {
-    en_IN: 'You can find information on how to use Fateh Kit is here https://youtu.be/cMxBWejWyes'
+    en_IN: 'You can find information on how to use Fateh Kit here https://youtu.be/cMxBWejWyes'
   },
   bedAvailabilityInfo: {
     en_IN: 'You can find information regarding Beds Availability centers here http://statecovidcontrolroom.punjab.gov.in/'

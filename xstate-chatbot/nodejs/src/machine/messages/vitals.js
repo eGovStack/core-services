@@ -54,8 +54,8 @@ const grammers = {
       hi_IN: '\n1. हाँ \n2. नहीं',
     },
     grammer: [
-      { intention: true, recognize: ['1'] },
-      { intention: false, recognize: ['2'] },
+      { intention: 'YES', recognize: ['1'] },
+      { intention: 'NO', recognize: ['2'] },
     ],
   },
 };
