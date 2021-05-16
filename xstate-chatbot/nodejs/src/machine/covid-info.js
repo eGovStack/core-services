@@ -61,7 +61,7 @@ const covidInfoFlow = {
     selfCareInfo: {
       id: 'selfCareInfo',
       onEntry: assign((context, event) => {
-        const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/home_isolation_todo`, 'jpeg', 'en_IN', '');
+        const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/home_isolation_todo`, 'jpeg', context.user.locale, '');
         dialog.sendMessage(context, mediaMessage, false);
         dialog.sendMessage(context, dialog.get_message(messages.selfCareInfo, context.user.locale));
       }),

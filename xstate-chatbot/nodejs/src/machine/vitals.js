@@ -1,5 +1,7 @@
 const { assign, actions } = require('xstate');
 const dialog = require('./util/dialog');
+const mediaUtil = require('./util/media');
+const config = require('../env-variables');
 const { messages, grammers } = require('./messages/vitals');
 const { personService, vitalsService } = require('./service/service-loader');
 
@@ -118,6 +120,8 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
+            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
+            dialog.sendMessage(context, mediaMessage, false);
             dialog.sendMessage(context, dialog.get_message(messages.spo2.prompt, context.user.locale));
           }),
           on: {

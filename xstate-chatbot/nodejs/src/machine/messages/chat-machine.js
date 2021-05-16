@@ -24,15 +24,18 @@ let messages = {
     prompt: {
       preamble: {
         en_IN: 'What would you like to do?',
+        pa_IN: 'ਤੁਸੀ ਕੀ ਕਰਨਾ ਚਾਹੋਗੇ?'
       },
       options: {
         list: [ 'covidInfo', 'addVitals' ],
         messageBundle: {
           covidInfo: {
             en_IN: ' Get information about Covid',
+            pa_IN: 'ਕੋਵਿਡ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ'
           },
           addVitals: {
             en_IN: 'Register my vitals',
+            pa_IN: 'ਮੇਰੇ ਲੱਛਣ ਰਜਿਸਟਰ ਕਰੋ'
           },
         },
       },
