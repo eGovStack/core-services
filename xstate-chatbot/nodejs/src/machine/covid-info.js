@@ -77,14 +77,14 @@ const covidInfoFlow = {
     bedAvailabilityInfo: {
       id: 'bedAvailabilityInfo',
       onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.fatehKitInfo, context.user.locale));
+        dialog.sendMessage(context, dialog.get_message(messages.bedAvailabilityInfo, context.user.locale));
       }),
       always: '#endstate'
     },
     vaccinationCentersInfo: {
       id: 'vaccinationCentersInfo',
       onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.fatehKitInfo, context.user.locale));
+        dialog.sendMessage(context, dialog.get_message(messages.vaccinationCentersInfo, context.user.locale));
       }),
       always: '#endstate'
     }
