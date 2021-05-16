@@ -19,12 +19,17 @@ class PersonService {
 
     var urlSearchParams = new URLSearchParams();
     urlSearchParams.append("MobileNumber", mobileNumber);
-    urlSearchParams.append("Token", config.covaApiConfigs.covaAuthToken);
+    urlSearchParams.append("Token", '');
+
+    let requestBody = {
+      Token: config.covaApiConfigs.covaAuthToken,
+      MobileNumber: mobileNumber,
+    };
 
     var request = {
       method: "POST",
       headers: headers,
-      body: urlSearchParams,
+      body: JSON.stringify(requestBody),
     };
     let response = await fetch(url, request)
     if(response.status == 200) {
@@ -35,8 +40,8 @@ class PersonService {
         return false;
       }
     } else {
-      // try with invalid token, other cases where api might fail, etc.
-      console.error('');
+      let responseBody = await response.json();
+      console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
     }
     return true;
   }
