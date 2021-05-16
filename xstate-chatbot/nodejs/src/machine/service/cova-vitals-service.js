@@ -7,7 +7,7 @@ class VitalsService {
 
     let symptoms = vitals.symptoms;
     let url = config.covaApiConfigs.covaProdUrl.concat(
-      config.covaApiConfigs.isHomeIsolatedSuffix
+      config.covaApiConfigs.updateSelfInspectionSuffix
     );
 
     let headers = {
@@ -15,27 +15,38 @@ class VitalsService {
       Authorization: config.covaApiConfigs.covaAuthorization,
     };
 
-    var urlSearchParams = new URLSearchParams();
-
-    urlSearchParams.append("Token",             config.covaApiConfigs.covaAuthToken);
-    urlSearchParams.append("mobile_no",         user.mobileNumber);
-    urlSearchParams.append("pulserate",         vitals.pulse);
-    urlSearchParams.append("spo2level",         vitals.spo2);
-    urlSearchParams.append("current_temp",      vitals.temprature);
-    urlSearchParams.append("Comorbidities",     symptoms.comorbidities);
-    urlSearchParams.append("FluLikeSymptoms",   symptoms.fluLikeSymptoms);
-    urlSearchParams.append("LossOfSmellTaste",  symptoms.lossOfSmellTaste);
-    urlSearchParams.append("RespiratoryIssues", symptoms.respiratoryIssues);
-    urlSearchParams.append("NeedsDoctorCall",   vitals.NeedsDoctorCall);
-    urlSearchParams.append("Remarks",           vitals.remarks);
+    let requestBody = {
+      Token: config.covaApiConfigs.covaAuthToken,
+      mobile_no: user.mobileNumber,
+      current_temp: vitals.temperature.toString(),
+      pulserate: vitals.pulse.toString(),
+      spo2level: vitals.spo2.toString(),
+      LossOfSmellTaste: symptoms.lossOfSmellTaste,
+      FluLikeSymptoms: symptoms.fluLikeSymptoms,
+      RespiratoryIssues: symptoms.respiratoryIssues,
+      Comorbidities: symptoms.comorbidities,
+      NeedsDoctorCall: 'NO',
+      Remarks: '',
+    };
 
     var request = {
       method: "POST",
       headers: headers,
-      body: urlSearchParams,
+      body: JSON.stringify(requestBody),
     };
 
-    await fetch(url, request);
+    let response = await fetch(url, request);
+    if(response.status) {
+      let responseBody = await response.json();
+      if(responseBody.response == 1) {
+        console.log('Vitals registered successfully with Cova.');
+      } else {
+        console.error(`Error while registering vitals to Cova. Message: ${responseBody.sys_message}`);
+      }
+    } else {
+      let responseBody = await response.json();
+      console.error(`Error while registering vitals to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
+    }
   }
 }
 
