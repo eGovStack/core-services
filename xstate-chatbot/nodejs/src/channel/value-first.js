@@ -218,7 +218,17 @@ class ValueFirstWhatsAppProvider {
                 messageBody = JSON.parse(textMessageBody);
                 let encodedMessage=urlencode(message, 'utf8');
                 messageBody['@TEXT'] = encodedMessage;
-            } else {
+            }
+            
+            if(type === 'media'){
+                const buffer = fs.readFileSync(path.resolve(__dirname, `../../${message[i].output}`),'base64');
+                var uniqueImageMessageId = uuid();
+                messageBody = JSON.parse(imageMessageBody);
+                messageBody['@TEXT'] = base64Image;
+                messageBody['@ID'] = uniqueImageMessageId;
+            }
+
+            else {
                 // TODO for non-textual messages
                 let fileStoreId;
                 if(message)
