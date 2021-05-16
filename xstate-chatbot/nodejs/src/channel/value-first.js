@@ -224,7 +224,7 @@ class ValueFirstWhatsAppProvider {
                 const buffer = fs.readFileSync(path.resolve(__dirname, `../../${message[i].output}`),'base64');
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);
-                messageBody['@TEXT'] = base64Image;
+                messageBody['@TEXT'] = buffer;
                 messageBody['@ID'] = uniqueImageMessageId;
             }
 
