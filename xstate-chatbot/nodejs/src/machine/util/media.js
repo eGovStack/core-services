@@ -6,9 +6,7 @@ const defaultLocale = 'en_IN';
 
 function createMediaMessage(mediaPath, mediaType, locale, caption = '') {
     let filePath = `${mediaPath}_${locale}.${mediaType}`;
-    try {
-      fs.existsSync(path.resolve(__dirname, `../../../${mediaPath}`));
-    } catch(err) {
+    if(!fs.existsSync(path.resolve(__dirname, `../../../${mediaPath}`))) {
       filePath = `${mediaPath}_${defaultLocale}.${mediaType}`;
     }
     const mediaMessage =  {
