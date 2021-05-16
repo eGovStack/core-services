@@ -1,15 +1,10 @@
 function createMediaMessage(mediaPath, mediaType, locale, caption = '') {
-    if (mediaType) {
-      if (locale != 'en_IN') {
-        mediaPath+= '_' + locale + `.${mediaType}`;
-      } else {
-        mediaPath+= `.${mediaType}`;
-      }
-    }
+    mediaPath+= '_' + locale + `.${mediaType}`;
     const mediaMessage =  {
-      "type": "media",
-      "output": mediaPath,
-      "caption": caption
+      type: 'media',
+      output: mediaPath,
+      mediaType: mediaType,
+      caption: caption
     }
     return mediaMessage;
 }

@@ -1,5 +1,7 @@
 const { assign, actions } = require('xstate');
 const dialog = require('./util/dialog');
+const mediaUtil = require('./util/media');
+const config = require('../env-variables');
 const messages = require('./messages/covid-info');
 
 const covidInfoFlow = {
@@ -59,6 +61,8 @@ const covidInfoFlow = {
     selfCareInfo: {
       id: 'selfCareInfo',
       onEntry: assign((context, event) => {
+        const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/home_isolation_todo`, 'jpeg', 'en_IN', '');
+        dialog.sendMessage(context, mediaMessage, false);
         dialog.sendMessage(context, dialog.get_message(messages.selfCareInfo, context.user.locale));
       }),
       always: '#endstate'
