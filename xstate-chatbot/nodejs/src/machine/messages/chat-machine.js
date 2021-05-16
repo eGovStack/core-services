@@ -31,7 +31,7 @@ let messages = {
         list: [ 'covidInfo', 'addVitals' ],
         messageBundle: {
           covidInfo: {
-            en_IN: ' Get information about Covid',
+            en_IN: 'Get information about Covid',
             pa_IN: 'ਕੋਵਿਡ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ',
             hi_IN: 'कोविड के बारे में पता करें',
           },
