@@ -16,7 +16,7 @@ const messages = {
           },
           fatehKit: {
             en_IN: 'How to use Fateh Kit',
-            pa_IN: 'ਕੋਵਿਡ ਵਿਚ ਸਵੈ-ਸੰਭਾਲ ਕਿਵੇਂ ਕਰੀਏ',
+            pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਕਿਵੇਂ ਕਰੀਏ',
             hi_IN: 'फतेह किट का इस्तेमाल कैसे करें',
           },
           bedAvailability: {
@@ -40,12 +40,12 @@ const messages = {
   },
   fatehKitInfo: {
     en_IN: 'You can find information on how to use Fateh Kit here https://youtu.be/cMxBWejWyes',
-    pa_IN: 'ਤੁਸੀਂ ਫਤੇਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ ਇਹ https://youtu.be/cMxBWejWyes ਹੈ',
+    pa_IN: 'ਤੁਸੀਂ ਇੱਥੇ https://youtu.be/cMxBWejWyes ਫਤੇਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ ',
     hi_IN: 'आप यहां https://youtu.be/cMxBWejWyes पर फतेह किट का उपयोग करने के बारे में जानकारी प्राप्त कर सकते हैं',
   },
   bedAvailabilityInfo: {
     en_IN: 'You can find information regarding Beds Availability centers here http://statecovidcontrolroom.punjab.gov.in/',
-    pa_IN: 'ਤੁਸੀਂ ਬੈੱਡਜ਼ ਅਵੈਲੇਬਿਲਿਟੀ ਸੈਂਟਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ http://statecovidcontrolroom.punjab.gov.in/.',
+    pa_IN: 'ਤੁਸੀਂ ਬੈੱਡ ਉਪਲਬਧਤਾ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ http://statecovidcontrolroom.punjab.gov.in/ \'ਤੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ.',
     hi_IN: 'आप http://statecovidcontrolroom.punjab.gov.in/ पर बिस्तर उपलब्धता केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं।',
   },
   vaccinationCentersInfo: {
