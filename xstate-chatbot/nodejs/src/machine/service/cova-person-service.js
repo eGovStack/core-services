@@ -26,20 +26,19 @@ class PersonService {
       headers: headers,
       body: urlSearchParams,
     };
-
-    let response;
-
-    return await fetch(url, request)
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        console.log('The resposne from homeIsolation response : ' + json);
-        let response = JSON.parse(json);
-        if(response == 1)
+    let response = await fetch(url, request)
+    if(response.status == 200) {
+      let data = await response.json();
+      if(data.response == 1) {
         return true;
-        else return false;
-      }).catch(err => console.log('The error msg for homeIsolation : ' + err));
+      } else {
+        return false;
+      }
+    } else {
+      // try with invalid token, other cases where api might fail, etc.
+      console.error('');
+    }
+    return true;
   }
 
   async fetchAllHomeIsolatedPatients() {}
