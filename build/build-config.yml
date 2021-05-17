@@ -171,6 +171,12 @@ config:
       - work-dir: "zuul"
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/core-services/internal-gateway"
+    build:
+      - work-dir: "internal-gateway"
+        image-name: "internal-gateway"
+        dockerfile: "build/maven/Dockerfile"
         
   - name: "builds/core-services/egov-user-event"
     build:
@@ -236,6 +242,11 @@ config:
     build:
       - work-dir: "libraries/enc-client"
         image-name: "enc-client"
+        
+  - name: "builds/core-services/libraries/tracer"
+    build:
+      - work-dir: "libraries/tracer"
+        image-name: "tracer"
 
   - name: "builds/core-services/nlp-engine"
     build:
