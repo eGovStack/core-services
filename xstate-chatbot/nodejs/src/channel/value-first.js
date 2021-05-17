@@ -30,7 +30,7 @@ class ValueFirstWhatsAppProvider {
         let reformattedMessage={};
 
         reformattedMessage.message = {
-            input: "mseva",
+            input: "hi",
             type: "text"
         };
 
