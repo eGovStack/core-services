@@ -1,6 +1,68 @@
 const messages = {
+  notHomeIsolatedPatient: {
+    en_IN: 'You are not registered. Please register yourself.',
+  },
   registerPatient: {
-
+    personName: {
+      prompt: {
+        en_IN: 'Got it, please tell me your name'
+      },
+      error: {
+        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid name which is less than 100 characters.'
+      }
+    },
+    personAge: {
+      prompt: {
+        en_IN: 'Thanks {{name}}. How old are you?'
+      },
+      error: {
+        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid age (between 0 and 120)'
+      }
+    },
+    personGender: {
+      prompt: {
+        en_IN: 'Please select your gender.'
+      },
+      options: {
+        list: ['male', 'female', 'other'],
+        messageBundle: {
+          male: {
+            en_IN: 'Male'
+          },
+          female: {
+            en_IN: 'Female'
+          },
+          other: {
+            en_IN: 'Other'
+          }
+        }
+      }
+    },
+    city: {
+      prompt: {
+        preamble: {
+          en_IN: 'Please select your city',
+        }
+      }
+    },
+    address: {
+      prompt: {
+        en_IN: 'Please enter your address',
+      }
+    },
+    symptomsDate: {
+      prompt: {
+        en_IN: 'Symptoms start date (DD/MM/YY)',
+      }
+    },
+    covidPositiveDate: {
+      prompt: {
+        en_IN: 'Covid Positive date (DD/MM/YY)',
+      }
+    },
+    registeredPatientSuccess: {
+      en_IN: 'Registered successfully'
+    }
   },
   registerVitals: {
     temperature: {
