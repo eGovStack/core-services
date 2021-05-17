@@ -255,3 +255,9 @@ config:
         image-name: "xstate-chatbot"
       - work-dir: "xstate-chatbot/nodejs/db"
         image-name: "xstate-chatbot-db"
+
+  - name: "builds/core-services/internal-gateway"
+    build:
+      - work-dir: "internal-gateway"
+        image-name: "internal-gateway"
+        dockerfile: "build/maven/Dockerfile"
