@@ -1,12 +1,10 @@
 
 All notable changes to this module will be documented in this file.
 
-## 1.2.3 - 2021-05-17
+## 1.3.0 - 2021-05-17
 - Changes to error handling
 - Removed stack trace printing
 - Added rate limiting functionality
-
-## 1.2.2 - 2021-03-20
 - Add support for PATCH and PUT statements
 - Changed auth filter to not read body if Json content type is not specified
 - Removed `x-user-info` header from sensitive headers in `application.properties`
