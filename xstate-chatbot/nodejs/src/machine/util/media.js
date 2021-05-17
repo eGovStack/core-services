@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const asd = require('../../../')
 
 const defaultLocale = 'en_IN';
 
