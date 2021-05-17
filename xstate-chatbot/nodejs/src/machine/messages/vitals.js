@@ -61,7 +61,7 @@ const messages = {
     },
     diabetes: {
       prompt: {
-        en_IN: 'Do you have Diabetes',
+        en_IN: 'Do you have Diabetes?',
       },
     }
   },
