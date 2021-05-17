@@ -6,6 +6,9 @@ class VitalsService {
   async addVitals(user, vitals) {
 
     let symptoms = vitals.symptoms;
+    let extra = {
+      diabetes: symptoms.diabetes,
+    };
     let url = config.covaApiConfigs.covaProdUrl.concat(
       config.covaApiConfigs.updateSelfInspectionSuffix
     );
@@ -26,7 +29,7 @@ class VitalsService {
       RespiratoryIssues: symptoms.respiratoryIssues,
       Comorbidities: symptoms.comorbidities,
       NeedsDoctorCall: 'NO',
-      Remarks: '',
+      Remarks: JSON.stringify(extra),
     };
 
     var request = {
