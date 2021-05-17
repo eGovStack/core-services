@@ -20,9 +20,9 @@ const messages = {
             hi_IN: 'फतेह किट का इस्तेमाल कैसे करें',
           },
           bedAvailability: {
-            en_IN: 'Where to check covid Beds Availability',
-            pa_IN: 'ਕੋਵਿਡ ਬੈੱਡਾਂ ਦੀ ਉਪਲਬਧਤਾ ਨੂੰ ਕਿੱਥੇ ਚੈੱਕ ਕਰਨਾ ਹੈ',
-            hi_IN: 'कोविड बेड की उपलब्धता की जांच कहां करें',
+            en_IN: 'Information about availability of Covid Beds',
+            pa_IN: 'ਕੋਵਿਡ ਬੈੱਡਾਂ ਦੀ ਉਪਲਬਧਤਾ ਬਾਰੇ ਜਾਣਕਾਰੀ',
+            hi_IN: 'कोविड बेड की उपलब्धता के बारे में जानकारी',
           },
           vaccinationCenters: {
             en_IN: 'Information about Vaccination Centers',
@@ -40,12 +40,12 @@ const messages = {
   },
   fatehKitInfo: {
     en_IN: 'You can find information on how to use Fateh Kit here https://youtu.be/cMxBWejWyes',
-    pa_IN: 'ਤੁਸੀਂ ਇੱਥੇ https://youtu.be/cMxBWejWyes ਫਤੇਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ ',
-    hi_IN: 'आप यहां https://youtu.be/cMxBWejWyes पर फतेह किट का उपयोग करने के बारे में जानकारी प्राप्त कर सकते हैं',
+    pa_IN: 'ਇਸ ਵੀਡੀਓ ਨੂੰ ਵੇਖ ਕੇ ਫਤਹਿ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਕਿਵੇਂ ਕੀਤੀ ਜਾਵੇ ਇਸ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ  https://youtu.be/cMxBWejWyes',
+    hi_IN: 'फतेह किट का उपयोग कैसे करें इसकी जानकारी इस वीडियो को देखकर प्राप्त करें  https://youtu.be/cMxBWejWyes',
   },
   bedAvailabilityInfo: {
-    en_IN: 'You can find information regarding Beds Availability centers here http://statecovidcontrolroom.punjab.gov.in/',
-    pa_IN: 'ਤੁਸੀਂ ਬੈੱਡ ਉਪਲਬਧਤਾ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ http://statecovidcontrolroom.punjab.gov.in/ \'ਤੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ.',
+    en_IN: 'You can find information regarding Beds Availability here http://statecovidcontrolroom.punjab.gov.in/',
+    pa_IN: 'ਤੁਸੀਂ ਬੈੱਡ ਉਪਲਬਧਤਾ ਬਾਰੇ ਜਾਣਕਾਰੀ http://statecovidcontrolroom.punjab.gov.in/',
     hi_IN: 'आप http://statecovidcontrolroom.punjab.gov.in/ पर बिस्तर उपलब्धता केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं।',
   },
   vaccinationCentersInfo: {
