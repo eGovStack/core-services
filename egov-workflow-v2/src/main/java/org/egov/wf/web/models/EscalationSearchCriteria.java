@@ -12,6 +12,7 @@ import java.util.List;
 public class EscalationSearchCriteria {
 
 
+    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
@@ -19,6 +20,7 @@ public class EscalationSearchCriteria {
     @JsonProperty("status")
     private String status;
 
+    @NotNull
     @JsonProperty("businessService")
     private String businessService;
 

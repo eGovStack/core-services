@@ -73,6 +73,7 @@ public class EscalationService {
 
         for(String tenantId: tenantIds){
 
+
             String stateUUID = escalationUtil.getStatusUUID(escalation.getStatus(), tenantId, escalation.getBusinessService());
 
             EscalationSearchCriteria criteria = EscalationSearchCriteria.builder().tenantId(tenantId)

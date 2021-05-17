@@ -12,7 +12,9 @@ public class EscalationQueryBuilder {
 
 
 
-    private static final String BASE_QUERY = "SELECT businessId from eg_wf_processinstance_v2 wf WHERE ";
+    private static final String BASE_QUERY = "select businessId from (" +
+            "  SELECT *,RANK () OVER (PARTITION BY businessId ORDER BY createdtime  DESC) rank_number " +
+            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? ) wf  WHERE rank_number = 1 ";
 
 
     /**
@@ -25,35 +27,23 @@ public class EscalationQueryBuilder {
 
         StringBuilder builder = new StringBuilder(BASE_QUERY);
 
-        /*
-        * To DO
-        * Map status to it's uuid before this function is executed
-        * */
-        builder.append(" wf.status = ? ");
+        preparedStmtList.add(criteria.getBusinessService());
+        preparedStmtList.add(criteria.getTenantId());
+
+        builder.append(" AND wf.status = ? ");
         preparedStmtList.add(criteria.getStatus());
 
-        if(!StringUtils.isEmpty(criteria.getTenantId())){
-            builder.append(" AND wf.tenantid = ? ");
-            preparedStmtList.add(criteria.getTenantId());
-        }
-
-        if(!StringUtils.isEmpty(criteria.getBusinessService())){
-            builder.append(" AND wf.businessservice = ? ");
-            preparedStmtList.add(criteria.getBusinessService());
-        }
-
         if(criteria.getStateSlaExceededBy() != null){
-            builder.append(" AND (select extract(epoch from current_timestamp) * 1000 - wf.createdtime - wf.statesla > ? ");
+            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime - wf.statesla > ? ");
             preparedStmtList.add(criteria.getStateSlaExceededBy());
         }
 
         if(criteria.getBusinessSlaExceededBy() != null){
-            builder.append(" AND (select extract(epoch from current_timestamp) * 1000 - wf.createdtime - wf.businessservicesla > ? ");
+            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime - wf.businessservicesla > ? ");
             preparedStmtList.add(criteria.getBusinessSlaExceededBy());
         }
 
         return builder.toString();
-
 
     }
 

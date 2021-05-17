@@ -70,14 +70,14 @@ public class EscalationUtil {
 
         List<BusinessService> businessServices = businessMasterService.search(businessServiceSearchCriteria);
 
-        if(!CollectionUtils.isEmpty(businessServices)){
+        if(CollectionUtils.isEmpty(businessServices)){
             throw new CustomException("BUSINESSSERVICE_NOT_FOUND","No BusinessService found for tenantId: "+tenantId+" and code: "+businessService);
         }
 
         String uuid = null;
 
         for(State state : businessServices.get(0).getStates()) {
-            if(state.getState().equalsIgnoreCase(statusCode)){
+            if(state.getState()!=null && state.getState().equalsIgnoreCase(statusCode)){
                 uuid = state.getUuid();
                 break;
             }
@@ -98,6 +98,10 @@ public class EscalationUtil {
      * @return
      */
     public Long daysToMillisecond(Double day){
+
+        if(day == null)
+            return null;
+
         return Double.valueOf(day*24*60*60*1000).longValue();
     }
 
@@ -122,8 +126,8 @@ public class EscalationUtil {
             String state  = (String) map.get("state");
             String action  = (String) map.get("action");
             String module  = (String) map.get("module");
-            Long  stateSla = (Long) map.get("stateSLA");
-            Long  businessSLa = (Long) map.get("businessSLA");
+            Long  stateSla = daysToMillisecond((Double) map.get("stateSLA"));
+            Long  businessSLa = daysToMillisecond((Double) map.get("businessSLA"));
 
             if(stateSla == null && businessSLa == null)
                 errorMap.put("INVALID_CONFIG","Both stateSLA and businessSLA are null for config with state: "+state+" and action: "+action);
