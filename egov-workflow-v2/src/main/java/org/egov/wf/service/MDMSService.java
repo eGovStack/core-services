@@ -47,6 +47,16 @@ public class MDMSService {
         return result;
     }
 
+    /**
+     * Calls MDMS service to fetch master data
+     * @return
+     */
+    public Object getBusinessServiceMDMS(){
+        MdmsCriteriaReq mdmsCriteriaReq = getBusinessServiceMDMSRequest(new RequestInfo(),workflowConfig.getStateLevelTenantId());
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
+
 
     /**
      * Creates MDMSCriteria
@@ -71,10 +81,30 @@ public class MDMSService {
 
 
     /**
-     * Creates MDMS ModuleDetail object for workflow
+     * Creates MDMSCriteria
+     * @param requestInfo The RequestInfo of the request
+     * @param tenantId TenantId of the request
+     * @return MDMSCriteria for search call
+     */
+    private MdmsCriteriaReq getBusinessServiceMDMSRequest(RequestInfo requestInfo, String tenantId){
+        ModuleDetail wfMasterDetails = getBusinessServiceMasterConfig();
+
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(wfMasterDetails))
+                .tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+        return mdmsCriteriaReq;
+    }
+
+
+    /**
+     * Fetches BusinessServiceMasterConfig from MDMS
      * @return ModuleDetail for workflow
      */
-    private ModuleDetail getWorkflowMDMSDetail() {
+    private ModuleDetail getBusinessServiceMasterConfig() {
 
         // master details for WF module
         List<MasterDetail> wfMasterDetails = new ArrayList<>();

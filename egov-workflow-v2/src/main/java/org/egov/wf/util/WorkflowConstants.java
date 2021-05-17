@@ -20,6 +20,8 @@ public class WorkflowConstants {
 
     public static final String JSONPATH_AUTOESCALTION = "$.MdmsRes.Workflow.AutoEscalation";
 
+    public static final String JSONPATH_BUSINESSSERVICE_STATELEVEL = "$.MdmsRes.Workflow.BusinessServiceMasterConfig";
+
     public static final String JSONPATH_TEANANTIDS = "$.MdmsRes.tenant.tenants.*.code";
 
     public static final String MDMS_MODULE_TENANT= "tenant";

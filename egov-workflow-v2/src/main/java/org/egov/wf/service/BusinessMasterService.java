@@ -1,5 +1,6 @@
 package org.egov.wf.service;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.repository.BusinessServiceRepository;
@@ -9,9 +10,14 @@ import org.egov.wf.web.models.BusinessServiceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.egov.wf.util.WorkflowConstants.JSONPATH_BUSINESSSERVICE_STATELEVEL;
 
 @Service
 public class BusinessMasterService {
@@ -24,16 +30,38 @@ public class BusinessMasterService {
 
     private BusinessServiceRepository repository;
 
+    private MDMSService mdmsService;
+
 
     @Autowired
-    public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService,
-                                 BusinessServiceRepository repository) {
+    public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService, BusinessServiceRepository repository, MDMSService mdmsService) {
         this.producer = producer;
         this.config = config;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
+        this.mdmsService = mdmsService;
     }
 
+
+
+    @Bean
+    public Map<String,Boolean> stateLevelMapping(){
+        Map<String, Boolean> stateLevelMapping = new HashMap<>();
+
+        Object mdmsData = mdmsService.getBusinessServiceMDMS();
+        List<HashMap<String, Object>> configs = JsonPath.read(mdmsData,JSONPATH_BUSINESSSERVICE_STATELEVEL);
+
+
+        for (Map map : configs){
+
+            String businessService = (String) map.get("businessService");
+            Boolean isStatelevel = Boolean.valueOf((String) map.get("isStatelevel"));
+
+            stateLevelMapping.put(businessService, isStatelevel);
+        }
+
+        return stateLevelMapping;
+    }
 
 
 
