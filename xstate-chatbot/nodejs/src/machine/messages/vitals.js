@@ -1,8 +1,8 @@
 const messages = {
   notHomeIsolatedPatient: {
-    en_IN: 'You are not a home isolated patient. Please register with Cova first.',
-    pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਕੋਵਾ ਐਪ \nਨਾਲ ਰਜਿਸਟਰ ਕਰੋ.',
-    hi_IN: 'आप घरेलू आइसोलेशन के मरीज नहीं हैं। कृपया पहले कोवा ऐप में रजिस्टर करें।',
+    en_IN: 'You are not a home isolated patient. Please register with Cova first. https://play.google.com/store/apps/details?id=in.gov.punjab.cova&hl=en_IN&gl=US',
+    pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਕੋਵਾ ਐਪ ਨਾਲ ਰਜਿਸਟਰ ਕਰੋ. https://play.google.com/store/apps/details?id=in.gov.punjab.cova&hl=en_IN&gl=US',
+    hi_IN: 'आप घरेलू आइसोलेशन के मरीज नहीं हैं। कृपया पहले कोवा ऐप में रजिस्टर करें। https://play.google.com/store/apps/details?id=in.gov.punjab.cova&hl=en_IN&gl=US',
   },
   temperature: {
     prompt: {

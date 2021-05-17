@@ -36,9 +36,9 @@ let messages = {
             hi_IN: 'कोविड के बारे में पता करें',
           },
           addVitals: {
-            en_IN: 'Register my vitals',
-            pa_IN: 'ਮੇਰੇ ਲੱਛਣ ਰਜਿਸਟਰ ਕਰੋ',
-            hi_IN: 'मेरे लक्षण दर्ज करें',
+            en_IN: 'Register your vitals',
+            pa_IN: 'ਆਪਣੇ ਲੱਛਣ ਰਜਿਸਟਰ ਕਰੋ',
+            hi_IN: 'अपने लक्षण दर्ज करें',
           },
         },
       },
