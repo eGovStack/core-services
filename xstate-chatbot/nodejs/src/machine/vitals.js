@@ -311,6 +311,46 @@ const vitalsFlow = {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.comorbidities = context.intention;
                   }),
+                  target: '#diabetes'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
+        diabetes: {
+          id: 'diabetes',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                context.grammer = grammers.binaryChoice.grammer;
+                let message = dialog.get_message(messages.symptoms.diabetes.prompt, context.user.locale);
+                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.diabetes = context.intention;
+                  }),
                   target: '#addVitals'
                 }
               ]
