@@ -269,7 +269,7 @@ class ValueFirstWhatsAppProvider {
         }
         let response = await fetch(url,request);
         if(response.status === 200){
-            console.log('Message sent to user by vFirst');
+            console.log('Message sent to user using vFirst');
             let messageBack = await response.json();
             if(messageBack.MESSAGEACK.Err){
                 console.error(messageBack.MESSAGEACK.Err.Desc);
@@ -283,9 +283,10 @@ class ValueFirstWhatsAppProvider {
             console.error('Error in sending message');
             return undefined;
           }
-    }    
+    }
     
     async processMessageFromUser(req) {
+        console.log('Received message from vFirst');
         let reformattedMessage = {}
         let requestBody = req.query;
 
@@ -302,7 +303,6 @@ class ValueFirstWhatsAppProvider {
     }
 
     async sendMessageToUser(user, messages,extraInfo) {
-        console.log('Received message from vFirst');
         let requestBody = {};
         requestBody = await this.getTransformedResponse(user, messages, extraInfo);
         this.sendMessage(requestBody);       
