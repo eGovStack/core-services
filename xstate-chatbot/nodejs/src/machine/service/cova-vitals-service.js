@@ -55,9 +55,7 @@ class VitalsService {
   async addPatient(user, patientDetails) {
 
     
-    let url = config.covaApiConfigs.covaProdUrl.concat(
-      config.covaApiConfigs.insertPatientInfo
-    );
+    let url = config.covaApiConfigs.insertPatientInfoUrl;
 
     let headers = {
       "Content-Type": "application/json",
@@ -77,8 +75,8 @@ class VitalsService {
       gender_Id: genderId,
       district_Id: '', //  add distrct code here TODO
       address: patientDetails.address,
-      symptom_start_date: patientDetails.symptomsDate,
-      covid_positive_date: patientDetails.covidPositiveDate,
+      symptom_start_date: patientDetails.symptomsDate.toString(),
+      covid_positive_date: patientDetails.covidPositiveDate.toString(),
     };
      // Dates are object Date and not strings 
 
@@ -101,7 +99,6 @@ class VitalsService {
       let responseBody = await response.json();
       console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
     }
-
   }
 
 }
