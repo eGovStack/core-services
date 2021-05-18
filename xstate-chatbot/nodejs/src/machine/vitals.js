@@ -20,7 +20,7 @@ const vitalsFlow = {
           {
             cond: (context, event) => event.data == false,
             actions: assign((context, event) => {
-              dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale));
+              dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
             }),
             target: '#registerPatient'
           },
@@ -320,7 +320,7 @@ const vitalsFlow = {
               actions: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registeredPatientSuccess, context.user.locale));
               }),
-              target: '#endstate'
+              target: '#temperature'
             }
           }
         }
