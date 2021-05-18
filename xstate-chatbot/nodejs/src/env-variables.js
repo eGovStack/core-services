@@ -53,12 +53,13 @@ const envVariables = {
     },
 
     covaApiConfigs: {
-
-        covaProdUrl                : 'https://covaprod.punjab.gov.in/api/cova/citizen/services/v1/status/',
-        isHomeIsolatedSuffix       : 'isHomeIsolated',
-        updateSelfInspectionSuffix : 'updateSelfInspection',
-        covaAuthorization          : process.env.COVA_BEARER_TOKEN || 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIzMjMiLCJ0cyI6IjU4IiwiZXhwIjoxNjM1OTI2OTEzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYzODg0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2Mzg4NCJ9.ovY-mtV3vU005bvYT5SCZwyVPAx-tgRw8TxDdIucPn0',
-        covaAuthToken              : process.env.COVA_AUTH_TOKEN || 'f77762bfd1a69c37227d9206c3c40c50c686f485'
+        covaUrl                     : 'https://covaprod.punjab.gov.in/api/cova/citizen/services/v1/',
+        updateSelfInspectionSuffix  : 'status/updateSelfInspection',
+        cova2Url                    : 'https://cova.punjab.gov.in/api/cova/citizen/services/v1/',
+        isHomeIsolatedSuffix        : 'get-whats-app-hi-active',
+        addPatientSuffix            : 'insert-whats-app-pm-data',
+        covaAuthorization           : process.env.COVA_BEARER_TOKEN || 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIzMjMiLCJ0cyI6IjU4IiwiZXhwIjoxNjM1OTI2OTEzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYzODg0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2Mzg4NCJ9.ovY-mtV3vU005bvYT5SCZwyVPAx-tgRw8TxDdIucPn0',
+        covaAuthToken               : process.env.COVA_AUTH_TOKEN || 'f77762bfd1a69c37227d9206c3c40c50c686f485'
 
     }
 

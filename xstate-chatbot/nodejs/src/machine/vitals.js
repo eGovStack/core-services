@@ -1,4 +1,5 @@
 const { assign, actions } = require('xstate');
+const moment = require('moment');
 const dialog = require('./util/dialog');
 const mediaUtil = require('./util/media');
 const config = require('../env-variables');
@@ -7,31 +8,312 @@ const { personService, vitalsService } = require('./service/service-loader');
 
 const vitalsFlow = {
   id: 'vitalsFlow',
-  initial: 'isHomeIsolated',
+  initial: 'isHomeIsolatedPatient',
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
   }),
   states: {
-    isHomeIsolated: {
+    isHomeIsolatedPatient: {
       invoke: {
         src: (context) => personService.isHomeIsolatedPatient(context.user.mobileNumber),
         onDone: [
           {
             cond: (context, event) => event.data == false,
-            target: '#notHomeIsolatedPatient'
+            actions: assign((context, event) => {
+              dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
+            }),
+            target: '#registerPatient'
           },
           {
-            target: 'temperature'
+            target: '#temperature'
           }
         ]
       }
     },
-    notHomeIsolatedPatient: {
-      id: 'notHomeIsolatedPatient',
+    registerPatient: {
+      id: 'registerPatient',
+      initial: 'personName',
       onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale));
+        context.slots.registerPatient = {};
       }),
-      target: '#endstate'
+      states: {
+        personName: {
+          id: 'personName',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personName.prompt, context.user.locale));
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                let message = dialog.get_input(event, false);
+                if (event.message.type == 'text' && message.length < 100 && /^[ A-Za-z]+$/.test(message.trim())) {
+                  context.slots.registerPatient.name = message
+                  context.validMessage = true;
+                } else {
+                  context.validMessage = false;
+                }
+              }),
+              always: [
+                {
+                  cond: (context) => context.validMessage,
+                  target: '#personAge'
+                },
+                {
+                  target: 'error'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personName.error, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        }, // personName
+        personAge: {
+          id: 'personAge',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                let message = dialog.get_message(messages.registerPatient.personAge.prompt, context.user.locale);
+                message = message.replace('{{name}}', context.slots.registerPatient.name);
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                if (event.message.type == 'text') {
+                  let age = parseInt(dialog.get_input(event, false));
+                  if (age > 0 && age < 120) {
+                    context.slots.registerPatient.age = age;
+                    context.validMessage = true;
+                    return;
+                  }
+                }
+                context.validMessage = false;
+              }),
+              always: [
+                {
+                  cond: (context) => context.validMessage,
+                  target: '#personGender'
+                },
+                {
+                  target: 'error'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personAge.error, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        }, // personAge
+        personGender: {
+          id: 'personGender',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                let { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.registerPatient.personGender.options.list, messages.registerPatient.personGender.options.messageBundle, context.user.locale);
+                context.grammer = grammer;
+                let message = dialog.get_message(messages.registerPatient.personGender.prompt, context.user.locale) + '\n' + prompt;
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event);
+              }),
+              always: [
+                {
+                  cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.registerPatient.gender = context.intention;
+                  }),
+                  target: '#district'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        }, // personGender
+        district: {
+          id: 'district',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                let districts = messages.registerPatient.district.prompt.options;
+                let { prompt, grammer } = dialog.constructListPromptAndGrammer(districts.list, districts.messageBundle, context.user.locale);
+                let message = dialog.get_message(messages.registerPatient.district.prompt.preamble, context.user.locale);
+                message += prompt;
+                context.grammer = grammer;
+                dialog.sendMessage(context, message);
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.intention = dialog.get_intention(context.grammer, event, true);
+              }),
+              always: [
+                {
+                  cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.registerPatient.district = context.intention;
+                  }),
+                  target: '#address'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
+        address: {
+          id: 'address',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.address.prompt, context.user.locale));
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.slots.registerPatient.address = dialog.get_input(event, false);
+              }),
+              always: '#symptomsDate'
+            },
+          }
+        },
+        symptomsDate: {
+          id: 'symptomsDate',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.symptomsDate.prompt, context.user.locale));
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                let input = dialog.get_input(event);
+                let date = moment(input, 'DD/MM/YY', true);
+                context.isValid = date.isValid();
+                if(context.isValid) {
+                  context.slots.registerPatient.symptomsDate = date;
+                } 
+              }),
+              always: [
+                {
+                  cond: (context) => context.isValid == false,
+                  target: 'error'
+                },
+                {
+                  target: '#covidPositiveDate'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
+        covidPositiveDate: {
+          id: 'covidPositiveDate',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.covidPositiveDate.prompt, context.user.locale));
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                let input = dialog.get_input(event);
+                let date = moment(input, 'DD/MM/YY', true);
+                context.isValid = date.isValid();
+                if(context.isValid) {
+                  context.slots.registerPatient.covidPositiveDate = date;
+                } 
+              }),
+              always: [
+                {
+                  cond: (context) => context.isValid == false,
+                  target: 'error'
+                },
+                {
+                  target: '#addPatient'
+                }
+              ]
+            },
+            error: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+              }),
+              always: 'prompt'
+            }
+          }
+        },
+        addPatient: {
+          id: 'addPatient',
+          invoke: {
+            src: (context) => vitalsService.addPatient(context.user, context.slots.registerPatient),
+            onDone: {
+              actions: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registeredPatientSuccess, context.user.locale));
+              }),
+              target: '#temperature'
+            }
+          }
+        }
+      },
     },
     temperature: {
       id: 'temperature',

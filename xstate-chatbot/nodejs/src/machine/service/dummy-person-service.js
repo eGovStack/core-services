@@ -1,7 +1,7 @@
 class PersonService {
 
   async isHomeIsolatedPatient(mobileNumber) {
-    return true;
+    return Math.random() > 0.7;
   }
 
   async fetchAllHomeIsolatedPatients() {
