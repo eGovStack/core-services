@@ -68,7 +68,7 @@ public class RequestRoutFilter extends ZuulFilter {
 	}
 
 	private String findTenant(Map<String, String> tenantRoutingMap, String reqTenantId) {
-		int count = StringUtils.countOccurrencesOf(reqTenantId, ".");
+		int count = StringUtils.countOccurrencesOf(reqTenantId, ".") + 1;
 		String tmpTenantId = new String(reqTenantId);
 		for (int i = 0; i < count; i++) {
 			if (tenantRoutingMap.containsKey(tmpTenantId)) {

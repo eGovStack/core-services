@@ -1,21 +1,11 @@
 {
   "tenantRoutingConfig": [
     {
-      "incomingURI": "/employee/*",
+      "incomingURI": "/egov-mdms-service/*",
       "tenantRoutingMap": {
-        "in.pb.amritsar": "http://localhost:9091",
-        "in.pb": "http://localhost:9092",
-        "in.ap": "http://localhost:9092",
-        "in.uk": "http://localhost:9093"
-      }
-    },
-    {
-      "incomingURI": "/todos1/*",
-      "tenantRoutingMap": {
-        "in.pb.amritsar": "http://localhost:9091",
-        "in.pb": "http://localhost:9092",
-        "in.ap": "http://localhost:9092",
-        "in.uk": "http://localhost:9093"
+        "in.uk": "http://egov-mdms-service-tenant-a:8080",
+        "in"   : "http://egov-mdms-service-tenant-b:8080",
+        "pb"   : "http://egov-mdms-service:8080"
       }
     }
   ]

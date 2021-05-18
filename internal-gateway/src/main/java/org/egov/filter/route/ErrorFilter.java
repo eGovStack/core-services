@@ -11,7 +11,6 @@ public class ErrorFilter extends ZuulFilter{
 
 	@Override
 	public boolean shouldFilter() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
