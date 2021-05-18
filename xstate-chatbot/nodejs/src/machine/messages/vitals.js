@@ -47,13 +47,137 @@ const messages = {
           list: [
             '27',
             '605',
+            '28',
+            '29',
+            '30',
+            '651',
+            '31',
+            '32',
+            '33',
+            '34',
+            '35',
+            '36',
+            '37',
+            '38',
+            '662',
+            '41',
+            '42',
+            '43',
+            '609',
+            '40',
+            '39',
+            '609',
           ],
           messageBundle: {
             '27': {
               en_IN: 'Amritsar',
+              pa_IN: 'ਅੰਮਿ੍ਤਸਰ',
+              hi_IN: 'अमृतसर',
             },
             '605': {
               en_IN: 'Barnala',
+              pa_IN: 'ਬਰਨਾਲਾ',
+              hi_IN: 'बरनाला',
+            },
+            '28': {
+              en_IN: 'Bathinda',
+              pa_IN: 'ਬਠਿੰਡਾ',
+              hi_IN: 'बठिंडा',
+            },
+            '29': {
+              en_IN: 'Faridkot',
+              pa_IN: 'ਫਰੀਡਕੋਟ',
+              hi_IN: 'फरीदकोट',
+            },
+            '30': {
+              en_IN: 'Fatehgarh Sahib',
+              pa_IN: 'ਫਤਿਹਗੜ੍ਹ ਸਾਹਿਬ',
+              hi_IN: 'फतेहगढ़ साहिब',
+            },
+            '651': {
+              en_IN: 'Fazilka',
+              pa_IN: 'ਫਾਜ਼ਿਲਕਾ',
+              hi_IN: 'फाजिल्का',
+            },
+            '31': {
+              en_IN: 'Ferozepur',
+              pa_IN: 'ਫਿਰੋਜ਼ਪੁਰ',
+              hi_IN: 'फिरोजपुर',
+            },
+            '32': {
+              en_IN: 'Gurdaspur',
+              pa_IN: 'ਗੁਰਦਾਸਪੁਰ',
+              hi_IN: 'गुरदासपुर',
+            },
+            '33': {
+              en_IN: 'Hoshiarpur',
+              pa_IN: 'ਹੁਸ਼ਿਆਰਪੁਰ',
+              hi_IN: 'होशियारपुर',
+            },
+            '34': {
+              en_IN: 'Jalandhar',
+              pa_IN: 'ਜਲੰਧਰ',
+              hi_IN: 'जलंधर',
+            },
+            '35': {
+              en_IN: 'Kapurthala',
+              pa_IN: 'ਕਪੂਰਥਲਾ',
+              hi_IN: 'कपूरथला',
+            },
+            '36': {
+              en_IN: 'Ludhiana',
+              pa_IN: 'ਲੁਧਿਆਣਾ',
+              hi_IN: 'लुधियाना',
+            },
+            '37': {
+              en_IN: 'Mansa',
+              pa_IN: 'ਮਾਨਸਾ',
+              hi_IN: 'मानसा',
+            },
+            '38': {
+              en_IN: 'Moga',
+              pa_IN: 'ਮੋਗਾ',
+              hi_IN: 'मोगा',
+            },
+            '662': {
+              en_IN: 'Pathankot',
+              pa_IN: 'ਪਠਾਨਕੋਟ',
+              hi_IN: 'पठानकोट',
+            },
+            '41': {
+              en_IN: 'Patiala',
+              pa_IN: 'ਪਟਿਆਲਾ',
+              hi_IN: 'पटियाला',
+            },
+            '42': {
+              en_IN: 'Rupnagar',
+              pa_IN: 'ਰੂਪਨਗਰ',
+              hi_IN: 'रूपनगर',
+            },
+            '43': {
+              en_IN: 'Sangrur',
+              pa_IN: 'ਸੰਗਰੂਰ',
+              hi_IN: 'संगरूर',
+            },
+            '608': {
+              en_IN: 'S.A.S Nagar',
+              pa_IN: 'ਐਸ.ਏ.ਐਸ.ਨਗਰ',
+              hi_IN: 'एस.ए.एस नगर',
+            },
+            '40': {
+              en_IN: 'Shahid Bhagat Singh Nagar',
+              pa_IN: 'ਸ਼ਹੀਦ ਭਗਤ ਸਿੰਘ ਨਗਰ',
+              hi_IN: 'शहीद भगत सिंह नगर',
+            },
+            '39': {
+              en_IN: 'Sri Muktsar Sahib',
+              pa_IN: 'ਸ਼੍ਰੀ ਮੁਕਤਸਰ ਸਾਹਿਬ',
+              hi_IN: 'श्री मुक्तसर साहिब',
+            },
+            '609': {
+              en_IN: 'Tarn Taran',
+              pa_IN: 'ਤਰਨ ਤਾਰਨ',
+              hi_IN: 'तरनतारन',
             },
           }
         }
