@@ -73,12 +73,11 @@ class VitalsService {
       patient_age: patientDetails.age,
       patient_mobile: user.mobileNumber,
       gender_Id: genderId,
-      district_Id: '', //  add distrct code here TODO
+      district_Id: patientDetails.district, 
       address: patientDetails.address,
       symptom_start_date: patientDetails.symptomsDate.toString(),
       covid_positive_date: patientDetails.covidPositiveDate.toString(),
     };
-     // Dates are object Date and not strings 
 
     var request = {
       method: "POST",
