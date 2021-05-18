@@ -8,7 +8,7 @@ class PersonService {
    * @param {*} mobileNumber
    */
   async isHomeIsolatedPatient(mobileNumber) {
-    let url = config.covaApiConfigs.covaProdUrl.concat(
+    let url = config.covaApiConfigs.cova2Url.concat(
       config.covaApiConfigs.isHomeIsolatedSuffix
     );
 
@@ -17,13 +17,8 @@ class PersonService {
       Authorization: config.covaApiConfigs.covaAuthorization,
     };
 
-    var urlSearchParams = new URLSearchParams();
-    urlSearchParams.append("MobileNumber", mobileNumber);
-    urlSearchParams.append("Token", '');
-
     let requestBody = {
-      Token: config.covaApiConfigs.covaAuthToken,
-      MobileNumber: mobileNumber,
+      patient_mobile: mobileNumber,
     };
 
     var request = {
@@ -43,7 +38,7 @@ class PersonService {
       let responseBody = await response.json();
       console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
     }
-    return true;
+    return false;
   }
 
   async fetchAllHomeIsolatedPatients() {}

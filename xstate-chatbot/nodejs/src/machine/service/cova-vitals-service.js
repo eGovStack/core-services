@@ -9,7 +9,7 @@ class VitalsService {
     let extra = {
       diabetes: symptoms.diabetes,
     };
-    let url = config.covaApiConfigs.covaProdUrl.concat(
+    let url = config.covaApiConfigs.covaUrl.concat(
       config.covaApiConfigs.updateSelfInspectionSuffix
     );
 
@@ -53,9 +53,10 @@ class VitalsService {
   }
 
   async addPatient(user, patientDetails) {
-
     
-    let url = config.covaApiConfigs.insertPatientInfoUrl;
+    let url = config.covaApiConfigs.cova2Url.concat(
+      config.covaApiConfigs.addPatientSuffix
+    );
 
     let headers = {
       "Content-Type": "application/json",
