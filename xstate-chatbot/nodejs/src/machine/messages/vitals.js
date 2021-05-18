@@ -1,39 +1,57 @@
 const messages = {
   notHomeIsolatedPatient: {
-    en_IN: 'You are not registered. Please register yourself.',
+    en_IN: 'You are not a home isolated patient. Please register your self.',
+    pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂਰਜਿਸਟਰ ਕਰੋ',
+    hi_IN: 'आप घरेलू आइसोलेशन के मरीज नहीं हैं। कृपया पहले रजिस्टर करें',
   },
   registerPatient: {
     personName: {
       prompt: {
-        en_IN: 'Got it, please tell me your name'
+        en_IN: 'Please tell me your name',
+        pa_IN: 'ਕ੍ਰਿਪਾ ਕਰਕੇ ਆਪਣਾ ਨਾਮ ਦੱਸੋ',
+        hi_IN: 'कृपया अपना नाम बताएं'
       },
       error: {
-        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid name which is less than 100 characters.'
+        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid name which is less than 100 characters.',
+        pa_IN: 'ਮੈਨੂੰ ਮਾਫ ਕਰਨਾ, ਮੈਨੂੰ ਸਮਝ ਨਹੀਂ ਆਇਆ ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਪ੍ਰਮਾਣਿਕ ​​ਨਾਮ ਦਾਖਲ ਕਰੋ ਜੋ 100 ਅੱਖਰਾਂ ਤੋਂ ਘੱਟ ਹੈ.',
+        hi_IN: 'मुझे खेद है, मुझे समझ में नहीं आया। कृपया एक मान्य नाम दर्ज करें जो 100 वर्णों से कम हो।'
       }
     },
     personAge: {
       prompt: {
-        en_IN: 'Thanks {{name}}. How old are you?'
+        en_IN: 'Thanks {{name}}. How old are you?',
+        pa_IN: 'ਧੰਨਵਾਦ {{name}}. ਤੁਹਾਡੀ ਉਮਰ ਕੀ ਹੈ?',
+        hi_IN: 'धन्यवाद {{name}}। आप कितने साल के हैं?'
       },
       error: {
-        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid age (between 0 and 120)'
+        en_IN: 'I am sorry, I didn\'t understand. Please enter a valid age (between 0 and 120)',
+        pa_IN: 'ਮੈਨੂੰ ਮਾਫ ਕਰਨਾ, ਮੈਨੂੰ ਸਮਝ ਨਹੀਂ ਆਇਆ ਕਿਰਪਾ ਕਰਕੇ ਉਮਰ (0 ਅਤੇ 120 ਦੇ ਵਿਚਕਾਰ) ਦਾਖਲ ਕਰੋ',
+        hi_IN: 'मुझे खेद है, मुझे समझ में नहीं आया। कृपया आयु दर्ज करें (0 और 120 के बीच)'
       }
     },
     personGender: {
       prompt: {
-        en_IN: 'Please select your gender.'
+        en_IN: 'Please select your gender.',
+        pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਲਿੰਗ ਦੀ ਚੋਣ ਕਰੋ.',
+        hi_IN: 'कृपया अपना लिंग चुनें।'
       },
       options: {
         list: ['male', 'female', 'other'],
         messageBundle: {
           male: {
-            en_IN: 'Male'
+            en_IN: 'Male',
+            pa_IN: 'ਮਰਦ',
+            hi_IN: 'पुरुष '
           },
           female: {
-            en_IN: 'Female'
+            en_IN: 'Female',
+            pa_IN: 'ਔਰਤ',
+            hi_IN: 'महिला'
           },
           other: {
-            en_IN: 'Other'
+            en_IN: 'Other',
+            pa_IN: 'ਹੋਰ',
+            hi_IN: 'अन्य'
           }
         }
       }
@@ -42,6 +60,8 @@ const messages = {
       prompt: {
         preamble: {
           en_IN: 'Please select your district',
+          pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਜ਼ਿਲ੍ਹਾ ਦੀ ਚੋਣ ਕਰੋ',
+          hi_IN: 'कृपया अपने जिले का चयन करें'
         },
         options: {
           list: [
@@ -186,20 +206,28 @@ const messages = {
     address: {
       prompt: {
         en_IN: 'Please enter your address',
+        pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪਤਾ ਦਾਖਲ ਕਰੋ',
+        hi_IN: 'कृपया अपना पता दर्ज करें'
       }
     },
     symptomsDate: {
       prompt: {
         en_IN: 'Symptoms start date (DD/MM/YY)',
+        pa_IN: 'ਲੱਛਣ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਮਿਤੀ (ਤਾਰੀਖ / ਮਹੀਨਾ / ਸਾਲ)',
+        hi_IN: 'लक्षण शुरू होने की तारीख (दिन/माह/वर्ष)'
       }
     },
     covidPositiveDate: {
       prompt: {
         en_IN: 'Covid Positive date (DD/MM/YY)',
+        pa_IN: 'ਕੋਵਿਡ ਸਕਾਰਾਤਮਕ ਤਾਰੀਖ (ਤਾਰੀਖ / ਮਹੀਨਾ / ਸਾਲ)',
+        hi_IN: 'कोविड पॉजिटिव तारीख (दिन/माह/वर्ष)'
       }
     },
     registeredPatientSuccess: {
-      en_IN: 'Registered successfully'
+      en_IN: 'Registered successfully',
+      pa_IN: 'ਤੁਸੀਂ ਸਫਲਤਾਪੂਰਵਕ ਆਪਣੇ ਆਪ ਨੂੰ ਰਜਿਸਟਰ ਕਰ ਲਿਆ ਹੈ',
+      hi_IN: 'आपने अपना पंजीकरण सफलतापूर्वक कर लिया है'
     }
   },
   temperature: {
@@ -260,6 +288,8 @@ const messages = {
     diabetes: {
       prompt: {
         en_IN: 'Do you have Diabetes?',
+        pa_IN: 'ਕੀ ਤੁਹਾਨੰ ਮਧੁਮੇਹ ਹੈ ?',
+        hi_IN: 'क्या आपको मधुमेह है?'
       },
     }
   },
