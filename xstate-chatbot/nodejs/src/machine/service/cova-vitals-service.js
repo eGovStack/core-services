@@ -53,11 +53,55 @@ class VitalsService {
   }
 
   async addPatient(user, patientDetails) {
-    // Dummy Content of patient Details
-    //{"name":"asd","age":12,"gender":"male","district":"27","address":"asds","symptomsDate":"2021-05-16T18:30:00.000Z","covidPositiveDate":"2021-05-17T18:30:00.000Z"}
-    // Dates are object Date and not strings 
 
-    // TODO Make API call to Cova
+    
+    let url = config.covaApiConfigs.covaProdUrl.concat(
+      config.covaApiConfigs.insertPatientInfo
+    );
+
+    let headers = {
+      "Content-Type": "application/json",
+      Authorization: config.covaApiConfigs.covaAuthorization,
+    };
+
+    let genderId = 3;
+    if(patientDetails.gender.toLowerCase() == 'male'){
+      genderId = 1;
+    }else if(patientDetails.gender.toLowerCase() == 'female'){
+      genderId = 2;
+    }
+
+    let requestBody = {
+      patient_age: patientDetails.age,
+      patient_mobile: user.mobileNumber,
+      gender_Id: genderId,
+      district_Id: '', //  add distrct code here TODO
+      address: patientDetails.address,
+      symptom_start_date: patientDetails.symptomsDate,
+      covid_positive_date: patientDetails.covidPositiveDate,
+    };
+     // Dates are object Date and not strings 
+
+    var request = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    };
+
+    let response = await fetch(url, request)
+    
+    if(response.status == 200) {
+      let data = await response.json();
+      if(data.response == 1) {
+        console.log('pateint info added succesfully : ' + data.sys_message);
+      } else {
+        console.log('patient info addition failure : ' + data.sys_message);
+      }
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
+    }
+
   }
 
 }
