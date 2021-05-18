@@ -311,7 +311,7 @@ const vitalsFlow = {
             src: (context) => vitalsService.addPatient(context.user, context.slots.registerPatient),
             onDone: {
               actions: assign((context, event) => {
-                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registeredPatientSuccess, context.user.locale));
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registeredPatientSuccess, context.user.locale), false);
               }),
               target: '#temperature'
             }
