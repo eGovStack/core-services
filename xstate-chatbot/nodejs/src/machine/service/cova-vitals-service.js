@@ -52,23 +52,9 @@ class VitalsService {
     }
   }
 
-  async getCitiesAndMessageBundle() {
-    // TODO Replace dummy data with actual data if district list is available in MDMS
-    let keys = [ 'pb.jalandhar', 'pb.amritsar' ];
-    let messageBundle = {
-      'pb.jalandhar': {
-        en_IN: 'Jalandhar',
-      },
-      'pb.amritsar': {
-        en_IN: 'Amritsar',
-      },
-    };
-    return { keys, messageBundle };
-  }
-
   async addPatient(user, patientDetails) {
     // Dummy Content of patient Details
-    //{"name":"asd","age":12,"gender":"male","city":"pb.amritsar","address":"asds","symptomsDate":"2021-05-16T18:30:00.000Z","covidPositiveDate":"2021-05-17T18:30:00.000Z"}
+    //{"name":"asd","age":12,"gender":"male","district":"27","address":"asds","symptomsDate":"2021-05-16T18:30:00.000Z","covidPositiveDate":"2021-05-17T18:30:00.000Z"}
     // Dates are object Date and not strings 
 
     // TODO Make API call to Cova

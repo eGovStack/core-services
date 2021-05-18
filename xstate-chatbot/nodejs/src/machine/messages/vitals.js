@@ -38,10 +38,24 @@ const messages = {
         }
       }
     },
-    city: {
+    district: {
       prompt: {
         preamble: {
-          en_IN: 'Please select your city',
+          en_IN: 'Please select your district',
+        },
+        options: {
+          list: [
+            '27',
+            '605',
+          ],
+          messageBundle: {
+            '27': {
+              en_IN: 'Amritsar',
+            },
+            '605': {
+              en_IN: 'Barnala',
+            },
+          }
         }
       }
     },

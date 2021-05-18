@@ -149,7 +149,7 @@ const vitalsFlow = {
                   actions: assign((context, event) => {
                     context.slots.registerPatient.gender = context.intention;
                   }),
-                  target: '#city'
+                  target: '#district'
                 }
               ]
             },
@@ -161,26 +161,15 @@ const vitalsFlow = {
             }
           }
         }, // personGender
-        city: {
-          id: 'city',
-          initial: 'fetchCities',
+        district: {
+          id: 'district',
+          initial: 'prompt',
           states: {
-            fetchCities: {
-              invoke: {
-                src: (context) => vitalsService.getCitiesAndMessageBundle(),
-                onDone: {
-                  actions: assign((context, event) => {
-                    context.cities = event.data;
-                  }),
-                  target: 'prompt'
-                }
-              }
-            },
             prompt: {
               onEntry: assign((context, event) => {
-                let cities = context.cities;
-                let { prompt, grammer } = dialog.constructListPromptAndGrammer(cities.keys, cities.messageBundle, context.user.locale);
-                let message = dialog.get_message(messages.registerPatient.city.prompt.preamble, context.user.locale);
+                let districts = messages.registerPatient.district.prompt.options;
+                let { prompt, grammer } = dialog.constructListPromptAndGrammer(districts.list, districts.messageBundle, context.user.locale);
+                let message = dialog.get_message(messages.registerPatient.district.prompt.preamble, context.user.locale);
                 message += prompt;
                 context.grammer = grammer;
                 dialog.sendMessage(context, message);
@@ -200,7 +189,7 @@ const vitalsFlow = {
                 },
                 {
                   actions: assign((context, event) => {
-                    context.slots.registerPatient.city = context.intention;
+                    context.slots.registerPatient.district = context.intention;
                   }),
                   target: '#address'
                 }
