@@ -30,6 +30,10 @@ const vitalsFlow = {
         ]
       }
     },
+    notHomeIsolatedPatient:{            // To handle any user who is at this state when the update was pushed
+      id: 'notHomeIsolatedPatient',
+      always: 'registerPatient',
+    },
     registerPatient: {
       id: 'registerPatient',
       initial: 'personName',
