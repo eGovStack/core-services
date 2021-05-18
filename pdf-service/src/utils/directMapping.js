@@ -138,7 +138,7 @@ export const directMapping = async (
               scema[k].localisation.required
             ) {
               let loc = scema[k].localisation;
-              fieldValue = getLocalisationkey(
+              fieldValue = await getLocalisationkey(
                 loc.prefix,
                 fieldValue,
                 loc.isCategoryRequired,
