@@ -1,6 +1,5 @@
 const fetch = require("node-fetch");
 const config = require("../../env-variables");
-const moment = require('moment-timezone');
 
 class VitalsService {
 
@@ -77,8 +76,8 @@ class VitalsService {
       gender_Id: genderId,
       district_Id: patientDetails.district, 
       address: patientDetails.address,
-      symptom_start_date: patientDetails.symptomsDate.format('YYYY-MM-DD HH:MM:SS').toString(),
-      covid_positive_date: patientDetails.covidPositiveDate.format('YYYY-MM-DD HH:MM:SS').toString(),
+      symptom_start_date: patientDetails.symptomsDate,
+      covid_positive_date: patientDetails.covidPositiveDate,
     };
 
     var request = {

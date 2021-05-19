@@ -242,10 +242,10 @@ const vitalsFlow = {
             process: {
               onEntry: assign((context, event) => {
                 let input = dialog.get_input(event);
-                let date = moment(input, 'DD/MM/YY', true);
+                let date = moment(input, 'D/M/YY', true);
                 context.isValid = date.isValid();
                 if(context.isValid) {
-                  context.slots.registerPatient.symptomsDate = date;
+                  context.slots.registerPatient.symptomsDate = date.format('YYYY-MM-DD HH:MM:SS').toString();
                 } 
               }),
               always: [
@@ -281,10 +281,10 @@ const vitalsFlow = {
             process: {
               onEntry: assign((context, event) => {
                 let input = dialog.get_input(event);
-                let date = moment(input, 'DD/MM/YY', true);
+                let date = moment(input, 'D/M/YY', true);
                 context.isValid = date.isValid();
                 if(context.isValid) {
-                  context.slots.registerPatient.covidPositiveDate = date;
+                  context.slots.registerPatient.covidPositiveDate = date.format('YYYY-MM-DD HH:MM:SS').toString();
                 } 
               }),
               always: [
