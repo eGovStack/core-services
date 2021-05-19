@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const config = require("../../env-variables");
+const moment = require('moment-timezone');
 
 class VitalsService {
 
@@ -76,8 +77,8 @@ class VitalsService {
       gender_Id: genderId,
       district_Id: patientDetails.district, 
       address: patientDetails.address,
-      symptom_start_date: patientDetails.symptomsDate.toString(),
-      covid_positive_date: patientDetails.covidPositiveDate.toString(),
+      symptom_start_date: patientDetails.symptomsDate.format('YYYY-MM-DD HH:MM:SS').toString(),
+      covid_positive_date: patientDetails.covidPositiveDate.format('YYYY-MM-DD HH:MM:SS').toString(),
     };
 
     var request = {
@@ -97,7 +98,7 @@ class VitalsService {
       }
     } else {
       let responseBody = await response.json();
-      console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
+      console.error(`Cova (Add Patient API) responded with ${JSON.stringify(responseBody)}`);
     }
   }
 

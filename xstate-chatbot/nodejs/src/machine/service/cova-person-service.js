@@ -36,7 +36,7 @@ class PersonService {
       }
     } else {
       let responseBody = await response.json();
-      console.error(`Cova responded with ${JSON.stringify(responseBody)}`);
+      console.error(`Cova (isHomeIsolatedPatient API) responded with ${JSON.stringify(responseBody)}`);
     }
     return false;
   }
