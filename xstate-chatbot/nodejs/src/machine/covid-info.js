@@ -70,7 +70,9 @@ const covidInfoFlow = {
     fatehKitInfo: {
       id: 'fatehKitInfo',
       onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.fatehKitInfo, context.user.locale));
+        let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/Fateh Kit Contents`, 'pdf', undefined, 'Fateh Kit Contents.pdf');
+        dialog.sendMessage(context, dialog.get_message(messages.fatehKitInfo, context.user.locale), false);
+        dialog.sendMessage(context, mediaMessage);
       }),
       always: '#endstate'
     },
