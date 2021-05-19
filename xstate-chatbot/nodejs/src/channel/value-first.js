@@ -201,31 +201,36 @@ class ValueFirstWhatsAppProvider {
         requestBody["USER"]["@PASSWORD"] = config.valueFirstWhatsAppProvider.valueFirstPassword;
 
         for(let i = 0; i < messages.length; i++) {
-            let message;
+            let output;
             let type;
             if(typeof messages[i] == 'string'){
                 type = "text";
-                message = messages[i];
+                output = messages[i];
             }
             
             if(typeof messages[i] == 'object'){
                 type = messages[i].type;
-                message = messages[i].output;
+                output = messages[i].output;
             }
             
             let messageBody;
             if(type === 'text') {
                 messageBody = JSON.parse(textMessageBody);
-                let encodedMessage=urlencode(message, 'utf8');
+                let encodedMessage = urlencode(output, 'utf8');
                 messageBody['@TEXT'] = encodedMessage;
             }
             
             else if(type === 'media'){
-                const buffer = fs.readFileSync(path.resolve(__dirname, `../../${message}`),'base64');
+                const buffer = fs.readFileSync(path.resolve(__dirname, `../../${output}`),'base64');
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);
                 messageBody['@TEXT'] = buffer;
                 messageBody['@ID'] = uniqueImageMessageId;
+                if(messages[i].mediaType === 'pdf'){
+                    messageBody['@TYPE'] = "document";
+                    messageBody['@CONTENTTYPE'] = 'application/pdf';
+                    messageBody['@CAPTION'] = messages[i].caption;
+                }
             }
 
             else {
