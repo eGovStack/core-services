@@ -23,9 +23,9 @@ let messages = {
   menu: {
     prompt: {
       preamble: {
-        en_IN: 'You can get information about Bed availability, vaccination centres, Fateh kit and other important information about Self care in Home Isolation. You can also resister yourself as patient under Home isolation and your daily vitals shall be recorded.  Our team from health shall be monitoring your vitals and can contact you on your registered number in case of need.',
-        pa_IN: 'ਇਸ ਚੈਟਬੋਟ ਰਾਹੀਂ ਤੁਸੀਂ ਬੈੱਡਜ਼ ਦੀ ਉਪਲਬਧਤਾ, ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ, ਫਤਹਿ ਕਿੱਟ ਅਤੇ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਵਿਚ ਸਵੈ-ਦੇਖਭਾਲ ਬਾਰੇ ਅਤੇ ਹੋਰ ਜ਼ਰੂਰੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ । ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਨੂੰ  ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਵਜੋਂ ਰਜਿਸਟਰ ਵੀ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਤੁਹਾਡੇ COVID-19 ਸੰਬੰਧਿਤ  ਲੱਛਣ  ਵੀ  ਰਿਕਾਰਡ ਕੀਤੇ ਜਾਣਗੇ। ਜ਼ਰੂਰਤ ਪੈਣ \'ਤੇ  ਸਿਹਤ ਵਿਭਾਗ ਦੀ ਟੀਮ ਤੁਹਾਡੇ ਰਜਿਸਟਰਡ ਨੰਬਰ ਤੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।',
-        hi_IN: 'इस चैटबॉट से आप बिस्तरों की उपलब्धता, टीकाकरण केंद्र, विजय किट और घर में एकांतवास में स्वयं की देखभाल और अन्य महत्वपूर्ण जानकारी प्राप्त कर सकते हैं। आप खुद को घरेलू आइसोलेशन रोगी के रूप में भी पंजीकृत कर सकते हैं और आपके COVID-19 संबंधित लक्षणों को दर्ज किया जाएगा। जरूरत पड़ने पर स्वास्थ्य विभाग की टीम आपके रजिस्टर्ड नंबर पर आपसे संपर्क करेगी।',
+        en_IN: 'You can get information about Bed availability, vaccination centres, Fateh kit and other important information about Self care in Home Isolation. You can also resister yourself as patient under Home isolation and your daily vitals shall be recorded.  Our team from health shall be monitoring your vitals and can contact you on your registered number in case of need. \n\nWhat would you like to do?',
+        pa_IN: 'ਇਸ ਚੈਟਬੋਟ ਰਾਹੀਂ ਤੁਸੀਂ ਬੈੱਡਜ਼ ਦੀ ਉਪਲਬਧਤਾ, ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ, ਫਤਹਿ ਕਿੱਟ ਅਤੇ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਵਿਚ ਸਵੈ-ਦੇਖਭਾਲ ਬਾਰੇ ਅਤੇ ਹੋਰ ਜ਼ਰੂਰੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ । ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਨੂੰ  ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਵਜੋਂ ਰਜਿਸਟਰ ਵੀ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਤੁਹਾਡੇ COVID-19 ਸੰਬੰਧਿਤ  ਲੱਛਣ  ਵੀ  ਰਿਕਾਰਡ ਕੀਤੇ ਜਾਣਗੇ। ਜ਼ਰੂਰਤ ਪੈਣ \'ਤੇ  ਸਿਹਤ ਵਿਭਾਗ ਦੀ ਟੀਮ ਤੁਹਾਡੇ ਰਜਿਸਟਰਡ ਨੰਬਰ ਤੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।\n\nਤੁਸੀ ਕੀ ਕਰਨਾ ਚਾਹੋਗੇ?',
+        hi_IN: 'इस चैटबॉट से आप बिस्तरों की उपलब्धता, टीकाकरण केंद्र, विजय किट और घर में एकांतवास में स्वयं की देखभाल और अन्य महत्वपूर्ण जानकारी प्राप्त कर सकते हैं। आप खुद को घरेलू आइसोलेशन रोगी के रूप में भी पंजीकृत कर सकते हैं और आपके COVID-19 संबंधित लक्षणों को दर्ज किया जाएगा। जरूरत पड़ने पर स्वास्थ्य विभाग की टीम आपके रजिस्टर्ड नंबर पर आपसे संपर्क करेगी।\n\nआप क्या करना पसंद करेंगे?',
       },
       options: {
         list: [ 'covidInfo', 'addVitals' ],
