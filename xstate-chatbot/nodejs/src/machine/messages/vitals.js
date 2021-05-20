@@ -213,8 +213,8 @@ const messages = {
     symptomsDate: {
       prompt: {
         en_IN: 'Symptoms start date (DD/MM/YY)',
-        pa_IN: 'ਲੱਛਣ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਮਿਤੀ (ਤਾਰੀਖ / ਮਹੀਨਾ / ਸਾਲ)',
-        hi_IN: 'लक्षण शुरू होने की तारीख (दिन/माह/वर्ष)'
+        pa_IN: 'ਲੱਛਣ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਮਿਤੀ (DD/MM/YY)',
+        hi_IN: 'लक्षण शुरू होने की तारीख (DD/MM/YY)'
       }
     },
     covidPositiveDate: {

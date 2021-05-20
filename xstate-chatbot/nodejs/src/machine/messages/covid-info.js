@@ -39,9 +39,9 @@ const messages = {
     hi_IN: 'आप COVID-19 में स्वयं की देखभाल के बारे में विस्तृत जानकारी https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf पर प्राप्त कर सकते हैं। स्वस्थ और सुरक्षित रहने के लिए कृपया इन सरल युक्तियों का पालन करें! कोविड-19 के क्लिक प्रबंधन के बारे में विस्तृत जानकारी के लिए यहां क्लिक करें  https://nhm.punjab.gov.in/Clinical_Guidance.pdf',
   },
   fatehKitInfo: {
-    en_IN: 'Please find below information related to Fateh Kit use.',
-    pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਨਾਲ ਸਬੰਧਤ ਜਾਣਕਾਰੀ',
-    hi_IN: 'फतेह किट के उपयोग के संबंध में जानकारी',
+    en_IN: 'Detailed Video on How to use Fateh Kit is here https://youtu.be/eqg8tFyRlLk. Please find below information related to Fateh Kit use.',
+    pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਬਾਰੇ ਵਿਸਤ੍ਰਿਤ ਵੀਡੀਓ ਇੱਥੇ ਹੈ https://youtu.be/eqg8tFyRlLk ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਨਾਲ ਸਬੰਧਤ ਜਾਣਕਾਰੀ ',
+    hi_IN: 'फतेह किट का उपयोग कैसे करें पर विस्तृत वीडियो यहां है https://youtu.be/eqg8tFyRlLkफतेह किट के उपयोग के संबंध में जानकारी',
   },
   bedAvailabilityInfo: {
     en_IN: 'You can find information regarding Beds Availability here http://statecovidcontrolroom.punjab.gov.in/',
