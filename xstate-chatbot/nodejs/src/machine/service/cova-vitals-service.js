@@ -71,6 +71,7 @@ class VitalsService {
     }
 
     let requestBody = {
+      patient_name: patientDetails.name,
       patient_age: patientDetails.age,
       patient_mobile: user.mobileNumber,
       gender_Id: genderId,
