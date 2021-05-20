@@ -86,7 +86,9 @@ const covidInfoFlow = {
     vaccinationCentersInfo: {
       id: 'vaccinationCentersInfo',
       onEntry: assign((context, event) => {
+        let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/vaccination_centers_info`, 'jpeg', '', '');
         dialog.sendMessage(context, dialog.get_message(messages.vaccinationCentersInfo, context.user.locale));
+        dialog.sendMessage(context, mediaMessage);
       }),
       always: '#endstate'
     }
