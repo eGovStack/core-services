@@ -1,3 +1,8 @@
+
+
+## 2.1.0
+- Tenant-id added to MDC for logging in central instance
+
 ## 2.0.0
 - Upgraded to Spring Boot 2.2.6 RELASE
 
