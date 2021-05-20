@@ -31,6 +31,8 @@ public class MDMSService {
 		Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
 
 		String tenantId = mdmsCriteriaReq.getMdmsCriteria().getTenantId();
+		log.info(" Incoming tenantid : " + tenantId);
+		
 		/* 
 		 * local tenantId replica for backtracking to parent tenant when child tenant is empty
 		 */
@@ -45,8 +47,9 @@ public class MDMSService {
 		 */
 		if (countOfSubTenant == 0) {
 
-			if (tenantData != null)
+			if (tenantData != null) {
 				getDataForTenatId(mdmsCriteriaReq, tenantIdWithData, responseMap);
+			}
 		} else {
 			/*
 			 * if the tenantId contains separator, it will be backtracked until a tenant
