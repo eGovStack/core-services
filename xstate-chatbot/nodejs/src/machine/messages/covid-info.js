@@ -34,14 +34,14 @@ const messages = {
     },
   },
   selfCareInfo: {
-    en_IN: 'You can find detailed information regarding Self Care in COVID-19 here https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf. \nPlease follow these simple tips to stay healthy and safe!',
-    pa_IN: 'ਤੁਸੀਂ ਸਵੈ-ਦੇਖਭਾਲ ਸੰਬੰਧੀ ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ COVID-19 ਵਿਚ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf. ਸਿਹਤਮੰਦ ਅਤੇ ਸੁਰੱਖਿਅਤ ਰਹਿਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇਨ੍ਹਾਂ ਸਧਾਰਣ ਸੁਝਾਆਂ ਦੀ ਪਾਲਣਾ ਕਰੋ!',
-    hi_IN: 'आप COVID-19 में स्वयं की देखभाल के बारे में विस्तृत जानकारी https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf पर प्राप्त कर सकते हैं। स्वस्थ और सुरक्षित रहने के लिए कृपया इन सरल युक्तियों का पालन करें!',
+    en_IN: 'You can find detailed information regarding Self Care in COVID-19 here https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf. \nPlease follow these simple tips to stay healthy and safe! For detailed information on clicnical management of covid-19 click here https://nhm.punjab.gov.in/Clinical_Guidance.pdf',
+    pa_IN: 'ਤੁਸੀਂ ਸਵੈ-ਦੇਖਭਾਲ ਸੰਬੰਧੀ ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ COVID-19 ਵਿਚ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf. ਸਿਹਤਮੰਦ ਅਤੇ ਸੁਰੱਖਿਅਤ ਰਹਿਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇਨ੍ਹਾਂ ਸਧਾਰਣ ਸੁਝਾਆਂ ਦੀ ਪਾਲਣਾ ਕਰੋ! ਕੋਵਿਡ -19 ਦੇ ਕਲਿਕਲ ਪ੍ਰਬੰਧਨ ਬਾਰੇ ਵਿਸਥਾਰ ਜਾਣਕਾਰੀ ਲਈ ਇੱਥੇ ਕਲਿੱਕ ਕਰੋ  https://nhm.punjab.gov.in/Clinical_Guidance.pdf',
+    hi_IN: 'आप COVID-19 में स्वयं की देखभाल के बारे में विस्तृत जानकारी https://pmidc.punjab.gov.in/wp-content/uploads/2021/05/home-isolation.pdf पर प्राप्त कर सकते हैं। स्वस्थ और सुरक्षित रहने के लिए कृपया इन सरल युक्तियों का पालन करें! कोविड-19 के क्लिक प्रबंधन के बारे में विस्तृत जानकारी के लिए यहां क्लिक करें  https://nhm.punjab.gov.in/Clinical_Guidance.pdf',
   },
   fatehKitInfo: {
-    en_IN: 'You can find information on how to use Fateh Kit here https://youtu.be/cMxBWejWyes',
-    pa_IN: 'ਇਸ ਵੀਡੀਓ ਨੂੰ ਵੇਖ ਕੇ ਫਤਹਿ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਕਿਵੇਂ ਕੀਤੀ ਜਾਵੇ ਇਸ ਬਾਰੇ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ  https://youtu.be/cMxBWejWyes',
-    hi_IN: 'फतेह किट का उपयोग कैसे करें इसकी जानकारी इस वीडियो को देखकर प्राप्त करें  https://youtu.be/cMxBWejWyes',
+    en_IN: 'Please find below information related to Fateh Kit use.',
+    pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਨਾਲ ਸਬੰਧਤ ਜਾਣਕਾਰੀ',
+    hi_IN: 'फतेह किट के उपयोग के संबंध में जानकारी',
   },
   bedAvailabilityInfo: {
     en_IN: 'You can find information regarding Beds Availability here http://statecovidcontrolroom.punjab.gov.in/',
