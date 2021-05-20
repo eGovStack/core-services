@@ -657,8 +657,8 @@ const vitalsFlow = {
         src: (context) => vitalsService.addVitals(context.user, context.slots.vitals),
         onDone: {
           actions: assign((context, event) => {
-            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', '', '');
-            dialog.sendMessage(context, dialog.get_message(messages.addVitals, context.user.locale));
+            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
+            dialog.sendMessage(context, dialog.get_message(messages.addVitals, context.user.locale), false);
             dialog.sendMessage(context, mediaMessage);
           }),
           target: '#endstate'
