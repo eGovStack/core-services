@@ -129,15 +129,16 @@ public class IntegrationService {
 
     private RequestInfoWrapper generateRequestInfoWrapper(RequestInfo requestInfo) {
         RequestInfoWrapper riw = new RequestInfoWrapper();
-        org.egov.swagger.model.RequestInfo ri = new org.egov.swagger.model.RequestInfo();
+        RequestInfo ri = new RequestInfo();
         ri.setAction(requestInfo.getAction());
         ri.setAuthToken(requestInfo.getAuthToken());
-        ri.apiId(requestInfo.getApiId());
+        ri.setApiId(requestInfo.getApiId());
         ri.setVer(requestInfo.getVer());
         ri.setTs(1L);
         ri.setDid(requestInfo.getDid());
         ri.setKey(requestInfo.getKey());
         ri.setMsgId(requestInfo.getMsgId());
+        ri.setUserInfo(requestInfo.getUserInfo());
 //        ri.setRequesterId(requestInfo.getRequesterId());
         riw.setRequestInfo(ri);
         return riw;
