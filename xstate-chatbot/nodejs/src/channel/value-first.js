@@ -309,11 +309,20 @@ class ValueFirstWhatsAppProvider {
 
     async sendMessageToUser(user, messages,extraInfo) {
         let requestBody = {};
-        requestBody = await this.getTransformedResponse(user, messages, extraInfo);
-        this.sendMessage(requestBody);       
+        if(extraInfo.missedCall) {
+            await this.sendMessageForTemplate([{
+                user: user,
+                extraInfo: {
+                    templateId: config.valueFirstWhatsAppProvider.valueFirstWelcomeMessageTemplateId,
+                }
+            }]);
+        } else {
+            requestBody = await this.getTransformedResponse(user, messages, extraInfo);
+            this.sendMessage(requestBody);
+        }
     }
 
-    async getTransformMessageForTemplate(reformattedMessages){
+    async sendMessageForTemplate(reformattedMessages){
         if(reformattedMessages.length>0){
             let requestBody = JSON.parse(valueFirstRequestBody);
             requestBody["USER"]["@USERNAME"] = config.valueFirstWhatsAppProvider.valueFirstUsername;
@@ -325,9 +334,11 @@ class ValueFirstWhatsAppProvider {
                 let combinedStringForTemplateInfo = message.extraInfo.templateId;
                 let userMobile = message.user.mobileNumber;
             
-                for(let param of templateParams)
-                    combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
-
+                if(templateParams) {
+                    for(let param of templateParams)
+                        combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
+                }
+                
                 messageBody['@TEMPLATEINFO'] = combinedStringForTemplateInfo;
 
                 messageBody["ADDRESS"][0]["@FROM"] = config.whatsAppBusinessNumber;

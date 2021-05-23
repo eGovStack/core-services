@@ -42,6 +42,7 @@ const envVariables = {
         valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
         valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
         valueFirstURL: process.env.VALUEFIRST_SEND_MESSAGE_URL || 'https://api.myvaluefirst.com/psms/servlet/psms.JsonEservice',
+        valueFirstWelcomeMessageTemplateId: process.env.VALUEFIRST_WELCOME_MESSAGE_TEMPLATE_ID || '3459715',
     },
 
     kafka: {
