@@ -46,6 +46,14 @@ const covidInfoFlow = {
               target: '#vaccinationCentersInfo'
             },
             {
+              cond: (context) => context.intention == 'VaccineRegistration',
+              target: '#VaccinationRegistrationInfo'
+            },
+            {
+              cond: (context) => context.intention == 'InfoBlackFungus',
+              target: '#InfoBlackFungus'
+            },
+            {
               target: 'error'
             },
           ]
@@ -89,6 +97,20 @@ const covidInfoFlow = {
         let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/vaccination_centers_info`, 'jpeg', '', '');
         dialog.sendMessage(context, dialog.get_message(messages.vaccinationCentersInfo, context.user.locale));
         dialog.sendMessage(context, mediaMessage);
+      }),
+      always: '#endstate'
+    },
+    VaccinationRegistrationInfo: {
+      id: 'VaccinationRegistrationInfo',
+      onEntry: assign((context, event) => {
+        dialog.sendMessage(context, dialog.get_message(messages.VaccinationRegistrationInfo, context.user.locale));
+      }),
+      always: '#endstate'
+    },
+    InfoBlackFungus: {
+      id: 'InfoBlackFungus',
+      onEntry: assign((context, event) => {
+        dialog.sendMessage(context, dialog.get_message(messages.InfoBlackFungus, context.user.locale));
       }),
       always: '#endstate'
     }

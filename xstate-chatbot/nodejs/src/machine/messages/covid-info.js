@@ -7,7 +7,7 @@ const messages = {
         hi_IN: 'आप क्या जानना चाहेंगे?',
       },
       options: {
-        list: [ 'selfCare', 'fatehKit', 'bedAvailability', 'vaccinationCenters' ],
+        list: [ 'selfCare', 'fatehKit', 'bedAvailability', 'vaccinationCenters', 'VaccineRegistration', 'InfoBlackFungus' ],
         messageBundle: {
           selfCare: {
             en_IN: 'How to do Self Care  in Covid',
@@ -29,6 +29,16 @@ const messages = {
             pa_IN: 'ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ',
             hi_IN: 'टीकाकरण केंद्रों की जानकारी',
           },
+          VaccineRegistration: {
+            en_IN: 'Where should I Register for getting vaccinated?',
+            pa_IN: 'ਟੀਕਾ ਲਗਵਾਉਣ ਲਈ ਮੈਨੂੰ ਕਿੱਥੇ ਰਜਿਸਟਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ?',
+            hi_IN: 'टीकाकरण के लिए मुझे कहां पंजीकरण कराना चाहिए?'
+          },
+          InfoBlackFungus: {
+            en_IN: 'Detailed information and DOs and Don’ts in Case of Black Fungus',
+            pa_IN: 'ਕਾਲੇ ਫੰਗਸ ਦੇ ਮਾਮਲੇ ਵਿੱਚ ਵਿਸਥਾਰ ਜਾਣਕਾਰੀ ਅਤੇ ਕੀ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਕੀ ਨਹੀਂ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ|',
+            hi_IN: 'काले कवक के बारे में विस्तृत जानकारी और क्या करें और क्या न करें'
+          }
         }
       }
     },
@@ -52,6 +62,16 @@ const messages = {
     en_IN: 'You can find information regarding COVID-19 vaccination centers here https://nhm.punjab.gov.in/',
     pa_IN: 'ਤੁਸੀਂ COVID-19 ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ https://nhm.punjab.gov.in/',
     hi_IN: 'आप यहां COVID-19 टीकाकरण केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं https://nhm.punjab.gov.in/',
+  },
+  VaccinationRegistrationInfo: {
+    en_IN: 'For registration for vaccination please download COVA App and register. No registration is required for persons above 45 years of Age',
+    pa_IN: 'ਟੀਕਾਕਰਣ ਲਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਕੋਵਾ ਐਪ ਡਾਉਨਲੋਡ ਕਰੋ. 45 ਸਾਲ ਤੋਂ ਵੱਧ ਉਮਰ ਦੇ ਵਿਅਕਤੀਆਂ ਲਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ',
+    hi_IN: 'वैक्सीन के लिए पंजीकरण करने के लिए, कृपया कोवा ऐप डाउनलोड करें। 45 वर्ष से अधिक आयु के व्यक्तियों के लिए पंजीकरण की आवश्यकता नहीं है'
+  },
+  InfoBlackFungus: {
+    en_IN: 'Please listen to the video for expert opinion on Black Fungus and which medicines should not be taken. https://youtu.be/-Rp7j0fpatw https://youtu.be/suVQGHajU9M',
+    pa_IN: 'ਕਾਲੀ ਫੰਗਸ ਬਾਰੇ ਮਾਹਰ ਦੀ ਰਾਏ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਵੀਡੀਓ ਨੂੰ ਸੁਣੋ ਅਤੇ ਪਤਾ ਕਰੋ ਕਿ ਕਿਹੜੀਆਂ ਦਵਾਈਆਂ ਨਹੀਂ ਲਈਆਂ ਜਾਣੀਆਂ ਚਾਹੀਦੀਆਂ. https://youtu.be/-Rp7j0fpatw https://youtu.be/suVQGHajU9M',
+    hi_IN: 'ब्लैक फंगस पर विशेषज्ञ की राय के लिए कृपया वीडियो सुनें और पता करें कि कौन सी दवाएं नहीं लेनी चाहिए। https://youtu.be/-Rp7j0fpatw https://youtu.be/suVQGHajU9M'
   }
 };
 
