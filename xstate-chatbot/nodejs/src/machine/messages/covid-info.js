@@ -37,7 +37,7 @@ const messages = {
           InfoBlackFungus: {
             en_IN: 'Detailed information and DOs and Don’ts in Case of Black Fungus',
             pa_IN: 'ਕਾਲੇ ਫੰਗਸ ਦੇ ਮਾਮਲੇ ਵਿੱਚ ਵਿਸਥਾਰ ਜਾਣਕਾਰੀ ਅਤੇ ਕੀ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਕੀ ਨਹੀਂ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ|',
-            hi_IN: 'काले कवक के बारे में विस्तृत जानकारी और क्या करें और क्या न करें'
+            hi_IN: 'काले फंगस के बारे में विस्तृत जानकारी और क्या करें और क्या न करें'
           }
         }
       }
