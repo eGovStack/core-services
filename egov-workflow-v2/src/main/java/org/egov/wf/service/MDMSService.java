@@ -1,5 +1,6 @@
 package org.egov.wf.service;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -10,6 +11,7 @@ import org.egov.wf.repository.ServiceRequestRepository;
 import org.egov.wf.util.WorkflowConstants;
 import org.egov.wf.web.models.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +27,7 @@ public class MDMSService {
 
    private WorkflowConfig workflowConfig;
 
+   private Map<String,Boolean> stateLevelMapping;
 
     @Autowired
     public MDMSService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository, WorkflowConfig workflowConfig) {
@@ -34,6 +37,29 @@ public class MDMSService {
     }
 
 
+    public Map<String, Boolean> getStateLevelMapping() {
+        return this.stateLevelMapping;
+    }
+
+
+    @Bean
+    public void stateLevelMapping(){
+        Map<String, Boolean> stateLevelMapping = new HashMap<>();
+
+        Object mdmsData = getBusinessServiceMDMS();
+        List<HashMap<String, Object>> configs = JsonPath.read(mdmsData,JSONPATH_BUSINESSSERVICE_STATELEVEL);
+
+
+        for (Map map : configs){
+
+            String businessService = (String) map.get("businessService");
+            Boolean isStatelevel = Boolean.valueOf((String) map.get("isStatelevel"));
+
+            stateLevelMapping.put(businessService, isStatelevel);
+        }
+
+        this.stateLevelMapping = stateLevelMapping;
+    }
 
 
     /**
@@ -52,7 +78,7 @@ public class MDMSService {
      * @return
      */
     public Object getBusinessServiceMDMS(){
-        MdmsCriteriaReq mdmsCriteriaReq = getBusinessServiceMDMSRequest(new RequestInfo(),workflowConfig.getStateLevelTenantId());
+        MdmsCriteriaReq mdmsCriteriaReq = getBusinessServiceMDMSRequest(new RequestInfo(), workflowConfig.getStateLevelTenantId());
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
@@ -78,7 +104,6 @@ public class MDMSService {
                 .requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
-
 
     /**
      * Creates MDMSCriteria

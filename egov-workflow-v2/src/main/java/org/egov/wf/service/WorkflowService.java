@@ -159,7 +159,9 @@ public class WorkflowService {
         else
             businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
 
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
+        Map<String, Boolean> stateLevelMapping = stat
+
+        List<BusinessService> businessServices = businessServiceRepository.getAllBusinessService();
         List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         criteria.setStatus(actionableStatuses);

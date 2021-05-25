@@ -14,7 +14,7 @@ public class WorkflowConstants {
 
     public static final String ALL_WF_JSONPATH_CODE = "$.MdmsRes.Workflow.BusinessService.*";
 
-    public static final String MDMS_BUSINESSSERVICE= "BusinessService";
+    public static final String MDMS_BUSINESSSERVICE= "BusinessServiceMasterConfig";
 
     public static final String MDMS_AUTOESCALTION= "AutoEscalation";
 

@@ -34,7 +34,8 @@ public class BusinessMasterService {
 
 
     @Autowired
-    public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService, BusinessServiceRepository repository, MDMSService mdmsService) {
+    public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService,
+                                 BusinessServiceRepository repository, MDMSService mdmsService) {
         this.producer = producer;
         this.config = config;
         this.enrichmentService = enrichmentService;
@@ -42,26 +43,6 @@ public class BusinessMasterService {
         this.mdmsService = mdmsService;
     }
 
-
-
-    @Bean
-    public Map<String,Boolean> stateLevelMapping(){
-        Map<String, Boolean> stateLevelMapping = new HashMap<>();
-
-        Object mdmsData = mdmsService.getBusinessServiceMDMS();
-        List<HashMap<String, Object>> configs = JsonPath.read(mdmsData,JSONPATH_BUSINESSSERVICE_STATELEVEL);
-
-
-        for (Map map : configs){
-
-            String businessService = (String) map.get("businessService");
-            Boolean isStatelevel = Boolean.valueOf((String) map.get("isStatelevel"));
-
-            stateLevelMapping.put(businessService, isStatelevel);
-        }
-
-        return stateLevelMapping;
-    }
 
 
 
@@ -84,11 +65,10 @@ public class BusinessMasterService {
      */
     @Cacheable(value = "businessService")
     public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
-        String tenantId = criteria.getTenantIds().get(0);
+        String tenantId = criteria.getTenantId();
         List<BusinessService> businessServices = repository.getBusinessServices(criteria);
-        if(config.getIsStateLevel()){
-            enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
-        }
+        enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
+
         return businessServices;
     }
 

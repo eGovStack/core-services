@@ -226,13 +226,19 @@ public class WorkflowQueryBuilder {
 
         preparedStmtList.add(criteria.getTenantId());
         List<String> statuses = criteria.getStatus();
+        List<String> tenantSpecificStatus = criteria.getTenantSpecifiStatus();
         StringBuilder with_query_builder = new StringBuilder(with_query);
 
-        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-            with_query_builder.append(" AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_outer.tenantid = ? ) OR (pi_outer.tenantid || ':' || pi_outer.status) IN (").append(createQuery(statuses)).append("))");
+        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(tenantSpecificStatus)){
+            String clause = " AND ((id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?)" +
+                    " AND pi_outer.tenantid = ? ) {{OR_CLUASE_PLACEHOLDER}} )";
+
             preparedStmtList.add(criteria.getAssignee());
             preparedStmtList.add(criteria.getTenantId());
-            addToPreparedStatement(preparedStmtList,statuses);
+
+            String statusWhereCluse = getStatusRelatedWhereClause(statuses, tenantSpecificStatus, preparedStmtList);
+            clause = clause.replace("{{OR_CLUASE_PLACEHOLDER}}", statusWhereCluse);
+            with_query_builder.append(clause);
         }
         else {
             with_query_builder.append(" id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_outer.tenantid = ? ");
@@ -253,6 +259,36 @@ public class WorkflowQueryBuilder {
 
         return builder.toString();
     }
+
+
+    private String getStatusRelatedWhereClause(List<String> statuses, List<String> tenantSpecificStatus, List<Object> preparedStmtList)
+    {
+        StringBuilder innerQuery = new StringBuilder();
+
+        if(!CollectionUtils.isEmpty(tenantSpecificStatus)){
+            innerQuery.append(getTenantSpecificStatusClause(tenantSpecificStatus));
+            addToPreparedStatement(preparedStmtList, tenantSpecificStatus);
+        }
+
+        if(!CollectionUtils.isEmpty(statuses)){
+            innerQuery.append(getStatusClause(statuses));
+            addToPreparedStatement(preparedStmtList, statuses);
+        }
+
+        return innerQuery.toString();
+    }
+
+
+    private String getTenantSpecificStatusClause(List<String> tenantSpecificStatus){
+        StringBuilder builder = new StringBuilder(" OR (pi_outer.tenantid || ':' || pi_outer.status) IN (").append(createQuery(tenantSpecificStatus)).append(")");
+        return builder.toString();
+    }
+
+    private String getStatusClause(List<String> statuses){
+        StringBuilder builder = new StringBuilder(" OR pi_outer.status IN (").append(createQuery(statuses)).append(")");
+        return builder.toString();
+    }
+
 
     /**
      * Wraps pagination around the base query

@@ -65,7 +65,7 @@ public class EscalationUtil {
 
 
         BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
-        businessServiceSearchCriteria.setTenantIds(Collections.singletonList(tenantId));
+        businessServiceSearchCriteria.setTenantId(tenantId);
         businessServiceSearchCriteria.setBusinessServices(Collections.singletonList(businessService));
 
         List<BusinessService> businessServices = businessMasterService.search(businessServiceSearchCriteria);
