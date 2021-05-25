@@ -148,12 +148,12 @@ public class WorkflowService {
      */
     private void enrichSearchCriteriaFromUser(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
 
-        BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
+        /*BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
 
-        /*
+        *//*
          * If tenantId is sent in query param processInstances only for that tenantId is returned
          * else all tenantIds for which the user has roles are returned
-         * */
+         * *//*
         if(criteria.getTenantId()!=null)
             businessServiceSearchCriteria.setTenantIds(Collections.singletonList(criteria.getTenantId()));
         else
@@ -164,7 +164,11 @@ public class WorkflowService {
         List<BusinessService> businessServices = businessServiceRepository.getAllBusinessService();
         List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
-        criteria.setStatus(actionableStatuses);
+        criteria.setStatus(actionableStatuses);*/
+
+        util.enrichStatusesInSearchCriteria(requestInfo, criteria);
+        criteria.setAssignee(requestInfo.getUserInfo().getUuid());
+
 
     }
 

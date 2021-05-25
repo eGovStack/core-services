@@ -184,7 +184,7 @@ public class WorkflowUtil {
      * @return List of status on which user from requestInfo can take action upon
      */
 
-    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
+/*    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
 
         String tenantId;
         List<String> userRoleCodes;
@@ -214,7 +214,7 @@ public class WorkflowUtil {
             }         
         }
         return actionableStatuses;
-    }
+    }*/
 
 
     /**
@@ -236,7 +236,7 @@ public class WorkflowUtil {
      * @param criteria
      * @return
      */
-    public List<String> getActionableStatusesForRole(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria){
+    public void enrichStatusesInSearchCriteria(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria){
 
         Map<String, Map<String,List<String>>> roleTenantAndStatusMapping = businessServiceRepository.getRoleTenantAndStatusMapping();
         Map<String,List<String>> roleToTenantIdMap = getRoleToTenantId(requestInfo);
@@ -305,10 +305,13 @@ public class WorkflowUtil {
                 }
             }
 
-
-            
         }
 
+        if(!CollectionUtils.isEmpty(tenantSpecificStatuses))
+            criteria.setTenantSpecifiStatus(tenantSpecificStatuses);
+
+        if(!CollectionUtils.isEmpty(statusIrrespectiveOfTenant))
+            criteria.setStatus(statusIrrespectiveOfTenant);
 
 
     }
