@@ -96,8 +96,8 @@ public class TransitionService {
                 }
             }
 
-            System.out.println("~~~~~~~~~~ Actions from state ".concat(processStateAndAction.getCurrentState().getUuid()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
             if(isTransitionCall){
+            	System.out.println("~~~~~~~~~~ Actions from state ".concat(processStateAndAction.getCurrentState().getUuid()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
                             + " not found in config for the businessId: "
