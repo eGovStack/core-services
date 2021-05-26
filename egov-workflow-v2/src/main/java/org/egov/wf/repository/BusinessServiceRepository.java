@@ -2,12 +2,14 @@ package org.egov.wf.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.Role;
+import org.egov.tracer.model.CustomException;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.repository.querybuilder.BusinessServiceQueryBuilder;
 import org.egov.wf.repository.rowmapper.BusinessServiceRowMapper;
 import org.egov.wf.service.MDMSService;
 import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -86,8 +88,11 @@ public class BusinessServiceRepository {
     }
 
 
-
-
+    /**
+     * Creates map of roles vs tenantId vs List of status uuids from all the avialable businessServices
+     * @return
+     */
+    @Cacheable(value = "roleTenantAndStatusesMapping")
     public Map<String,Map<String,List<String>>> getRoleTenantAndStatusMapping(){
 
 
@@ -167,6 +172,9 @@ public class BusinessServiceRepository {
             String code = businessService.getBusinessService();
             String tenantId = businessService.getTenantId();
             Boolean isStatelevel = stateLevelMapping.get(code);
+
+            if(isStatelevel == null)
+                throw new CustomException("INVALID_MDMS_CONFIG","The master data is missing for businessService: "+code);
 
             if(isStatelevel){
                 if(tenantId.equalsIgnoreCase(config.getStateLevelTenantId())){
