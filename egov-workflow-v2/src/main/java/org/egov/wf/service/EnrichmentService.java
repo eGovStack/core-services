@@ -96,9 +96,12 @@ public class EnrichmentService {
             if(isTransition)
              state = processStateAndAction.getResultantState();
             else state = processStateAndAction.getCurrentState();
+            System.out.println("State : "+state.getUuid()+"~~~~~"+state.getActions());
             List<Action> nextAction = new ArrayList<>();
             if(!CollectionUtils.isEmpty( state.getActions())){
                 state.getActions().forEach(action -> {
+                	System.out.println("User roles ------------"+roles);
+                	System.out.println("action id ------------- "+action.getUuid()+"roles ------------ "+action.getRoles());
                     if(util.isRoleAvailable(tenantId,roles,action.getRoles()) && !nextAction.contains(action))
                         nextAction.add(action);
                 });
@@ -106,6 +109,7 @@ public class EnrichmentService {
             if(!CollectionUtils.isEmpty(nextAction))
                 nextAction.sort(Comparator.comparing(Action::getAction));
             processStateAndAction.getProcessInstanceFromRequest().setNextActions(nextAction);
+            System.out.println("nextactions --------------"+nextAction);
         });
     }
 
