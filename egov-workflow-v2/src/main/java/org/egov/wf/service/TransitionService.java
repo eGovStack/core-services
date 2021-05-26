@@ -83,7 +83,7 @@ public class TransitionService {
                     }
             }
             else processStateAndAction.setCurrentState(currentState);
-            System.out.println("~~~~~~~~~~ current state from business service = ".concat(processStateAndAction.getCurrentState().getUuid()).concat(processStateAndAction.getCurrentState().getState()));
+            System.out.println("~~~~~~~~~~ current state from business service = ".concat(processStateAndAction.getCurrentState().getUuid()));
             
             if(!CollectionUtils.isEmpty(processStateAndAction.getCurrentState().getActions())){
                 for (Action action : processStateAndAction.getCurrentState().getActions()){
@@ -96,7 +96,7 @@ public class TransitionService {
                 }
             }
 
-            System.out.println("~~~~~~~~~~ Actions from state ".concat(currentState.getState()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
+            System.out.println("~~~~~~~~~~ Actions from state ".concat(processStateAndAction.getCurrentState().getUuid()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
             if(isTransitionCall){
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
