@@ -83,7 +83,7 @@ public class TransitionService {
                     }
             }
             else processStateAndAction.setCurrentState(currentState);
-            System.out.println("~~~~~~~~~~ current state from business service = ".concat(currentState.getUuid()).concat(currentState.getState()));
+            System.out.println("~~~~~~~~~~ current state from business service = ".concat(processStateAndAction.getCurrentState().getUuid()).concat(processStateAndAction.getCurrentState().getState()));
             
             if(!CollectionUtils.isEmpty(processStateAndAction.getCurrentState().getActions())){
                 for (Action action : processStateAndAction.getCurrentState().getActions()){
