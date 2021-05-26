@@ -50,6 +50,7 @@ public class TransitionService {
 
         BusinessService businessService = getBusinessService(processInstances);
         Map<String,ProcessInstance> idToProcessInstanceFromDbMap = prepareProcessStateAndAction(processInstances,businessService);
+        System.out.println("~~~~~~~~~~~~~ idToProcessInstanceFromDbMap = "+idToProcessInstanceFromDbMap);
         List<String> allowedRoles = workflowUtil.rolesAllowedInService(businessService);
         for(ProcessInstance processInstance: processInstances){
 
@@ -59,17 +60,19 @@ public class TransitionService {
                 processStateAndAction.getProcessInstanceFromRequest().setModuleName(businessService.getBusiness());
             }
             processStateAndAction.setProcessInstanceFromDb(idToProcessInstanceFromDbMap.get(processInstance.getBusinessId()));
+            System.out.println("~~~~~~~~~~~~~ ProcessInstanceFromDb = "+processStateAndAction.getProcessInstanceFromDb());
             State currentState = null;
             if(processStateAndAction.getProcessInstanceFromDb()!=null && isTransitionCall)
                 currentState = processStateAndAction.getProcessInstanceFromDb().getState();
             else if(!isTransitionCall)
                 currentState = processStateAndAction.getProcessInstanceFromRequest().getState();
 
+            if(currentState!=null)
+            	System.out.println("~~~~~~~~~~ current state from request/DB = ".concat(currentState.getUuid()).concat(currentState.getState()));
 
             //Assign businessSla when creating processInstance
             if(processStateAndAction.getProcessInstanceFromDb()==null && isTransitionCall)
                 processInstance.setBusinesssServiceSla(businessService.getBusinessServiceSla());
-
 
             if(currentState==null){
                     for(State state : businessService.getStates()){
@@ -80,7 +83,8 @@ public class TransitionService {
                     }
             }
             else processStateAndAction.setCurrentState(currentState);
-
+            System.out.println("~~~~~~~~~~ current state from business service = ".concat(currentState.getUuid()).concat(currentState.getState()));
+            
             if(!CollectionUtils.isEmpty(processStateAndAction.getCurrentState().getActions())){
                 for (Action action : processStateAndAction.getCurrentState().getActions()){
                     if(action.getAction().equalsIgnoreCase(processInstance.getAction())){
@@ -92,7 +96,7 @@ public class TransitionService {
                 }
             }
 
-
+            System.out.println("~~~~~~~~~~ Actions from state ".concat(currentState.getState()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
             if(isTransitionCall){
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
