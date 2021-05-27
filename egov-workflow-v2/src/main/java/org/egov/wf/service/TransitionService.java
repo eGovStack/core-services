@@ -83,7 +83,9 @@ public class TransitionService {
                     }
             }
             else processStateAndAction.setCurrentState(currentState);
-            System.out.println("~~~~~~~~~~ current state from business service = ".concat(processStateAndAction.getCurrentState().getUuid()));
+            
+            if(processStateAndAction.getCurrentState() != null)
+            	System.out.println("~~~~~~~~~~ current state from business service = ".concat(processStateAndAction.getCurrentState().getUuid()));
             
             if(!CollectionUtils.isEmpty(processStateAndAction.getCurrentState().getActions())){
                 for (Action action : processStateAndAction.getCurrentState().getActions()){
@@ -97,7 +99,9 @@ public class TransitionService {
             }
 
             if(isTransitionCall){
-            	System.out.println("~~~~~~~~~~ Actions from state ".concat(processStateAndAction.getCurrentState().getUuid()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
+            	if(processStateAndAction.getCurrentState() != null && processStateAndAction.getAction() != null && processStateAndAction.getAction().getAction() != null)
+            		System.out.println("~~~~~~~~~~ Actions from state ".concat(processStateAndAction.getCurrentState().getUuid()).concat(" are ").concat(processStateAndAction.getAction().getAction()));
+            	
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
                             + " not found in config for the businessId: "
@@ -106,6 +110,7 @@ public class TransitionService {
                 for(State state : businessService.getStates()){
                     if(state.getUuid().equalsIgnoreCase(processStateAndAction.getAction().getNextState())){
                         processStateAndAction.setResultantState(state);
+                        System.out.println("~~~~~~~~~~ Resultant state = "+processStateAndAction.getResultantState());
                         break;
                     }
                 }
