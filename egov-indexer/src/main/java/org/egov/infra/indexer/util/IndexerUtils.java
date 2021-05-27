@@ -272,7 +272,9 @@ public class IndexerUtils {
 	 */
 	public String buildIndexId(Index index, String stringifiedObject) {
 		String[] idFormat = index.getId().split("[,]");
+		log.info("idFormat: {}", idFormat);
 		StringBuilder id = new StringBuilder();
+		log.info("index: {} and stringifiedObject: {}", index.toString(), stringifiedObject);
 		try {
 			if (0 == idFormat.length) {
 				id.append(JsonPath.read(stringifiedObject, index.getId()).toString());
@@ -281,6 +283,8 @@ public class IndexerUtils {
 					String fieldVaue = JsonPath.read(stringifiedObject, idFormat[j]);
 					if(fieldVaue !=null)
 						id.append(fieldVaue);
+					else
+						log.warn("idFormat: {}", idFormat[j]);
 				}
 				if(id.toString().equals("")){
 					log.error("No id found at the given jsonpath: all id fields returned empty");
