@@ -21,7 +21,7 @@ const messages = {
           },
           bedAvailability: {
             en_IN: 'Information about availability of Covid Beds',
-            pa_IN: 'ਕੋਵਿਡ ਬੈੱਡਾਂ ਦੀ ਉਪਲਬਧਤਾ ਬਾਰੇ ਜਾਣਕਾਰੀ',
+            pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਕਿਵੇਂ ਕਰੀਏ',
             hi_IN: 'कोविड बेड की उपलब्धता के बारे में जानकारी',
           },
           vaccinationCenters: {
@@ -59,9 +59,9 @@ const messages = {
     hi_IN: 'आप http://statecovidcontrolroom.punjab.gov.in/ पर बिस्तर उपलब्धता केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं।',
   },
   vaccinationCentersInfo: {
-    en_IN: 'You can find information regarding COVID-19 vaccination centers here https://nhm.punjab.gov.in/',
-    pa_IN: 'ਤੁਸੀਂ COVID-19 ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ https://nhm.punjab.gov.in/',
-    hi_IN: 'आप यहां COVID-19 टीकाकरण केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं https://nhm.punjab.gov.in/',
+    en_IN: 'You can find information regarding COVID-19 vaccination centers here http://www.nhm.punjab.gov.in/advertisements/Corona/List%20of%20Covid%20Vaccination%20Centres%20Dated%2015-05-2021.pdf',
+    pa_IN: 'ਤੁਸੀਂ COVID-19 ਟੀਕਾਕਰਨ ਕੇਂਦਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਇੱਥੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ http://www.nhm.punjab.gov.in/advertisements/Corona/List%20of%20Covid%20Vaccination%20Centres%20Dated%2015-05-2021.pdf',
+    hi_IN: 'आप यहां COVID-19 टीकाकरण केंद्रों के बारे में जानकारी प्राप्त कर सकते हैं http://www.nhm.punjab.gov.in/advertisements/Corona/List%20of%20Covid%20Vaccination%20Centres%20Dated%2015-05-2021.pdf',
   },
   VaccinationRegistrationInfo: {
     en_IN: 'For registration for vaccination please download COVA App and register. No registration is required for persons above 45 years of Age',
