@@ -38,7 +38,7 @@ class ValueFirstWhatsAppProvider {
             mobileNumber: requestBody.mobile_number.slice(2)
         };
         reformattedMessage.extraInfo = {
-            whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
+            whatsAppBusinessNumber: config.whatsAppBusinessNumber,
             tenantId: config.rootTenantId,
             missedCall: true
         };
@@ -109,7 +109,7 @@ class ValueFirstWhatsAppProvider {
             mobileNumber: requestBody.from.slice(2)
         };
         reformattedMessage.extraInfo ={
-            whatsAppBusinessNumber: requestBody.to.slice(2),
+            whatsAppBusinessNumber: requestBody.to,
             tenantId: config.rootTenantId
         };
 
@@ -192,7 +192,7 @@ class ValueFirstWhatsAppProvider {
     async getTransformedResponse(user, messages, extraInfo){
         let userMobile = user.mobileNumber;
 
-        let fromMobileNumber = "91"+extraInfo.whatsAppBusinessNumber;
+        let fromMobileNumber = extraInfo.whatsAppBusinessNumber;
         if(!fromMobileNumber)
             console.error("Receipient number can not be empty");
 

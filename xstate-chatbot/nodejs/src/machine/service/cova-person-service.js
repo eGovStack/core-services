@@ -41,7 +41,34 @@ class PersonService {
     return false;
   }
 
-  async fetchAllHomeIsolatedPatients() {}
+  async fetchAllHomeIsolatedPatients() {
+    let headers = {
+      "Content-Type": "application/json",
+      Authorization: config.covaApiConfigs.covaReminderAuthorization,
+    };
+    let requestBody = {
+      timestamp: "",
+      filter_type: "all",
+      data_type: "P"
+    };
+    var requestOptions = {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    };
+    let url = config.covaApiConfigs.covaReminderUrl.concat(
+      config.covaApiConfigs.covaReminderSuffix
+    );
+    let response = await fetch(url, requestOptions)
+    var data;
+    if(response.status == 200) {
+      data = await response.json();
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (fetchAllHomeIsolatedPatients API) responded with ${JSON.stringify(responseBody)}`);
+    }
+    return data;
+  }
 }
 
 module.exports = new PersonService();

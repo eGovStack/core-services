@@ -12,7 +12,7 @@ const envVariables = {
 
     whatsAppProvider: process.env.WHATSAPP_PROVIDER || 'console',
 
-    serviceProvider: process.env.SERVICE_PROVIDER || 'Dummy',
+    serviceProvider: process.env.SERVICE_PROVIDER || 'Cova',
 
     repoProvider: process.env.REPO_PROVIDER || 'InMemory',
 
@@ -59,9 +59,11 @@ const envVariables = {
         cova2Url                    : 'https://cova.punjab.gov.in/api/cova/citizen/services/v1/',
         isHomeIsolatedSuffix        : 'get-whats-app-hi-active',
         addPatientSuffix            : 'insert-whats-app-pm-data',
+        covaReminderUrl             : 'https://cova.punjab.gov.in/api/cova/patients/services/v1/',
+        covaReminderSuffix          : 'get-quaranitinrd-data-search-api',
         covaAuthorization           : process.env.COVA_BEARER_TOKEN || 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIzMjMiLCJ0cyI6IjU4IiwiZXhwIjoxNjM1OTI2OTEzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYzODg0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2Mzg4NCJ9.ovY-mtV3vU005bvYT5SCZwyVPAx-tgRw8TxDdIucPn0',
-        covaAuthToken               : process.env.COVA_AUTH_TOKEN || 'f77762bfd1a69c37227d9206c3c40c50c686f485'
-
+        covaAuthToken               : process.env.COVA_AUTH_TOKEN || 'f77762bfd1a69c37227d9206c3c40c50c686f485',
+        covaReminderAuthorization   : process.env.COVA_REMINDER_BEARER_TOKEN || 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI0NiIsInVzZXJ0eXBlIjoiMSIsInRzIjoiNzg3IiwiZXhwIjoxNjUxOTk5NzA4LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYzODg0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2Mzg4NCJ9.keJk7wyYSnyV55vSt6XpCs09s9GRyL-SPRFeVWPBUCc'
     }
 
 }
