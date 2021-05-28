@@ -25,6 +25,7 @@ class RemindersService {
           
           const chatState = await repoProvider.getActiveStateForUserId(userId);
           if(!chatState) {
+            console.log('Skipping sending reminder. Mobile number not present in chatbot database.');
             continue;
           }
 
