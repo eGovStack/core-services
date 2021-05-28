@@ -67,16 +67,6 @@ class PersonService {
       let responseBody = await response.json();
       console.error(`Cova (fetchAllHomeIsolatedPatients API) responded with ${JSON.stringify(responseBody)}`);
     }
-    data = {
-      data: [
-        {
-          patient_mobile: '9428010077'
-        },
-        {
-          patient_mobile: '9916077654'
-        },
-      ]
-    };
     return data;
   }
 }
