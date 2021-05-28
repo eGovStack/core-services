@@ -7,89 +7,41 @@ const { messages } = require('../messages/reminders');
 const dialog = require('../util/dialog.js');
 const sha256 = require('js-sha256');
 const repoProvider = require('../../session/repo');
+const sessionManager = require('../../session/session-manager');
 
 class RemindersService {
-
-    async triggerReminders(time=null) {
-      console.log('Cron job initiated at time: ', time);
-      const people = await this.getSubscribedPeople();
-
-      if (!time) {
-        time = this.getTime();
-      }
+    async triggerReminders() {
+      const people = await personService.fetchAllHomeIsolatedPatients();
 
       console.log('Sending reminders to people');
-      this.sendMessages(people, time);
+      this.sendMessages(people);
       console.log('Reminders execution end');
     }
 
-    async getSubscribedPeople() {
-      //TODO: Get only unique mobile numbers, using mobile_hash
-        const query = `query GetSubscribedPeople($isSubscribed: Boolean) {
-            c19_triage(where: {subscribe: {_eq: $isSubscribed}}) {
-              person {
-                uuid
-                first_name
-                mobile
-              }
-            }
-          }
-          `
-
-        const variables = {
-            "isSubscribed": true
-          }
-        const data = await getQuery(query, variables, null);
-
-        const decrypedPeople = await this.decryptUserData(data.c19_triage);
-
-        const peopleWithUniqueMobileNumbers = this.filterDuplicateMobileNumbers(decrypedPeople);
-
-        return peopleWithUniqueMobileNumbers;
-    }
-
-    async decryptUserData(triageData) {
-      let people = triageData.map(item => item.person);
-      return await personService.decryptPersons(people);
-    }
-
-    filterDuplicateMobileNumbers(people) {
-      const mobileNumbers = people.map(person => person.mobile)
-      const peopleWithUniqueMobileNumbers = people.filter((person, index) => !mobileNumbers.includes(person.mobile, index + 1));
-      return peopleWithUniqueMobileNumbers
-    }
-
-    sendMessages(people, time) {
+    sendMessages(people) {
         const extraInfo = {
           whatsAppBusinessNumber: envVariables.whatsAppBusinessNumber
         }
-        
-        people.forEach(async (person) => {
-          const mobile = person.mobile;
-          const userId = sha256.sha256(mobile)
-          const chatState = await repoProvider.getActiveStateForUserId(userId);
-
-          const message = dialog.get_message(messages[time], chatState.context.user.locale);
-
-          person.mobileNumber = person.mobile;
+        console.log(people, "pppppp");
+        people.data.forEach(async (person) => {
+          const mobile = person.patient_mobile;
+          const userId = sha256.sha256(mobile);
+          // const chatState = await repoProvider.getActiveStateForUserId(userId);
+          const message = dialog.get_message(messages.reminder, "en_IN");
           console.log('Reminder sent');
-          channelProvider.sendMessageToUser(person,[message],extraInfo)
+          const context = {
+            user: {
+              userId: userId,
+              mobileNumber: mobile,
+              locale: 'en_IN'
+            },
+            chatInterface: sessionManager,
+            extraInfo
+          }
+          dialog.sendMessage(context, message);
+          // channelProvider.sendMessageToUser(person,[message],extraInfo)
         });
         console.log('Message sent to ' + people.length + ' mobile numbers');
-    }
-
-    getTime() {
-     const hour = new Date().getHours();
-     switch(hour) {
-       case hour >= 9 || hour <= 11:
-         return 'morning';
-       case hour >= 14 || hour <= 16:
-         return 'afternoon'; 
-       case hour >= 20 || hour <= 22:
-          return 'evening'; 
-       default:
-          return 'default';
-     }
     }
 }
 
