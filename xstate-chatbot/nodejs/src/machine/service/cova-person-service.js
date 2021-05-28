@@ -52,9 +52,9 @@ class PersonService {
       data_type: "P"
     };
     var requestOptions = {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(requestBody),
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestBody),
     };
     let url = config.covaApiConfigs.covaReminderUrl.concat(
       config.covaApiConfigs.covaReminderSuffix
@@ -63,7 +63,6 @@ class PersonService {
     var data;
     if(response.status == 200) {
       data = await response.json();
-      console.log(data, "dataaa");
     } else {
       let responseBody = await response.json();
       console.error(`Cova (fetchAllHomeIsolatedPatients API) responded with ${JSON.stringify(responseBody)}`);

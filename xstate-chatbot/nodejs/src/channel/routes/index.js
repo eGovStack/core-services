@@ -14,7 +14,8 @@ router.get('/message', async (req, res) =>  {
 });
 
 router.post('/reminder', async (req, res) =>  {
-  remindersService.triggerReminders();
+  await remindersService.triggerReminders();
+  res.end();
 });
 
 async function processHttpRequest(req, res) {
