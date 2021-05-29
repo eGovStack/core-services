@@ -9,7 +9,7 @@ const { context } = require('./chat-machine');
 
 const vitalsFlow = {
   id: 'vitalsFlow',
-  initial: 'srfId',
+  initial: 'isHomeIsolatedPatient',
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
   }),
@@ -38,16 +38,21 @@ const vitalsFlow = {
                 actions: assign((context, event) => {
                   context.slots.vitals.srfId = context.message;
                   context.message = undefined;
-                  dialog.sendMessage(context, dialog.get_message(messages.srfId.success, context.user.locale), false);      
+                  dialog.sendMessage(context, dialog.get_message(messages.srfId.success, context.user.locale), false);
                 }),
                 target: '#temperature'
               },
               {
-                target: '#isHomeIsolatedPatient'
+                target: 'error'
               }
             ]
           }
         },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.srfId.error), false);
+          })
+        }
       }
     },
     isHomeIsolatedPatient: {

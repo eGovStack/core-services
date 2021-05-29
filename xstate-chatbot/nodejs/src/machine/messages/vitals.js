@@ -1,7 +1,10 @@
 const messages = {
   srfId: {
     prompt: {
-      en_IN: 'If you are a member of RRT, please enter SRF ID of the patient. Otherwise type and send any character.',
+      en_IN: 'Please enter SRF ID of the patient.',
+    },
+    error: {
+      en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".'
     },
     success: {
       en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.'

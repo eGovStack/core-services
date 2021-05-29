@@ -11,7 +11,7 @@ class VitalsService {
   }
 
   async isValidSrfId(srfId) {
-    return false;
+    return true;
   }
 
 }
