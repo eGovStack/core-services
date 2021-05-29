@@ -1,4 +1,12 @@
 const messages = {
+  srfId: {
+    prompt: {
+      en_IN: 'If you are a member of RRT, please enter SRF ID of the patient. Otherwise type and send any character.',
+    },
+    success: {
+      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.'
+    },
+  },
   notHomeIsolatedPatient: {
     en_IN: 'You are not a home isolated patient. Please register your self.',
     pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂਰਜਿਸਟਰ ਕਰੋ',

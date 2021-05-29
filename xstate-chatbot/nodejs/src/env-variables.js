@@ -12,7 +12,7 @@ const envVariables = {
 
     whatsAppProvider: process.env.WHATSAPP_PROVIDER || 'console',
 
-    serviceProvider: process.env.SERVICE_PROVIDER || 'Cova',
+    serviceProvider: process.env.SERVICE_PROVIDER || 'Dummy',
 
     repoProvider: process.env.REPO_PROVIDER || 'InMemory',
 
@@ -36,6 +36,12 @@ const envVariables = {
     gupshup: {
         botname: process.env.GUPSHUP_BOT_NAME || 'CovaChatbot',
         apikey: process.env.GUPSHUP_API_KEY || ''
+    },
+
+    kaleyra: {
+        sendMessageUrl: process.env.KALEYRA_SEND_MESSAGE_URL || 'https://api.kaleyra.io/v1/{{sid}}/messages',
+        sid: process.env.KALEYRA_SID || '',
+        apikey: process.env.KALEYRA_API_KEY || '',
     },
 
     valueFirstWhatsAppProvider: {
