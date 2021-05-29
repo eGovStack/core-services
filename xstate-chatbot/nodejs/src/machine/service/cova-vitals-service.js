@@ -4,6 +4,8 @@ const config = require("../../env-variables");
 class VitalsService {
 
   async addVitals(user, vitals) {
+    // TODO : If RRT member is entering then vitals.srfId will have some value. If citizen is entering then srfId will be undefined
+    // Make changes for the API call to Cova accordingly
 
     let symptoms = vitals.symptoms;
     let extra = {
@@ -102,6 +104,17 @@ class VitalsService {
     }
   }
 
+  async isValidSrfId(srfId) {
+    // TODO: Make API call
+    console.log('Dummy')
+    // Return boolean true/false
+  }
+
 }
+
+// Command to test single function "node cova-vitals-service.js"
+// To test the method locally uncomment next 2 lines
+// const vitalsService = new VitalsService();
+// vitalsService.isValidSrfId('123');
 
 module.exports = new VitalsService();

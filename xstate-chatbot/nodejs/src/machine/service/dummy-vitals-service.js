@@ -10,6 +10,10 @@ class VitalsService {
     console.log(JSON.stringify(patientDetails));
   }
 
+  async isValidSrfId(srfId) {
+    return false;
+  }
+
 }
 
 module.exports = new VitalsService();

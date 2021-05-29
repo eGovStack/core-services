@@ -5,15 +5,53 @@ const mediaUtil = require('./util/media');
 const config = require('../env-variables');
 const { messages, grammers } = require('./messages/vitals');
 const { personService, vitalsService } = require('./service/service-loader');
+const { context } = require('./chat-machine');
 
 const vitalsFlow = {
   id: 'vitalsFlow',
-  initial: 'isHomeIsolatedPatient',
+  initial: 'srfId',
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
   }),
   states: {
+    srfId: {
+      id: 'srfId',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.srfId.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process'
+          }
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            context.message = dialog.get_input(event, false);
+          }),
+          invoke: {
+            src: (context, event) => vitalsService.isValidSrfId(context.message),
+            onDone: [
+              {
+                cond: (context, event) => event.data == true,
+                actions: assign((context, event) => {
+                  context.slots.vitals.srfId = context.message;
+                  context.message = undefined;
+                  dialog.sendMessage(context, dialog.get_message(messages.srfId.success, context.user.locale), false);      
+                }),
+                target: '#temperature'
+              },
+              {
+                target: '#isHomeIsolatedPatient'
+              }
+            ]
+          }
+        },
+      }
+    },
     isHomeIsolatedPatient: {
+      id: 'isHomeIsolatedPatient',
       invoke: {
         src: (context) => personService.isHomeIsolatedPatient(context.user.mobileNumber),
         onDone: [
