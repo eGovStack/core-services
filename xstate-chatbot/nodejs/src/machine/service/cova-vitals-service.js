@@ -35,7 +35,7 @@ class VitalsService {
       Comorbidities: symptoms.comorbidities,
       NeedsDoctorCall: 'NO',
       Remarks: JSON.stringify(extra),
-      srf_Id: vitalssrfId,
+      srf_Id: vitals.srfId,
     };
 
     var request = {
@@ -61,6 +61,7 @@ class VitalsService {
   async addPatient(user, patientDetails) {
     let srfIdCheckResponse = await this.getPatientDetailsFromSrfId(patientDetails.srfId);
     if(srfIdCheckResponse.response === 0) {
+      console.log('Could not verify SRF ID while adding patient');
       patientDetails.srfId = undefined;
     }
     

@@ -20,7 +20,7 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.srfId.prompt, context.user.locale));
+            dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.prompt, context.user.locale));
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -39,7 +39,7 @@ const vitalsFlow = {
                   context.slots.vitals.srfId = context.message;
                   context.slots.vitals.mobile_no = event.data.data[0].mobile_no;
                   context.message = undefined;
-                  dialog.sendMessage(context, dialog.get_message(messages.srfId.success, context.user.locale), false);
+                  dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.success, context.user.locale), false);
                 }),
                 target: '#temperature'
               },
@@ -51,8 +51,9 @@ const vitalsFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.srfId.error), false);
-          })
+            dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.error), false);
+          }),
+          always: 'prompt'
         }
       }
     },
