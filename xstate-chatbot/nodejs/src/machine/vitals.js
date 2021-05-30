@@ -14,8 +14,8 @@ const vitalsFlow = {
     context.slots.vitals = {};
   }),
   states: {
-    srfId: {
-      id: 'srfId',
+    rrtSrfId: {
+      id: 'rrtSrfId',
       initial: 'prompt',
       states: {
         prompt: {
@@ -31,12 +31,13 @@ const vitalsFlow = {
             context.message = dialog.get_input(event, false);
           }),
           invoke: {
-            src: (context, event) => vitalsService.isValidSrfId(context.message),
+            src: (context, event) => vitalsService.getPatientDetailsFromSrfId(context.message),
             onDone: [
               {
-                cond: (context, event) => event.data == true,
+                cond: (context, event) => event.data.response === 1,
                 actions: assign((context, event) => {
                   context.slots.vitals.srfId = context.message;
+                  context.slots.vitals.mobile_no = event.data.data[0].mobile_no;
                   context.message = undefined;
                   dialog.sendMessage(context, dialog.get_message(messages.srfId.success, context.user.locale), false);
                 }),
@@ -336,7 +337,7 @@ const vitalsFlow = {
                   target: 'error'
                 },
                 {
-                  target: '#addPatient'
+                  target: '#registerPatientSrfId'
                 }
               ]
             },
@@ -346,6 +347,26 @@ const vitalsFlow = {
               }),
               always: 'prompt'
             }
+          }
+        },
+        registerPatientSrfId: {
+          id: 'registerPatientSrfId',
+          initial: 'prompt',
+          states: {
+            prompt: {
+              onEntry: assign((context, event) => {
+                dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registerPatientSrfId.prompt, context.user.locale));
+              }),
+              on: {
+                USER_MESSAGE: 'process'
+              }
+            },
+            process: {
+              onEntry: assign((context, event) => {
+                context.slots.registerPatient.srfId = dialog.get_input(event, false);
+              }),
+              always: '#addPatient'
+            },
           }
         },
         addPatient: {

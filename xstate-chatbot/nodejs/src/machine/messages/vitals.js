@@ -1,7 +1,7 @@
 const messages = {
-  srfId: {
+  rrtSrfId: {
     prompt: {
-      en_IN: 'Please enter SRF ID of the patient.',
+      en_IN: 'Please enter Patient\'s SRF ID ',
     },
     error: {
       en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".'
@@ -234,6 +234,11 @@ const messages = {
         pa_IN: 'ਕੋਵਿਡ ਸਕਾਰਾਤਮਕ ਤਾਰੀਖ (ਤਾਰੀਖ / ਮਹੀਨਾ / ਸਾਲ)',
         hi_IN: 'कोविड पॉजिटिव तारीख (दिन/माह/वर्ष)'
       }
+    },
+    registerPatientSrfId: {
+      prompt: {
+        en_IN: 'Please enter your SRF ID ( Check your Covid test report for SRF ID)',
+      },
     },
     registeredPatientSuccess: {
       en_IN: 'Registered successfully',

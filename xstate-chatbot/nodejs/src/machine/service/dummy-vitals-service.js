@@ -10,8 +10,8 @@ class VitalsService {
     console.log(JSON.stringify(patientDetails));
   }
 
-  async isValidSrfId(srfId) {
-    return true;
+  async getPatientDetailsFromSrfId(srfId) {
+    return {"response":1,"sys_message":"success","data":[{"Response":"1","mobile_no":"9123123123","patient_name":"","flag":"WHATSPP-PM","patient_Id":"123"}]};
   }
 
 }
