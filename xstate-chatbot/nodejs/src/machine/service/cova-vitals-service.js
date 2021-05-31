@@ -4,7 +4,12 @@ const config = require("../../env-variables");
 class VitalsService {
 
   async addVitals(user, vitals) {
-
+    let mobile;
+    if(vitals.mobile) {             // RRT
+      mobile = vitals.mobile;
+    } else {                        // Citizen
+      mobile = user.mobileNumber;
+    }
     let symptoms = vitals.symptoms;
     let extra = {
       diabetes: symptoms.diabetes,
@@ -20,7 +25,7 @@ class VitalsService {
 
     let requestBody = {
       Token: config.covaApiConfigs.covaAuthToken,
-      mobile_no: user.mobileNumber,
+      mobile_no: mobile,
       current_temp: vitals.temperature.toString(),
       pulserate: vitals.pulse.toString(),
       spo2level: vitals.spo2.toString(),
@@ -30,6 +35,7 @@ class VitalsService {
       Comorbidities: symptoms.comorbidities,
       NeedsDoctorCall: 'NO',
       Remarks: JSON.stringify(extra),
+      srf_Id: vitals.srfId,
     };
 
     var request = {
@@ -53,6 +59,11 @@ class VitalsService {
   }
 
   async addPatient(user, patientDetails) {
+    let srfIdCheckResponse = await this.getPatientDetailsFromSrfId(patientDetails.srfId);
+    if(srfIdCheckResponse.response === 0) {
+      console.log('Could not verify SRF ID while adding patient');
+      patientDetails.srfId = undefined;
+    }
     
     let url = config.covaApiConfigs.cova2Url.concat(
       config.covaApiConfigs.addPatientSuffix
@@ -79,6 +90,7 @@ class VitalsService {
       address: patientDetails.address,
       symptom_start_date: patientDetails.symptomsDate,
       covid_positive_date: patientDetails.covidPositiveDate,
+      srf_id: patientDetails.srfId,
     };
 
     var request = {
@@ -102,6 +114,37 @@ class VitalsService {
     }
   }
 
+  async getPatientDetailsFromSrfId(srfId) {
+    let url = config.covaApiConfigs.covaReminderUrl.concat(
+      config.covaApiConfigs.isDataBasedSrfid
+    );
+
+    let headers = {
+      "Content-Type": "application/json",
+      Authorization: config.covaApiConfigs.covaAuthorization,
+    };
+
+    let requestBody = {
+      srf_id: srfId.toString(),
+    };
+
+    var request = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    };
+
+    let response = await fetch(url, request);
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (SRFId API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+
 }
 
-module.exports = new VitalsService();
+ module.exports = new VitalsService();

@@ -28,7 +28,7 @@ let messages = {
         hi_IN: 'इस चैटबॉट से आप बिस्तरों की उपलब्धता, टीकाकरण केंद्र, विजय किट और घर में एकांतवास में स्वयं की देखभाल और अन्य महत्वपूर्ण जानकारी प्राप्त कर सकते हैं। आप खुद को घरेलू आइसोलेशन रोगी के रूप में भी पंजीकृत कर सकते हैं और आपके COVID-19 संबंधित लक्षणों को दर्ज किया जाएगा। जरूरत पड़ने पर स्वास्थ्य विभाग की टीम आपके रजिस्टर्ड नंबर पर आपसे संपर्क करेगी।\n\nआप क्या करना पसंद करेंगे?',
       },
       options: {
-        list: [ 'covidInfo', 'addVitals' ],
+        list: [ 'covidInfo', 'addVitals', 'rrt' ],
         messageBundle: {
           covidInfo: {
             en_IN: 'Get information about Covid',
@@ -39,6 +39,9 @@ let messages = {
             en_IN: 'Register your vitals',
             pa_IN: 'ਆਪਣੇ ਲੱਛਣ ਰਜਿਸਟਰ ਕਰੋ',
             hi_IN: 'अपने लक्षण दर्ज करें',
+          },
+          rrt: {
+            en_IN: 'For RRT team members Only',
           },
         },
       },

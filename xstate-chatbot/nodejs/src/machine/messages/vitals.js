@@ -1,4 +1,15 @@
 const messages = {
+  rrtSrfId: {
+    prompt: {
+      en_IN: 'Please enter Patient\'s SRF ID ',
+    },
+    error: {
+      en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".'
+    },
+    success: {
+      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.'
+    },
+  },
   notHomeIsolatedPatient: {
     en_IN: 'You are not a home isolated patient. Please register your self.',
     pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂਰਜਿਸਟਰ ਕਰੋ',
@@ -223,6 +234,11 @@ const messages = {
         pa_IN: 'ਕੋਵਿਡ ਸਕਾਰਾਤਮਕ ਤਾਰੀਖ (ਤਾਰੀਖ / ਮਹੀਨਾ / ਸਾਲ)',
         hi_IN: 'कोविड पॉजिटिव तारीख (दिन/माह/वर्ष)'
       }
+    },
+    registerPatientSrfId: {
+      prompt: {
+        en_IN: 'Please enter your SRF ID ( Check your Covid test report for SRF ID)',
+      },
     },
     registeredPatientSuccess: {
       en_IN: 'Registered successfully',

@@ -94,6 +94,10 @@ const chatStateMachine = Machine({
               target: '#vitalsFlow'
             },
             {
+              cond: (context) => context.intention == 'rrt',
+              target: '#rrtSrfId'
+            },
+            {
               target: 'error'
             },
           ]
