@@ -59,10 +59,12 @@ class VitalsService {
   }
 
   async addPatient(user, patientDetails) {
-    let srfIdCheckResponse = await this.getPatientDetailsFromSrfId(patientDetails.srfId);
-    if(srfIdCheckResponse.response === 0) {
-      console.log('Could not verify SRF ID while adding patient');
-      patientDetails.srfId = undefined;
+    if(patientDetails.srfId) {
+      // Validate SRF ID is 13 digit number
+      const valid = /^\d{13}$/.test(patientDetails.srfId);
+      console.log(`Valid: ${valid}`);
+      if(!valid)
+        patientDetails.srfId = null;
     }
     
     let url = config.covaApiConfigs.cova2Url.concat(

@@ -364,7 +364,7 @@ const vitalsFlow = {
             },
             process: {
               onEntry: assign((context, event) => {
-                context.slots.registerPatient.srfId = dialog.get_input(event, false);
+                context.slots.registerPatient.srfId = dialog.get_input(event);
               }),
               always: '#addPatient'
             },
