@@ -5,8 +5,8 @@ class VitalsService {
 
   async addVitals(user, vitals) {
     let mobile;
-    if(vitals.mobile) {             // RRT
-      mobile = vitals.mobile;
+    if(vitals.mobile_no) {             // RRT
+      mobile = vitals.mobile_no;
     } else {                        // Citizen
       mobile = user.mobileNumber;
     }
