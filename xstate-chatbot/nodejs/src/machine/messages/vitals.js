@@ -2,12 +2,18 @@ const messages = {
   rrtSrfId: {
     prompt: {
       en_IN: 'Please enter Patient\'s SRF ID ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੀ SRF ID ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया रोगी की SRF ID दर्ज करें'
     },
     error: {
-      en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".'
+      en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".',
+      pa_IN: 'ਗਲਤ SRF ਆਈਡੀ. . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ SRF ID ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
+      hi_IN: 'अमान्य SRF ID  \n \nकृपया फिर से SRF ID दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
     },
     success: {
-      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.'
+      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.',
+      pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
     },
   },
   notHomeIsolatedPatient: {
@@ -238,6 +244,8 @@ const messages = {
     registerPatientSrfId: {
       prompt: {
         en_IN: 'Please enter your SRF ID ( Check your Covid test report for SRF ID)',
+        pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ  SRF ID ਲਿਖੋ  ( SRF ID ਲਈ ਆਪਣੀ ਕੋਵੀਡ ਟੈਸਟ ਰਿਪੋਰਟ ਵੇਖੋ)',
+        hi_IN: 'कृपया अपना एसआरएफ आईडी दर्ज करें (एसआरएफ आईडी के लिए अपनी कोविड परीक्षण रिपोर्ट देखें)'
       },
     },
     registeredPatientSuccess: {

@@ -42,6 +42,8 @@ let messages = {
           },
           rrt: {
             en_IN: 'For RRT team members Only',
+            pa_IN: 'ਸਿਰਫ  (RRT) ਆਰਆਰਟੀ ਟੀਮ ਦੇ ਮੈਂਬਰਾਂ ਲਈ',
+            hi_IN: '​​केवल आरआरटी ​​टीम (RRT) के सदस्यों के लिए',
           },
         },
       },
