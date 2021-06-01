@@ -75,6 +75,7 @@ public class CorrelationIdFilter extends ZuulFilter {
         }
         String tenantId = tenantIds.toArray(new String[0])[0];
         MDC.put(TENANTID_MDC, tenantId);
+        ctx.set(REQUEST_TENANT_ID_KEY, tenantId);
         
         final String correlationId = UUID.randomUUID().toString();
         MDC.put(CORRELATION_ID_KEY, correlationId);
