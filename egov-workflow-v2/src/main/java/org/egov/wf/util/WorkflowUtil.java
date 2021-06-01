@@ -256,6 +256,11 @@ public class WorkflowUtil {
             List<String> tenantIds = entry.getValue();
 
 
+            if(!roleTenantAndStatusMapping.containsKey(role))
+                continue;
+
+
+
             Boolean isStatelevelRolePresent = false;
 
             for (String tenantId : tenantIds) {

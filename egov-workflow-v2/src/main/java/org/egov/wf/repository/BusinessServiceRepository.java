@@ -108,29 +108,35 @@ public class BusinessServiceRepository {
 
                 String uuid = state.getUuid();
 
-                for(Action action : state.getActions()){
+                if(!CollectionUtils.isEmpty(state.getActions())){
 
-                    List<String> roles = action.getRoles();
+                    for(Action action : state.getActions()){
 
-                    for(String role : roles){
+                        List<String> roles = action.getRoles();
 
-                        Map<String, List<String>> tenantToStatusMap;
+                        if(!CollectionUtils.isEmpty(roles)){
+                            for(String role : roles){
 
-                        if (roleTenantAndStatusMapping.containsKey(role))
-                            tenantToStatusMap = roleTenantAndStatusMapping.get(role);
-                        else tenantToStatusMap = new HashMap();
+                                Map<String, List<String>> tenantToStatusMap;
 
-                        List<String> statuses;
+                                if (roleTenantAndStatusMapping.containsKey(role))
+                                    tenantToStatusMap = roleTenantAndStatusMapping.get(role);
+                                else tenantToStatusMap = new HashMap();
 
-                        if(tenantToStatusMap.containsKey(tenantId))
-                            statuses = tenantToStatusMap.get(tenantId);
-                        else statuses = new LinkedList<>();
+                                List<String> statuses;
 
-                        statuses.add(uuid);
+                                if(tenantToStatusMap.containsKey(tenantId))
+                                    statuses = tenantToStatusMap.get(tenantId);
+                                else statuses = new LinkedList<>();
 
-                        tenantToStatusMap.put(tenantId, statuses);
-                        roleTenantAndStatusMapping.put(role, tenantToStatusMap);
+                                statuses.add(uuid);
+
+                                tenantToStatusMap.put(tenantId, statuses);
+                                roleTenantAndStatusMapping.put(role, tenantToStatusMap);
+                            }
+                        }
                     }
+
                 }
 
             }
@@ -173,8 +179,10 @@ public class BusinessServiceRepository {
             String tenantId = businessService.getTenantId();
             Boolean isStatelevel = stateLevelMapping.get(code);
 
-            if(isStatelevel == null)
-                throw new CustomException("INVALID_MDMS_CONFIG","The master data is missing for businessService: "+code);
+            if(isStatelevel == null){
+                isStatelevel = true;
+               // throw new CustomException("INVALID_MDMS_CONFIG","The master data is missing for businessService: "+code);
+            }
 
             if(isStatelevel){
                 if(tenantId.equalsIgnoreCase(config.getStateLevelTenantId())){
