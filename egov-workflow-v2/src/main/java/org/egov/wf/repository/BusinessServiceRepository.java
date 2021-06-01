@@ -58,7 +58,7 @@ public class BusinessServiceRepository {
         if(!CollectionUtils.isEmpty(criteria.getBusinessServices())){
 
             criteria.getBusinessServices().forEach(businessService -> {
-                if(stateLevelMapping.get(businessService))
+                if(stateLevelMapping.get(businessService)==null || stateLevelMapping.get(businessService))
                     stateLevelBusinessServices.add(businessService);
                 else
                     tenantBusinessServices.add(businessService);
