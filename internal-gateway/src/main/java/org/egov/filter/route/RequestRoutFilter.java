@@ -33,9 +33,10 @@ public class RequestRoutFilter extends ZuulFilter {
 
 	@Override
 	public Object run() {
-		System.out.println("route filter");
+
 		RequestContext ctx = RequestContext.getCurrentContext();
 		List<TenantRoutingConfig> tenantRoutingConfigs = tenantRoutingConfigWrapper.getTenantRoutingConfig();
+		log.info(" Route filter routing for URI ....... " + ctx.getRequest().getRequestURI());
 		URL url = null;
 		for (TenantRoutingConfig tenantRoutingConfig : tenantRoutingConfigs) {
 			if (ctx.getRequest().getRequestURI().matches(tenantRoutingConfig.getIncomingURI())) {
