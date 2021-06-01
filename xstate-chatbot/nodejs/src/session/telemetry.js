@@ -12,16 +12,12 @@ class Telemetry {
             data: data
         }
 
-        // TODO: Put object on a kafka queue
-
-        // console.log('Telemetry: ' + JSON.stringify(object));
-
         let payloads = [ {
             topic: config.kafka.chatbotTelemetryTopic,
             messages: JSON.stringify(object)
         } ]
 
-        // producer.send(payloads, function(err, data) {});
+        producer.send(payloads, function(err, data) {});
     }
 };
 
