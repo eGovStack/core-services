@@ -98,10 +98,6 @@ const chatStateMachine = Machine({
               target: '#rrtMobileNumber'
             },
             {
-              cond: (context) => context.intention == 'rmo',
-              target: '#rrtSrfId'
-            },
-            {
               target: 'error'
             },
           ]
