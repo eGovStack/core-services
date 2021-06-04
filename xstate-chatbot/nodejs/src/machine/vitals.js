@@ -140,9 +140,9 @@ const vitalsFlow = {
             },
             {
               actions: assign((context, event) => {
-                context.slots.vitals.MASTER_ID = context.intention.MASTER_ID;
-                context.slots.vitals.com_status = context.intention.com_status;
-                context.slots.vitals.fateh_kit_delivered = context.intention.fateh_kit_delivered;
+                context.slots.person.MASTER_ID = context.intention.MASTER_ID;
+                context.slots.person.com_status = context.intention.com_status;
+                context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
 
               }),
               target: '#temperature'
