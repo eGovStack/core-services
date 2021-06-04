@@ -761,7 +761,7 @@ const vitalsFlow = {
                 {
                   cond: (context, event) => context.slots.vitals.com_status == '1',
                   actions: assign((context, event) => {
-                    console.log(context.slots.vitals.com_status)
+                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;               
                   }),
                   target: '#heartrelated'
                 },
