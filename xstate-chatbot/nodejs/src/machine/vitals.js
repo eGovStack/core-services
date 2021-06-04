@@ -999,7 +999,7 @@ const vitalsFlow = {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.ComCancer = context.intention;                  
                   }),
-                  targ
+                  
                   target: '#addVitals'
                 },
               ]
