@@ -1018,15 +1018,16 @@ const vitalsFlow = {
                  {
                   cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'NO',
                   actions: assign((context, event) => {
-                    console.log(context.slots.vitals.fateh_kit_delivered)
+                  context.slots.vitals.symptoms.ComCancer = context.intention;                  
                   }),
                   target: '#fatehKitDel'
                 },
                 {
                   cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'YES',
                   actions: assign((context, event) => {
-                    console.log(context.slots.vitals.fateh_kit_delivered)
+                    context.slots.vitals.symptoms.ComCancer = context.intention;                  
                   }),
+                  targ
                   target: '#addVitals'
                 },
               ]
