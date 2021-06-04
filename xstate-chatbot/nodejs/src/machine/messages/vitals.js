@@ -27,12 +27,7 @@ const messages = {
       pa_IN: 'ਗਲਤ ਮੋਬਾਈਲ ਨੰ . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਮੋਬਾਈਲ ਨੰ ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
       hi_IN: 'अमान्य मोबाइल नंबर  \n \nकृपया फिर से मोबाइल नंबर दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
     },
-    success: {
-      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.',
-      pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
-      hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
-    },
-  },
+   },
   notHomeIsolatedPatient: {
     en_IN: 'You are not a home isolated patient. Please register your self.',
     pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂਰਜਿਸਟਰ ਕਰੋ',
