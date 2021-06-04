@@ -79,7 +79,6 @@ const vitalsFlow = {
               {
                 cond: (context, event) => event.data.data === null,
                 actions: assign((context, event) => {
-                  context.persons = event.data;
                 }),
                 target: 'error'
               },
