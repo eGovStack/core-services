@@ -309,7 +309,7 @@ const messages = {
       prompt: {
         en_IN: 'Are you experiencing loss of smell or taste?',
         pa_IN: 'ਕੀ ਤੁਹਾਨੂੰ ਗੰਦ ਤੇ ਸਵਾਦ ਨਹੀ ਆ ਰਿਹਾ ਹੈ?',
-        hi_IN: 'क्या आपको गंदगी का स्वाद नहीं आता?',
+        hi_IN: 'क्या आपको गंध या स्वाद नहीं आता ??',
       },
     },
     fluLikeSymptoms: {

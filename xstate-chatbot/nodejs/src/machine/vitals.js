@@ -12,6 +12,7 @@ const vitalsFlow = {
   initial: 'isHomeIsolatedPatient',
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
+    context.slots.person = {};
   }),
   states: {
     rrtSrfId: {
@@ -57,7 +58,7 @@ const vitalsFlow = {
         }
      }
     },
-    rrtMobileNumber: {
+   rrtMobileNumber: {
       id: 'rrtMobileNumber',
       initial: 'prompt',
       states: {
@@ -79,15 +80,14 @@ const vitalsFlow = {
               {
                 cond: (context, event) => event.data.data === null,
                 actions: assign((context, event) => {
+                  context.persons = event.data;
                 }),
                 target: 'error'
               },
               {
                 cond: (context, event) => event.data.data.length >= 1,
                 actions: assign((context, event) => {
-                  console.log(event.data.data.length)
-                  context.slots.vitals.persons = event.data;
-                  
+                  context.persons = event.data;
                 }),
                 target: '#selectPerson'
               },
@@ -113,7 +113,7 @@ const vitalsFlow = {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.selectPerson, context.user.locale);
             let grammer = [];
-
+            context.slots.person={};
             for (let i = 0; i < event.data.data.length; i++) {
               let person = event.data.data[i];
 
@@ -143,7 +143,7 @@ const vitalsFlow = {
                 context.slots.person.MASTER_ID = context.intention.MASTER_ID;
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
-
+                               
               }),
               target: '#temperature'
             }
@@ -165,7 +165,9 @@ const vitalsFlow = {
           {
             cond: (context, event) => event.data == false,
             actions: assign((context, event) => {
-              dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
+            context.slots.person.com_status = '0';
+            context.slots.person.fateh_kit_delivered = 'NO';
             }),
             target: '#registerPatient'
           },
@@ -512,7 +514,7 @@ const vitalsFlow = {
               cond: (context) => context.isValid == false,
               target: 'error'
             },
-            {
+            { 
               target: '#pulse'
             }
           ]
@@ -631,7 +633,7 @@ const vitalsFlow = {
             },
             process: {
               onEntry: assign((context, event) => {
-                context.intention = dialog.get_intention(context.grammer, event, true);
+               context.intention = dialog.get_intention(context.grammer, event, true);
               }),
               always: [
                 {
@@ -718,17 +720,17 @@ const vitalsFlow = {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
                   target: 'error'
                 },
-                {
-                  cond: (context, event) => context.slots.vitals.com_status == '1',
+               {
+                  cond: (context, event) => context.slots.person.com_status == '1',
                   actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;               
+                     context.slots.vitals.symptoms.respiratoryIssues = context.intention;                
                   }),
                   target: '#heartrelated'
                 },
               {
-                cond: (context, event) => context.slots.vitals.com_status == '0',
+                cond: (context, event) => context.slots.person.com_status == '0',
                 actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;                }),
+                context.slots.vitals.symptoms.respiratoryIssues = context.intention;                }),
                 target: '#comorbidities'
               },
               {
@@ -812,19 +814,19 @@ const vitalsFlow = {
                   target: 'error'
                 },
                 {
-                  cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'YES',
+                  cond: (context, event) => context.slots.person.fateh_kit_delivered === 'YES',
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.diabetes = context.intention;
                   }),
                   target: '#addVitals'
                 },
               {
-                cond: (context, event) =>context.slots.vitals.fateh_kit_delivered == 'NO',
+                cond: (context, event) =>context.slots.person.fateh_kit_delivered === 'NO',
                 actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.diabetes = context.intention;
+                   context.slots.vitals.symptoms.diabetes = context.intention;
                 }),
                   target: '#fatehKitDelivery'
-               },
+              },
               {
                 actions: assign((context, event) => {
                   context.slots.vitals.symptoms.diabetes = context.intention;
@@ -987,20 +989,11 @@ const vitalsFlow = {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
                   target: 'error'
                 },
-                 {
-                  cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'NO',
-                  actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.ComCancer = context.intention;                  
-                  }),
-                  target: '#fatehKitDelivery'
-                },
                 {
-                  cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'YES',
                   actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.ComCancer = context.intention;                  
+                    context.slots.vitals.symptoms.comorbidities = context.intention;
                   }),
-                  
-                  target: '#addVitals'
+                  target: '#diabetes'
                 },
               ]
             },
@@ -1028,7 +1021,7 @@ const vitalsFlow = {
         }
       }
     },
-    }
+   }
 }
 
 
