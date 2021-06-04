@@ -23,9 +23,9 @@ const messages = {
       hi_IN: 'कृपया रोगी की मोबाइल नंबर  दर्ज करें'
     },
     error: {
-      en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".',
-      pa_IN: 'ਗਲਤ SRF ਆਈਡੀ. . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ SRF ID ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
-      hi_IN: 'अमान्य SRF ID  \n \nकृपया फिर से SRF ID दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
+      en_IN: 'Invalid Mobile Id. \n\nIf you would like to reset the chat flow, send "Hi".',
+      pa_IN: 'ਗਲਤ ਮੋਬਾਈਲ ਨੰ . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਮੋਬਾਈਲ ਨੰ ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
+      hi_IN: 'अमान्य मोबाइल नंबर  \n \nकृपया फिर से मोबाइल नंबर दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
     },
     success: {
       en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.',
