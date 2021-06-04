@@ -57,7 +57,7 @@ class VitalsService {
       console.error(`Error while registering vitals to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
     }
   }
-    
+
   async addPatient(user, patientDetails) {
     if(patientDetails.srfId) {
       // Validate SRF ID is 13 digit number
@@ -147,36 +147,6 @@ class VitalsService {
     }
   }
 
-  async getPatientDetailsFromMobileNumber(mobileNumber) {
-        let url = config.covaApiConfigs.covaUrl.concat(
-      config.covaApiConfigs.isDataBasedMobileNo
-    );
-    let headers = {
-      "Content-Type": "application/json",
-       Authorization: config.covaApiConfigs.covaAuthorization,
-         };
-
-    let requestBody = {
-      MobileNumber: mobileNumber.toString(),
-    };
-
-    var request = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(requestBody),
-    };
-
-    let response = await fetch(url, request);
-    if(response.status == 200) {
-      let data = await response.json();
-     // console.log(data.data);
-      return data;
-    } else {
-      let responseBody = await response.json();
-      console.error(`Cova (MOBNo API) responded with ${JSON.stringify(responseBody)}`);
-      return { response: 0 };
-    }
-  }
 }
 
  module.exports = new VitalsService();
