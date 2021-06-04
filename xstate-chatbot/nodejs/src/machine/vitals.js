@@ -57,49 +57,6 @@ const vitalsFlow = {
         }
      }
     },
-    patrmo: {
-      id: 'patrmo',
-      initial: 'prompt',
-      states: {
-       prompt: {
-         onEntry: assign((context, event) => {
-           dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.prompt, context.user.locale));
-          }),
-         on: {
-            USER_MESSAGE: 'process'
-          }
-        },
-        process: {
-          onEntry: assign((context, event) => {
-            context.message = dialog.get_input(event, false);
-          }),
-          invoke: {
-            src: (context, event) => vitalsService.getPatientDetailsFromSrfId(context.message),
-            onDone: [
-              {
-                cond: (context, event) => event.data.response === 1,
-                actions: assign((context, event) => {
-                  context.slots.vitals.srfId = context.message;
-                  context.slots.vitals.mobile_no = event.data.data[0].mobile_no;
-                  context.message = undefined;
-                  dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.success, context.user.locale), false);
-                }),
-                target: '#temperature'
-              },
-              {
-                target: 'error'
-              }
-            ]
-          }
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.rrtSrfId.error), false);
-          }),
-          always: 'prompt'
-        }
-     }
-    },
     rrtMobileNumber: {
       id: 'rrtMobileNumber',
       initial: 'prompt',
