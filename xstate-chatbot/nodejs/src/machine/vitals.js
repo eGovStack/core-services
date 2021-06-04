@@ -716,6 +716,10 @@ const vitalsFlow = {
               }),
               always: [
                 {
+                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+                  target: 'error'
+                },
+                {
                   cond: (context, event) => context.slots.vitals.com_status == '1',
                   actions: assign((context, event) => {
                   context.slots.vitals.symptoms.respiratoryIssues = context.intention;               
@@ -726,6 +730,12 @@ const vitalsFlow = {
                 cond: (context, event) => context.slots.vitals.com_status == '0',
                 actions: assign((context, event) => {
                   context.slots.vitals.symptoms.respiratoryIssues = context.intention;                }),
+                target: '#comorbidities'
+              },
+              {
+                actions: assign((context, event) => {
+                context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                }),
                 target: '#comorbidities'
               }
               ]
@@ -815,6 +825,12 @@ const vitalsFlow = {
                   context.slots.vitals.symptoms.diabetes = context.intention;
                 }),
                   target: '#fatehKitDelivery'
+               },
+              {
+                actions: assign((context, event) => {
+                  context.slots.vitals.symptoms.diabetes = context.intention;
+                }),
+                target: '#addVitals'
               }
                 
               ]
