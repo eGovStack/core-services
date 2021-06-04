@@ -130,7 +130,8 @@ const vitalsFlow = {
                 cond: (context, event) => event.data.data.length >= 1,
                 actions: assign((context, event) => {
                   console.log(event.data.data.length)
-                  context.persons = event.data;
+                  context.slots.vitals.persons = event.data;
+                  
                 }),
                 target: '#selectPerson'
               },
