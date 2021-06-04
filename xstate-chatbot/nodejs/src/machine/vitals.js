@@ -1056,14 +1056,7 @@ const vitalsFlow = {
         }
       }
     },
-    noUserFound: {
-      id: 'noUserFound',
-      onEntry: assign((context, event) => {
-        dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
-      }),
-      always: ''
-    },
-  }
+    }
 }
 
 
