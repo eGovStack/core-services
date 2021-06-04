@@ -95,6 +95,10 @@ const chatStateMachine = Machine({
             },
             {
               cond: (context) => context.intention == 'rrt',
+              target: '#rrtMobileNumber'
+            },
+            {
+              cond: (context) => context.intention == 'rmo',
               target: '#rrtSrfId'
             },
             {
