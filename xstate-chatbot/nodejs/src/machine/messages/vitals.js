@@ -16,6 +16,23 @@ const messages = {
       hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
     },
   },
+  rrtMobileNumber: {
+    prompt: {
+      en_IN: 'Please enter Patient\'s Mobile Number ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੀ ਮੋਬਾਈਲ ਨੰ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया रोगी की मोबाइल नंबर  दर्ज करें'
+    },
+    error: {
+      en_IN: 'Invalid Mobile Id. \n\nIf you would like to reset the chat flow, send "Hi".',
+      pa_IN: 'ਗਲਤ ਮੋਬਾਈਲ ਨੰ . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਮੋਬਾਈਲ ਨੰ ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
+      hi_IN: 'अमान्य मोबाइल नंबर  \n \nकृपया फिर से मोबाइल नंबर दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
+    },
+    success: {
+      en_IN: 'SRF Id successfully noted. Please continue entering patient\'s vitals.',
+      pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
+    },
+  },
   notHomeIsolatedPatient: {
     en_IN: 'You are not a home isolated patient. Please register your self.',
     pa_IN: 'ਤੁਸੀਂ ਘਰੇਲੂ ਇਕਾਂਤਵਾਸ ਮਰੀਜ਼ ਨਹੀਂ ਹੋ. ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂਰਜਿਸਟਰ ਕਰੋ',
@@ -265,7 +282,7 @@ const messages = {
       pa_IN: 'ਤਾਪਮਾਨ 92 ਅਤੇ 108 ਦੇ ਵਿਚਕਾਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
       hi_IN: 'तापमान 92 और 108. के बीच होना चाहिए',
     }
-  },
+  },  
   pulse: {
     prompt: {
       en_IN: 'Please enter your pulse rate',
@@ -317,11 +334,51 @@ const messages = {
       },
     }
   },
+  fatehkit: {
+    prompt: {
+      en_IN: 'Fateh kit delivered ?',
+      pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਮਿਲੀ ਹੈ?',
+      hi_IN: 'फतेह किट मिला?'
+    }
+},
+heartrelated: {
+  prompt: {
+    en_IN: 'Any Heart Related Problem ',
+    pa_IN: 'ਦਿਲ ਨਾਲ ਸਬੰਧਤ ਕੋਈ ਵੀ ਸਮੱਸਿਆ',
+    hi_IN: 'दिल से जुड़ी कोई भी समस्या'
+  }
+},
+kidneyrelated: {
+  prompt: {
+    en_IN: 'Any Kidney Related Problem  ',
+    pa_IN: 'ਕਿਡਨੀ ਨਾਲ ਸੰਬੰਧਤ ਕੋਈ ਵੀ ਸਮੱਸਿਆ',
+    hi_IN: 'किडनी से जुड़ी कोई भी समस्या'
+  }
+},
+cancerrelated: {
+  prompt: {
+    en_IN: 'Cancer ',
+    pa_IN: 'ਕੈਨਸਰ ',
+    hi_IN: 'कैंसर'
+  }
+},
   addVitals: {
     en_IN: 'Your vitals have been registered successfully. Our team from health department is monitoring you vitals and in case of need they will contact you . You can register vitals again whenever there is an important change. You may also contact state helpline 104   or the district control room at numbers mentioned below',
     pa_IN: 'ਤੁਹਾਡੇ ਮਹੱਤਵਪੂਰਨ ਲੱਛਣ ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਹੋ ਗਏ ਹਨ.. ਸਿਹਤ ਵਿਭਾਗ ਦੀ ਸਾਡੀ ਟੀਮ ਇਹਨਾ ਦੀ ਨਿਗਰਾਨੀ ਕਰ ਰਹੀ ਹੈ ਅਤੇ ਲੋੜ ਪੈਣ \'ਤੇ ਉਹ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰਨਗੇ. ਜਦੋਂ ਵੀ ਕੋਈ ਮਹੱਤਵਪੂਰਣ ਤਬਦੀਲੀ ਹੁੰਦੀ ਹੈ ਤਾਂ ਤੁਸੀਂ ਦੁਬਾਰਾ ਲੱਛਣ ਰਜਿਸਟਰ ਕਰ ਸਕਦੇ ਹੋ. ਤੁਸੀਂ ਸਟੇਟ ਹੈਲਪਲਾਈਨ 104 ਜਾਂ  ਹੇਠਾਂ ਦੱਸੇ ਨੰਬਰਾਂ \'ਤੇ ਜ਼ਿਲ੍ਹਾ ਕੰਟਰੋਲ ਰੂਮ ਨਾਲ ਵੀ ਸੰਪਰਕ ਕਰ ਸਕਦੇ ਹੋ',
     hi_IN: 'आपके महत्वपूर्ण लक्षण सफलतापूर्वक दर्ज कर लिए गए हैं।स्वास्थ्य विभाग की हमारी टीम इनकी निगरानी कर रही है और जरूरत पड़ने पर वे आपसे संपर्क करेंगे। जब भी कोई महत्वपूर्ण परिवर्तन होता है तो आप लक्षणों को फिर से पंजीकृत कर सकते हैं। आप राज्य हेल्पलाइन 104 या नीचे दिए गए नंबरों पर जिला नियंत्रण कक्ष से भी संपर्क कर सकते हैं।',
-  }
+  },
+  noUserFound:{
+    en_IN: 'No Patient Associated with this number',
+    pa_IN: 'ਕੋਈ ਵੀ ਮਰੀਜ਼ ਇਸ ਨੰਬਰ ਨਾਲ ਜੁੜਿਆ ਨਹੀਂ ਹੈ',
+    hi_IN: 'इस नंबर से कोई मरीज नहीं जुड़ा है ।',
+
+  },
+  selectPerson:{
+    en_IN: 'Select the Patient No. ',
+    pa_IN: 'ਮਰੀਜ਼ ਨੰਬਰ ਦੀ ਚੋਣ ਕਰੋ',
+    hi_IN: 'रोगी संख्या का चयन करें',
+
+  },
 };
 
 const grammers = {
