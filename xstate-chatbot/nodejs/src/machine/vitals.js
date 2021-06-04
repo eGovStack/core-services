@@ -857,7 +857,7 @@ const vitalsFlow = {
                 actions: assign((context, event) => {
                   context.slots.vitals.symptoms.diabetes = context.intention;
                 }),
-                  target: '#fatehKitDel'
+                  target: '#fatehKitDelivery'
               }
                 
               ]
@@ -870,8 +870,8 @@ const vitalsFlow = {
             }
           }
         },
-        fatehKitDel: {
-          id: 'fatehKitDel',
+        fatehKitDelivery: {
+          id: 'fatehKitDelivery',
           initial: 'prompt',
           states: {
             prompt: {
@@ -1020,7 +1020,7 @@ const vitalsFlow = {
                   actions: assign((context, event) => {
                   context.slots.vitals.symptoms.ComCancer = context.intention;                  
                   }),
-                  target: '#fatehKitDel'
+                  target: '#fatehKitDelivery'
                 },
                 {
                   cond: (context, event) => context.slots.vitals.fateh_kit_delivered == 'YES',
