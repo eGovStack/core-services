@@ -75,7 +75,7 @@ public class WorkflowService {
     public List<ProcessInstance> search(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
         List<ProcessInstance> processInstances;
         if(criteria.isNull())
-            processInstances = getUserBasedProcessInstances(requestInfo,criteria);
+            processInstances = getUserBasedProcessInstances(requestInfo, criteria);
         else processInstances = workflowRepository.getProcessInstances(criteria);
         if(CollectionUtils.isEmpty(processInstances))
             return processInstances;
@@ -173,11 +173,45 @@ public class WorkflowService {
     }
 
 
+    public List<ProcessInstance> escalatedApplicationsSearch(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        List<String> escalatedApplicationsBusinessIds;
+        List<ProcessInstance> escalatedApplications = new ArrayList<>();
+        Set<String> autoEscalationEmployeesUuids = enrichmentService.enrichUuidsOfAutoEscalationEmployees(requestInfo, criteria);
+        enrichmentService.enrichStatesToIgnore(requestInfo, criteria);
+        escalatedApplicationsBusinessIds = workflowRepository.fetchEscalatedApplicationsBusinessIdsFromDb(criteria);
+        if(CollectionUtils.isEmpty(escalatedApplicationsBusinessIds)){
+            return escalatedApplications;
+        }
+        // SEARCH BASED ON FILTERED BUSINESS IDs DONE HERE
+        ProcessInstanceSearchCriteria searchCriteria =  new ProcessInstanceSearchCriteria();
+        searchCriteria.setBusinessIds(escalatedApplicationsBusinessIds);
+        searchCriteria.setTenantId(criteria.getTenantId());
+        searchCriteria.setHistory(true);
+        List<ProcessInstance> escalatedApplicationsWithHistory = search(requestInfo, searchCriteria);
 
+        // Only last but one applications in history needs to show up where the employee failed to take action
 
-
-
-
-
-
+        HashMap<String, List<ProcessInstance>> businessIdsVsProcessInstancesMap = new HashMap<>();
+        HashMap<String, Integer> occurenceMap = new HashMap<>();
+        for(ProcessInstance processInstance : escalatedApplicationsWithHistory){
+            if(businessIdsVsProcessInstancesMap.containsKey(processInstance.getBusinessId())){
+                occurenceMap.put(processInstance.getBusinessId(), occurenceMap.get(processInstance.getBusinessId()) + 1);
+                businessIdsVsProcessInstancesMap.get(processInstance.getBusinessId()).add(processInstance);
+            }else{
+                occurenceMap.put(processInstance.getBusinessId(), 1);
+                List<ProcessInstance> processInstanceList = new ArrayList<>();
+                processInstanceList.add(processInstance);
+                businessIdsVsProcessInstancesMap.put(processInstance.getBusinessId(), processInstanceList);
+            }
+        }
+        criteria.setAssignee(requestInfo.getUserInfo().getUuid());
+        for(String businessId : occurenceMap.keySet()){
+            if(occurenceMap.get(businessId) >= 2){
+                if(autoEscalationEmployeesUuids.contains(businessIdsVsProcessInstancesMap.get(businessId).get(0).getAuditDetails().getCreatedBy()) && businessIdsVsProcessInstancesMap.get(businessId).get(1).getAuditDetails().getCreatedBy().equals(criteria.getAssignee())){
+                    escalatedApplications.add(businessIdsVsProcessInstancesMap.get(businessId).get(0));
+                }
+            }
+        }
+        return escalatedApplications;
+    }
 }

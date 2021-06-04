@@ -87,7 +87,7 @@ public class WorkflowController {
     @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
     public ResponseEntity<ProcessInstanceResponse> searchEscalatedApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                           @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
-        List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
+        List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
         ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances)
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);

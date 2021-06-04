@@ -9,18 +9,13 @@ import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.util.WorkflowUtil;
-import org.egov.wf.web.models.Action;
-import org.egov.wf.web.models.AuditDetails;
-import org.egov.wf.web.models.BusinessService;
-import org.egov.wf.web.models.BusinessServiceRequest;
-import org.egov.wf.web.models.ProcessInstance;
-import org.egov.wf.web.models.ProcessInstanceRequest;
-import org.egov.wf.web.models.ProcessStateAndAction;
-import org.egov.wf.web.models.State;
+import org.egov.wf.web.models.*;
+import org.egov.wf.web.models.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import static org.egov.wf.util.WorkflowConstants.AUTO_ESC_EMPLOYEE_ROLE_CODE;
 import static org.egov.wf.util.WorkflowConstants.UUID_REGEX;
 
 
@@ -412,4 +407,28 @@ public class EnrichmentService {
     }
 
 
+    public Set<String> enrichUuidsOfAutoEscalationEmployees(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        List<String> roleCodes = new ArrayList<>();
+        Set<String> autoEscalationEmployeesUuids = new HashSet<>();
+        // ######## CHANGE THE VALUE OF THE ROLE CODE CONSTANT WITH THE VALUE DEFINED IN SYSTEM
+        roleCodes.add(AUTO_ESC_EMPLOYEE_ROLE_CODE);
+        // ####################################################################################
+        UserSearchRequest userSearchRequest = new UserSearchRequest();
+        userSearchRequest.setRequestInfo(requestInfo);
+        userSearchRequest.setTenantId(criteria.getTenantId());
+        userSearchRequest.setRoleCodes(roleCodes);
+
+        List<String> uuidsOfAutoEscalationEmployees = userService.searchUserUuidsBasedOnRoleCodes(userSearchRequest);
+        criteria.setMultipleAssignees(uuidsOfAutoEscalationEmployees);
+        uuidsOfAutoEscalationEmployees.forEach(uuid -> {
+            autoEscalationEmployeesUuids.add(uuid);
+        });
+        return autoEscalationEmployeesUuids;
+    }
+
+    public void enrichStatesToIgnore(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        /* Complete this
+
+         */
+    }
 }

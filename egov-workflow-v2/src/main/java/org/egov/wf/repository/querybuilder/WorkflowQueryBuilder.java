@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Component
 public class WorkflowQueryBuilder {
@@ -367,4 +371,67 @@ public class WorkflowQueryBuilder {
     }
 
 
+    public String getInboxApplicationsBusinessIdsQuery(ProcessInstanceSearchCriteria criteria, ArrayList<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder("SELECT DISTINCT businessid FROM eg_wf_processinstance_v2 ");
+
+        if(!isNull(criteria.getTenantId())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" tenantid = ? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        if(!isNull(criteria.getAssignee())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" createdby = ? ");
+            preparedStmtList.add(criteria.getAssignee());
+        }
+
+        if(!isNull(criteria.getBusinessService())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" businessservice = ? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
+        return query.toString();
+    }
+
+    public String getAutoEscalatedApplicationsBusinessIdsQuery(ProcessInstanceSearchCriteria criteria, ArrayList<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder("SELECT DISTINCT businessid FROM eg_wf_processinstance_v2 ");
+
+        if(!isNull(criteria.getTenantId())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" tenantid = ? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        List<String> businessIds = criteria.getBusinessIds();
+        if(!CollectionUtils.isEmpty(criteria.getBusinessIds())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" businessid IN ( ").append(createQuery(businessIds)).append(" )");
+            addToPreparedStatement(preparedStmtList, businessIds);
+        }
+
+        List<String> uuidsOfAutoEscalationEmployees = criteria.getMultipleAssignees();
+        if(!CollectionUtils.isEmpty(uuidsOfAutoEscalationEmployees)){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" createdby IN ( ").append(createQuery(uuidsOfAutoEscalationEmployees)).append(" )");
+            addToPreparedStatement(preparedStmtList, uuidsOfAutoEscalationEmployees);
+        }
+
+        if(!isNull(criteria.getBusinessService())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" businessservice = ? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
+        return query.toString();
+    }
+
+    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ");
+        }else{
+            query.append(" AND ");
+        }
+    }
 }
