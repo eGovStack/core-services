@@ -2,7 +2,7 @@ const moment = require('moment');
 
 class VitalsService {
 
-  async addVitals(user, vitals) {
+  async addVitals(user, vitals,patientDetails) {
     console.log(JSON.stringify(vitals));
   }
 
