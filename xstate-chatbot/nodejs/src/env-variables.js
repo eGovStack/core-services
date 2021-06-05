@@ -64,6 +64,7 @@ const envVariables = {
         updateSelfInspectionSuffix  : 'status/updateSelfInspection',
         cova2Url                    : 'https://cova.punjab.gov.in/api/cova/citizen/services/v1/',
         isHomeIsolatedSuffix        : 'get-whats-app-hi-active',
+        submitData                  : 'insert-blo-data',
         addPatientSuffix            : 'insert-whats-app-pm-data',
         isDataBasedSrfid            : 'get-data-based-srfid',
         isDataBasedMobileNo         : 'Emp/HomeIsolated/Mobile',

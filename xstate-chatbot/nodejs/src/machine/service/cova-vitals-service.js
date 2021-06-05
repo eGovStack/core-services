@@ -3,20 +3,18 @@ const config = require("../../env-variables");
 
 class VitalsService {
 
-  async addVitals(user, vitals) {
+  async addVitals(user, vitals,patientDetails) {
     let mobile;
     if(vitals.mobile_no) {             // RRT
       mobile = vitals.mobile_no;
-    } else {                        // Citizen
-      mobile = user.mobileNumber;
-    }
-    let symptoms = vitals.symptoms;
+   let url = config.covaApiConfigs.covaUrl.concat(
+        config.covaApiConfigs.updateSelfInspectionSuffix
+      );
+      let symptoms = vitals.symptoms;
     let extra = {
       diabetes: symptoms.diabetes,
     };
-    let url = config.covaApiConfigs.covaUrl.concat(
-      config.covaApiConfigs.updateSelfInspectionSuffix
-    );
+   
 
     let headers = {
       "Content-Type": "application/json",
@@ -38,6 +36,62 @@ class VitalsService {
       srf_Id: vitals.srfId,
     };
 
+    } else {                        // Citizen
+      mobile = user.mobileNumber;
+
+      let url = config.covaApiConfigs.covaUrl.concat(
+        config.covaApiConfigs.submitData
+      );
+  
+      let headers = {
+        "Content-Type": "application/json",
+        Authorization: config.covaApiConfigs.covaAuthorization,
+      };
+  
+      let genderId = 3;
+      if(patientDetails.gender.toLowerCase() == 'male'){
+        genderId = 1;
+      }else if(patientDetails.gender.toLowerCase() == 'female'){
+        genderId = 2;
+      }
+  
+      let requestBody = {
+        RespiratoryIssues: patientDetails.symptoms.respiratoryIssues,
+        Comorbidities: patientDetails.symptoms.comorbidities,
+        ComHeart: patientDetails.symptoms.ComHeart,
+        LossOfSmellTaste: patientDetails.symptoms.lossOfSmellTaste,
+        inspection_type: "R",
+        FluLikeSymptoms: patientDetails.symptoms.fluLikeSymptoms,
+        ComDiabetic: patientDetails.symptoms.diabetes,
+        ComKidney: patientDetails.symptoms.ComKidney,
+        spo2level: patientDetails.spo2,
+        logitude: "",
+        latitude: "",
+        role_Id: "0",
+        ComCancer: patientDetails.symptoms.ComCancer,
+        ComStatus: 1,
+        type_info: "",
+        ComOthers: "",
+        question_2: "",
+        question_1: "",
+        question_3: "",
+        IdspId: "",
+        quaranitined_Id: "",
+        registered_date: "",
+        pulserate: patientDetails.pulse,
+        district_Id: "",
+        current_temp: patientDetails.temperature,
+        arrival_at_home: "",
+        NeedsDoctorCall: "",
+        FatehKitsDelivered: patientDetails.symptoms.FatehKitsDelivered,
+        base64: ""
+  
+      };
+  
+
+  
+    }
+    
     var request = {
       method: "POST",
       headers: headers,
@@ -45,20 +99,20 @@ class VitalsService {
     };
 
     let response = await fetch(url, request);
-    if(response.status) {
+    if(response.status == 200) {
       let responseBody = await response.json();
       if(responseBody.response == 1) {
-        console.log('Vitals registered successfully with Cova.');
+        console.log('Vitals registered Or Report Submitted  successfully with Cova.');
       } else {
-        console.error(`Error while registering vitals to Cova. Message: ${responseBody.sys_message}`);
+        console.error(`Error while registering vitals or report to Cova. Message: ${responseBody.sys_message}`);
       }
     } else {
       let responseBody = await response.json();
-      console.error(`Error while registering vitals to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
+      console.error(`Error while registering vitals or reports to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
     }
   }
-    
-  async addPatient(user, patientDetails) {
+
+async addPatient(user, patientDetails) {
     if(patientDetails.srfId) {
       // Validate SRF ID is 13 digit number
       const valid = /^\d{13}$/.test(patientDetails.srfId);
