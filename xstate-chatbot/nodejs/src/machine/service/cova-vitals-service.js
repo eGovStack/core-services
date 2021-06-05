@@ -5,23 +5,26 @@ class VitalsService {
 
   async addVitals(user, vitals,patientDetails) {
     let mobile;
-    if(vitals.mobile_no) {             // RRT
-      mobile = vitals.mobile_no;
-   let url = config.covaApiConfigs.covaUrl.concat(
+    let url;
+    let headers;
+    let requestBody;
+    if(patientDetails.rrt==='NO') {              // CITIZEN
+      mobile = user.mobileNumber;
+      url = config.covaApiConfigs.covaUrl.concat(
         config.covaApiConfigs.updateSelfInspectionSuffix
       );
-      let symptoms = vitals.symptoms;
+    let symptoms = vitals.symptoms;
     let extra = {
-      diabetes: symptoms.diabetes,
-    };
+       diabetes: symptoms.diabetes,
+        };
    
 
-    let headers = {
+    headers = {
       "Content-Type": "application/json",
       Authorization: config.covaApiConfigs.covaAuthorization,
-    };
+      };
 
-    let requestBody = {
+    requestBody = {
       Token: config.covaApiConfigs.covaAuthToken,
       mobile_no: mobile,
       current_temp: vitals.temperature.toString(),
@@ -34,41 +37,36 @@ class VitalsService {
       NeedsDoctorCall: 'NO',
       Remarks: JSON.stringify(extra),
       srf_Id: vitals.srfId,
-    };
+      };
 
-    } else {                        // Citizen
-      mobile = user.mobileNumber;
+       } else {     
+      mobile = user.mobileNumber;             // RRT
 
-      let url = config.covaApiConfigs.covaUrl.concat(
+       url = config.covaApiConfigs.covaUrl.concat(
         config.covaApiConfigs.submitData
       );
   
-      let headers = {
+      headers = {
         "Content-Type": "application/json",
         Authorization: config.covaApiConfigs.covaAuthorization,
       };
   
-      let genderId = 3;
-      if(patientDetails.gender.toLowerCase() == 'male'){
-        genderId = 1;
-      }else if(patientDetails.gender.toLowerCase() == 'female'){
-        genderId = 2;
-      }
-  
-      let requestBody = {
-        RespiratoryIssues: patientDetails.symptoms.respiratoryIssues,
-        Comorbidities: patientDetails.symptoms.comorbidities,
-        ComHeart: patientDetails.symptoms.ComHeart,
-        LossOfSmellTaste: patientDetails.symptoms.lossOfSmellTaste,
+
+
+    requestBody = {
+        RespiratoryIssues: vitals.symptoms.respiratoryIssues,
+        Comorbidities: vitals.symptoms.comorbidities,
+        ComHeart: vitals.symptoms.ComHeart,
+        LossOfSmellTaste: vitals.symptoms.lossOfSmellTaste,
         inspection_type: "R",
-        FluLikeSymptoms: patientDetails.symptoms.fluLikeSymptoms,
-        ComDiabetic: patientDetails.symptoms.diabetes,
-        ComKidney: patientDetails.symptoms.ComKidney,
-        spo2level: patientDetails.spo2,
+        FluLikeSymptoms: vitals.symptoms.fluLikeSymptoms,
+        ComDiabetic: vitals.symptoms.diabetes,
+        ComKidney: vitals.symptoms.ComKidney,
+        spo2level: vitals.spo2,
         logitude: "",
         latitude: "",
         role_Id: "0",
-        ComCancer: patientDetails.symptoms.ComCancer,
+        ComCancer: vitals.symptoms.ComCancer,
         ComStatus: 1,
         type_info: "",
         ComOthers: "",
@@ -78,18 +76,18 @@ class VitalsService {
         IdspId: "",
         quaranitined_Id: "",
         registered_date: "",
-        pulserate: patientDetails.pulse,
+        pulserate: vitals.pulse,
         district_Id: "",
-        current_temp: patientDetails.temperature,
+        current_temp: vitals.temperature,
         arrival_at_home: "",
         NeedsDoctorCall: "",
-        FatehKitsDelivered: patientDetails.symptoms.FatehKitsDelivered,
+        FatehKitsDelivered: vitals.symptoms.FatehKitsDelivered,
         base64: ""
   
       };
   
 
-  
+
     }
     
     var request = {

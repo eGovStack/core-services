@@ -87,7 +87,7 @@ const vitalsFlow = {
               {
                 cond: (context, event) => event.data.data.length >= 1,
                 actions: assign((context, event) => {
-                  context.persons = event.data;
+                      context.persons = event.data;
                 }),
                 target: '#selectPerson'
               },
@@ -1021,7 +1021,7 @@ const vitalsFlow = {
     addVitals: {
       id: 'addVitals',
       invoke: {
-        src: (context) => vitalsService.addVitals(context.user, context.slots.vitals,context.slots.registerPatient),
+        src: (context) => vitalsService.addVitals(context.user, context.slots.vitals,context.slots.person),
         onDone: [
         {
           cond: (context, event) =>context.slots.person.rrt==='NO',
