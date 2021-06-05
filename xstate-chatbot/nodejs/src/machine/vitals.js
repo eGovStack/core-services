@@ -120,7 +120,7 @@ const vitalsFlow = {
               let grammerItem = { intention: event.data.data[i], recognize: [(i + 1).toString()] };
 
               grammer.push(grammerItem);
-              message += '\n' + (i + 1) + '. ' + event.data.data[i].MASTER_NAME + '\n  com_status : '+event.data.data[i].com_status+'\n  fateh_kit_delivered : '+event.data.data[i].fateh_kit_delivered;
+              message += '\n' + (i + 1) + '. ' + event.data.data[i].MASTER_NAME ;
             }
             context.grammer = grammer;
             dialog.sendMessage(context, message);
