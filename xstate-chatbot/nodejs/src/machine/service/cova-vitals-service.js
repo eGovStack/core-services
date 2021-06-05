@@ -3,27 +3,28 @@ const config = require("../../env-variables");
 
 class VitalsService {
 
-  async addVitals(user, vitals) {
+  async addVitals(user, vitals,patientDetails) {
     let mobile;
-    if(vitals.mobile_no) {             // RRT
-      mobile = vitals.mobile_no;
-    } else {                        // Citizen
+    let url;
+    let headers;
+    let requestBody;
+    if(patientDetails.rrt==='NO') {              // CITIZEN
       mobile = user.mobileNumber;
-    }
+      url = config.covaApiConfigs.covaUrl.concat(
+        config.covaApiConfigs.updateSelfInspectionSuffix
+      );
     let symptoms = vitals.symptoms;
     let extra = {
-      diabetes: symptoms.diabetes,
-    };
-    let url = config.covaApiConfigs.covaUrl.concat(
-      config.covaApiConfigs.updateSelfInspectionSuffix
-    );
+       diabetes: symptoms.diabetes,
+        };
+   
 
-    let headers = {
+    headers = {
       "Content-Type": "application/json",
       Authorization: config.covaApiConfigs.covaAuthorization,
-    };
+      };
 
-    let requestBody = {
+    requestBody = {
       Token: config.covaApiConfigs.covaAuthToken,
       mobile_no: mobile,
       current_temp: vitals.temperature.toString(),
@@ -36,8 +37,59 @@ class VitalsService {
       NeedsDoctorCall: 'NO',
       Remarks: JSON.stringify(extra),
       srf_Id: vitals.srfId,
-    };
+      };
 
+       } else {     
+      mobile = user.mobileNumber;             // RRT
+
+       url = config.covaApiConfigs.covaUrl.concat(
+        config.covaApiConfigs.submitData
+      );
+  
+      headers = {
+        "Content-Type": "application/json",
+        Authorization: config.covaApiConfigs.covaAuthorization,
+      };
+  
+
+
+    requestBody = {
+        RespiratoryIssues: vitals.symptoms.respiratoryIssues,
+        Comorbidities: vitals.symptoms.comorbidities,
+        ComHeart: vitals.symptoms.ComHeart,
+        LossOfSmellTaste: vitals.symptoms.lossOfSmellTaste,
+        inspection_type: "R",
+        FluLikeSymptoms: vitals.symptoms.fluLikeSymptoms,
+        ComDiabetic: vitals.symptoms.diabetes,
+        ComKidney: vitals.symptoms.ComKidney,
+        spo2level: vitals.spo2,
+        logitude: "",
+        latitude: "",
+        role_Id: "0",
+        ComCancer: vitals.symptoms.ComCancer,
+        ComStatus: 1,
+        type_info: "",
+        ComOthers: "",
+        question_2: "",
+        question_1: "",
+        question_3: "",
+        IdspId: "",
+        quaranitined_Id: "",
+        registered_date: "",
+        pulserate: vitals.pulse,
+        district_Id: "",
+        current_temp: vitals.temperature,
+        arrival_at_home: "",
+        NeedsDoctorCall: "",
+        FatehKitsDelivered: vitals.symptoms.FatehKitsDelivered,
+        base64: ""
+  
+      };
+  
+
+
+    }
+    
     var request = {
       method: "POST",
       headers: headers,
@@ -45,20 +97,20 @@ class VitalsService {
     };
 
     let response = await fetch(url, request);
-    if(response.status) {
+    if(response.status == 200) {
       let responseBody = await response.json();
       if(responseBody.response == 1) {
-        console.log('Vitals registered successfully with Cova.');
+        console.log('Vitals registered Or Report Submitted  successfully with Cova.');
       } else {
-        console.error(`Error while registering vitals to Cova. Message: ${responseBody.sys_message}`);
+        console.error(`Error while registering vitals or report to Cova. Message: ${responseBody.sys_message}`);
       }
     } else {
       let responseBody = await response.json();
-      console.error(`Error while registering vitals to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
+      console.error(`Error while registering vitals or reports to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
     }
   }
 
-  async addPatient(user, patientDetails) {
+async addPatient(user, patientDetails) {
     if(patientDetails.srfId) {
       // Validate SRF ID is 13 digit number
       const valid = /^\d{13}$/.test(patientDetails.srfId);
@@ -147,6 +199,36 @@ class VitalsService {
     }
   }
 
+  async getPatientDetailsFromMobileNumber(mobileNumber) {
+        let url = config.covaApiConfigs.covaUrl.concat(
+      config.covaApiConfigs.isDataBasedMobileNo
+    );
+    let headers = {
+      "Content-Type": "application/json",
+       Authorization: config.covaApiConfigs.covaAuthorization,
+         };
+
+    let requestBody = {
+      MobileNumber: mobileNumber.toString(),
+    };
+
+    var request = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    };
+
+    let response = await fetch(url, request);
+    if(response.status == 200) {
+      let data = await response.json();
+     // console.log(data.data);
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (MOBNo API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
 }
 
  module.exports = new VitalsService();
