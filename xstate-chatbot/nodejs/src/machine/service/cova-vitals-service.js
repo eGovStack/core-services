@@ -86,11 +86,11 @@ class VitalsService {
   
       };
 
-    
-    
-    
-    }
+  
 
+
+    }
+    
     var request = {
       method: "POST",
       headers: headers,

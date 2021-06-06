@@ -288,8 +288,8 @@ const vitalsFlow = {
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
                 context.slots.person.rrt='YES'
-                          
-            
+
+                               
               }),
               target: '#temperature'
             }
