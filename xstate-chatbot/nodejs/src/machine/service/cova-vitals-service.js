@@ -85,6 +85,7 @@ class VitalsService {
         base64: ""
   
       };
+
   
 
 
@@ -169,32 +170,60 @@ async addPatient(user, patientDetails) {
   }
 
   async getPatientDetailsFromSrfId(srfId) {
-    let url = config.covaApiConfigs.covaReminderUrl.concat(
-      config.covaApiConfigs.isDataBasedSrfid
+    let url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiSrfid.concat(srfId)
     );
+    let response = await fetch(url);
 
-    let headers = {
-      "Content-Type": "application/json",
-      Authorization: config.covaApiConfigs.covaAuthorization,
-    };
-
-    let requestBody = {
-      srf_id: srfId.toString(),
-    };
-
-    var request = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(requestBody),
-    };
-
-    let response = await fetch(url, request);
     if(response.status == 200) {
       let data = await response.json();
       return data;
     } else {
       let responseBody = await response.json();
       console.error(`Cova (SRFId API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+
+  async getMoAuthorization(rmoMobileNumber) {
+    let url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiRmoAuth.concat(rmoMobileNumber)
+    );
+
+    let response = await fetch(url);
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (RmoAuthorization API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+  async getMoSubmitReport(caseid,mophone,remarks,specRequire,hospRequire) {
+    let url;
+    if(specRequire=='yes')
+    {
+     url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiSpecializationNeed.concat(caseid).concat('/').concat(mophone)
+      .concat('/').concat(specRequire).concat('/').concat(remarks)
+    );
+    }
+    else
+    if(hospRequire=='yes')
+    {
+     url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiHospitalNeed.concat(caseid).concat('/').concat(mophone)
+      .concat('/').concat(hospRequire).concat('/').concat(remarks)
+    );
+    }
+    let response = await fetch(url);
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (RmoAuthorization API) responded with ${JSON.stringify(responseBody)}`);
       return { response: 0 };
     }
   }
@@ -221,7 +250,6 @@ async addPatient(user, patientDetails) {
     let response = await fetch(url, request);
     if(response.status == 200) {
       let data = await response.json();
-     // console.log(data.data);
       return data;
     } else {
       let responseBody = await response.json();
