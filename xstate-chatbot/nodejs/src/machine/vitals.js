@@ -289,6 +289,7 @@ const vitalsFlow = {
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
                 context.slots.person.rrt='YES'
                           
+            
               }),
               target: '#temperature'
             }
