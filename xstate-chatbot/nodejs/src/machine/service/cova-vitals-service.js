@@ -85,9 +85,6 @@ class VitalsService {
         base64: ""
   
       };
-  
-
-
     }
 
     var request = {
