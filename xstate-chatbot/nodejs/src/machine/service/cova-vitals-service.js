@@ -73,7 +73,7 @@ class VitalsService {
         question_2: "",
         question_1: "",
         question_3: "",
-        IdspId: "",
+        IdspId: patientDetails.MASTER_ID,
         quaranitined_Id: "",
         registered_date: "",
         pulserate: vitals.pulse,
