@@ -1,5 +1,5 @@
 const messages = {
-  rrtSrfId: {
+  rmoSrfId: {
     prompt: {
       en_IN: 'Please enter Patient\'s SRF ID ',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੀ SRF ID ਦਾਖਲ ਕਰੋ',
@@ -16,6 +16,61 @@ const messages = {
       hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
     },
   },
+  rmoMobileNumber: {
+    prompt: {
+      en_IN: 'Please enter Your Registered Mobile No As RMO ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ ਨੂੰ ਆਰਐਮਓ ਦੇ ਰੂਪ ਵਿੱਚ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया अपना पंजीकृत मोबाइल नंबर आरएमओ के रूप में दर्ज करें'
+    },
+    error: {
+      en_IN: 'RMO is Not Registered',
+      pa_IN: 'RMO ਰਜਿਸਟਰਡ ਨਹੀ ਹੈ',
+      hi_IN: 'आरएमओ पंजीकृत नहीं है ।'
+    },
+    success: {
+      en_IN: 'RMo SRF Id successfully noted. Please continue entering patient\'s vitals.',
+      pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
+    },
+
+   
+  },
+   rmoActionToPerformed: {
+    prompt: 
+    {
+      en_IN: 'Choose Action ',
+      pa_IN: 'ਕਾਰਵਾਈ ਚੁਣੋ',
+      hi_IN: 'कार्रवाई का चयन'
+     },
+      options: {
+        list: [ 'specializedAdvice', 'hospitalization'],
+        messageBundle: {
+          specializedAdvice: {
+            en_IN: 'Patient need Specialized Advice',
+            pa_IN: 'ਮਰੀਜ਼ ਨੂੰ ਵਿਸ਼ੇਸ਼ ਸਲਾਹ ਦੀ ਜਰੂਰਤ ਹੁੰਦੀ ਹੈ',
+            hi_IN: 'रोगी को विशेष सलाह की आवश्यकता है',
+          },
+          hospitalization: {
+            en_IN: 'Patients need hospitalization',
+            pa_IN: 'ਮਰੀਜ਼ ਨੂੰ ਹਸਪਤਾਲ ਦਾਖਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
+            hi_IN: 'रोगी को अस्पताल में भर्ती होने की आवश्यकता है',
+          },
+         },
+    },
+  },
+  doctorRemark: {
+    prompt: {
+      en_IN: 'Enter Remarks of Doctor',
+      pa_IN: 'ਡਾਕਟਰ ਦੀ ਟਿੱਪਣੀ ਦਰਜ ਕਰੋ',
+      hi_IN: 'डॉक्टर की टिप्पणी दर्ज करें'
+    },
+      
+  },
+  moReportSubmit: {
+    en_IN: 'The RO report have been registered successfully.',
+    pa_IN: 'ਆਰ ਓ ਰਿਪੋਰਟ ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਕੀਤੀ ਗਈ ਹੈ.',
+    hi_IN: 'आरओ रिपोर्ट सफलतापूर्वक दर्ज कर ली गई है।',
+},
   rrtMobileNumber: {
     prompt: {
       en_IN: 'Please enter Patient\'s Mobile Number ',
@@ -27,7 +82,7 @@ const messages = {
       pa_IN: 'ਗਲਤ ਮੋਬਾਈਲ ਨੰ . n \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਮੋਬਾਈਲ ਨੰ ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
       hi_IN: 'अमान्य मोबाइल नंबर  \n \nकृपया फिर से मोबाइल नंबर दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
     },
-   },
+  },
   noUserFound:{
         en_IN: 'No Patient Associated with this number',
         pa_IN: 'ਕੋਈ ਵੀ ਮਰੀਜ਼ ਇਸ ਨੰਬਰ ਨਾਲ ਜੁੜਿਆ ਨਹੀਂ ਹੈ',
