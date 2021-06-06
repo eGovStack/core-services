@@ -288,7 +288,7 @@ const vitalsFlow = {
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
                 context.slots.person.rrt='YES'
-       
+                          
               }),
               target: '#temperature'
             }
@@ -866,12 +866,31 @@ const vitalsFlow = {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
                   target: 'error'
                 },
+               {
+                  cond: (context, event) => context.slots.person.com_status == '1',
+                  actions: assign((context, event) => {
+                     context.slots.vitals.symptoms.respiratoryIssues = context.intention;                
+                  }),
+                  target: '#heartrelated'
+                },
+              {
+                cond: (context, event) => context.slots.person.com_status == '0',
+                actions: assign((context, event) => {
+                context.slots.vitals.symptoms.respiratoryIssues = context.intention; 
+                context.slots.vitals.symptoms.ComHeart = 'NO';
+                context.slots.vitals.symptoms.ComKidney = 'NO';
+                context.slots.vitals.symptoms.ComCancer = 'NO';
+
+              }),
+                target: '#comorbidities'
+              },
               {
                 actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;
-                  context.slots.vitals.symptoms.ComHeart = 'NO';
-                  context.slots.vitals.symptoms.ComKidney = 'NO';
-                  context.slots.vitals.symptoms.ComCancer = 'NO'; 
+                context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                context.slots.vitals.symptoms.ComHeart = 'NO';
+                context.slots.vitals.symptoms.ComKidney = 'NO';
+                context.slots.vitals.symptoms.ComCancer = 'NO';
+
                 }),
                 target: '#comorbidities'
               }
@@ -1171,7 +1190,7 @@ const vitalsFlow = {
         {
           cond: (context, event) =>context.slots.person.rrt==='YES',
           actions: assign((context, event) => {
-           let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
+            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
             dialog.sendMessage(context, dialog.get_message(messages.submitData, context.user.locale), false);
             dialog.sendMessage(context, mediaMessage);
           }),
