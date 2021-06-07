@@ -42,7 +42,7 @@ const chatStateMachine = Machine({
         process: {
           onEntry: assign((context, event) => {
             context.intention = dialog.get_intention(context.grammer, event, true);
-          }),
+            }),
           always: [
             {
               cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
@@ -95,7 +95,7 @@ const chatStateMachine = Machine({
             },
             {
               cond: (context) => context.intention == 'rrt',
-              target: '#rrtMobileNumber'
+              target: '#rrtLocation'
             },
             {
               cond: (context) => context.intention == 'rmo',

@@ -202,12 +202,71 @@ const vitalsFlow = {
         }
       }
     },
+    rrtLocation: {
+      id: 'rrtLocation',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+           dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process'
+          }
+        },
+        
+        process: {
+          onEntry: assign((context, event) => {
+            if(event.message.type === "location")
+            {
+            var str = event.message.input.toString().substring(1,event.message.input.length-1);
+            var latlong =  str.split(",");
+            var latitude = latlong[0];
+            var longitude = latlong[1];
+            input = '(' + latitude + ',' + longitude + ')';
+            context.slots.vitals.longitude=longitude;
+            context.slots.vitals.latitude=latitude; 
+            context.isValid=true;
+            }
+          else 
+          {
+            context.isValid=false;
+          }
+
+        }),
+          always:[
+            {
+              cond: (context) => context.isValid == false,
+              target: 'error'
+            },
+            { 
+              target: '#rrtMobileNumber'
+            }
+          ]
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.error, context.user.locale), false);
+          }),
+          always: 'prompt'
+        }
+      }
+    },
+
+
+
+
+
+
     rrtMobileNumber: {
       id: 'rrtMobileNumber',
       initial: 'prompt',
       states: {
         prompt: {
           onEntry: assign((context, event) => {
+          //  dialog.sendMessage(context, dialog.get_message(messages.rrtMobileNumber.prompt, context.user.locale));
+           // let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
+            //dialog.sendMessage(context, mediaMessage, false);
             dialog.sendMessage(context, dialog.get_message(messages.rrtMobileNumber.prompt, context.user.locale));
           }),
           on: {

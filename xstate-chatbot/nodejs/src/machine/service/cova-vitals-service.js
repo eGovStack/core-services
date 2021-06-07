@@ -63,8 +63,8 @@ class VitalsService {
         ComDiabetic: vitals.symptoms.diabetes,
         ComKidney: vitals.symptoms.ComKidney,
         spo2level: vitals.spo2,
-        logitude: "",
-        latitude: "",
+        logitude: vitals.logitude,
+        latitude: vitals.latitude,
         role_Id: "0",
         ComCancer: vitals.symptoms.ComCancer,
         ComStatus: 1,
@@ -90,7 +90,7 @@ class VitalsService {
 
 
     }
-    
+
     var request = {
       method: "POST",
       headers: headers,

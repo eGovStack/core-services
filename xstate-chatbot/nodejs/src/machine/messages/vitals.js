@@ -71,6 +71,18 @@ const messages = {
     pa_IN: 'ਆਰ ਓ ਰਿਪੋਰਟ ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਕੀਤੀ ਗਈ ਹੈ.',
     hi_IN: 'आरओ रिपोर्ट सफलतापूर्वक दर्ज कर ली गई है।',
 },
+  rrtLocation: {
+    prompt: {
+      en_IN: 'Please share your present Location ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਸਥਿਤੀ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया अपना स्थान दर्ज करें'
+    },
+    error: {
+      en_IN: 'Invalid Location. \n\nIf you would like to reset the chat flow, send "Hi".',
+      pa_IN: 'ਗਲਤ ਸਥਿਤੀ  \ n  ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਸਥਿਤੀ ਦਾਖਲ ਕਰੋ ਜਾਂ ਫੇਰ ਗੱਲਬਾਤ ਦੇ ਪ੍ਰਵਾਹ ਨੂੰ ਮੁੜ ਸੈੱਟ ਕਰਨ ਲਈ "Hi" ਟਾਈਪ ਕਰੋ.',
+      hi_IN: 'अमान्य स्थान   \n \nकृपया फिर से स्थान दर्ज करें या वार्तालाप प्रवाह को रीसेट करने के लिए "Hi" टाइप करें।'
+    },
+  },
   rrtMobileNumber: {
     prompt: {
       en_IN: 'Please enter Patient\'s Mobile Number ',
