@@ -63,8 +63,8 @@ class VitalsService {
         ComDiabetic: vitals.symptoms.diabetes,
         ComKidney: vitals.symptoms.ComKidney,
         spo2level: vitals.spo2,
-        logitude: "",
-        latitude: "",
+        logitude: vitals.logitude,
+        latitude: vitals.latitude,
         role_Id: "0",
         ComCancer: vitals.symptoms.ComCancer,
         ComStatus: 1,
@@ -73,7 +73,7 @@ class VitalsService {
         question_2: "",
         question_1: "",
         question_3: "",
-        IdspId: "",
+        IdspId: patientDetails.MASTER_ID,
         quaranitined_Id: "",
         registered_date: "",
         pulserate: vitals.pulse,
@@ -85,7 +85,7 @@ class VitalsService {
         base64: ""
   
       };
-  
+    }
 
 
     }
@@ -169,17 +169,75 @@ async addPatient(user, patientDetails) {
   }
 
   async getPatientDetailsFromSrfId(srfId) {
-    let url = config.covaApiConfigs.covaReminderUrl.concat(
-      config.covaApiConfigs.isDataBasedSrfid
+    let url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiSrfid.concat(srfId)
+    );
+    let response = await fetch(url);
+
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (SRFId API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+
+  async getMoAuthorization(rmoMobileNumber) {
+    let url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiRmoAuth.concat(rmoMobileNumber)
     );
 
+    let response = await fetch(url);
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (RmoAuthorization API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+  async getMoSubmitReport(caseid,mophone,remarks,specRequire,hospRequire) {
+    let url;
+    if(specRequire=='yes')
+    {
+     url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiSpecializationNeed.concat(caseid).concat('/').concat(mophone)
+      .concat('/').concat(specRequire).concat('/').concat(remarks)
+    );
+    }
+    else
+    if(hospRequire=='yes')
+    {
+     url = config.covaApiConfigs.covidApiSuffix.concat(
+      config.covaApiConfigs.covidApiHospitalNeed.concat(caseid).concat('/').concat(mophone)
+      .concat('/').concat(hospRequire).concat('/').concat(remarks)
+    );
+    }
+    let response = await fetch(url);
+    if(response.status == 200) {
+      let data = await response.json();
+      return data;
+    } else {
+      let responseBody = await response.json();
+      console.error(`Cova (RmoAuthorization API) responded with ${JSON.stringify(responseBody)}`);
+      return { response: 0 };
+    }
+  }
+
+  async getPatientDetailsFromMobileNumber(mobileNumber) {
+        let url = config.covaApiConfigs.covaUrl.concat(
+      config.covaApiConfigs.isDataBasedMobileNo
+    );
     let headers = {
       "Content-Type": "application/json",
-      Authorization: config.covaApiConfigs.covaAuthorization,
-    };
+       Authorization: config.covaApiConfigs.covaAuthorization,
+         };
 
     let requestBody = {
-      srf_id: srfId.toString(),
+      MobileNumber: mobileNumber.toString(),
     };
 
     var request = {
@@ -194,11 +252,10 @@ async addPatient(user, patientDetails) {
       return data;
     } else {
       let responseBody = await response.json();
-      console.error(`Cova (SRFId API) responded with ${JSON.stringify(responseBody)}`);
+      console.error(`Cova (MOBNo API) responded with ${JSON.stringify(responseBody)}`);
       return { response: 0 };
     }
   }
-
   async getPatientDetailsFromMobileNumber(mobileNumber) {
         let url = config.covaApiConfigs.covaUrl.concat(
       config.covaApiConfigs.isDataBasedMobileNo
