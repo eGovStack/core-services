@@ -201,6 +201,10 @@ const vitalsFlow = {
         }
       }
     },
+    rrtSrfId:{            // To handle any user who is at this state when the update was pushed
+      id: 'rrtSrfId',
+      always: 'rrtLocation',
+    },
     rrtLocation: {
       id: 'rrtLocation',
       initial: 'prompt',
