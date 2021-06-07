@@ -88,7 +88,6 @@ class VitalsService {
     }
 
 
-    }
     
     var request = {
       method: "POST",
