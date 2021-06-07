@@ -207,6 +207,8 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
+           let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/location_sharing_info`, 'jpeg',undefined, '');
+           dialog.sendMessage(context, mediaMessage, false);
            dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.prompt, context.user.locale));
           }),
           on: {
