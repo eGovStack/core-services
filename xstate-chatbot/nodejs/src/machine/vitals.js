@@ -251,12 +251,6 @@ const vitalsFlow = {
         }
       }
     },
-
-
-
-
-
-
     rrtMobileNumber: {
       id: 'rrtMobileNumber',
       initial: 'prompt',
@@ -360,106 +354,6 @@ const vitalsFlow = {
           always: 'prompt'
         }
      }
-    },
-   rrtMobileNumber: {
-      id: 'rrtMobileNumber',
-      initial: 'prompt',
-      states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.rrtMobileNumber.prompt, context.user.locale));
-          }),
-          on: {
-            USER_MESSAGE: 'process'
-          }
-        },
-        process: {
-          onEntry: assign((context, event) => {
-            context.message = dialog.get_input(event, false);
-          }),
-          invoke: {
-            src: (context, event) => vitalsService.getPatientDetailsFromMobileNumber(context.message),
-            onDone: [
-              {
-                cond: (context, event) => event.data.data === null,
-                actions: assign((context, event) => {
-                  context.persons = event.data;
-                }),
-                target: 'error'
-              },
-              {
-                cond: (context, event) => event.data.data.length >= 1,
-                actions: assign((context, event) => {
-                      context.persons = event.data;
-                }),
-                target: '#selectPerson'
-              },
-              {
-                target: 'error'
-              }
-            ]
-          }
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
-          }),
-          always: 'prompt'
-        }
-      }
-    },
-    selectPerson: {
-      id: 'selectPerson',
-      initial: 'prompt',
-      states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            let message = dialog.get_message(messages.selectPerson, context.user.locale);
-            let grammer = [];
-            context.slots.person={};
-            for (let i = 0; i < event.data.data.length; i++) {
-              let person = event.data.data[i];
-
-              let grammerItem = { intention: event.data.data[i], recognize: [(i + 1).toString()] };
-
-              grammer.push(grammerItem);
-              message += '\n' + (i + 1) + '. ' + event.data.data[i].MASTER_NAME ;
-            }
-            context.grammer = grammer;
-            dialog.sendMessage(context, message);
-          }),
-          on: {
-            USER_MESSAGE: 'process'
-          }
-        },
-        process: {
-          onEntry: assign((context, event) => {
-            context.intention = dialog.get_intention(context.grammer, event, true);
-          }),
-          always: [
-            {
-              cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
-              target: 'error'
-            },
-            {
-              actions: assign((context, event) => {
-                context.slots.person.MASTER_ID = context.intention.MASTER_ID;
-                context.slots.person.com_status = context.intention.com_status;
-                context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
-                context.slots.person.rrt='YES'
-                               
-              }),
-              target: '#temperature'
-            }
-          ]
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
-          }),
-          always: 'prompt'
-        }
-      }
     },
     isHomeIsolatedPatient: {
       id: 'isHomeIsolatedPatient',
@@ -1198,87 +1092,6 @@ const vitalsFlow = {
                     context.slots.vitals.symptoms.FatehKitsDelivered = context.intention;
                 }),
                   target: '#addVitals'
-                }
-              ]
-            },
-            error: {
-              onEntry: assign((context, event) => {
-                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
-              }),
-              always: 'prompt'
-            }
-          }
-        },
-        heartrelated: {
-          id: 'heartrelated',
-          initial: 'prompt',
-          states: {
-            prompt: {
-              onEntry: assign((context, event) => {
-                context.grammer = grammers.binaryChoice.grammer;
-                let message = dialog.get_message(messages.heartrelated.prompt, context.user.locale);
-                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
-                dialog.sendMessage(context, message);
-              }),
-              on: {
-                USER_MESSAGE: 'process'
-              }
-            },
-            process: {
-              onEntry: assign((context, event) => {
-                context.intention = dialog.get_intention(context.grammer, event, true);
-              }),
-              always: [
-                {
-                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
-                },
-                {
-                  actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.ComHeart = context.intention;
-                }),
-                  target: '#kidneyrelated'
-                }
-              ]
-            },
-            error: {
-              onEntry: assign((context, event) => {
-                dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
-              }),
-              always: 'prompt'
-            }
-          }
-        },
-        kidneyrelated: {
-          id: 'kidneyrelated',
-          initial: 'prompt',
-          states: {
-            prompt: {
-              onEntry: assign((context, event) => {
-                context.grammer = grammers.binaryChoice.grammer;
-                let message = dialog.get_message(messages.kidneyrelated.prompt, context.user.locale);
-                message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
-                dialog.sendMessage(context, message);
-              }),
-              on: {
-                USER_MESSAGE: 'process'
-              }
-            },
-            process: {
-              onEntry: assign((context, event) => {
-                context.intention = dialog.get_intention(context.grammer, event, true);
-              }),
-              always: [
-                {
-                  cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
-                },
-                {
-                  actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.ComKidney = context.intention;
-                   
-                  }),
-                  target: '#cancerrelated'
                 }
               ]
             },
