@@ -32,5 +32,8 @@ public class Escalation {
     @JsonProperty("businessSlaExceededBy")
     private Long businessSlaExceededBy;
 
+    @JsonProperty("topic")
+    private String topic;
+
 
 }

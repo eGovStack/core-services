@@ -126,6 +126,7 @@ public class EscalationUtil {
             String state  = (String) map.get("state");
             String action  = (String) map.get("action");
             String module  = (String) map.get("module");
+            String topic  = (String) map.get("topic");
             Long  stateSla = daysToMillisecond((Double) map.get("stateSLA"));
             Long  businessSLa = daysToMillisecond((Double) map.get("businessSLA"));
 
@@ -137,6 +138,7 @@ public class EscalationUtil {
                                     .businessSlaExceededBy(businessSLa)
                                     .stateSlaExceededBy(stateSla)
                                     .moduleName(module)
+                                    .topic(topic)
                                     .build();
 
             escalations.add(escalation);
