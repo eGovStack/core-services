@@ -63,7 +63,7 @@ class VitalsService {
         ComDiabetic: vitals.symptoms.diabetes,
         ComKidney: vitals.symptoms.ComKidney,
         spo2level: vitals.spo2,
-        logitude: vitals.logitude,
+        logitude: vitals.longitude,
         latitude: vitals.latitude,
         role_Id: "0",
         ComCancer: vitals.symptoms.ComCancer,
