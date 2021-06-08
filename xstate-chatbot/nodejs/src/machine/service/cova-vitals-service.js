@@ -53,7 +53,7 @@ class VitalsService {
         Comorbidities: vitals.symptoms.comorbidities,
         ComHeart: vitals.symptoms.ComHeart,
         LossOfSmellTaste: vitals.symptoms.lossOfSmellTaste,
-        inspection_type: 'R',
+        inspection_type: 'P',
         FluLikeSymptoms: vitals.symptoms.fluLikeSymptoms,
         ComDiabetic: vitals.symptoms.diabetes,
         ComKidney: vitals.symptoms.ComKidney,
