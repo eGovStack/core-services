@@ -3,17 +3,25 @@ package org.egov.wf.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.util.WorkflowUtil;
 import org.egov.wf.web.models.*;
 import org.egov.wf.web.models.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import static org.egov.wf.util.WorkflowConstants.AUTO_ESC_EMPLOYEE_ROLE_CODE;
 import static org.egov.wf.util.WorkflowConstants.UUID_REGEX;
@@ -29,6 +37,15 @@ public class EnrichmentService {
     private UserService userService;
 
     private TransitionService transitionService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsUrl;
 
     @Autowired
     public EnrichmentService(WorkflowUtil util, UserService userService,TransitionService transitionService) {
@@ -426,9 +443,44 @@ public class EnrichmentService {
         return autoEscalationEmployeesUuids;
     }
 
-    public void enrichStatesToIgnore(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
-        /* Complete this
+    public Set<String> fetchStatesToIgnoreFromMdms(RequestInfo requestInfo, String tenantId) {
+        Set<String> masterData = new HashSet<>();
+        StringBuilder uri = new StringBuilder();
+        uri.append(mdmsHost).append(mdmsUrl);
+        if(StringUtils.isEmpty(tenantId))
+            return masterData;
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForStatesToIgnore(requestInfo, tenantId.split("\\.")[0]);
 
-         */
+        try {
+            //Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+            //masterData = JsonPath.read(response, "$.MdmsRes.Workflow.AutoEscalationStatesToIgnore.*.state");
+        }catch(Exception e) {
+            log.error("Exception while fetching workflow states to ignore: ",e);
+        }
+
+        return masterData;
+    }
+
+    private MdmsCriteriaReq getMdmsRequestForStatesToIgnore(RequestInfo requestInfo, String tenantId) {
+        MasterDetail masterDetail = new MasterDetail();
+        masterDetail.setName("AutoEscalationStatesToIgnore");
+        List<MasterDetail> masterDetailList = new ArrayList<>();
+        masterDetailList.add(masterDetail);
+
+        ModuleDetail moduleDetail = new ModuleDetail();
+        moduleDetail.setMasterDetails(masterDetailList);
+        moduleDetail.setModuleName("Workflow");
+        List<ModuleDetail> moduleDetailList = new ArrayList<>();
+        moduleDetailList.add(moduleDetail);
+
+        MdmsCriteria mdmsCriteria = new MdmsCriteria();
+        mdmsCriteria.setTenantId(tenantId);
+        mdmsCriteria.setModuleDetails(moduleDetailList);
+
+        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+        mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+        return mdmsCriteriaReq;
     }
 }

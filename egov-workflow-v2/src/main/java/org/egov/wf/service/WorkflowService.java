@@ -177,7 +177,7 @@ public class WorkflowService {
         List<String> escalatedApplicationsBusinessIds;
         List<ProcessInstance> escalatedApplications = new ArrayList<>();
         Set<String> autoEscalationEmployeesUuids = enrichmentService.enrichUuidsOfAutoEscalationEmployees(requestInfo, criteria);
-        enrichmentService.enrichStatesToIgnore(requestInfo, criteria);
+        //Set<String> statesToIgnore = enrichmentService.fetchStatesToIgnoreFromMdms(requestInfo, criteria.getTenantId());
         escalatedApplicationsBusinessIds = workflowRepository.fetchEscalatedApplicationsBusinessIdsFromDb(criteria);
         if(CollectionUtils.isEmpty(escalatedApplicationsBusinessIds)){
             return escalatedApplications;
@@ -207,8 +207,13 @@ public class WorkflowService {
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
         for(String businessId : occurenceMap.keySet()){
             if(occurenceMap.get(businessId) >= 2){
-                if(autoEscalationEmployeesUuids.contains(businessIdsVsProcessInstancesMap.get(businessId).get(0).getAuditDetails().getCreatedBy()) && businessIdsVsProcessInstancesMap.get(businessId).get(1).getAuditDetails().getCreatedBy().equals(criteria.getAssignee())){
-                    escalatedApplications.add(businessIdsVsProcessInstancesMap.get(businessId).get(0));
+                Set<String> uuidsOfAssignees = new HashSet<>();
+                businessIdsVsProcessInstancesMap.get(businessId).get(1).getAssignes().forEach(user -> {
+                    uuidsOfAssignees.add(user.getUuid());
+                });
+                if(autoEscalationEmployeesUuids.contains(businessIdsVsProcessInstancesMap.get(businessId).get(0).getAuditDetails().getCreatedBy()) && uuidsOfAssignees.contains(criteria.getAssignee())){
+                    //if(!statesToIgnore.contains(businessIdsVsProcessInstancesMap.get(businessId).get(1).getState().getState()))
+                        escalatedApplications.add(businessIdsVsProcessInstancesMap.get(businessId).get(0));
                 }
             }
         }
