@@ -1,5 +1,5 @@
-const fetch = require("node-fetch");
-const config = require("../../env-variables");
+const fetch = require('node-fetch');
+const config = require('../../env-variables');
 
 class PersonService {
   /**
@@ -8,63 +8,62 @@ class PersonService {
    * @param {*} mobileNumber
    */
   async isHomeIsolatedPatient(mobileNumber) {
-    let url = config.covaApiConfigs.cova2Url.concat(
-      config.covaApiConfigs.isHomeIsolatedSuffix
+    const url = config.covaApiConfigs.cova2Url.concat(
+      config.covaApiConfigs.isHomeIsolatedSuffix,
     );
 
-    let headers = {
-      "Content-Type": "application/json",
+    const headers = {
+      'Content-Type': 'application/json',
       Authorization: config.covaApiConfigs.covaAuthorization,
     };
 
-    let requestBody = {
+    const requestBody = {
       patient_mobile: mobileNumber,
     };
 
-    var request = {
-      method: "POST",
-      headers: headers,
+    const request = {
+      method: 'POST',
+      headers,
       body: JSON.stringify(requestBody),
     };
-    let response = await fetch(url, request)
-    if(response.status == 200) {
-      let data = await response.json();
-      if(data.response == 1) {
+    const response = await fetch(url, request);
+    if (response.status == 200) {
+      const data = await response.json();
+      if (data.response == 1) {
         return true;
-      } else {
-        return false;
       }
-    } else {
-      let responseBody = await response.json();
-      console.error(`Cova (isHomeIsolatedPatient API) responded with ${JSON.stringify(responseBody)}`);
+      return false;
     }
+    const responseBody = await response.json();
+    console.error(`Cova (isHomeIsolatedPatient API) responded with ${JSON.stringify(responseBody)}`);
+
     return false;
   }
 
   async fetchAllHomeIsolatedPatients() {
-    let headers = {
-      "Content-Type": "application/json",
+    const headers = {
+      'Content-Type': 'application/json',
       Authorization: config.covaApiConfigs.covaReminderAuthorization,
     };
-    let requestBody = {
-      timestamp: "",
-      filter_type: "all",
-      data_type: "P"
+    const requestBody = {
+      timestamp: '',
+      filter_type: 'all',
+      data_type: 'P',
     };
-    var requestOptions = {
+    const requestOptions = {
       method: 'POST',
-      headers: headers,
+      headers,
       body: JSON.stringify(requestBody),
     };
-    let url = config.covaApiConfigs.covaReminderUrl.concat(
-      config.covaApiConfigs.covaReminderSuffix
+    const url = config.covaApiConfigs.covaReminderUrl.concat(
+      config.covaApiConfigs.covaReminderSuffix,
     );
-    let response = await fetch(url, requestOptions)
-    var data;
-    if(response.status == 200) {
+    const response = await fetch(url, requestOptions);
+    let data;
+    if (response.status == 200) {
       data = await response.json();
     } else {
-      let responseBody = await response.json();
+      const responseBody = await response.json();
       console.error(`Cova (fetchAllHomeIsolatedPatients API) responded with ${JSON.stringify(responseBody)}`);
     }
     return data;

@@ -19,18 +19,17 @@ const vitalsFlow = {
       id: 'rmoMobileNumber',
       initial: 'prompt',
       states: {
-       prompt: {
-         onEntry: assign((context, event) => {
-           dialog.sendMessage(context, dialog.get_message(messages.rmoMobileNumber.prompt, context.user.locale));
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.rmoMobileNumber.prompt, context.user.locale));
           }),
-         on: {
-            USER_MESSAGE: 'process'
-          }
+          on: {
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
             context.message = dialog.get_input(event, false);
-    
           }),
           invoke: {
             src: (context, event) => vitalsService.getMoAuthorization(context.message),
@@ -38,37 +37,37 @@ const vitalsFlow = {
               {
                 cond: (context, event) => event.data.flag == true,
                 actions: assign((context, event) => {
-                        console.log(event.data.flag)
+                  console.log(event.data.flag);
                   context.slots.person.mobileNumber = context.message;
                   context.message = undefined;
                 }),
-                target: '#rmoSrfId'
+                target: '#rmoSrfId',
               },
               {
-                target: 'error'
-              }
-            ]
-          }
+                target: 'error',
+              },
+            ],
+          },
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.rmoMobileNumber.error), false);
           }),
-          always: 'prompt'
-        }
-     }
+          always: 'prompt',
+        },
+      },
     },
     rmoSrfId: {
       id: 'rmoSrfId',
       initial: 'prompt',
       states: {
-       prompt: {
-         onEntry: assign((context, event) => {
-           dialog.sendMessage(context, dialog.get_message(messages.rmoSrfId.prompt, context.user.locale));
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.rmoSrfId.prompt, context.user.locale));
           }),
-         on: {
-            USER_MESSAGE: 'process'
-          }
+          on: {
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
@@ -78,26 +77,26 @@ const vitalsFlow = {
             src: (context, event) => vitalsService.getPatientDetailsFromSrfId(context.message),
             onDone: [
               {
-                  actions: assign((context, event) => {
+                actions: assign((context, event) => {
                   context.slots.person.caseId = event.data.list[0].case_id;
                   context.message = undefined;
                   dialog.sendMessage(context, dialog.get_message(messages.rmoMobileNumber.success, context.user.locale), false);
                 }),
-                target: '#rmoActionToPerformed'
+                target: '#rmoActionToPerformed',
               },
               {
-                target: 'error'
-              }
-            ]
-          }
+                target: 'error',
+              },
+            ],
+          },
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.rmoSrfId.error), false);
           }),
-          always: 'prompt'
-        }
-     }
+          always: 'prompt',
+        },
+      },
     },
     rmoActionToPerformed: {
       id: 'rmoActionToPerformed',
@@ -106,15 +105,15 @@ const vitalsFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.rmoActionToPerformed.prompt, context.user.locale);
-            console.log(message)
-            let { prompt, grammer } = dialog.constructListPromptAndGrammer(messages.rmoActionToPerformed.options.list, messages.rmoActionToPerformed.options.messageBundle, context.user.locale);
+            console.log(message);
+            const { prompt, grammer } = dialog.constructListPromptAndGrammer(messages.rmoActionToPerformed.options.list, messages.rmoActionToPerformed.options.messageBundle, context.user.locale);
             context.grammer = grammer;
             message += prompt;
             dialog.sendMessage(context, message);
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
@@ -124,33 +123,32 @@ const vitalsFlow = {
             {
               cond: (context) => context.intention == 'specializedAdvice',
               actions: assign((context, event) => {
-                context.slots.person.isSpecializationRequired ='yes'
-                context.slots.person.isHospitalizationRequired ='no'
+                context.slots.person.isSpecializationRequired = 'yes';
+                context.slots.person.isHospitalizationRequired = 'no';
               }),
-              target: '#doctorRemark'
-             
+              target: '#doctorRemark',
+
             },
             {
               cond: (context) => context.intention == 'hospitalization',
               actions: assign((context, event) => {
-                context.slots.person.isHospitalizationRequired ='yes'
-                context.slots.person.isSpecializationRequired ='no'
-
+                context.slots.person.isHospitalizationRequired = 'yes';
+                context.slots.person.isSpecializationRequired = 'no';
               }),
-              target: '#doctorRemark'
+              target: '#doctorRemark',
             },
             {
-              target: 'error'
+              target: 'error',
             },
-          ]
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     },
     doctorRemark: {
       id: 'doctorRemark',
@@ -159,49 +157,47 @@ const vitalsFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.doctorRemark.prompt, context.user.locale));
-
           }),
-         on: {
-            USER_MESSAGE: 'process'
-          }
+          on: {
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
             context.message = dialog.get_input(event, false);
-            console.log(context.message)
-            console.log(context.slots.person.isSpecializationRequired)
-
+            console.log(context.message);
+            console.log(context.slots.person.isSpecializationRequired);
           }),
           invoke: {
-            src: (context, event) => vitalsService.getMoSubmitReport(context.slots.person.caseId,context.slots.person.mobileNumber,
-              context.message,context.slots.person.isSpecializationRequired,context.slots.person.isHospitalizationRequired),
+            src: (context, event) => vitalsService.getMoSubmitReport(context.slots.person.caseId, context.slots.person.mobileNumber,
+              context.message, context.slots.person.isSpecializationRequired, context.slots.person.isHospitalizationRequired),
             onDone: [
               {
                 actions: assign((context, event) => {
                   context.slots.person.caseId = context.message;
                   context.persons = event.data;
 
-                  let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
-                    dialog.sendMessage(context, dialog.get_message(messages.moReportSubmit, context.user.locale), false);
-                    dialog.sendMessage(context, mediaMessage);
-                  }),
-                  target: '#endstate'
+                  const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
+                  dialog.sendMessage(context, dialog.get_message(messages.moReportSubmit, context.user.locale), false);
+                  dialog.sendMessage(context, mediaMessage);
+                }),
+                target: '#endstate',
               },
               {
-                target: 'error'
-              }
-            ]
-          }
+                target: 'error',
+              },
+            ],
+          },
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     },
-    rrtSrfId:{            // To handle any user who is at this state when the update was pushed
+    rrtSrfId: { // To handle any user who is at this state when the update was pushed
       id: 'rrtSrfId',
       always: 'rrtLocation',
     },
@@ -211,51 +207,47 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-           let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/location_sharing_info`, 'jpeg',undefined, '');
-           dialog.sendMessage(context, mediaMessage, false);
-           dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.prompt, context.user.locale));
+            const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/location_sharing_info`, 'jpeg', undefined, '');
+            dialog.sendMessage(context, mediaMessage, false);
+            dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.prompt, context.user.locale));
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
-        
+
         process: {
           onEntry: assign((context, event) => {
-            if(event.message.type === "location")
-            {
-            var str = event.message.input.toString().substring(1,event.message.input.length-1);
-            var latlong =  str.split(",");
-            var latitude = latlong[0];
-            var longitude = latlong[1];
-            input = '(' + latitude + ',' + longitude + ')';
-            context.slots.vitals.longitude=longitude;
-            context.slots.vitals.latitude=latitude; 
-            context.isValid=true;
+            if (event.message.type === 'location') {
+              const str = event.message.input.toString().substring(1, event.message.input.length - 1);
+              const latlong = str.split(',');
+              const latitude = latlong[0];
+              const longitude = latlong[1];
+              input = `(${latitude},${longitude})`;
+              context.slots.vitals.longitude = longitude;
+              context.slots.vitals.latitude = latitude;
+              context.isValid = true;
+            } else {
+              context.isValid = false;
             }
-          else 
-          {
-            context.isValid=false;
-          }
-
-        }),
-          always:[
+          }),
+          always: [
             {
               cond: (context) => context.isValid == false,
-              target: 'error'
+              target: 'error',
             },
-            { 
-              target: '#rrtMobileNumber'
-            }
-          ]
+            {
+              target: '#rrtMobileNumber',
+            },
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.rrtLocation.error, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     },
     rrtMobileNumber: {
       id: 'rrtMobileNumber',
@@ -264,48 +256,48 @@ const vitalsFlow = {
         prompt: {
           onEntry: assign((context, event) => {
           //  dialog.sendMessage(context, dialog.get_message(messages.rrtMobileNumber.prompt, context.user.locale));
-           // let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
-            //dialog.sendMessage(context, mediaMessage, false);
+            // let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
+            // dialog.sendMessage(context, mediaMessage, false);
             dialog.sendMessage(context, dialog.get_message(messages.rrtMobileNumber.prompt, context.user.locale));
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
             context.message = dialog.get_input(event, false);
           }),
           invoke: {
-          src: (context, event) => vitalsService.getPatientDetailsFromMobileNumber(context.message),
+            src: (context, event) => vitalsService.getPatientDetailsFromMobileNumber(context.message),
             onDone: [
               {
                 cond: (context, event) => event.data.data === null,
                 actions: assign((context, event) => {
-                context.persons = event.data;
+                  context.persons = event.data;
                 }),
-                target: 'error'
+                target: 'error',
               },
               {
                 cond: (context, event) => event.data.data.length >= 1,
                 actions: assign((context, event) => {
-                      context.persons = event.data;
+                  context.persons = event.data;
                 }),
-                target: '#selectPerson'
+                target: '#selectPerson',
               },
               {
-                target: 'error'
-              }
-            ]
-          }
+                target: 'error',
+              },
+            ],
+          },
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     },
     selectPerson: {
       id: 'selectPerson',
@@ -314,22 +306,22 @@ const vitalsFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.selectPerson, context.user.locale);
-            let grammer = [];
-            context.slots.person={};
+            const grammer = [];
+            context.slots.person = {};
             for (let i = 0; i < event.data.data.length; i++) {
-              let person = event.data.data[i];
+              const person = event.data.data[i];
 
-              let grammerItem = { intention: event.data.data[i], recognize: [(i + 1).toString()] };
+              const grammerItem = { intention: event.data.data[i], recognize: [(i + 1).toString()] };
 
               grammer.push(grammerItem);
-              message += '\n' + (i + 1) + '. ' + event.data.data[i].MASTER_NAME ;
+              message += `\n${i + 1}. ${event.data.data[i].MASTER_NAME}`;
             }
             context.grammer = grammer;
             dialog.sendMessage(context, message);
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
@@ -338,28 +330,26 @@ const vitalsFlow = {
           always: [
             {
               cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
-              target: 'error'
+              target: 'error',
             },
             {
               actions: assign((context, event) => {
                 context.slots.person.MASTER_ID = context.intention.MASTER_ID;
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
-                context.slots.person.rrt='YES'
-
-                               
+                context.slots.person.rrt = 'YES';
               }),
-              target: '#temperature'
-            }
-          ]
+              target: '#temperature',
+            },
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-     }
+          always: 'prompt',
+        },
+      },
     },
     isHomeIsolatedPatient: {
       id: 'isHomeIsolatedPatient',
@@ -369,20 +359,20 @@ const vitalsFlow = {
           {
             cond: (context, event) => event.data == false,
             actions: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
-            context.slots.person.com_status = '0';
-            context.slots.person.fateh_kit_delivered = 'NO';
-            context.slots.person.rrt='NO'
+              dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
+              context.slots.person.com_status = '0';
+              context.slots.person.fateh_kit_delivered = 'NO';
+              context.slots.person.rrt = 'NO';
             }),
-            target: '#registerPatient'
+            target: '#registerPatient',
           },
           {
-            target: '#temperature'
-          }
-        ]
-      }
+            target: '#temperature',
+          },
+        ],
+      },
     },
-    notHomeIsolatedPatient:{            // To handle any user who is at this state when the update was pushed
+    notHomeIsolatedPatient: { // To handle any user who is at this state when the update was pushed
       id: 'notHomeIsolatedPatient',
       always: 'registerPatient',
     },
@@ -402,14 +392,14 @@ const vitalsFlow = {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personName.prompt, context.user.locale));
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
-                let message = dialog.get_input(event, false);
+                const message = dialog.get_input(event, false);
                 if (event.message.type == 'text' && message.length < 100 && /^[ A-Za-z]+$/.test(message.trim())) {
-                  context.slots.registerPatient.name = message
+                  context.slots.registerPatient.name = message;
                   context.validMessage = true;
                 } else {
                   context.validMessage = false;
@@ -418,20 +408,20 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.validMessage,
-                  target: '#personAge'
+                  target: '#personAge',
                 },
                 {
-                  target: 'error'
-                }
-              ]
+                  target: 'error',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personName.error, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         }, // personName
         personAge: {
           id: 'personAge',
@@ -444,13 +434,13 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
                 if (event.message.type == 'text') {
-                  let age = parseInt(dialog.get_input(event, false));
+                  const age = parseInt(dialog.get_input(event, false));
                   if (age > 0 && age < 120) {
                     context.slots.registerPatient.age = age;
                     context.validMessage = true;
@@ -462,20 +452,20 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.validMessage,
-                  target: '#personGender'
+                  target: '#personGender',
                 },
                 {
-                  target: 'error'
-                }
-              ]
+                  target: 'error',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.personAge.error, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         }, // personAge
         personGender: {
           id: 'personGender',
@@ -483,14 +473,14 @@ const vitalsFlow = {
           states: {
             prompt: {
               onEntry: assign((context, event) => {
-                let { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.registerPatient.personGender.options.list, messages.registerPatient.personGender.options.messageBundle, context.user.locale);
+                const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.registerPatient.personGender.options.list, messages.registerPatient.personGender.options.messageBundle, context.user.locale);
                 context.grammer = grammer;
-                let message = dialog.get_message(messages.registerPatient.personGender.prompt, context.user.locale) + '\n' + prompt;
+                const message = `${dialog.get_message(messages.registerPatient.personGender.prompt, context.user.locale)}\n${prompt}`;
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -499,23 +489,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.registerPatient.gender = context.intention;
                   }),
-                  target: '#district'
-                }
-              ]
+                  target: '#district',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         }, // personGender
         district: {
           id: 'district',
@@ -523,16 +513,16 @@ const vitalsFlow = {
           states: {
             prompt: {
               onEntry: assign((context, event) => {
-                let districts = messages.registerPatient.district.prompt.options;
-                let { prompt, grammer } = dialog.constructListPromptAndGrammer(districts.list, districts.messageBundle, context.user.locale);
+                const districts = messages.registerPatient.district.prompt.options;
+                const { prompt, grammer } = dialog.constructListPromptAndGrammer(districts.list, districts.messageBundle, context.user.locale);
                 let message = dialog.get_message(messages.registerPatient.district.prompt.preamble, context.user.locale);
                 message += prompt;
                 context.grammer = grammer;
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -541,23 +531,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.registerPatient.district = context.intention;
                   }),
-                  target: '#address'
-                }
-              ]
+                  target: '#address',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         address: {
           id: 'address',
@@ -568,16 +558,16 @@ const vitalsFlow = {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.address.prompt, context.user.locale));
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
                 context.slots.registerPatient.address = dialog.get_input(event, false);
               }),
-              always: '#symptomsDate'
+              always: '#symptomsDate',
             },
-          }
+          },
         },
         symptomsDate: {
           id: 'symptomsDate',
@@ -588,35 +578,35 @@ const vitalsFlow = {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.symptomsDate.prompt, context.user.locale));
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
-                let input = dialog.get_input(event);
-                let date = moment(input, 'D/M/YY', true);
+                const input = dialog.get_input(event);
+                const date = moment(input, 'D/M/YY', true);
                 context.isValid = date.isValid();
-                if(context.isValid) {
+                if (context.isValid) {
                   context.slots.registerPatient.symptomsDate = date.format('YYYY-MM-DD HH:MM:SS').toString();
-                } 
+                }
               }),
               always: [
                 {
                   cond: (context) => context.isValid == false,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
-                  target: '#covidPositiveDate'
-                }
-              ]
+                  target: '#covidPositiveDate',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         covidPositiveDate: {
           id: 'covidPositiveDate',
@@ -627,35 +617,35 @@ const vitalsFlow = {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.covidPositiveDate.prompt, context.user.locale));
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
-                let input = dialog.get_input(event);
-                let date = moment(input, 'D/M/YY', true);
+                const input = dialog.get_input(event);
+                const date = moment(input, 'D/M/YY', true);
                 context.isValid = date.isValid();
-                if(context.isValid) {
+                if (context.isValid) {
                   context.slots.registerPatient.covidPositiveDate = date.format('YYYY-MM-DD HH:MM:SS').toString();
-                } 
+                }
               }),
               always: [
                 {
                   cond: (context) => context.isValid == false,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
-                  target: '#registerPatientSrfId'
-                }
-              ]
+                  target: '#registerPatientSrfId',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         registerPatientSrfId: {
           id: 'registerPatientSrfId',
@@ -666,16 +656,16 @@ const vitalsFlow = {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registerPatientSrfId.prompt, context.user.locale));
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
                 context.slots.registerPatient.srfId = dialog.get_input(event);
               }),
-              always: '#addPatient'
+              always: '#addPatient',
             },
-          }
+          },
         },
         addPatient: {
           id: 'addPatient',
@@ -685,10 +675,10 @@ const vitalsFlow = {
               actions: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(messages.registerPatient.registeredPatientSuccess, context.user.locale), false);
               }),
-              target: '#temperature'
-            }
-          }
-        }
+              target: '#temperature',
+            },
+          },
+        },
       },
     },
     temperature: {
@@ -700,14 +690,14 @@ const vitalsFlow = {
             dialog.sendMessage(context, dialog.get_message(messages.temperature.prompt, context.user.locale));
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
-            let input = dialog.get_input(event);
-            let temperature = parseFloat(input);
-            if(temperature >= 92 && temperature <= 108) {
+            const input = dialog.get_input(event);
+            const temperature = parseFloat(input);
+            if (temperature >= 92 && temperature <= 108) {
               context.isValid = true;
               context.slots.vitals.temperature = temperature;
             } else {
@@ -717,20 +707,20 @@ const vitalsFlow = {
           always: [
             {
               cond: (context) => context.isValid == false,
-              target: 'error'
+              target: 'error',
             },
-            { 
-              target: '#pulse'
-            }
-          ]
+            {
+              target: '#pulse',
+            },
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.temperature.error, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     }, // temperature
     pulse: {
       id: 'pulse',
@@ -741,13 +731,13 @@ const vitalsFlow = {
             dialog.sendMessage(context, dialog.get_message(messages.pulse.prompt, context.user.locale));
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
-            let pulse = parseInt(dialog.get_input(event));
-            if(pulse >= 10 && pulse <= 500) {
+            const pulse = parseInt(dialog.get_input(event));
+            if (pulse >= 10 && pulse <= 500) {
               context.isValid = true;
               context.slots.vitals.pulse = pulse;
             } else {
@@ -757,20 +747,20 @@ const vitalsFlow = {
           always: [
             {
               cond: (context) => context.isValid == false,
-              target: 'error'
+              target: 'error',
             },
             {
-              target: '#spo2'
-            }
-          ]
+              target: '#spo2',
+            },
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     }, // pulse
     spo2: {
       id: 'spo2',
@@ -778,18 +768,18 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
+            const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
             dialog.sendMessage(context, mediaMessage, false);
             dialog.sendMessage(context, dialog.get_message(messages.spo2.prompt, context.user.locale));
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
-            let spo2 = parseInt(dialog.get_input(event));
-            if(spo2 >= 0 && spo2 <= 100) {
+            const spo2 = parseInt(dialog.get_input(event));
+            if (spo2 >= 0 && spo2 <= 100) {
               context.isValid = true;
               context.slots.vitals.spo2 = spo2;
             } else {
@@ -799,20 +789,20 @@ const vitalsFlow = {
           always: [
             {
               cond: (context) => context.isValid == false,
-              target: 'error'
+              target: 'error',
             },
             {
-              target: '#symptoms'
-            }
-          ]
+              target: '#symptoms',
+            },
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     }, // spo2
     symptoms: {
       id: 'symptoms',
@@ -833,33 +823,33 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
-               context.intention = dialog.get_intention(context.grammer, event, true);
+                context.intention = dialog.get_intention(context.grammer, event, true);
               }),
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.lossOfSmellTaste = context.intention;
                   }),
-                  target: '#fluLikeSymptoms'
-                }
-              ]
+                  target: '#fluLikeSymptoms',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         fluLikeSymptoms: {
           id: 'fluLikeSymptoms',
@@ -873,8 +863,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -883,23 +873,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.fluLikeSymptoms = context.intention;
                   }),
-                  target: '#respiratoryIssues'
-                }
-              ]
+                  target: '#respiratoryIssues',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         respiratoryIssues: {
           id: 'respiratoryIssues',
@@ -913,8 +903,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -923,45 +913,43 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
-               {
+                {
                   cond: (context, event) => context.slots.person.com_status == '1',
                   actions: assign((context, event) => {
-                     context.slots.vitals.symptoms.respiratoryIssues = context.intention;                
+                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
                   }),
-                  target: '#heartrelated'
+                  target: '#heartrelated',
                 },
-              {
-                cond: (context, event) => context.slots.person.com_status == '0',
-                actions: assign((context, event) => {
-                context.slots.vitals.symptoms.respiratoryIssues = context.intention; 
-                context.slots.vitals.symptoms.ComHeart = 'NO';
-                context.slots.vitals.symptoms.ComKidney = 'NO';
-                context.slots.vitals.symptoms.ComCancer = 'NO';
-
-              }),
-                target: '#comorbidities'
-              },
-              {
-                actions: assign((context, event) => {
-                context.slots.vitals.symptoms.respiratoryIssues = context.intention;
-                context.slots.vitals.symptoms.ComHeart = 'NO';
-                context.slots.vitals.symptoms.ComKidney = 'NO';
-                context.slots.vitals.symptoms.ComCancer = 'NO';
-
-                }),
-                target: '#comorbidities'
-              }
-              ]
+                {
+                  cond: (context, event) => context.slots.person.com_status == '0',
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                    context.slots.vitals.symptoms.ComHeart = 'NO';
+                    context.slots.vitals.symptoms.ComKidney = 'NO';
+                    context.slots.vitals.symptoms.ComCancer = 'NO';
+                  }),
+                  target: '#comorbidities',
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                    context.slots.vitals.symptoms.ComHeart = 'NO';
+                    context.slots.vitals.symptoms.ComKidney = 'NO';
+                    context.slots.vitals.symptoms.ComCancer = 'NO';
+                  }),
+                  target: '#comorbidities',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         comorbidities: {
           id: 'comorbidities',
@@ -975,8 +963,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -985,34 +973,33 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   cond: (context, event) => context.intention === 'YES',
                   actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.comorbidities = context.intention;
-                  context.slots.vitals.symptoms.ComHeart = 'NO';
-                  context.slots.vitals.symptoms.ComKidney = 'NO';
-                  context.slots.vitals.symptoms.ComCancer = 'NO';
-  
-                }),
-                  target: '#heartrelated'
+                    context.slots.vitals.symptoms.comorbidities = context.intention;
+                    context.slots.vitals.symptoms.ComHeart = 'NO';
+                    context.slots.vitals.symptoms.ComKidney = 'NO';
+                    context.slots.vitals.symptoms.ComCancer = 'NO';
+                  }),
+                  target: '#heartrelated',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.comorbidities = context.intention;
                   }),
-                  target: '#diabetes'
-                }
-              ]
+                  target: '#diabetes',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         diabetes: {
           id: 'diabetes',
@@ -1026,8 +1013,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -1036,38 +1023,38 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   cond: (context, event) => context.slots.person.fateh_kit_delivered === 'YES',
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.diabetes = context.intention;
                   }),
-                  target: '#addVitals'
+                  target: '#addVitals',
                 },
-              {
-                cond: (context, event) =>context.slots.person.fateh_kit_delivered === 'NO',
-                actions: assign((context, event) => {
-                   context.slots.vitals.symptoms.diabetes = context.intention;
-                }),
-                  target: '#fatehKitDelivery'
-              },
-              {
-                actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.diabetes = context.intention;
-                }),
-                target: '#addVitals'
-              }
-                
-              ]
+                {
+                  cond: (context, event) => context.slots.person.fateh_kit_delivered === 'NO',
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.diabetes = context.intention;
+                  }),
+                  target: '#fatehKitDelivery',
+                },
+                {
+                  actions: assign((context, event) => {
+                    context.slots.vitals.symptoms.diabetes = context.intention;
+                  }),
+                  target: '#addVitals',
+                },
+
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         fatehKitDelivery: {
           id: 'fatehKitDelivery',
@@ -1081,8 +1068,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -1091,23 +1078,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.FatehKitsDelivered = context.intention;
-                }),
-                  target: '#addVitals'
-                }
-              ]
+                  }),
+                  target: '#addVitals',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         heartrelated: {
           id: 'heartrelated',
@@ -1121,8 +1108,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -1131,23 +1118,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.ComHeart = context.intention;
-                }),
-                  target: '#kidneyrelated'
-                }
-              ]
+                  }),
+                  target: '#kidneyrelated',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         kidneyrelated: {
           id: 'kidneyrelated',
@@ -1161,8 +1148,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -1171,24 +1158,23 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.ComKidney = context.intention;
-                   
                   }),
-                  target: '#cancerrelated'
-                }
-              ]
+                  target: '#cancerrelated',
+                },
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
         cancerrelated: {
           id: 'cancerrelated',
@@ -1202,8 +1188,8 @@ const vitalsFlow = {
                 dialog.sendMessage(context, message);
               }),
               on: {
-                USER_MESSAGE: 'process'
-              }
+                USER_MESSAGE: 'process',
+              },
             },
             process: {
               onEntry: assign((context, event) => {
@@ -1212,54 +1198,54 @@ const vitalsFlow = {
               always: [
                 {
                   cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
-                  target: 'error'
+                  target: 'error',
                 },
                 {
                   actions: assign((context, event) => {
                     context.slots.vitals.symptoms.ComCancer = context.intention;
                   }),
-                  target: '#diabetes'
+                  target: '#diabetes',
                 },
-              ]
+              ],
             },
             error: {
               onEntry: assign((context, event) => {
                 dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
               }),
-              always: 'prompt'
-            }
-          }
+              always: 'prompt',
+            },
+          },
         },
-      }
+      },
     }, // symptoms
     addVitals: {
       id: 'addVitals',
       invoke: {
-        src: (context) => vitalsService.addVitals(context.user, context.slots.vitals,context.slots.person),
+        src: (context) => vitalsService.addVitals(context.user, context.slots.vitals, context.slots.person),
         onDone: [
-        {
-          cond: (context, event) =>context.slots.person.rrt==='NO',
-          actions: assign((context, event) => {
-            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
-            dialog.sendMessage(context, dialog.get_message(messages.addVitals, context.user.locale), false);
-            dialog.sendMessage(context, mediaMessage);
-          }),
-          target: '#endstate'
-        },
-        {
-          cond: (context, event) =>context.slots.person.rrt==='YES',
-          actions: assign((context, event) => {
-            let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
-            dialog.sendMessage(context, dialog.get_message(messages.submitData, context.user.locale), false);
-            dialog.sendMessage(context, mediaMessage);
-          }),
-          target: '#endstate'
-        },
-        ]
-        
-      }
+          {
+            cond: (context, event) => context.slots.person.rrt === 'NO',
+            actions: assign((context, event) => {
+              const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
+              dialog.sendMessage(context, dialog.get_message(messages.addVitals, context.user.locale), false);
+              dialog.sendMessage(context, mediaMessage);
+            }),
+            target: '#endstate',
+          },
+          {
+            cond: (context, event) => context.slots.person.rrt === 'YES',
+            actions: assign((context, event) => {
+              const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/controlRoom_contact_numbers`, 'jpeg', undefined, '');
+              dialog.sendMessage(context, dialog.get_message(messages.submitData, context.user.locale), false);
+              dialog.sendMessage(context, mediaMessage);
+            }),
+            target: '#endstate',
+          },
+        ],
+
+      },
     },
-  }
-}
+  },
+};
 
 module.exports = vitalsFlow;

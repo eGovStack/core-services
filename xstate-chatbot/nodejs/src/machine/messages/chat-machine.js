@@ -1,11 +1,11 @@
-let messages = {
+const messages = {
   selectLanguage: {
     prompt: {
       preamble: {
         en_IN: 'Sat Sri Akal ! Welcome to the COVID-19 Chatbot of Punjab Government Mission Fateh (For more information please download COVA app). Mission Fateh has set me up to assist you with your COVID-19 questions and concerns. Please select your preferred language.',
       },
       options: {
-        list: [ 'pa_IN', 'hi_IN', 'en_IN' ],
+        list: ['pa_IN', 'hi_IN', 'en_IN'],
         messageBundle: {
           en_IN: {
             en_IN: 'English',
@@ -28,7 +28,7 @@ let messages = {
         hi_IN: 'इस चैटबॉट से आप बिस्तरों की उपलब्धता, टीकाकरण केंद्र, विजय किट और घर में एकांतवास में स्वयं की देखभाल और अन्य महत्वपूर्ण जानकारी प्राप्त कर सकते हैं। आप खुद को घरेलू आइसोलेशन रोगी के रूप में भी पंजीकृत कर सकते हैं और आपके COVID-19 संबंधित लक्षणों को दर्ज किया जाएगा। जरूरत पड़ने पर स्वास्थ्य विभाग की टीम आपके रजिस्टर्ड नंबर पर आपसे संपर्क करेगी।\n\nआप क्या करना पसंद करेंगे?',
       },
       options: {
-        list: [ 'covidInfo', 'addVitals', 'rrt' ,'rmo'],
+        list: ['covidInfo', 'addVitals', 'rrt', 'rmo'],
         messageBundle: {
           covidInfo: {
             en_IN: 'Get information about Covid',

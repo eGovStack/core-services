@@ -1,5 +1,4 @@
 class PersonService {
-
   async isHomeIsolatedPatient(mobileNumber) {
     return Math.random() > 0.7;
   }
@@ -7,7 +6,6 @@ class PersonService {
   async fetchAllHomeIsolatedPatients() {
     return [];
   }
-
 }
 
 module.exports = new PersonService();

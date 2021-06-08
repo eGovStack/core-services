@@ -1,24 +1,24 @@
+const uuid = require('uuid');
 const config = require('../env-variables');
 const producer = require('./kafka/kafka-producer');
-const uuid = require('uuid');
 
 class Telemetry {
-    async log(userId, type, data) {
-        let object = {
-            id: uuid.v4(),
-            date: new Date().getTime(),
-            user: userId,
-            type: type,
-            data: data
-        }
+  async log(userId, type, data) {
+    const object = {
+      id: uuid.v4(),
+      date: new Date().getTime(),
+      user: userId,
+      type,
+      data,
+    };
 
-        let payloads = [ {
-            topic: config.kafka.chatbotTelemetryTopic,
-            messages: JSON.stringify(object)
-        } ]
+    const payloads = [{
+      topic: config.kafka.chatbotTelemetryTopic,
+      messages: JSON.stringify(object),
+    }];
 
-        producer.send(payloads, function(err, data) {});
-    }
-};
+    producer.send(payloads, (err, data) => {});
+  }
+}
 
 module.exports = new Telemetry();

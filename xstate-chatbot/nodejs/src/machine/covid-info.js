@@ -15,14 +15,14 @@ const covidInfoFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.covidInfoMenu.prompt.preamble, context.user.locale);
-            let { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.covidInfoMenu.prompt.options.list, messages.covidInfoMenu.prompt.options.messageBundle, context.user.locale);
+            const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.covidInfoMenu.prompt.options.list, messages.covidInfoMenu.prompt.options.messageBundle, context.user.locale);
             message += prompt;
             context.grammer = grammer;
             dialog.sendMessage(context, message);
           }),
           on: {
-            USER_MESSAGE: 'process'
-          }
+            USER_MESSAGE: 'process',
+          },
         },
         process: {
           onEntry: assign((context, event) => {
@@ -31,40 +31,40 @@ const covidInfoFlow = {
           always: [
             {
               cond: (context) => context.intention == 'selfCare',
-              target: '#selfCareInfo'
+              target: '#selfCareInfo',
             },
             {
               cond: (context) => context.intention == 'fatehKit',
-              target: '#fatehKitInfo'
+              target: '#fatehKitInfo',
             },
             {
               cond: (context) => context.intention == 'bedAvailability',
-              target: '#bedAvailabilityInfo'
+              target: '#bedAvailabilityInfo',
             },
             {
               cond: (context) => context.intention == 'vaccinationCenters',
-              target: '#vaccinationCentersInfo'
+              target: '#vaccinationCentersInfo',
             },
             {
               cond: (context) => context.intention == 'VaccineRegistration',
-              target: '#VaccinationRegistrationInfo'
+              target: '#VaccinationRegistrationInfo',
             },
             {
               cond: (context) => context.intention == 'InfoBlackFungus',
-              target: '#InfoBlackFungus'
+              target: '#InfoBlackFungus',
             },
             {
-              target: 'error'
+              target: 'error',
             },
-          ]
+          ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
           }),
-          always: 'prompt'
-        }
-      }
+          always: 'prompt',
+        },
+      },
     },
     selfCareInfo: {
       id: 'selfCareInfo',
@@ -73,48 +73,48 @@ const covidInfoFlow = {
         dialog.sendMessage(context, mediaMessage, false);
         dialog.sendMessage(context, dialog.get_message(messages.selfCareInfo, context.user.locale));
       }),
-      always: '#endstate'
+      always: '#endstate',
     },
     fatehKitInfo: {
       id: 'fatehKitInfo',
       onEntry: assign((context, event) => {
-        let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/fatehKit_info`, 'jpeg', '', '');
+        const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/fatehKit_info`, 'jpeg', '', '');
         dialog.sendMessage(context, dialog.get_message(messages.fatehKitInfo, context.user.locale));
         dialog.sendMessage(context, mediaMessage);
       }),
-      always: '#endstate'
+      always: '#endstate',
     },
     bedAvailabilityInfo: {
       id: 'bedAvailabilityInfo',
       onEntry: assign((context, event) => {
         dialog.sendMessage(context, dialog.get_message(messages.bedAvailabilityInfo, context.user.locale));
       }),
-      always: '#endstate'
+      always: '#endstate',
     },
     vaccinationCentersInfo: {
       id: 'vaccinationCentersInfo',
       onEntry: assign((context, event) => {
-        let mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/vaccination_centers_info`, 'jpeg', '', '');
+        const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/vaccination_centers_info`, 'jpeg', '', '');
         dialog.sendMessage(context, dialog.get_message(messages.vaccinationCentersInfo, context.user.locale));
         dialog.sendMessage(context, mediaMessage);
       }),
-      always: '#endstate'
+      always: '#endstate',
     },
     VaccinationRegistrationInfo: {
       id: 'VaccinationRegistrationInfo',
       onEntry: assign((context, event) => {
         dialog.sendMessage(context, dialog.get_message(messages.VaccinationRegistrationInfo, context.user.locale));
       }),
-      always: '#endstate'
+      always: '#endstate',
     },
     InfoBlackFungus: {
       id: 'InfoBlackFungus',
       onEntry: assign((context, event) => {
         dialog.sendMessage(context, dialog.get_message(messages.InfoBlackFungus, context.user.locale));
       }),
-      always: '#endstate'
-    }
-  }
+      always: '#endstate',
+    },
+  },
 };
 
 module.exports = covidInfoFlow;
