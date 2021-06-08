@@ -208,9 +208,11 @@ public class WorkflowService {
         for(String businessId : occurenceMap.keySet()){
             if(occurenceMap.get(businessId) >= 2){
                 Set<String> uuidsOfAssignees = new HashSet<>();
-                businessIdsVsProcessInstancesMap.get(businessId).get(1).getAssignes().forEach(user -> {
-                    uuidsOfAssignees.add(user.getUuid());
-                });
+                if(!CollectionUtils.isEmpty(businessIdsVsProcessInstancesMap.get(businessId).get(1).getAssignes())) {
+                    businessIdsVsProcessInstancesMap.get(businessId).get(1).getAssignes().forEach(user -> {
+                        uuidsOfAssignees.add(user.getUuid());
+                    });
+                }
                 if(autoEscalationEmployeesUuids.contains(businessIdsVsProcessInstancesMap.get(businessId).get(0).getAuditDetails().getCreatedBy()) && uuidsOfAssignees.contains(criteria.getAssignee())){
                     //if(!statesToIgnore.contains(businessIdsVsProcessInstancesMap.get(businessId).get(1).getState().getState()))
                         escalatedApplications.add(businessIdsVsProcessInstancesMap.get(businessId).get(0));
