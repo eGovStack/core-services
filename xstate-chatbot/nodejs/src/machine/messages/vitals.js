@@ -18,19 +18,19 @@ const messages = {
   },
   rmoMobileNumber: {
     prompt: {
-      en_IN: 'Please enter Your Registered Mobile No As RMO ',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ ਨੂੰ ਆਰਐਮਓ ਦੇ ਰੂਪ ਵਿੱਚ ਦਾਖਲ ਕਰੋ',
-      hi_IN: 'कृपया अपना पंजीकृत मोबाइल नंबर आरएमओ के रूप में दर्ज करें'
+      en_IN: 'Please enter your mobile no registered as Medical officer  ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮੈਡੀਕਲ ਅਧਿਕਾਰੀ ਵਜੋਂ ਰਜਿਸਟਰਡ ਆਪਣਾ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ',
+      hi_IN: 'कृपया चिकित्सा अधिकारी के रूप में पंजीकृत अपना मोबाइल नंबर दर्ज करें'
     },
     error: {
-      en_IN: 'RMO is Not Registered',
-      pa_IN: 'RMO ਰਜਿਸਟਰਡ ਨਹੀ ਹੈ',
-      hi_IN: 'आरएमओ पंजीकृत नहीं है ।'
+      en_IN: 'Your mobile no is not registered as Medical officer',
+      pa_IN: 'ਤੁਹਾਡਾ ਮੋਬਾਈਲ ਨੰਬਰ ਮੈਡੀਕਲ ਅਧਿਕਾਰੀ ਵਜੋਂ ਰਜਿਸਟਰਡ ਨਹੀਂ ਹੈ',
+      hi_IN: 'आपका मोबाइल नंबर चिकित्सा अधिकारी के रूप में पंजीकृत नहीं है ।'
     },
     success: {
-      en_IN: 'RMo SRF Id successfully noted. Please continue entering patient\'s vitals.',
-      pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
-      hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।'
+      en_IN: 'RMO Mobile No successfully noted. Please continue entering patient\'s vitals.',
+      pa_IN: 'ਆਰ.ਐੱਮ.ਓ. ਮੋਬਾਈਲ ਨੰਬਰ ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤਾ ਗਿਆ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'आरएमओ मोबाइल नंबर सफलतापूर्वक नोट किया गया । कृपया रोगी के लक्षण दर्ज करें।'
     },
 
    
@@ -60,9 +60,9 @@ const messages = {
   },
   doctorRemark: {
     prompt: {
-      en_IN: 'Enter Remarks of Doctor',
-      pa_IN: 'ਡਾਕਟਰ ਦੀ ਟਿੱਪਣੀ ਦਰਜ ਕਰੋ',
-      hi_IN: 'डॉक्टर की टिप्पणी दर्ज करें'
+      en_IN: 'Enter you remarks and action taken by you . ',
+      pa_IN: 'ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਅਤੇ ਤੁਹਾਡੇ ਦੁਆਰਾ ਕੀਤੀ ਕਾਰਵਾਈ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'अपनी टिप्पणियाँ और आपके द्वारा की गई कार्रवाई सबमिट करें।'
     },
       
   },
