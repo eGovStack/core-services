@@ -31,6 +31,12 @@ class KaleyraWhatsAppProvider {
           type: type,
           input: requestBody.body
         };
+      } else if(type == 'location'){
+        let geoDetail = '(' + requestBody.location.latitude + ',' + requestBody.location.longitude + ')';
+        reformattedMessage.message = {
+          type: type,
+          input: geoDetail
+        };
       } else {
         reformattedMessage.message = {
           type: 'unknown',
