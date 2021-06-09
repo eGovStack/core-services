@@ -332,6 +332,7 @@ const vitalsFlow = {
                 context.slots.person.MASTER_ID = context.intention.MASTER_ID;
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
+                context.slots.person.data_source_type = context.intention.data_source_type;
                 context.slots.person.rrt = 'YES';
               }),
               target: '#temperature',
@@ -357,6 +358,7 @@ const vitalsFlow = {
               dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
               context.slots.person.com_status = '0';
               context.slots.person.fateh_kit_delivered = 'NO';
+              context.slots.oerson.data_source_type ='';
               context.slots.person.rrt = 'NO';
             }),
             target: '#registerPatient',
@@ -911,32 +913,13 @@ const vitalsFlow = {
                   target: 'error',
                 },
                 {
-                  cond: (context, event) => context.slots.person.com_status == '1',
                   actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;
                   }),
-                  target: '#heartrelated',
+                  target: '#comorbidities'
+                  
                 },
-                {
-                  cond: (context, event) => context.slots.person.com_status == '0',
-                  actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
-                    context.slots.vitals.symptoms.ComHeart = 'NO';
-                    context.slots.vitals.symptoms.ComKidney = 'NO';
-                    context.slots.vitals.symptoms.ComCancer = 'NO';
-                  }),
-                  target: '#comorbidities',
-                },
-                {
-                  actions: assign((context, event) => {
-                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
-                    context.slots.vitals.symptoms.ComHeart = 'NO';
-                    context.slots.vitals.symptoms.ComKidney = 'NO';
-                    context.slots.vitals.symptoms.ComCancer = 'NO';
-                  }),
-                  target: '#comorbidities',
-                },
-              ],
+                ],
             },
             error: {
               onEntry: assign((context, event) => {
