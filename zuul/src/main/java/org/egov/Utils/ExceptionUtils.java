@@ -45,7 +45,7 @@ public class ExceptionUtils {
             error.put("description", description);
             return errorInfo;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IO Exception while getting errorInfo object: " + e.getMessage());
         }
 
         return null;
@@ -123,14 +123,18 @@ public class ExceptionUtils {
                     _setExceptionBody(((HttpClientErrorException) e).getStatusCode(), existingResponse);
             } else if (exceptionName.equalsIgnoreCase("InvalidAccessTokenException")) {
                 _setExceptionBody(HttpStatus.UNAUTHORIZED, getErrorInfoObject(exceptionName, exceptionMessage, exceptionMessage));
-            } else if (exceptionName.equalsIgnoreCase("CustomException")) {
+            } else if (exceptionName.equalsIgnoreCase("RateLimitExceededException")) {
+                _setExceptionBody(HttpStatus.TOO_MANY_REQUESTS, getErrorInfoObject(exceptionName, "Rate limit exceeded", null));
+            }else if (exceptionName.equalsIgnoreCase("JsonParseException")) {
+                _setExceptionBody(HttpStatus.BAD_REQUEST, getErrorInfoObject(exceptionName, "Bad request", null));
+            }else if (exceptionName.equalsIgnoreCase("CustomException")) {
                 CustomException ce = (CustomException)e;
                 _setExceptionBody(HttpStatus.valueOf(ce.nStatusCode), getErrorInfoObject(exceptionName, exceptionMessage, exceptionMessage));
             } else {
                 _setExceptionBody(HttpStatus.INTERNAL_SERVER_ERROR, getErrorInfoObject(exceptionName, exceptionMessage, exceptionMessage));
             }
         } catch (Exception e1) {
-            e1.printStackTrace();
+            logger.error("Exception while raising error filter exception: " + e1.getMessage());
         }
     }
 }
