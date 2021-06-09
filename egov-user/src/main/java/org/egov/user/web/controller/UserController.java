@@ -56,9 +56,6 @@ public class UserController {
     @Value("${citizen.registration.withlogin.enabled}")
     private boolean isRegWithLoginEnabled;
 
-    @Value("${egov.user.search.default.size}")
-    private Integer defaultSearchSize;
-
 
     @Autowired
     public UserController(UserService userService, TokenService tokenService) {
@@ -137,7 +134,7 @@ public class UserController {
         if (request.getActive() == null) {
             request.setActive(true);
         }
-        return searchUsers(request, headers);
+        return userService.searchUsers(request, headers);
     }
 
     /**
@@ -150,7 +147,7 @@ public class UserController {
      */
     @PostMapping("/v1/_search")
     public UserSearchResponse getV1(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
-        return searchUsers(request, headers);
+        return userService.searchUsers(request, headers);
     }
 
 
@@ -163,8 +160,8 @@ public class UserController {
      * @return
      */
     @PostMapping("/owner/_search")
-    public CitizenSearchResponse getOwners(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
-        return userService.transfromUserToCitizenObj(searchUsers(request, headers));
+    public CitizenSearchResponse getOwners(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers, @RequestParam Boolean isPIIRequested) {
+        return userService.searchCitizen(request, headers, isPIIRequested);
     }
 
     /**
@@ -241,22 +238,7 @@ public class UserController {
         return new UpdateResponse(responseInfo, Collections.singletonList(updateRequest));
     }
 
-    private UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
 
-        UserSearchCriteria searchCriteria = request.toDomain();
-
-        if (!isInterServiceCall(headers)) {
-            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
-                    || searchCriteria.getLimit() == 0))
-                searchCriteria.setLimit(defaultSearchSize);
-        }
-
-        List<User> userModels = userService.searchUsers(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
-        List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
-                .collect(Collectors.toList());
-        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-        return new UserSearchResponse(responseInfo, userContracts);
-    }
 
     private boolean isMobileValidationRequired(HttpHeaders headers) {
         boolean x_pass_through_gateway = !isInterServiceCall(headers);

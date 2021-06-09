@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 import static org.egov.user.config.UserServiceConstants.USER_CLIENT_ID;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -88,6 +91,9 @@ public class UserService {
 
     @Value("${egov.user.pwd.pattern.max.length}")
     private Integer pwdMaxLength;
+
+    @Value("${egov.user.search.default.size}")
+    private Integer defaultSearchSize;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -633,13 +639,34 @@ public class UserService {
         }
     }
 
+
+    public UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
+
+        UserSearchCriteria searchCriteria = request.toDomain();
+
+        if (!isInterServiceCall(headers)) {
+            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
+                    || searchCriteria.getLimit() == 0))
+                searchCriteria.setLimit(defaultSearchSize);
+        }
+
+        List<User> userModels = searchUsers(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
+        List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
+                .collect(Collectors.toList());
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+        return new UserSearchResponse(responseInfo, userContracts);
+    }
+
     /**
-     * Converts UserResponse to CitizenResponse
-     * @param userSearchResponse
+     *
+     * @param request
+     * @param headers
+     * @param isPIIRequested
      * @return
      */
-    public CitizenSearchResponse transfromUserToCitizenObj(UserSearchResponse userSearchResponse){
+    public CitizenSearchResponse searchCitizen(UserSearchRequest request, HttpHeaders headers, Boolean isPIIRequested){
 
+        UserSearchResponse userSearchResponse = searchUsers(request, headers);
         ResponseInfo responseInfo = userSearchResponse.getResponseInfo();
         List<UserSearchResponseContent> users = userSearchResponse.getUserSearchResponseContent();
 
@@ -661,11 +688,35 @@ public class UserService {
             citizens.add(citizen);
         }
 
+        if(!isPIIRequested)
+            maskPII(citizens);
+        else auditRequest(request);
+
         CitizenSearchResponse citizenSearchResponse = CitizenSearchResponse.builder().citizens(citizens).responseInfo(responseInfo).build();
 
         return citizenSearchResponse;
 
     }
+
+
+    /**
+     * Masks the PII data
+     * @param citizens
+     */
+    private void maskPII(List<Citizen> citizens){
+
+        // Mask specific field
+    }
+
+    /**
+     * Audits the caller which requested PII data
+     */
+    private void auditRequest(UserSearchRequest request){
+
+        // Push the request on kafka topic for auditing
+
+    }
+
 
 
 }
