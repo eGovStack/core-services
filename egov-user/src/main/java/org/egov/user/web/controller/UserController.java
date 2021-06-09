@@ -105,6 +105,25 @@ public class UserController {
     }
 
     /**
+     * end-point to create the user without otp validation.
+     *
+     * @param createUserRequest
+     * @param headers
+     * @return
+     */
+    @PostMapping("/owners/_createnovalidate")
+    public UserDetailResponse createOwnerWithoutValidation(@RequestBody @Valid CreateUserRequest createUserRequest,
+                                                          @RequestHeader HttpHeaders headers) {
+
+        User user = createUserRequest.toDomain(true);
+        validateOwner(user);
+        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+        user.setOtpValidationMandatory(false);
+        final User newUser = userService.createUser(user, createUserRequest.getRequestInfo());
+        return createResponse(newUser);
+    }
+
+    /**
      * end-point to search the users by providing userSearchRequest. In Request
      * if there is no active filed value, it will fetch only active users
      *
@@ -132,6 +151,20 @@ public class UserController {
     @PostMapping("/v1/_search")
     public UserSearchResponse getV1(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
         return searchUsers(request, headers);
+    }
+
+
+    /**
+     * end-point to search the citizens by providing userSearchRequest. In Request
+     * if there is no active filed value, it will fetch all(active & inactive)
+     * users.
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/owner/_search")
+    public CitizenSearchResponse getOwners(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
+        return userService.transfromUserToCitizenObj(searchUsers(request, headers));
     }
 
     /**
@@ -162,6 +195,25 @@ public class UserController {
         final User updatedUser = userService.updateWithoutOtpValidation(user, createUserRequest.getRequestInfo());
         return createResponseforUpdate(updatedUser);
     }
+
+
+    /**
+     * end-point to update the user details without otp validations.
+     *
+     * @param createUserRequest
+     * @param headers
+     * @return
+     */
+    @PostMapping("/owners/_updatenovalidate")
+    public UpdateResponse updateOwnerWithoutValidation(@RequestBody final @Valid CreateUserRequest createUserRequest,
+                                                      @RequestHeader HttpHeaders headers) {
+        User user = createUserRequest.toDomain(false);
+        validateOwner(user);
+        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+        final User updatedUser = userService.updateWithoutOtpValidation(user, createUserRequest.getRequestInfo());
+        return createResponseforUpdate(updatedUser);
+    }
+
 
     /**
      * end-point to update user profile.
@@ -213,6 +265,18 @@ public class UserController {
             return false;
         }
         return true;
+    }
+
+
+    private void validateOwner(User user){
+        
+        if(user.getBloodGroup()!=null  || user.getPhoto()!=null || user.getTitle()!=null
+           || user.getOtpReference()!=null || user.getSignature()!=null || user.getSalutation()!=null
+           || user.getPan()!=null || user.getAadhaarNumber()!=null || user.getDob()!=null || user.getLocale()!=null
+           || user.getIdentificationMark()!=null || user.getAddresses()!=null){
+            throw new CustomException("INVALID_OWNER","Extra information is sent than required");
+        }
+
     }
 
 }

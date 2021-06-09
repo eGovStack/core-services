@@ -1,6 +1,7 @@
 package org.egov.user;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -88,6 +89,7 @@ public class EgovUserApplication {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+       // mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         mapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH));
         mapper.setTimeZone(TimeZone.getTimeZone(timeZone));

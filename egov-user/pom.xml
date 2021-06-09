@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>services-common</artifactId>
-            <version>0.12.1</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -159,6 +159,7 @@
             <version>4.2.2.RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
