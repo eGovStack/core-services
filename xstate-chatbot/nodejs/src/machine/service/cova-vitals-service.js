@@ -78,7 +78,9 @@ class VitalsService {
         NeedsDoctorCall: '',
         FatehKitsDelivered: vitals.symptoms.FatehKitsDelivered,
         base64: '',
-
+        srf_Id:'',
+        data_source_type: patientDetails.data_source_type,
+     
       };
     }
 

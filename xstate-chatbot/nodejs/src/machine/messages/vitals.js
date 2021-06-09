@@ -18,17 +18,17 @@ const messages = {
   },
   rmoMobileNumber: {
     prompt: {
-      en_IN: 'Please enter Your Registered Mobile No As RMO ',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ ਨੂੰ ਆਰਐਮਓ ਦੇ ਰੂਪ ਵਿੱਚ ਦਾਖਲ ਕਰੋ',
-      hi_IN: 'कृपया अपना पंजीकृत मोबाइल नंबर आरएमओ के रूप में दर्ज करें',
+      en_IN: 'Please enter your mobile no registered as Medical officer ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮੈਡੀਕਲ ਅਧਿਕਾਰੀ ਵਜੋਂ ਰਜਿਸਟਰਡ ਆਪਣਾ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ',
+      hi_IN: 'कृपया चिकित्सा अधिकारी के रूप में पंजीकृत अपना मोबाइल नंबर दर्ज करें',
     },
     error: {
-      en_IN: 'RMO is Not Registered',
-      pa_IN: 'RMO ਰਜਿਸਟਰਡ ਨਹੀ ਹੈ',
-      hi_IN: 'आरएमओ पंजीकृत नहीं है ।',
+      en_IN: 'Not A Registered Medical officer.Please Register ',
+      pa_IN: 'ਰਜਿਸਟਰਡ ਮੈਡੀਕਲ ਅਫਸਰ ਨਹੀਂ ਹੈ. ਕ੍ਰਿਪਾ ਕਰਕੇ ਰਜਿਸਟਰ ਕਰੋ',
+      hi_IN: 'चिकित्सा अधिकारी के रूप में पंजीकृत नहीं है। कृपया पंजीकरण करें ।',
     },
     success: {
-      en_IN: 'RMo SRF Id successfully noted. Please continue entering patient\'s vitals.',
+      en_IN: 'RMO successfully noted. Please continue entering patient\'s vitals.',
       pa_IN: 'ਮਰੀਜ਼ ਦੀ SRF ID ਸਫਲਤਾਪੂਰਵਕ ਨੋਟ ਕੀਤੀ ਗਈ. ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੇ ਲੱਛਣਾਂ ਨੂੰ ਦਾਖਲ ਕਰੋ.',
       hi_IN: 'मरीज की SRF ID सफलतापूर्वक नोट कर ली गई। कृपया रोगी के लक्षण दर्ज करें।',
     },
@@ -59,16 +59,16 @@ const messages = {
   },
   doctorRemark: {
     prompt: {
-      en_IN: 'Enter Remarks of Doctor',
-      pa_IN: 'ਡਾਕਟਰ ਦੀ ਟਿੱਪਣੀ ਦਰਜ ਕਰੋ',
-      hi_IN: 'डॉक्टर की टिप्पणी दर्ज करें',
+      en_IN: 'Enter you remarks and action taken by you . ',
+      pa_IN: 'ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਅਤੇ ਤੁਹਾਡੇ ਦੁਆਰਾ ਕੀਤੀ ਕਾਰਵਾਈ ਦਾਖਲ ਕਰੋ.',
+      hi_IN: 'अपनी टिप्पणियाँ और आपके द्वारा की गई कार्रवाई सबमिट करें।',
     },
 
   },
   moReportSubmit: {
-    en_IN: 'The RO report have been registered successfully.',
-    pa_IN: 'ਆਰ ਓ ਰਿਪੋਰਟ ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਕੀਤੀ ਗਈ ਹੈ.',
-    hi_IN: 'आरओ रिपोर्ट सफलतापूर्वक दर्ज कर ली गई है।',
+    en_IN: 'Details registered sucessfully',
+    pa_IN: 'ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਹੋਏ.',
+    hi_IN: 'विवरण सफलतापूर्वक पंजीकृत।',
   },
   rrtLocation: {
     prompt: {
