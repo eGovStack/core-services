@@ -5,7 +5,6 @@ const mediaUtil = require('./util/media');
 const config = require('../env-variables');
 const { messages, grammers } = require('./messages/vitals');
 const { personService, vitalsService } = require('./service/service-loader');
-const { context } = require('./chat-machine');
 
 const vitalsFlow = {
   id: 'vitalsFlow',
@@ -196,10 +195,6 @@ const vitalsFlow = {
           always: 'prompt',
         },
       },
-    },
-    rrtSrfId: { // To handle any user who is at this state when the update was pushed
-      id: 'rrtSrfId',
-      always: 'rrtLocation',
     },
     rrtLocation: {
       id: 'rrtLocation',
@@ -710,7 +705,7 @@ const vitalsFlow = {
               target: 'error',
             },
             {
-              target: '#pulse',
+              target: '#symptoms',
             },
           ],
         },
@@ -722,46 +717,46 @@ const vitalsFlow = {
         },
       },
     }, // temperature
-    pulse: {
-      id: 'pulse',
-      initial: 'prompt',
-      states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.pulse.prompt, context.user.locale));
-          }),
-          on: {
-            USER_MESSAGE: 'process',
-          },
-        },
-        process: {
-          onEntry: assign((context, event) => {
-            const pulse = parseInt(dialog.get_input(event));
-            if (pulse >= 10 && pulse <= 500) {
-              context.isValid = true;
-              context.slots.vitals.pulse = pulse;
-            } else {
-              context.isValid = false;
-            }
-          }),
-          always: [
-            {
-              cond: (context) => context.isValid == false,
-              target: 'error',
-            },
-            {
-              target: '#spo2',
-            },
-          ],
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
-          }),
-          always: 'prompt',
-        },
-      },
-    }, // pulse
+    // pulse: {
+    //   id: 'pulse',
+    //   initial: 'prompt',
+    //   states: {
+    //     prompt: {
+    //       onEntry: assign((context, event) => {
+    //         dialog.sendMessage(context, dialog.get_message(messages.pulse.prompt, context.user.locale));
+    //       }),
+    //       on: {
+    //         USER_MESSAGE: 'process',
+    //       },
+    //     },
+    //     process: {
+    //       onEntry: assign((context, event) => {
+    //         const pulse = parseInt(dialog.get_input(event));
+    //         if (pulse >= 10 && pulse <= 500) {
+    //           context.isValid = true;
+    //           context.slots.vitals.pulse = pulse;
+    //         } else {
+    //           context.isValid = false;
+    //         }
+    //       }),
+    //       always: [
+    //         {
+    //           cond: (context) => context.isValid == false,
+    //           target: 'error',
+    //         },
+    //         {
+    //           target: '#spo2',
+    //         },
+    //       ],
+    //     },
+    //     error: {
+    //       onEntry: assign((context, event) => {
+    //         dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+    //       }),
+    //       always: 'prompt',
+    //     },
+    //   },
+    // }, // pulse
     spo2: {
       id: 'spo2',
       initial: 'prompt',

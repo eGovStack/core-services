@@ -25,6 +25,15 @@ class SessionManager {
     // }
 
     let service;
+    if (chatState) {
+      try {
+        // In case state X gets removed after an update
+        service = this.getChatServiceFor(chatState, reformattedMessage);
+      } catch (err) {
+        console.error('Error: Child state not found. Resetting the flow');
+        chatState = undefined;
+      }
+    }
     if (!chatState) {
       // come here if virgin dialog, old dialog was inactive, or reset case
       chatState = this.createChatStateFor(user);
