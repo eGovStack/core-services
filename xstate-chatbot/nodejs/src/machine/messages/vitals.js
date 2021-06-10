@@ -1,9 +1,9 @@
 const messages = {
   rmoSrfId: {
     prompt: {
-      en_IN: 'Please enter Patient\'s SRF ID ',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ ਦੀ SRF ID ਦਾਖਲ ਕਰੋ',
-      hi_IN: 'कृपया रोगी की SRF ID दर्ज करें',
+      en_IN: 'Please enter Patient\'s SRF ID or Patient\'s ID ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਮਰੀਜ਼ਾਂ ਦੀ ਐਸਆਰਐਫ ਆਈਡੀ ਜਾਂ ਮਰੀਜ਼ ਦੀ ਆਈਡੀ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया रोगी की एसआरएफ आईडी या रोगी की आईडी दर्ज करें',
     },
     error: {
       en_IN: 'Invalid SRF Id. \n\nIf you would like to reset the chat flow, send "Hi".',
@@ -442,9 +442,9 @@ const messages = {
   },
 
   submitData: {
-    en_IN: 'Your report have been submitted successfully.',
-    pa_IN: 'ਤੁਹਾਡੇ ਮਹੱਤਵਪੂਰਨ ਰਿਪੋਰਟ  ਸਫਲਤਾਪੂਰਵਕ ਰਜਿਸਟਰ ਹੋ ਗਏ ਹਨ..',
-    hi_IN: 'आपके महत्वपूर्ण रिपोर्ट  सफलतापूर्वक दर्ज कर लिए गए हैं।',
+    en_IN: 'Details have been submitted successfully.',
+    pa_IN: 'ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਦਰਜ ਕੀਤੇ ਗਏ ਹਨ.',
+    hi_IN: 'विवरण सफलतापूर्वक सबमिट कर दिया गया है।',
   },
 };
 
