@@ -760,7 +760,7 @@ const vitalsFlow = {
       initial: 'prompt',
       states: {
         prompt: {
-          onEntry: assign((context, event) => { 
+          onEntry: assign((context, event) => {
             const mediaMessage = mediaUtil.createMediaMessage(`${config.staticMediaPath}/pulse_oximeter`, 'jpeg', context.user.locale, '');
             dialog.sendMessage(context, mediaMessage, false);
             dialog.sendMessage(context, dialog.get_message(messages.spo2.prompt, context.user.locale));
