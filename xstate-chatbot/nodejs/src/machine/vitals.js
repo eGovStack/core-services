@@ -358,7 +358,7 @@ const vitalsFlow = {
               dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
               context.slots.person.com_status = '0';
               context.slots.person.fateh_kit_delivered = 'NO';
-              context.slots.oerson.data_source_type ='';
+              context.slots.person.data_source_type ='';
               context.slots.person.rrt = 'NO';
             }),
             target: '#registerPatient',
