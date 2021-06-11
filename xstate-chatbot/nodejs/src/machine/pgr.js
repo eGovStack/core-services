@@ -572,7 +572,7 @@ const pgr =  {
 let messages = {
   pgrmenu: {
     question: {
-      en_IN : 'Please type and send the number of your option from the list given 👇 below:\n\n1. File New Complaint.\n2. Track Your Complaints.',
+      en_IN : 'Please type and send the number for your option 👇\n\n1. File New Complaint.\n2. Track Old Complaints.',
       hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें\n\n1. यदि आप शिकायत दर्ज करना चाहते हैं\n2. यदि आप अपनी शिकायतों की स्थिति देखना चाहते हैं'
     }
   },
@@ -580,7 +580,7 @@ let messages = {
     complaintType: {
       question: {
         preamble: {
-          en_IN : 'Please enter the number for your complaint',
+          en_IN : 'What is the complaint about ? Please type and send the number of your option 👇',
           hi_IN : 'कृपया अपनी शिकायत के लिए नंबर दर्ज करें'
         },
         other: {
@@ -593,7 +593,7 @@ let messages = {
       category: {
         question: {
           preamble: {
-            en_IN : 'Please enter the number for your complaint category',
+            en_IN : 'Please enter the number for your complaint category👇',
             hi_IN : 'अपनी शिकायत श्रेणी के लिए नंबर दर्ज करें'
           },
           otherType: {
@@ -660,11 +660,31 @@ let messages = {
     closingStatement: {
       en_IN: '\nPlease type and send “mseva” whenever you need my assistance',
       hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
+    },
+    cityFuzzySearch: {
+      question: {
+        en_IN: "Please enter the name of your city. For example - Jalandhar, Amritsar, Ludhiana",
+        hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - जालंधर, अमृतसर, लुधियाना"
+      },
+      confirmation: {
+        en_IN: "Our system detected {{city}} as your city.\n\n👉 Type and send *1* to confirm your city.\n👉 Type and send 2 to re-enter the city name.",
+        hi_IN: "हमारे सिस्टम ने {{city}} को आपके शहर के रूप में पहचाना।\n\n👉 अपने शहर की पुष्टि करने के लिए *1* टाइप करें और भेजें।\n👉 शहर का नाम फिर से दर्ज करने के लिए 2 टाइप करें और भेजें।"
+      }
+    },
+    localityFuzzySearch: {
+      question: {
+        en_IN: "Please enter the name of your locality. For example - Ajit Nagar, Mohalla Kango",
+        hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - अजीत नगर, मोहल्ला कांगो"
+      },
+      confirmation: {
+        en_IN: "Our system detected {{locality}} as your locality.\n\n👉 Type and send *1* to confirm your locality.\n👉 Type and send *2* to re-enter the locality name.",
+        hi_IN: "हमारे सिस्टम ने {{locality}} को आपके इलाके के रूप में पहचाना।\n\n👉 अपने इलाके की पुष्टि करने के लिए *1* टाइप करें और भेजें।\n👉 इलाके का नाम फिर से दर्ज करने के लिए *2* टाइप करें और भेजें।"
+      }
     }
   }, // fileComplaint
   trackComplaint: {
     noRecords: {
-      en_IN: 'There are no open complaints.\nPlease type and send mseva to go to the main menu options.',
+      en_IN: 'Sorry 😥 No complaints are found registered from this mobile number.\n\n👉 To go back to the main menu, type and send mseva.',
       hi_IN: 'अब आपके द्वारा पंजीकृत कोई खुली शिकायत नहीं है।\nमुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     results: {

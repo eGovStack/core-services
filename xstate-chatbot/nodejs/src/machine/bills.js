@@ -245,9 +245,9 @@ const bills = {
             let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
             let message = dialog.get_message(messages.paramInput.question, context.user.locale);
             let optionMessage = dialog.get_message(option, context.user.locale);
-            let exampleMessage = dialog.get_message(example, context.user.locale);
+            //let exampleMessage = dialog.get_message(example, context.user.locale);
             message = message.replace('{{option}}', optionMessage);
-            message = message.replace('{{example}}', exampleMessage);
+            //message = message.replace('{{example}}', exampleMessage);
             dialog.sendMessage(context, message);
           }),
           on: {
@@ -433,7 +433,7 @@ let messages = {
       hi_IN: 'आपकी {{service}} बिल उपभोक्ता संख्या {{id}}, {{secondaryInfo}} में संपत्ति के लिए {{period}} अवधि के लिए देय राशि: रु {{dueAmount}} है। देर से भुगतान शुल्क से बचने के लिए {{dueDate}} से पहले भुगतान करें। \n\n भुगतान लिंक: {{paymentLink}}'
     },
     multipleRecords: {
-      en_IN: 'Following bills found against your mobile number:',
+      en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '{{service}} | Rs. {{dueAmount}} | Due on {{dueDate}} \nPayment Link: {{paymentLink}}',
@@ -441,7 +441,7 @@ let messages = {
       }
     },
     multipleRecordsSameService: {
-      en_IN: 'Following bills found against your mobile number:',
+      en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: ' {{service}} | {{id}} | {{secondaryInfo}} | Rs. {{dueAmount}} | Due on {{dueDate}} \nPayment Link: {{paymentLink}}',
@@ -451,7 +451,7 @@ let messages = {
   },
   noBills: {
     notLinked: {
-      en_IN: 'Sorry, your mobile number is not linked to any service. Contact your ULB to link it. You can avail service by searching your account information as given below:',
+      en_IN: 'Sorry, it seems like your mobile number is not linked to any service.\n\nPlease contact your nearest municipality office to link the number.\n\n👉 You can still proceed to pay for a service by using your account information.\n',
       hi_IN: 'क्षमा करें, आपका मोबाइल नंबर किसी सेवा से लिंक नहीं है। इसे लिंक करने के लिए अपने शहरी स्थानीय निकाय से संपर्क करें। आप नीचे दी गई जानकारी के अनुसार अपनी खाता जानकारी खोज कर सेवा प्राप्त कर सकते हैं:'
     },
     noPending: {
@@ -461,41 +461,41 @@ let messages = {
   },
   searchBillInitiate: {
     question: {
-      en_IN: '\nPlease type and send ‘1’ to Search and Pay for other bills or fees which are not linked with your mobile number. \nOr \'mseva\' to Go ⬅️ Back to the main menu.',
+      en_IN: '\nWant to pay any other bill which are not linked with your mobile number?\n\n👉 Type and Send *1* to Search & Pay for other bills.\n\n👉 To go back to the main menu, type and send mseva.',
       hi_IN: '\nकृपया अन्य बिल या शुल्क के लिए खोज और भुगतान करें जो आपके मोबाइल नंबर से लिंक नहीं हैं, टाइप करें ‘1’ और भेजें। मुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     error:{
-      en_IN: "Sorry, I didn\'t understand",
+      en_IN: "Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.",
       hi_IN: "क्षमा करें, मुझे समझ में नहीं आया"
     }
   },
   billServices: {
     question: {
       preamble: {
-        en_IN: 'Please type and send the number of your option from the list given 👇 below to search and pay:',
+        en_IN: 'Please type and send the number for your option👇',
         hi_IN: 'कृपया खोज और भुगतान के लिए नीचे दी गई सूची से अपना विकल्प टाइप करें और भेजें:'
       }
     },
     error:{
-      en_IN: 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.',
+      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
       hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया दिए गए विकल्पों के लिए फिर से एक नंबर दर्ज करे।'
     }
   },
   searchParamOptions: {
     question: {
       preamble: {
-        en_IN: 'Please type and send the number of your option from the list given 👇 below:',
+        en_IN: 'Please type and send the number for your option👇',
         hi_IN: 'कृपया नीचे दिए गए सूची से अपना विकल्प टाइप करें और भेजें:'
       }
     },
     error:{
-      en_IN: 'Sorry, I didn\'t understand. Could please try again entering a number for the given options.',
+      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
       hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया दिए गए विकल्पों के लिए फिर से एक नंबर दर्ज करे।'
     }
   },
   paramInput: {
     question: {
-      en_IN: 'Please Enter {{option}} to view the bill. {{example}}\n\nOr Type and send "mseva" to Go ⬅️ Back to main menu.',
+      en_IN: 'Please enter the {{option}}.\n\n👉 To go back to the main menu, type and send mseva.',
       hi_IN: 'बिल देखने के लिए कृपया {{option}} डालें। {{example}} \n\n मुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     re_enter: {
@@ -505,7 +505,7 @@ let messages = {
   },
   billSearchResults: {
     noRecords: {
-      en_IN: 'The {{searchParamOption}} : {{paramInput}} is not found in our records. Please Check the details you have provided once again.',
+      en_IN: 'The {{searchParamOption}} : {{paramInput}} is not found in our records.\n\nPlease check the entered details and try again.',
       hi_IN: 'आपके द्वारा प्रदान किए गए विवरण {{searchParamOption}} :   {{paramInput}} हमारे रिकॉर्ड में नहीं पाया जाता है। कृपया आपके द्वारा प्रदान किए गए विवरण को एक बार फिर से देखें।'
     },
     singleRecord: {
@@ -513,7 +513,7 @@ let messages = {
       hi_IN: 'आपकी {{service}} बिल उपभोक्ता संख्या {{id}}, {{secondaryInfo}} में संपत्ति के लिए {{period}} अवधि के लिए देय राशि: रु {{dueAmount}} है। देर से भुगतान शुल्क से बचने के लिए {{dueDate}} से पहले भुगतान करें। \n\n भुगतान लिंक: {{paymentLink}}'
     },
     multipleRecords: {
-      en_IN: 'Following bills found:',
+      en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
         en_IN: '{{service}} | Rs. {{dueAmount}} | Due on {{dueDate}} \nPayment Link: {{paymentLink}}',
@@ -521,7 +521,7 @@ let messages = {
       }
     },
     multipleRecordsSameService: {
-      en_IN: 'Following bills found:',
+      en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
         en_IN: '{{service}} | {{id}} | {{secondaryInfo}} | Rs. {{dueAmount}} | Due on {{dueDate}} \nPayment Link: {{paymentLink}}',
@@ -535,7 +535,7 @@ let messages = {
       hi_IN: 'कृपया {{searchParamOption}} फिर से टाइप करने के लिए ’1’ टाइप करें और भेजें।\n\nमुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     error:{
-      en_IN: "Sorry, I didn\'t understand",
+      en_IN: "Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.",
       hi_IN: "क्षमा करें, मुझे समझ में नहीं आया"
     }
   }

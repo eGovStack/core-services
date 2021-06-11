@@ -351,22 +351,22 @@ let messages = {
     hi_IN: 'ठीक। फिर से शुरू करते हैं।'
   },
   onboarding: {
-    onboardingWelcome: 'Welcome to mSeva Punjab. Now you can file a complaint and track it’s status, you can also Pay your bills through WhatsApp. \n\nmSeva पंजाब में आपका स्वागत🙏🏻 है। अब आप WhatsApp द्वारा कई सुविधाओं का लाभ ले सकते है जैसे शिकायत दर्ज करना, बिल का भुगतान करना।',
+    onboardingWelcome: 'Dear Citizen,\n\nWelcome to mSeva Punjab 🙏\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.\n\nmSeva पंजाब में आपका स्वागत🙏🏻 है। अब आप WhatsApp द्वारा कई सुविधाओं का लाभ ले सकते है जैसे शिकायत दर्ज करना, बिल का भुगतान करना।\n',
     onboardingLocale: {
-      question: 'Please Select the Language of your choice from the list given below:\n\nनीचे दिए गए पर्याय में से आपकी पसंदीदा भाषा का चयन करें।\n\n1. English\n2. हिंदी'
+      question: 'Please select the language of your choice 👇\n\nनीचे दिए गए पर्याय में से आपकी पसंदीदा भाषा का चयन करें।\n\n👉    Type 1 for English\n👉     हिन्दी के लिये २ टाइप करे\n👉    ਪੰਜਾਬੀ ਲਈ 3 ਟਾਈਪ ਕਰੋ'
     },
     onboardingName: {
       question: {
-        en_IN: 'Before moving further, please share your name to make your experience more personalized.\nElse if you don\'t want to share your name, type and send "No".',
+        en_IN: '👉 For a Better Communication, we request you to type and send your name.\n\n👉  Type and Send *No*, incase you want to continue without sharing the name',
         hi_IN: 'आगे बढ़ने से पहले, अपने अनुभव को और व्यक्तिगत बनाने के लिए कृपया अपना नाम साझा करें।\nयदि आप अपना नाम साझा नहीं करना चाहते हैं, तो टाइप करें और "No" भेजें।'
       }      
     },
     onboardingNameConfirmation: {
-      en_IN: "Please confirm your name {{name}} by typing “Yes” or send “No” to change your name.",
+      en_IN: "Confirm Name : {{name}} ?\n\n👉  Type and Send *Yes* to confirm the name.\n\n👉  Type and Send *No* to change the name.",
       hi_IN: "कृपया अपने नाम {{name}} की पुष्टि करने के लिए “Yes” टाइप करें। यदि आप अपना नाम बदलना चाहते हैं, तो “No” टाइप कीजिए।"
     },
     onboardingThankYou: {
-      en_IN: 'Thank you so much {{name}} for the details, we are happy to serve you.',
+      en_IN: 'Thanks for providing the confirmation 👍 We are happy to serve you 😊',
       hi_IN: 'विवरण के लिए आपका बहुत-बहुत धन्यवाद {{name}}, हम आपकी सेवा करके प्रसन्न हैं।'
     }  
   },
@@ -377,12 +377,12 @@ let messages = {
     }
   },
   welcome: {
-    en_IN: 'Hi {{name}}, \nWelcome to mSeva Punjab 🙏. Now, using WhatsApp, you can:\n  - File a Complaint and Track its Status\n  - Pay your Bills.',
-    hi_IN: 'नमस्ते {{name}}\nmSeva पंजाब में आपका स्वागत है 🙏। अब आप WhatsApp द्वारा कई सुविधाओं का लाभ ले सकते है जैसे: \n  - आप शिकायत दर्ज कर सकते है \n  - बिल का भुगतान कर सकते है।'
+    en_IN: 'Dear {{name}},\n\nWelcome to mSeva Punjab 🙏.\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.\n',
+    hi_IN: 'नमस्ते {{name}},\n\nmSeva पंजाब में आपका स्वागत है 🙏।\n\nअब आप WhatsApp द्वारा कई सुविधाओं का लाभ ले सकते है जैसे शिकायत दर्ज करना, बिल का भुगतान करना।'
   },
   sevamenu: {
     question: {
-      en_IN : 'Please type and send the number of your option from the list given 👇 below:\n\n1. File or Track Complaints.\n2. Pay Bills and Fees.\n3. View Payments Receipts.\n4. Change Language.',
+      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n1. File or Track Complaints.\n2. Pay Bills and Fees.\n3. View Payments Receipts.\n4. Change Language.\n\n👉  At any stage type and send mseva to go back to the main menu.',
       hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें:\n\n1. शिकायतों के लिए\n2. बिलों के लिए\n3. रसीदों के लिए\n4. भाषा बदलने के लिए'
     }
   },

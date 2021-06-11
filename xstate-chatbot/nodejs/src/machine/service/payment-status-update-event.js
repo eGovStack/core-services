@@ -143,6 +143,12 @@ class PaymentStatusUpdateEventFormatter{
     };
     message.push(pdfContent);
 
+    var endStatement = {
+      output:dialog.get_message(messageBundle.endStatement,locale),
+      type: "text"
+    };
+    message.push(endStatement);
+
     return message;
   }
 
@@ -209,12 +215,16 @@ class PaymentStatusUpdateEventFormatter{
 
 let messageBundle = {
   paymentSucess:{
-    en_IN: "Thank you😃! You have successfully paid your bill through mSeva Punjab. Your transaction number is {{transaction_number}}.\n\nPlease find attached receipt for your reference.\n",
+    en_IN: "Bill Payment Successful ✅\n\nYour transaction number is {{transaction_number}}.\n\nYou can download the payment receipt from above.\n\n[Payment receipt in PDF format is attached with message]\n\nWe are happy to serve you 😃",
     hi_IN: "धन्यवाद😃! आपने mSeva पंजाब के माध्यम से अपने बिल का सफलतापूर्वक भुगतान किया है। आपका ट्रांजेक्शन नंबर {{transaction_number}} है। \n\n कृपया अपने संदर्भ के लिए संलग्न रसीद प्राप्त करें।"
   },
   paymentFail:{
-    en_IN: "Sorry😥! The Payment Transaction has failed due to authentication failure. Your transaction reference number is {{transaction_number}}.\n\nIf the amount is debited from your account please give us 2-3 hours to get confirmation on payment.\n\nIf the amount is  not deducted from your account you can retry using the following payment link:\n{{link}}",
+    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nIf the amount is debited from your account please give us 2-3 hours to get confirmation on payment.\n\nIf the amount is  not deducted from your account you can retry using the following payment link:\n{{link}}",
     hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\n यदि राशि आपके खाते से डेबिट होती है, तो कृपया भुगतान पर पुष्टि प्राप्त करने के लिए हमें 2-3 घंटे का समय दें।\n\n यदि आपके खाते से राशि नहीं काटी जाती है, तो आप निम्नलिखित भुगतान लिंक का उपयोग करके पुन: प्रयास कर सकते हैं:\n{{link}}"
+  },
+  endStatement:{
+    en_IN: "👉 To go back to the main menu, type and send mseva.",
+    hi_IN: "👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
   }
 
 };

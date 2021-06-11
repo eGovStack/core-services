@@ -40,6 +40,12 @@ const envVariables = {
         kafkaConsumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID || 'xstate-chatbot',
     },
 
+    kaleyra: {
+        sendMessageUrl: process.env.KALEYRA_SEND_MESSAGE_URL || 'https://api.kaleyra.io/v1/{{sid}}/messages',
+        sid: process.env.KALEYRA_SID || '',
+        apikey: process.env.KALEYRA_API_KEY || '',
+    },
+
     valueFirstWhatsAppProvider: {
         valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
         valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
@@ -77,6 +83,8 @@ const envVariables = {
         pgrv1SearchEndpoint: process.env.PGR_SEARCH_ENDPOINT || 'rainmaker-pgr/v1/requests/_search',
         waterConnectionSearch: process.env.WATER_CONNECTION_SEARCH || 'ws-services/wc/_search?searchType=CONNECTION',
         sewerageConnectionSearch: process.env.SEWERAGE_CONNECTION_SEARCH || 'sw-services/swc/_search?searchType=CONNECTION',
+        cityFuzzySearch: process.env.CITY_FUZZY_SEARCH || 'nlp-engine/fuzzy/city',
+        localityFuzzySearch: process.env.LOCALITY_FUZZY_SEARCH || 'nlp-engine/fuzzy/locality',
 
         cityExternalWebpagePath: process.env.CITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/city',
         localityExternalWebpagePath: process.env.LOCALITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/locality',
@@ -94,11 +102,12 @@ const envVariables = {
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 5,
         informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '643bfd34-5b28-4ef6-ba80-af7f529fe69b',
         pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
+        geoSearch: process.env.GEO_SEARCH || false
     },
 
     billsAndReceiptsUseCase: {
         billSearchLimit: process.env.BILL_SEARCH_LIMIT || 5,
-        receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 3,
+        receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 1,
 
         billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL, FIRENOC, BPA',
 
