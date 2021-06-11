@@ -249,6 +249,7 @@ class ValueFirstWhatsAppProvider {
 
         let headers = {
             'Content-Type': 'application/json',
+            'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
         }
 
         var request = {
