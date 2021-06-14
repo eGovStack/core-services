@@ -72,7 +72,7 @@ public class WorkflowQueryBuilder {
 
         List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
-            builder.append("and tl.id IN (").append(createQuery(ids)).append(")");
+            builder.append("and pi.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
 
@@ -222,7 +222,7 @@ public class WorkflowQueryBuilder {
 
 
 
-    public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, Boolean isPaginationRequired){
 
         String with_query = WITH_CLAUSE + " pi_outer.lastmodifiedTime = (" +
                 "SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
@@ -257,7 +257,8 @@ public class WorkflowQueryBuilder {
 
         with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
-        addPagination(with_query_builder,preparedStmtList,criteria);
+        if(isPaginationRequired)
+            addPagination(with_query_builder,preparedStmtList,criteria);
 
         StringBuilder builder = new StringBuilder(with_query_builder);
 
@@ -329,25 +330,11 @@ public class WorkflowQueryBuilder {
      */
     public String getInboxCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
-        String query = QUERY + " pi.lastmodifiedTime IN  (SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 WHERE tenantid=? GROUP BY businessid)";
-        preparedStmtList.add(criteria.getTenantId());
+        String query = getInboxIdQuery(criteria, preparedStmtList, false);
 
-        List<String> statuses = criteria.getStatus();
-        StringBuilder builder = new StringBuilder(query);
+        String countQuery = "select count(DISTINCT id) from ({INTERNAL_QUERY}) as count";
 
-        if(!config.getAssignedOnly() && !CollectionUtils.isEmpty(statuses)){
-            builder.append(" AND ((asg.assignee = ?  AND pi.tenantid = ?) OR CONCAT (pi.tenantid,':',pi.status) IN (").append(createQuery(statuses)).append("))");
-            preparedStmtList.add(criteria.getAssignee());
-            preparedStmtList.add(criteria.getTenantId());
-            addToPreparedStatement(preparedStmtList,statuses);
-        }
-        else {
-            builder.append(" AND asg.assignee = ?  AND pi.tenantid = ?");
-            preparedStmtList.add(criteria.getAssignee());
-            preparedStmtList.add(criteria.getTenantId());
-        }
-
-        String countQuery = addCountWrapper(builder.toString());
+        countQuery = countQuery.replace("{INTERNAL_QUERY}", query);
 
         return countQuery;
     }
