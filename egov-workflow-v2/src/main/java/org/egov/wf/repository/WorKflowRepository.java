@@ -65,7 +65,7 @@ public class WorKflowRepository {
     public List<ProcessInstance> getProcessInstancesForUserInbox(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
 
-        if(CollectionUtils.isEmpty(criteria.getStatus()))
+        if(CollectionUtils.isEmpty(criteria.getStatus()) && CollectionUtils.isEmpty(criteria.getTenantSpecifiStatus()))
             return new LinkedList<>();
 
         List<String> ids = getInboxSearchIds(criteria);
