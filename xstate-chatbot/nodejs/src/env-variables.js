@@ -91,6 +91,8 @@ const envVariables = {
         localityExternalWebpagePath: process.env.LOCALITY_EXTERNAL_WEBPAGE_PATH || 'citizen/openlink/whatsapp/locality',
         receiptdownladlink: process.env.RECEIPT_DOWNLOAD_LINK || 'citizen/withoutAuth/egov-common/download-receipt?status=success&consumerCode=$consumercode&tenantId=$tenantId&receiptNumber=$receiptnumber&businessService=$businessservice&smsLink=true&mobileNo=$mobilenumber&channel=whatsapp&redirectNumber=+$whatsAppBussinessNumber&locale=$locale',
         msgpaylink: process.env.MSG_PAY_LINK || 'citizen/withoutAuth/egov-common/pay?consumerCode=$consumercode&tenantId=$tenantId&businessService=$businessservice&redirectNumber=$redirectNumber&channel=whatsapp&locale=$locale',
+        wsOpenSearch: process.env.WS_OPEN_SEARCH || 'citizen/withoutAuth/wns/public-search',
+        ptOpenSearch: process.env.PT_OPEN_SEARCH || 'citizen/withoutAuth/pt-mutation/public-search'
     },
 
     userService: {
@@ -107,10 +109,10 @@ const envVariables = {
     },
 
     billsAndReceiptsUseCase: {
-        billSearchLimit: process.env.BILL_SEARCH_LIMIT || 5,
+        billSearchLimit: process.env.BILL_SEARCH_LIMIT || 3,
         receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 1,
 
-        billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT, TL, FIRENOC, BPA',
+        billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT',
 
         paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
         pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',

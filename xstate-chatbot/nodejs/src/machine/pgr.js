@@ -18,12 +18,26 @@ const pgr =  {
       initial: 'question',
       states: {
         question: {
-          onEntry: assign( (context, event) => {
+          /*onEntry: assign( (context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.pgrmenu.question, context.user.locale));
           }),
           on: {
             USER_MESSAGE: 'process'
-          }
+          }*/
+          always : [
+            {
+              target: '#fileComplaint',
+              cond: (context) => context.intention == 'file_new_complaint'
+            },
+            {
+              target: '#trackComplaint', 
+              cond: (context) => context.intention == 'track_existing_complaints'
+            },
+            {
+              target: 'error'
+            }
+          ]
+
         }, // pgrmenu.question
         process: {
           onEntry: assign((context, event) => context.intention = dialog.get_intention(grammer.pgrmenu.question, event)),
@@ -242,7 +256,7 @@ const pgr =  {
                   type: 'image',
                   output: config.pgrUseCase.informationImageFilestoreId
                 };
-                dialog.sendMessage(context, message, false);
+                dialog.sendMessage(context, message);
               }),
               always: 'geoLocation'
             },

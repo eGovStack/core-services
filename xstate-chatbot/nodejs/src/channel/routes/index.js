@@ -14,6 +14,8 @@ router.post('/message', async (req, res) =>  {
     res.end();
 });
 
+router.post('/status', (req, res) => res.sendStatus(200));
+
 router.get('/health', (req, res) => res.sendStatus(200));
 
 module.exports = router;
