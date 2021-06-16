@@ -124,6 +124,7 @@ const vitalsFlow = {
               actions: assign((context, event) => {
                 context.slots.person.isSpecializationRequired = 'yes';
                 context.slots.person.isHospitalizationRequired = 'no';
+                context.slots.person.isPatientStable='no';
               }),
               target: '#doctorRemark',
 
@@ -133,6 +134,18 @@ const vitalsFlow = {
               actions: assign((context, event) => {
                 context.slots.person.isHospitalizationRequired = 'yes';
                 context.slots.person.isSpecializationRequired = 'no';
+                context.slots.person.isPatientStable='no';
+              }),
+              target: '#doctorRemark',
+            },
+            ,
+            {
+              cond: (context) => context.intention == 'patientStable',
+              actions: assign((context, event) => {
+                context.slots.person.isHospitalizationRequired = 'no';
+                context.slots.person.isSpecializationRequired = 'no';
+                context.slots.person.isPatientStable='yes';
+
               }),
               target: '#doctorRemark',
             },
@@ -155,6 +168,7 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
+            console.log(context.slots.person)
             dialog.sendMessage(context, dialog.get_message(messages.doctorRemark.prompt, context.user.locale));
           }),
           on: {
@@ -169,7 +183,7 @@ const vitalsFlow = {
           }),
           invoke: {
             src: (context, event) => vitalsService.getMoSubmitReport(context.slots.person.caseId, context.slots.person.mobileNumber,
-              context.message, context.slots.person.isSpecializationRequired, context.slots.person.isHospitalizationRequired),
+              context.message, context.slots.person.isSpecializationRequired, context.slots.person.isHospitalizationRequired,context.slots.person.isPatientStable),
             onDone: [
               {
                 actions: assign((context, event) => {
