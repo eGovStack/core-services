@@ -14,7 +14,18 @@ router.post('/message', async (req, res) =>  {
     res.end();
 });
 
-router.post('/status', (req, res) => res.sendStatus(200));
+//router.post('/status', (req, res) => res.sendStatus(200));
+
+router.post('/status', (req, res) => {
+    try {
+        console.log("\n"+JSON.stringify(req.query));
+        console.log("\n"+JSON.stringify(req.body));
+    } catch(e) {
+        console.log(e);
+    }
+    res.sendStatus(200);
+});
+
 
 router.get('/health', (req, res) => res.sendStatus(200));
 
