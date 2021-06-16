@@ -220,11 +220,9 @@ class VitalsService {
           .concat(remarks),
       );
     }
-    console.log(url)
     const response = await fetch(url);
     if (response.status == 200) {
       const data = await response.json();
-      console.log(data)
       return data;
     }
     const responseBody = await response.json();
