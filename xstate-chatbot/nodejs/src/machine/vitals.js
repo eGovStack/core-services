@@ -138,7 +138,6 @@ const vitalsFlow = {
               }),
               target: '#doctorRemark',
             },
-            ,
             {
               cond: (context) => context.intention == 'patientStable',
               actions: assign((context, event) => {
