@@ -168,7 +168,6 @@ const vitalsFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-            console.log(context.slots.person)
             dialog.sendMessage(context, dialog.get_message(messages.doctorRemark.prompt, context.user.locale));
           }),
           on: {
