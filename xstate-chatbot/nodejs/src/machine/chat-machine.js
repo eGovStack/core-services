@@ -3,6 +3,7 @@ const dialog = require('./util/dialog.js');
 const covidInfoFlow = require('./covid-info');
 const vitalsFlow = require('./vitals');
 const messages = require('./messages/chat-machine');
+const hospitalFlow = require('./hospital-details')
 
 const chatStateMachine = Machine({
   id: 'chatMachine',
@@ -102,6 +103,10 @@ const chatStateMachine = Machine({
               target: '#rmoMobileNumber',
             },
             {
+              cond: (context) => context.intention == 'bedsavailability',
+              target: '#nodalOfficer',
+            },
+            {
               target: 'error',
             },
           ],
@@ -116,6 +121,7 @@ const chatStateMachine = Machine({
     }, // menu
     covidInfoFlow,
     vitalsFlow,
+    hospitalFlow,
     endstate: {
       id: 'endstate',
       always: '#start',
