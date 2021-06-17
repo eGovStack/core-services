@@ -33,6 +33,7 @@ const hospitalFlow = {
             src: (context, event) => bedsService.getHospitalById(context.slots.hospital.mobileNumber),
             onDone: [
               {
+                cond: (context, event) => event.data.response == '1',
                 actions: assign((context, event) => {
                   context.slots.hospital.confirmed_cases_on_oxygen_support_l2 = event.data.data[0].confirmed_cases_on_oxygen_support_l2;
                   context.slots.hospital.confirmed_cases_on_oxygen_without_support_l2 = event.data.data[0].confirmed_cases_on_oxygen_without_support_l2;
@@ -80,7 +81,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.noUserFetch.prompt, context.user.locale));
           }),
           always: 'prompt',
         },

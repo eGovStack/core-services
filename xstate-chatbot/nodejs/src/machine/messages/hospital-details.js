@@ -367,9 +367,11 @@ const messages = {
     },
   },
   noUserFetch: {
-    en_IN: 'No Nodal Officer Associated with this number and kindly retry',
-    pa_IN: 'ਕੋਈ ਨੋਡਲ ਅਧਿਕਾਰੀ ਇਸ ਨੰਬਰ ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ ਹੈ ਅਤੇ ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
-    hi_IN: 'इस नंबर से कोई नोडल अधिकारी संबद्ध नहीं है और कृपया पुनः प्रयास करें',
+      prompt: {
+      en_IN: 'No Nodal Officer Associated with this number and kindly retry',
+      pa_IN: 'ਕੋਈ ਨੋਡਲ ਅਧਿਕਾਰੀ ਇਸ ਨੰਬਰ ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ ਹੈ ਅਤੇ ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+      hi_IN: 'इस नंबर से कोई नोडल अधिकारी संबद्ध नहीं है और कृपया पुनः प्रयास करें',
+    },
 
   },
 
