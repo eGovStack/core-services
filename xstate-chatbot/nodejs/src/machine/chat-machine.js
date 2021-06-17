@@ -104,7 +104,7 @@ const chatStateMachine = Machine({
             },
             {
               cond: (context) => context.intention == 'bedsavailability',
-              target: '#nodalOfficer',
+              target: '#hospitalFlow',
             },
             {
               target: 'error',

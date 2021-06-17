@@ -2,7 +2,7 @@ const moment = require('moment');
 
 class BedsService {
 
-  async getHospitalById(user) {
+  async getHospitalsByMobileNumber(mobileno) {
     return {
       "response": 1,
       "sys_message": "success",

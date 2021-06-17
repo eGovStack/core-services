@@ -3,10 +3,10 @@ const config = require('../../env-variables');
 
 class BedsService {
 
-  async getHospitalById(mobileNumber) {
+  async getHospitalsByMobileNumber(mobileNumber) {
 
     const url = config.covaApiConfigs.cova2Url.concat(
-      config.covaApiConfigs.getHospitalById,
+      config.covaApiConfigs.getHospitalsByMobileNumber,
     );
     const headers = {
       'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ class BedsService {
 
     } else {
       const responseBody = await response.json();
-      console.error(`Cova (getHospitalById) responded with ${JSON.stringify(responseBody)}`);
+      console.error(`Cova (getHospitalsByMobileNumber) responded with ${JSON.stringify(responseBody)}`);
     }
 
   }
