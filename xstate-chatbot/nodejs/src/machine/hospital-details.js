@@ -27,8 +27,7 @@ const hospitalFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            //context.slots.hospital.mobileNumber=context.user.mobileNumber;
-            context.slots.hospital.mobileNumber = '9815755721';
+            context.slots.hospital.mobileNumber=context.user.mobileNumber;
           }),
           invoke: {
             src: (context, event) => bedsService.getHospitalById(context.slots.hospital.mobileNumber),
