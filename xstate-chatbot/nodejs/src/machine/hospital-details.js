@@ -231,23 +231,17 @@ const hospitalFlow = {
               let message = dialog.get_message(messages.l2UpdateExistingDetails.prompt, context.user.locale);
               message += `\n`;
               message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsOnOxygen.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_support_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_support_l2}\n`;
               message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}\n`;
               message += dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsOnOxygen.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_support_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_support_l2}\n`;
               message += dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_without_support_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_without_support_l2}\n`;
               message += dialog.get_message(messages.l2PreviousTotaldischargedCOVIDPatients.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_l2}\n`;
               message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
-              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}`;
-              message += `\n`;
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}\n`;
               dialog.sendMessage(context, message);
             }),
             target: '#endstate',
@@ -263,8 +257,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.confirmedPreviousCOVIDPatientsOnOxygen.prompt, context.user.locale);
-            message += `\n :: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_support_l2}`;
-            message += `\n`;
+            message += `\n :: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_support_l2}\n`;
             message += dialog.get_message(messages.confirmedCOVIDPatientsOnOxygen.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -309,8 +302,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.confirmedPreviousCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}\n`;
             message += dialog.get_message(messages.confirmedCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -353,8 +345,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_without_support_l2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_without_support_l2}\n`;
             message += dialog.get_message(messages.l2SuspectedCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -397,8 +388,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l2PreviousTotaldischargedCOVIDPatients.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_l2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_l2}\n`;
             message += dialog.get_message(messages.l2TotaldischargedCOVIDPatients.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -444,8 +434,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l2PreviousTotalCOVIDdeaths.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_l2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_l2}\n`;
             message += dialog.get_message(messages.l2TotalCOVIDdeaths.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -496,8 +485,7 @@ const hospitalFlow = {
             let message = dialog.get_message(messages.l2previousAvailableL2OxygenBeds.prompt, context.user.locale);
             message += `\n`;
             message += dialog.get_message(messages.total.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.bed_capacity_L2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.bed_capacity_L2}\n`;
             message += dialog.get_message(messages.l2availableL2OxygenBeds.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -547,8 +535,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsOnOxygen.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_support_l2}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_support_l2}\n`;
             message += dialog.get_message(messages.l2SuspectedCOVIDPatientsOnOxygen.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -632,8 +619,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousBedswithoutVentilators.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.bed_capacity_L3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.bed_capacity_L3}\n`;
             message += dialog.get_message(messages.l3BedswithoutVentilators.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -676,8 +662,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousBedswithVentilators.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.bed_capacity_icu_L3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.bed_capacity_icu_L3}\n`;
             message += dialog.get_message(messages.l3BedswithVentilators.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -727,8 +712,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousPatientsintubatedwithoutVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.no_cases_on_icu_niv_without_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.no_cases_on_icu_niv_without_venti_l3}\n`;
             message += dialog.get_message(messages.l3PatientsintubatedwithoutVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -771,8 +755,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousDischargedPatientswithoutVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_without_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_without_venti_l3}\n`;
             message += dialog.get_message(messages.l3DischargedPatientswithoutVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -815,8 +798,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousTotalDeathswithoutVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_without_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_without_venti_l3}\n`;
             message += dialog.get_message(messages.l3TotalDeathswithoutVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -859,8 +841,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousPatientsICUwithVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.no_cases_on_intubated_invasive_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.no_cases_on_intubated_invasive_venti_l3}\n`;
             message += dialog.get_message(messages.l3PatientsICUwithVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -903,8 +884,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousDischargedPatientswithVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3}\n`;
             message += dialog.get_message(messages.l3DischargedPatientswithVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
@@ -947,8 +927,7 @@ const hospitalFlow = {
         prompt: {
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.l3PreviousDeathswithVentilator.prompt, context.user.locale);
-            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3}`;
-            message += `\n`;
+            message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3} \n`;
             message += dialog.get_message(messages.l3DeathswithVentilator.prompt, context.user.locale);
             dialog.sendMessage(context, message);
           }),
