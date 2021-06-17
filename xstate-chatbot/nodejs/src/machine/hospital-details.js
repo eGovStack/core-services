@@ -19,16 +19,13 @@ const hospitalFlow = {
       initial: 'process',
       states: {
         process: {
-          onEntry: assign((context, event) => {
-            context.slots.hospital.mobileNumber=context.user.mobileNumber;
-            
-          }),
           invoke: {
             src: (context, event) => bedsService.getHospitalsByMobileNumber(context.user.mobileNumber),
             onDone: [
               {
                 cond: (context, event) => event.data.response == '1',
                 actions: assign((context, event) => {
+                  context.slots.hospital.mobileNumber=context.user.mobileNumber;
                   context.slots.hospital.confirmed_cases_on_oxygen_support_l2 = event.data.data[0].confirmed_cases_on_oxygen_support_l2;
                   context.slots.hospital.confirmed_cases_on_oxygen_without_support_l2 = event.data.data[0].confirmed_cases_on_oxygen_without_support_l2;
                   context.slots.hospital.suspected_cases_on_oxygen_support_l2 = event.data.data[0].suspected_cases_on_oxygen_support_l2;
