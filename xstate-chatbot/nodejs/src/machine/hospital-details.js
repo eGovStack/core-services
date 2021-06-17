@@ -84,26 +84,7 @@ const hospitalFlow = {
       id: 'hospitalTypeId',
       initial: 'process',
       states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            let message;
-            if (context.slots.previoushospitaldata.hospital_level_Id == '1') 
-              message = dialog.get_message(messages.L2L3hospitalDetails, context.user.locale);
-            else
-              if (context.slots.previoushospitaldata.hospital_level_Id == '2') 
-               message = dialog.get_message(messages.L2hospitalDetails, context.user.locale);
-            else
-              if (context.slots.previoushospitaldata.hospital_level_Id == '3') 
-              message = dialog.get_message(messages.L3hospitalDetails, context.user.locale);
-              
-              dialog.sendMessage(context, message_3);
-               
-          }),
-          on: {
-            USER_MESSAGE: 'process',
-          },
-        },
-        process: {
+      process: {
           onEntry: assign((context, event) => {
             //context.slots.hospital.mobileNumber=context.user.mobileNumber;
             if (context.slots.previoushospitaldata.hospital_level_Id == '1') {
@@ -138,16 +119,7 @@ const hospitalFlow = {
               cond: (context) => context.validMessage == true,
               target: '#l2l3Hospital',
             },
-            {
-              target: 'error',
-            },
           ],
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.noUserFetch, context.user.locale), false);
-          }),
-          always: 'prompt',
         },
       },
     },//Hospital Type Id 1/2/3 
