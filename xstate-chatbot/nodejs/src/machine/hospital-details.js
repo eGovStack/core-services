@@ -18,13 +18,6 @@ const hospitalFlow = {
       id: 'nodalOfficer',
       initial: 'process',
       states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-          }),
-          on: {
-            USER_MESSAGE: 'process',
-          },
-        },
         process: {
           onEntry: assign((context, event) => {
             context.slots.hospital.mobileNumber=context.user.mobileNumber;
@@ -84,7 +77,6 @@ const hospitalFlow = {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.noUserFetch.prompt, context.user.locale));
           }),
-          always: 'prompt',
         },
       },
     },//Nodal Officer 
