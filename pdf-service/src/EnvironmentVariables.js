@@ -1,9 +1,9 @@
 const envVariables = {
   MAX_NUMBER_PAGES: process.env.MAX_NUMBER_PAGES || 80,
   EGOV_LOCALISATION_HOST:
-    process.env.EGOV_LOCALISATION_HOST || "http://egov-localization:8080",
+    process.env.EGOV_LOCALISATION_HOST || "https://dev.digit.org",
   EGOV_FILESTORE_SERVICE_HOST:
-    process.env.EGOV_FILESTORE_SERVICE_HOST || "http://egov-filestore:8080",
+    process.env.EGOV_FILESTORE_SERVICE_HOST || "https://dev.digit.org",
   SERVER_PORT: process.env.SERVER_PORT || 8080,
 
   KAFKA_BROKER_HOST: process.env.KAFKA_BROKER_HOST || "localhost:9092",
@@ -22,7 +22,7 @@ const envVariables = {
     process.env.DEFAULT_LOCALISATION_LOCALE || "en_IN",
     DEFAULT_LOCALISATION_TENANT:
     process.env.DEFAULT_LOCALISATION_TENANT || "pb",
-    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
-    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
+    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS || "file:///home/shashwat/Documents/egov/configs/pdf-service/data-config/tlcertificate.json",
+    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS || "file:///home/shashwat/Documents/egov/configs/pdf-service/format-config/tlcertificate.json"
 };
 export default envVariables;

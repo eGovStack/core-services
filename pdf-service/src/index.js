@@ -17,6 +17,7 @@ import set from "lodash/set";
 import { strict } from "assert";
 import { Recoverable } from "repl";
 import { fileStoreAPICall } from "./utils/fileStoreAPICall";
+import { certificateSignerAPICall } from "./utils/certificateSignerAPICall";
 import { directMapping } from "./utils/directMapping";
 import { externalAPIMapping } from "./utils/externalAPIMapping";
 import envVariables from "./EnvironmentVariables";
@@ -366,6 +367,12 @@ app.post(
       //
 
       var valid = validateRequest(req, res, key, tenantId, requestInfo);
+      if(req.body.Licenses[0].businessService === 'TL'){
+        //console.log("RECEIVED TL REQUEST !!!!!");
+        var reqBody = await certificateSignerAPICall(req.body);
+        req.body = reqBody;
+        //console.log("#####", reqBody);
+      }
 
       if (valid) {
         let [
@@ -751,6 +758,7 @@ const prepareBegin = async (
 ) => {
   var baseKeyPath = get(dataconfig, "DataConfigs.baseKeyPath");
   var entityIdPath = get(dataconfig, "DataConfigs.entityIdPath");
+  //console.log(req.body);
   if (baseKeyPath == null) {
     logger.error("baseKeyPath is absent in config");
     throw { message: `baseKeyPath is absent in config` };
