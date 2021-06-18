@@ -512,32 +512,31 @@ const hospitalFlow = {
             const message = dialog.get_input(event, false);
             const availableBed = parseInt(message);
             const totalBedCount = parseInt(context.slots.previoushospitaldata.bed_capacity_L2);
-
             if (event.message.type == 'text' && availableBed > totalBedCount)
-              context.isValid = true;
+              context.data='0';
             else
             if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '2' && availableBed <= totalBedCount) {
                context.slots.hospital.bed_vacant_L2 = message;
-               context.isValid = false;
-               context.validMessage = true;
+               context.data='1';
+
              } else
             if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1' && availableBed <= totalBedCount) {
-                context.validMessage = false;
-                context.isValid = false;
                 context.slots.hospital.bed_vacant_L2 = message;
+                context.data='2';
+
                 }
           }),
           always: [
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data=='0',
               target: 'error',
             },
             {
-              cond: (context) => context.validMessage == true,
+              cond: (context) => context.data=='1',
               target: '#l2HospitalUpdate',
             },
             {
-              cond: (context) => context.validMessage == false,
+              cond: (context) => context.data=='2',
               target: '#l3BedswithoutVentilators',
              //target: '#l3HospitalUpdate',
             },
