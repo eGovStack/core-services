@@ -358,7 +358,7 @@ const vitalsFlow = {
               dialog.sendMessage(context, dialog.get_message(messages.notHomeIsolatedPatient, context.user.locale), false);
               context.slots.person.com_status = '0';
               context.slots.person.fateh_kit_delivered = 'NO';
-              context.slots.person.data_source_type ='';
+              context.slots.person.data_source_type = '';
               context.slots.person.rrt = 'NO';
             }),
             target: '#registerPatient',
@@ -910,12 +910,12 @@ const vitalsFlow = {
                 },
                 {
                   actions: assign((context, event) => {
-                  context.slots.vitals.symptoms.respiratoryIssues = context.intention;
+                    context.slots.vitals.symptoms.respiratoryIssues = context.intention;
                   }),
-                  target: '#comorbidities'
-                  
+                  target: '#comorbidities',
+
                 },
-                ],
+              ],
             },
             error: {
               onEntry: assign((context, event) => {

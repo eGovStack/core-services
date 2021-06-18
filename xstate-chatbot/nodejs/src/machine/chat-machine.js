@@ -3,7 +3,7 @@ const dialog = require('./util/dialog.js');
 const covidInfoFlow = require('./covid-info');
 const vitalsFlow = require('./vitals');
 const messages = require('./messages/chat-machine');
-const hospitalFlow = require('./hospital-details')
+const hospitalFlow = require('./hospital-details');
 
 const chatStateMachine = Machine({
   id: 'chatMachine',

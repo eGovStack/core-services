@@ -14,7 +14,7 @@ const messages = {
   },
   l2HospitalUpdate: {
     prompt: {
-      en_IN: 'Is Any Updation Required in the Previous details ? ',
+      en_IN: 'Is Any Updation Required in the Previous data ? ',
       pa_IN: 'ਕੀ ਪਿਛਲੇ ਵੇਰਵਿਆਂ ਵਿੱਚ ਕੋਈ ਅਪਡੇਸ਼ਨ ਲੋੜੀਂਦਾ ਹੈ?',
       hi_IN: 'क्या पिछले विवरण में किसी अद्यतन की आवश्यकता है?',
     },
@@ -32,11 +32,10 @@ const messages = {
   },
   l2UpdateExistingDetails: {
     prompt: {
-      en_IN: 'Updated the Previous details as :',
+      en_IN: 'Updated the Previous data as :',
       pa_IN: 'ਪਿਛਲੇ ਵੇਰਵਿਆਂ ਨੂੰ ਇਸ ਤਰਾਂ ਅਪਡੇਟ ਕਰੋ',
       hi_IN: 'पिछले विवरण को इस प्रकार अपडेट करें',
     },
-
 
   },
   confirmedCOVIDPatientsOnOxygen: {
@@ -122,7 +121,6 @@ const messages = {
       hi_IN: 'पिछला रिकॉर्ड किए गए संदिग्ध COVID रोगियों की संख्या बिना ऑक्सीजन सहायता ',
     },
 
-
   },
   l2TotaldischargedCOVIDPatients: {
     prompt: {
@@ -164,7 +162,6 @@ const messages = {
       pa_IN: 'ਪਿਛਲੇ ਅੱਜ ਤੱਕ ਕੁੱਲ COVID ਮੌਤਾਂ ਨੂੰ ਰਿਕਾਰਡ ਕੀਤਾ ਗਿਆ',
       hi_IN: 'पिछला अब तक कुल COVID मौतों को रिकॉर्ड किया गया है',
     },
-
 
   },
   l2availableL2OxygenBeds: {
@@ -367,12 +364,33 @@ const messages = {
     },
   },
   noUserFetch: {
-      prompt: {
+    prompt: {
       en_IN: 'No Nodal Officer Associated with this number and kindly retry',
       pa_IN: 'ਕੋਈ ਨੋਡਲ ਅਧਿਕਾਰੀ ਇਸ ਨੰਬਰ ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ ਹੈ ਅਤੇ ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
       hi_IN: 'इस नंबर से कोई नोडल अधिकारी संबद्ध नहीं है और कृपया पुनः प्रयास करें',
     },
 
+  },
+  comparedAvailableOxygenBeds: {
+    prompt: {
+      en_IN: 'Available L2 Oxygen beds should not exceed from Total L2 Oxygen beds',
+      pa_IN: 'ਉਪਲੱਬਧ L2 ਆਕਸੀਜਨ ਬਿਸਤਰੇ ਕੁਲ L2 ਆਕਸੀਜਨ ਬਿਸਤਰੇ ਤੋਂ ਵੱਧ ਨਹੀਂ ਹੋਣੇ ਚਾਹੀਦੇ',
+      hi_IN: 'उपलब्ध L2 ऑक्सीजन बेड कुल L2 ऑक्सीजन बेड से अधिक नहीं होने चाहिए',
+    },
+  },
+  comparedAvailableBedsWithOutVent: {
+    prompt: {
+      en_IN: 'Available L3 Beds without ventilators should not exceed from Total L3 Beds without ventilators',
+      pa_IN: 'ਵੈਂਟੀਲੇਟਰਾਂ ਤੋਂ ਬਿਨਾਂ ਉਪਲੱਬਧ ਐਲ 3 ਬੈੱਡ ਵੈਂਟੀਲੇਟਰਾਂ ਤੋਂ ਬਿਨਾਂ ਕੁੱਲ ਐਲ 3 ਬੈੱਡਾਂ ਤੋਂ ਵੱਧ ਨਹੀਂ ਹੋਣੇ ਚਾਹੀਦੇ',
+      hi_IN: 'बिना वेंटिलेटर के उपलब्ध L3 बेड बिना वेंटिलेटर के कुल L3 बेड से अधिक नहीं होने चाहिए',
+    },
+  },
+  comparedAvailableBedsWithVent: {
+    prompt: {
+      en_IN: 'Available L3 Beds with ventilators should not exceed from Total L3 Beds with ventilators',
+      pa_IN: 'ਵੈਂਟੀਲੇਟਰਾਂ ਵਾਲੇ ਉਪਲਬਧ ਐਲ 3 ਬੈੱਡ ਵੈਂਟੀਲੇਟਰਾਂ ਵਾਲੇ ਕੁੱਲ ਐਲ 3 ਬੈੱਡਾਂ ਤੋਂ ਵੱਧ ਨਹੀਂ ਹੋਣੇ ਚਾਹੀਦੇ',
+      hi_IN: 'वेंटिलेटर के साथ उपलब्ध L3 बेड वेंटिलेटर वाले कुल L3 बेड से अधिक नहीं होने चाहिए',
+    },
   },
 
 };

@@ -28,7 +28,7 @@ const messages = {
         hi_IN: 'इस चैटबॉट से आप बिस्तरों की उपलब्धता, टीकाकरण केंद्र, विजय किट और घर में एकांतवास में स्वयं की देखभाल और अन्य महत्वपूर्ण जानकारी प्राप्त कर सकते हैं। आप खुद को घरेलू आइसोलेशन रोगी के रूप में भी पंजीकृत कर सकते हैं और आपके COVID-19 संबंधित लक्षणों को दर्ज किया जाएगा। जरूरत पड़ने पर स्वास्थ्य विभाग की टीम आपके रजिस्टर्ड नंबर पर आपसे संपर्क करेगी।\n\nआप क्या करना पसंद करेंगे?',
       },
       options: {
-        list: ['covidInfo', 'addVitals', 'rrt', 'rmo','bedsavailability'],
+        list: ['covidInfo', 'addVitals', 'rrt', 'rmo', 'bedsavailability'],
         messageBundle: {
           covidInfo: {
             en_IN: 'Get information about Covid',

@@ -8,5 +8,4 @@ if (config.serviceProvider == 'Dummy') {
   module.exports.personService = require('./cova-person-service');
   module.exports.vitalsService = require('./cova-vitals-service');
   module.exports.bedsService = require('./cova-beds-service');
-
 }
