@@ -190,6 +190,51 @@ const hospitalFlow = {
         },
       },
     },// Consent for updating L2 Hospital Details
+    l1HospitalUpdate: {
+      id: 'l1HospitalUpdate',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            context.grammer = grammers.binaryChoice.grammer;
+            let message = dialog.get_message(messages.l2HospitalUpdate.prompt, context.user.locale);
+            message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+            dialog.sendMessage(context, message);
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            context.intention = dialog.get_intention(context.grammer, event, true);
+          }),
+          invoke: {
+            src: (context, event) => bedsService.getHospitalsByMobileNumber(context.slots.hospital.mobileNumber),
+            onDone: [
+              {
+                cond: (context, event) => context.intention === 'YES',
+                target: '#l2ConfirmedCOVIDPatientsOnOxygen',
+              },
+              {
+                cond: (context, event) => context.intention === 'NO',
+                target: '#l1UpdateExistingDetails',
+              },
+              {
+                cond: (context, event) => context.intention === 'INTENTION_UKNOWN',
+                target: 'error',
+              },
+            ],
+          },
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.l2HospitalUpdate.error, context.user.locale), false);
+          }),
+          always: 'prompt',
+        },
+      },
+    },// Consent for updating L2 Hospital Details
     l2UpdateExistingDetails: {
       id: 'l2UpdateExistingDetails',
       invoke: {
@@ -464,18 +509,29 @@ const hospitalFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '2') {
-              const message = dialog.get_input(event, false);
-              context.slots.hospital.bed_vacant_L2 = message;
-              context.validMessage = true;
-            } else
-              if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1') {
-                const message = dialog.get_input(event, false);
+            const message = dialog.get_input(event, false);
+            const availableBed = parseInt(message);
+            const totalBedCount = parseInt(context.slots.previoushospitaldata.bed_capacity_L2);
+
+            if (event.message.type == 'text' && availableBed > totalBedCount)
+              context.isValid = true;
+            else
+            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '2' && availableBed <= totalBedCount) {
+               context.slots.hospital.bed_vacant_L2 = message;
+               context.isValid = false;
+               context.validMessage = true;
+             } else
+            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1' && availableBed <= totalBedCount) {
                 context.validMessage = false;
+                context.isValid = false;
                 context.slots.hospital.bed_vacant_L2 = message;
-              }
+                }
           }),
           always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: 'error',
+            },
             {
               cond: (context) => context.validMessage == true,
               target: '#l2HospitalUpdate',
@@ -483,6 +539,7 @@ const hospitalFlow = {
             {
               cond: (context) => context.validMessage == false,
               target: '#l3BedswithoutVentilators',
+             //target: '#l3HospitalUpdate',
             },
             {
               target: 'error',
@@ -491,7 +548,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+          dialog.sendMessage(context, dialog.get_message(messages.comparedAvailableOxygenBeds.prompt, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -556,6 +613,118 @@ const hospitalFlow = {
 
       },
     },//update L2 existing Details of hospital
+    l3HospitalUpdate: {
+      id: 'l3HospitalUpdate',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            context.grammer = grammers.binaryChoice.grammer;
+            let message = dialog.get_message(messages.l2HospitalUpdate.prompt, context.user.locale);
+            message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
+            dialog.sendMessage(context, message);
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            context.intention = dialog.get_intention(context.grammer, event, true);
+          }),
+          always: [
+            {
+              cond: (context, event) => context.intention === 'YES',
+              target: '#l3PatientsintubatedwithoutVentilator',
+            },
+            {
+              cond: (context, event) => context.intention === 'NO',
+              target: '#l3UpdateExistingDetails',
+            },
+            {
+              cond: (context) => context.grammer == dialog.INTENTION_UNKOWN,
+              target: 'error',
+            },
+           ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.l2HospitalUpdate.error, context.user.locale), false);
+          }),
+          always: 'prompt',
+        },
+      },
+    },// Consent for updating L3 Hospital Details
+    l1UpdateExistingDetails: {
+      id: 'l1UpdateExistingDetails',
+      invoke: {
+        src: (context) => bedsService.updatehospitaldata(context.slots.hospital),
+        onDone: [
+          {
+            actions: assign((context, event) => {
+              let message = dialog.get_message(messages.l2UpdateExistingDetails.prompt, context.user.locale);
+              message += `\n`;
+              message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsOnOxygen.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_support_l2}\n`;
+              message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}\n`;
+              message += dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsOnOxygen.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_support_l2}\n`;
+              message += dialog.get_message(messages.l2PreviousSuspectedCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.suspected_cases_on_oxygen_without_support_l2}\n`;
+              message += dialog.get_message(messages.l2PreviousTotaldischargedCOVIDPatients.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_l2}\n`;
+              message += dialog.get_message(messages.confirmedPreviousCOVIDPatientsWithoutOxygen.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.confirmed_cases_on_oxygen_without_support_l2}\n`;
+              message += dialog.get_message(messages.l3PreviousPatientsintubatedwithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.no_cases_on_icu_niv_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDischargedPatientswithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousTotalDeathswithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousPatientsICUwithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.no_cases_on_intubated_invasive_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDischargedPatientswithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDeathswithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3}\n`;
+              dialog.sendMessage(context, message);
+            }),
+            target: '#endstate',
+          },
+        ],
+
+      },
+    },//update L3 existing Details of hospital
+    l3UpdateExistingDetails: {
+      id: 'l3UpdateExistingDetails',
+      invoke: {
+        src: (context) => bedsService.updatehospitaldata(context.slots.hospital),
+        onDone: [
+          {
+            actions: assign((context, event) => {
+              let message = dialog.get_message(messages.l2UpdateExistingDetails.prompt, context.user.locale);
+              message += `\n`;
+              message += dialog.get_message(messages.l3PreviousPatientsintubatedwithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.no_cases_on_icu_niv_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDischargedPatientswithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousTotalDeathswithoutVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_without_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousPatientsICUwithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.no_cases_on_intubated_invasive_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDischargedPatientswithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3}\n`;
+              message += dialog.get_message(messages.l3PreviousDeathswithVentilator.prompt, context.user.locale);
+              message += `:: ${context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3}\n`;
+              dialog.sendMessage(context, message);
+            }),
+            target: '#endstate',
+          },
+        ],
+
+      },
+    },//update L3 existing Details of hospital
     l3Hospital: {
       id: 'l3Hospital',
       initial: 'process',
@@ -575,12 +744,12 @@ const hospitalFlow = {
             },
             {
               cond: (context) => context.isValid == true,
-              target: '#l3PatientsintubatedwithoutVentilator',
+              target: '#l3HospitalUpdate',
             },
           ],
         },
       },
-    },// L2 Hospital comparing time slots
+    },// L3 Hospital comparing time slots
     l3BedswithoutVentilators: {
       id: 'l3BedswithoutVentilators',
       initial: 'prompt',
@@ -598,18 +767,31 @@ const hospitalFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            if (event.message.type == 'text') {
-              const message = dialog.get_input(event, false);
+            const message = dialog.get_input(event, false);
+            const availableBedWithoutVent = parseInt(message);
+            const totalBedCountWithoutVent = parseInt(context.slots.previoushospitaldata.bed_capacity_L3);
+
+            if (event.message.type == 'text' && availableBedWithoutVent > totalBedCountWithoutVent)
+              context.isValid = true;
+            else
+            if (event.message.type == 'text' && availableBedWithoutVent <= totalBedCountWithoutVent) {
               context.slots.hospital.bed_vacant_L3 = message;
+              context.isValid = false;
               context.validMessage = true;
             } else {
               context.validMessage = false;
+              context.isValid = false;
             }
           }),
           always: [
             {
               cond: (context) => context.validMessage,
               target: '#l3BedswithVentilators',
+
+            },
+            {
+              cond: (context) => context.isValid==true,
+              target: 'error',
             },
             {
               target: 'error',
@@ -618,7 +800,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+          dialog.sendMessage(context, dialog.get_message(messages.comparedAvailableBedsWithOutVent.prompt, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -641,25 +823,38 @@ const hospitalFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '3') {
+            const message = dialog.get_input(event, false);
+            const availableBedWithVent = parseInt(message);
+            const totalBedCountWithVent = parseInt(context.slots.previoushospitaldata.bed_capacity_icu_L3);
+            if (event.message.type == 'text' && availableBedWithVent > totalBedCountWithVent)
+              context.isValid = true;
+            else
+            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '3' && availableBedWithVent <= totalBedCountWithVent) {
               const message = dialog.get_input(event, false);
               context.slots.hospital.bed_capacity_icu_L3 = message;
               context.validMessage = true;
+              context.isValid = false;
+
             } else
-              if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1') {
-                {
+            if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1') 
+            {
                   context.validMessage = false;
+                  context.isValid = false;
                 }
-              }
+             
           }),
           always: [
             {
+              cond: (context) => context.isValid == true,
+              target: 'error',
+            },
+            {
               cond: (context) => context.validMessage == true,
-              target: '#l3PatientsintubatedwithoutVentilator',
+              target: '#l3HospitalUpdate',
             },
             {
               cond: (context) => context.validMessage == false,
-              target: '#l2ConfirmedCOVIDPatientsOnOxygen',
+              target:'#l1HospitalUpdate'
             },
             {
               target: 'error',
@@ -668,7 +863,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.comparedAvailableBedsWithVent.prompt, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -711,7 +906,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3PatientsintubatedwithoutVentilator.prompt, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -754,7 +949,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3DischargedPatientswithoutVentilator.error, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -797,7 +992,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3TotalDeathswithoutVentilator.error, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -840,7 +1035,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3PatientsICUwithVentilator.error, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -883,7 +1078,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3DischargedPatientswithVentilator.error, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -926,7 +1121,7 @@ const hospitalFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.l2TotalCOVIDdeaths.error, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.l3DeathswithVentilator.error, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -951,12 +1146,13 @@ const hospitalFlow = {
             },
             {
               cond: (context) => context.isValid == true,
-              target: '#l3BedswithoutVentilators',
+              target: '#l1HospitalUpdate',
             },
           ],
         },
       },
     },// L2L3 Hospital comparing time slots
+    
 
   },
 };
