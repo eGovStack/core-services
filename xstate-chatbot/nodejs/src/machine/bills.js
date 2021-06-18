@@ -553,7 +553,7 @@ let messages = {
   billServices: {
     question: {
       preamble: {
-        en_IN: 'Please type and send the number for your option👇\n\n1.Yes\n2.No',
+        en_IN: 'Please type and send the number for your option👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
       confirmation:{

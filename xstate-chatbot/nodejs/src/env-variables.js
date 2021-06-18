@@ -23,6 +23,7 @@ const envVariables = {
 
     dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
     timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
+    msgId: process.env.MSG_ID || '20170310130900',
 
     postgresConfig: {
         dbHost: process.env.DB_HOST || 'localhost',
@@ -110,7 +111,7 @@ const envVariables = {
 
     billsAndReceiptsUseCase: {
         billSearchLimit: process.env.BILL_SEARCH_LIMIT || 3,
-        receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 1,
+        receiptSearchLimit: process.env.RECEIPT_SEARCH_LIMIT || 3,
 
         billSupportedModules: process.env.BILL_SUPPORTED_MODULES || 'WS, PT',
 

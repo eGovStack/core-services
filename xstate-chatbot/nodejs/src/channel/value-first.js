@@ -9,11 +9,11 @@ var geturl = require("url");
 var path = require("path");
 require('url-search-params-polyfill');
 
-let valueFirstRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[]}";
+let valueFirstRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@PASSWORD\":\"\",\"@UNIXTIMESTAMP\":\"\",\"@CH_TYPE\":\"4\"},\"DLR\":{\"@URL\":\"\"},\"SMS\":[]}";
 
-let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
+let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"1\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
-let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
+let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"4\",\"@MEDIADATA\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
 let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
@@ -92,7 +92,7 @@ class ValueFirstWhatsAppProvider {
             input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
         } 
         else if(type === 'image'){
-            var imageInBase64String = requestBody.media_data;
+            var imageInBase64String = requestBody.MediaData;
             input = await this.convertFromBase64AndStore(imageInBase64String);
         }
         else if(type === 'unknown' || type === 'document')
@@ -180,13 +180,13 @@ class ValueFirstWhatsAppProvider {
         let response = await fetch(url,options);
         response = await(response).json();
         var fileURL = response['fileStoreIds'][0]['url'].split(",");
-        var fileName = geturl.parse(fileURL[0]);
+        /*var fileName = geturl.parse(fileURL[0]);
         fileName = path.basename(fileName.pathname);
         fileName = fileName.substring(13);
         await this.downloadImage(fileURL[0].toString(),fileName);
         const file = fs.readFileSync(fileName,'base64');
-        fs.unlinkSync(fileName);
-        return file;
+        fs.unlinkSync(fileName);*/
+        return fileURL[0].toString();
     }
 
     async getTransformedResponse(user, messages, extraInfo){
@@ -223,7 +223,7 @@ class ValueFirstWhatsAppProvider {
                 let fileStoreId;
                 if(message)
                     fileStoreId = message;
-                const base64Image = await this.getFileForFileStoreId(fileStoreId);
+                var fileURL = await this.getFileForFileStoreId(fileStoreId);
                 var uniqueImageMessageId = uuid();
                 messageBody = JSON.parse(imageMessageBody);
                 if(type === 'pdf'){
@@ -231,7 +231,7 @@ class ValueFirstWhatsAppProvider {
                     messageBody['@CONTENTTYPE'] = 'application/pdf';
                     messageBody['@CAPTION'] = extraInfo.fileName+'-'+Date.now();
                 }
-                messageBody['@TEXT'] = base64Image;
+                messageBody['@MEDIADATA'] = fileURL;
                 messageBody['@ID'] = uniqueImageMessageId;
 
             }

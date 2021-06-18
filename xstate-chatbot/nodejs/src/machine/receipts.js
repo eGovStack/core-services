@@ -1,6 +1,7 @@
 const { assign } = require('xstate');
 const { receiptService } = require('./service/service-loader');
 const dialog = require('./util/dialog');
+const pdfService = require('./util/pdf-service');
 
 
 const receipts = {
@@ -21,6 +22,7 @@ const receipts = {
               let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
               let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
               context.grammer = grammer;
+              prompt = prompt.replace(/\n/g,"\n\n");
               dialog.sendMessage(context, `${preamble}${prompt}` , true);
             }),
             on: {
@@ -38,7 +40,7 @@ const receipts = {
               },
 
               {
-                target: '#trackReceipts',
+                target: '#receiptSlip',
                 actions: assign((context, event) => {
                   context.receipts.slots.service = context.intention;
                 }),
@@ -58,7 +60,7 @@ const receipts = {
           } 
         }
       },
-      trackReceipts:{
+     /* trackReceipts:{
         id:'trackReceipts',
         initial:'start',
         states:{
@@ -96,7 +98,7 @@ const receipts = {
           },
           
         },
-      },
+      },*/
       receiptSlip:{
         id:'receiptSlip',
         initial:'start',
@@ -113,9 +115,12 @@ const receipts = {
               },
               onDone:[
                 {
-                  cond:(context,event)=>{
-                    return event.data.length>0
+                  cond: (context, event) => {
+                    return ( event .data && event.data.length>0);
                   },
+                  actions: assign((context, event) => {
+                    context.receipts.slots.searchresults = event.data;
+                  }),
                   target: 'listofreceipts',
                 },
                 {
@@ -139,50 +144,25 @@ const receipts = {
           },
           listofreceipts:{
             onEntry: assign((context, event) => {
+              let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
+              let businessService = context.receipts.slots.service;
+              let receiptServiceName = dialog.get_message(messageBundle[businessService],context.user.locale);
               let receipts=context.receipts.slots.searchresults;
-              let message='';
-              let isValid = receipts.length === 1;
-              context.message = {
-                isValid: isValid,
-              };
-              if(receipts.length===1){
-                let receipt = receipts[0];
-                let message=dialog.get_message(messages.receiptSlip.listofreceipts.singleRecord,context.user.locale);
-                message = message.replace('{{service}}', receipt.service);
-                message = message.replace('{{id}}', receipt.id);
-                message = message.replace('{{locality}}', receipt.locality);
-                message = message.replace('{{city}}', receipt.city);
-                message = message.replace('{{date}}', receipt.date);
-                message = message.replace('{{amount}}', receipt.amount);
-                message = message.replace('{{transactionNumber}}', receipt.transactionNumber);
-                message = message.replace('{{receiptDocumentLink}}', receipt.receiptDocumentLink);
-                dialog.sendMessage(context, message, false);
-              }else {
-                message = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService, context.user.locale);
-                for(let i = 0; i < receipts.length; i++) {
-                  let receipt = receipts[i];
-                  let receiptTemplate = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService.receiptTemplate, context.user.locale);
-                  receiptTemplate = receiptTemplate.replace('{{id}}', receipt.id);
-                  receiptTemplate = receiptTemplate.replace('{{locality}}', receipt.locality);
-                  receiptTemplate = receiptTemplate.replace('{{city}}', receipt.city);
-                  message += '\n\n';
-                  message += (i + 1) + '. ';
-                  message += receiptTemplate;
-                }
-                let message1 = dialog.get_message(messages.receiptNumber.question, context.user.locale);
+              let message = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService, context.user.locale);
+              message = message.replace('{{service records}}', receiptServiceName);
+              for(let i = 0; i < receipts.length; i++) {
+                let receipt = receipts[i];
+                let receiptTemplate = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService.receiptTemplate, context.user.locale);
+                receiptTemplate = receiptTemplate.replace('{{id}}', receipt.id);
+                receiptTemplate = receiptTemplate.replace('{{locality}}', receipt.locality);
+                receiptTemplate = receiptTemplate.replace('{{city}}', receipt.city);
                 message += '\n\n';
-                message+=message1;
-                dialog.sendMessage(context, message, true);
+                message += (i + 1) + '. ';
+                message += receiptTemplate;
               }
-              
+              dialog.sendMessage(context, message, true);
             }),
             always:[
-              {
-                target:'#paramReceiptInputInitiate',
-                cond: (context, event) => {
-                  return  context.message.isValid;
-                }
-              },
               {
                 target:'#receiptNumber',
 
@@ -198,8 +178,64 @@ const receipts = {
           //context.chatInterface.toUser(context.user, message);
           dialog.sendMessage(context, message, false);
         }),
-        always:'#searchReceptInitiate'
+        always:'#openSearchInititate'
       },
+
+      openSearchInititate: {
+        id: 'openSearchInititate',
+        initial: 'question',
+        states: {
+          question: {
+            onEntry: assign((context, event) => {
+              let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+              context.receipts.slots.searchParamOption = searchOptions[0];
+              let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+  
+              let message = dialog.get_message(messages.searchParams.question.confirmation, context.user.locale);
+              message = message + "\n"+dialog.get_message(messages.searchParams.question.preamble, context.user.locale);;
+              message = message.replace('{{searchOption}}', optionMessage);
+              dialog.sendMessage(context, message);
+  
+            }),
+            on: {
+              USER_MESSAGE: 'process'
+            }    
+          },
+          process: {
+            onEntry: assign((context, event) => {
+              if(dialog.validateInputType(event, 'text'))
+                context.intention = dialog.get_intention(grammer.confirmation.choice, event, true);
+              else
+                context.intention = dialog.INTENTION_UNKOWN;
+            }),
+            always: [
+              {
+                target: '#paramReceiptInput',
+                cond: (context) => context.intention == 'Yes'
+              },
+              {
+                target: '#lastState',
+                actions: assign((context, event) => {
+                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));   
+                }),
+                cond: (context) => context.intention == 'No',
+              },
+              {
+                target: 'error'
+              }
+            ]
+          },
+          error: {
+            onEntry: assign( (context, event) => {
+              dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+            }),
+            always : 'question'
+          }
+        }
+      },
+
+
       searchReceptInitiate:{
         id:'searchReceptInitiate',
         initial:'receiptQuestion',
@@ -321,9 +357,7 @@ const receipts = {
               let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
               let message = dialog.get_message(messages.paramInput.question, context.user.locale);
               let optionMessage = dialog.get_message(option, context.user.locale);
-              let exampleMessage = dialog.get_message(example, context.user.locale);
               message = message.replace('{{option}}', optionMessage);
-              message = message.replace('{{example}}', exampleMessage);
               dialog.sendMessage(context, message , true);
             }),
             on: {
@@ -422,48 +456,34 @@ const receipts = {
           results:{
             onEntry: assign((context, event) => {
               let receipts=context.receipts.slots.searchresults;
-              let message='';
-              let isValid = receipts.length === 1;
-              context.message = {
-                isValid: isValid,
-              };
-              if(receipts.length===1){
-                let receipt = receipts[0];
-                let message=dialog.get_message(messages.receiptSearchResults.results.singleRecord,context.user.locale);
-                message = message.replace('{{service}}', receipt.service);
-                message = message.replace('{{id}}', receipt.id);
-                message = message.replace('{{locality}}', receipt.locality);
-                message = message.replace('{{city}}', receipt.city);
-                message = message.replace('{{date}}', receipt.date);
-                message = message.replace('{{amount}}', receipt.amount);
-                message = message.replace('{{transactionNumber}}', receipt.transactionNumber);
-                message = message.replace('{{receiptDocumentLink}}', receipt.receiptDocumentLink);
-                dialog.sendMessage(context, message , false);
-              }else {
-                message = dialog.get_message(messages.receiptSearchResults.results.multipleRecordsSameService, context.user.locale);
-                for(let i = 0; i < receipts.length; i++) {
-                  let receipt = receipts[i];
-                  let receiptTemplate = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService.receiptTemplate, context.user.locale);
-                  receiptTemplate = receiptTemplate.replace('{{id}}', receipt.id);
-                  receiptTemplate = receiptTemplate.replace('{{locality}}', receipt.locality);
-                  receiptTemplate = receiptTemplate.replace('{{city}}', receipt.city);
-                  message += '\n\n';
-                  message += (i + 1) + '. ';
-                  message += receiptTemplate;
-                }
-                dialog.sendMessage(context, message ,true);
+
+              let message = dialog.get_message(messages.mobileLinkage.notLinked.resultHeader, context.user.locale);
+              dialog.sendMessage(context, message , false);
+
+              let receiptMessage = dialog.get_message(messages.multipleRecordReceipt.header, context.user.locale);
+              receiptMessage = receiptMessage.replace('{{date}}', dialog.get_message(messages.multipleRecordReceipt.header.date,context.user.locale));
+              receiptMessage = receiptMessage.replace('{{amount}}', dialog.get_message(messages.multipleRecordReceipt.header.amount,context.user.locale));
+              receiptMessage = receiptMessage.replace('{{status}}', dialog.get_message(messages.multipleRecordReceipt.header.status,context.user.locale));
+
+              for(let i = 0; i < receipts.length; i++) {
+                let receipt = receipts[i];
+                let receiptTemplate = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts.receiptTemplate, context.user.locale);
+                receiptTemplate = receiptTemplate.replace('{{amount}}', "₹ "+receipt.amount);
+                receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
+                receiptTemplate = receiptTemplate.replace('{{status}}', dialog.get_message(messages.multipleRecordReceipt.header.paid,context.user.locale));
+
+                receiptMessage += '\n';
+                receiptMessage += receiptTemplate;
               }
+              dialog.sendMessage(context, receiptMessage ,true);
               
             }),
             always:[
               {
-                target:'#paramReceiptInputInitiate',
-                cond: (context, event) => {
-                  return  context.message.isValid;
-                }
-              },
-              {
-                target:'#receiptNumber'
+                target:'#lastState',
+                actions: assign((context, event) => {
+                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));   
+                }),
               }
             ]
           },
@@ -500,7 +520,7 @@ const receipts = {
                 }
               },
               {
-                target: '#serviceMenu'
+                target: '#pdfReceiptList'
               }
             ]
           },
@@ -575,7 +595,7 @@ const receipts = {
                 if(context.receipts.slots.searchresults)
                   consumerCode = context.receipts.slots.searchresults[receiptIndex-1].id;
                   businessService = context.receipts.slots.searchresults[receiptIndex-1].businessService;
-                return receiptService.multipleRecordReceipt(context.user,businessService,consumerCode);
+                return receiptService.multipleRecordReceipt(context.user,businessService,consumerCode,null,false);
               },
               onDone:[
                 {
@@ -601,43 +621,27 @@ const receipts = {
           },
           receipts:{
             onEntry:assign((context,event)=>{
-              let receipts=context.receipts.slots.multipleRecordReceipt;
-              let message='';
-              if(receipts.length===1){
-                let receipt = receipts[0];
-                let message=dialog.get_message(messages.multipleRecordReceipt.singleReceipt,context.user.locale);
-                message = message.replace('{{service}}', receipt.service);
-                message = message.replace('{{id}}', receipt.id);
-                message = message.replace('{{locality}}', receipt.locality);
-                message = message.replace('{{city}}', receipt.city);
-                message = message.replace('{{date}}', receipt.date);
-                message = message.replace('{{amount}}', receipt.amount);
-                message = message.replace('{{transactionNumber}}', receipt.transactionNumber);
-                message = message.replace('{{receiptDocumentLink}}', receipt.receiptDocumentLink);
-                dialog.sendMessage(context, message , false);
-              }else {
-                let receiptLength =receipts.length;
-                message = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts, context.user.locale);
-                message = message.replace('{{service}}', receipts[0].service);
-                message = message.replace('{{id}}', receipts[0].id);
-                message = message.replace('{{locality}}', receipts[0].locality);
-                message = message.replace('{{city}}', receipts[0].city);
-                message = message.replace('{{count}}', receiptLength);
-                for(let i = 0; i < receipts.length; i++) {
-                  let receipt = receipts[i];
-                  let receiptTemplate = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts.receiptTemplate, context.user.locale);
-                  receiptTemplate = receiptTemplate.replace('{{amount}}', receipt.amount);
-                  receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
-                  receiptTemplate = receiptTemplate.replace('{{transactionNumber}}', receipt.transactionNumber);
-                  receiptTemplate = receiptTemplate.replace('{{receiptDocumentLink}}', receipt.receiptDocumentLink);
+              let receipts = context.receipts.slots.multipleRecordReceipt;
+
+              let message = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts, context.user.locale);
+              dialog.sendMessage(context, message , false);
+                
+              let receiptMessage = dialog.get_message(messages.multipleRecordReceipt.header, context.user.locale);
+              receiptMessage = receiptMessage.replace('{{date}}', dialog.get_message(messages.multipleRecordReceipt.header.date,context.user.locale));
+              receiptMessage = receiptMessage.replace('{{amount}}', dialog.get_message(messages.multipleRecordReceipt.header.amount,context.user.locale));
+              receiptMessage = receiptMessage.replace('{{status}}', dialog.get_message(messages.multipleRecordReceipt.header.status,context.user.locale));
+              for(let i = 0; i < receipts.length; i++) {
+                let receipt = receipts[i];
+                let receiptTemplate = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts.receiptTemplate, context.user.locale);
+                receiptTemplate = receiptTemplate.replace('{{amount}}', "₹ "+receipt.amount);
+                receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
+                receiptTemplate = receiptTemplate.replace('{{status}}', dialog.get_message(messages.multipleRecordReceipt.header.paid,context.user.locale));
     
-                  message += '\n\n';
-                  message += (i + 1) + '. ';
-                  message += receiptTemplate;
-                }
-                //context.chatInterface.toUser(context.user,message);
-                dialog.sendMessage(context, message , false);
+                receiptMessage += '\n';
+                receiptMessage += receiptTemplate;
               }
+                //context.chatInterface.toUser(context.user,message);
+              dialog.sendMessage(context, receiptMessage , false);
 
             }),
             always:[
@@ -648,10 +652,7 @@ const receipts = {
             ]
 
           }
-        },
-
-
-        
+        }, 
       },
       serviceMenu: {
         id: 'serviceMenu',
@@ -703,6 +704,154 @@ const receipts = {
           } 
         }
       },
+      pdfReceiptList: {
+        id: 'pdfReceiptList',
+        initial: 'invoke',
+        states:{
+          invoke:{
+            onEntry: assign( (context, event) => {
+              let receiptList = [];
+              let message  = dialog.get_message(messages.pdfReceiptList,context.user.locale);
+              let receipts = context.receipts.slots.multipleRecordReceipt;
+              if(receipts.length == 1)
+                receiptList.push(receipts);
+              else
+                receiptList = receipts;
+              
+              for(let i = 0; i < receiptList.length; i++){
+                let receipt = receipts[i];
+                let receiptTemplate = dialog.get_message(messages.pdfReceiptList.receiptTemplate, context.user.locale);
+                receiptTemplate = receiptTemplate.replace('{{amount}}', receipt.amount);
+                receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
+
+                message += '\n\n';
+                message += (i + 1) + '. ';
+                message += receiptTemplate;
+              }
+
+              dialog.sendMessage(context, message , true);
+            }),
+            on: {
+              USER_MESSAGE: 'process'
+            }
+
+          },
+          process: {
+            onEntry: assign((context, event) => {
+              let parsed = parseInt(event.message.input.trim());
+              let isValid = (parsed >= 1 && parsed <= context.receipts.slots.multipleRecordReceipt.length);
+              context.message = {
+                isValid: isValid,
+                messageContent: event.message.input
+              };
+              context.receipts.slots.receiptNumber=parsed;
+            }),
+            always: [
+              {
+                target: '#receiptPdf',
+                cond: (context, event) => {
+                  return context.message.isValid;
+                }
+              },
+              {
+                target: 'error',
+                cond: (context, event) => {
+                  return !context.message.isValid;
+                }
+              }
+            ]
+          },
+          error: {
+            onEntry: assign( (context, event) => {
+              let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
+              dialog.sendMessage(context, message , false);
+            }),
+            always : 'invoke'
+          }
+        }
+
+      },
+      receiptPdf:{
+        id:"receiptPdf",
+        initial:'start',
+        states:{
+          start:{
+            onEntry: assign((context, event) => {
+              (async() => {
+                var receiptIndex = context.receipts.slots.receiptNumber;
+                let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
+                
+                var consumerCode, businessService, transactionNumber
+                if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
+                  context.receipts.slots.fileStoreId = receiptData.fileStoreId;
+                }
+                else {
+                  consumerCode = receiptData.id;
+                  businessService = receiptData.businessService;
+                  transactionNumber = receiptData.transactionNumber;
+                  context.extraInfo.fileName = consumerCode;
+
+                  let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
+                  context.receipts.slots.fileStoreId = await pdfService.generatePdf(businessService, payment, context.user.locale, context.user.authToken, context.user.userInfo);
+                }
+
+                var pdfContent = {
+                  output: context.receipts.slots.fileStoreId,
+                  type: "pdf",
+                };
+                dialog.sendMessage(context, pdfContent);
+
+                let message = dialog.get_message(messages.lastState.template,context.user.locale);
+                message = message.replace('{{id}}',receiptData.id);
+                message = message.replace('{{amount}}',receiptData.amount);
+                message = message.replace('{{date}}',receiptData.date);
+                dialog.sendMessage(context, message);
+                dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));   
+              })();
+            }),
+            always:[
+              {
+                target:'#lastState',
+
+              }
+            ]
+
+            
+          },
+          
+        }
+
+      },
+      lastState: {
+        id: 'lastState',
+        initial: 'invoke',
+        states:{
+          invoke:{
+            onEntry: assign((context, event) => {}),
+            on: {
+              USER_MESSAGE: 'process'
+            }
+          },
+          process: {
+            onEntry: assign((context, event) => {
+              var isValid = event.message.input.trim().toLowerCase() == 'mseva'
+              context.receipts.slots.validInput = isValid;
+
+            }),
+            always: {
+                target: 'invoke',
+                cond: (context, event) => {
+                  return !context.receipts.slots.validInput;
+                }
+            }
+            
+
+          }
+        }  
+        
+
+      }
+
     }//receipts.states
 };
 
@@ -727,8 +876,8 @@ let messages = {
   },
   receiptSlip:{
     not_found:{
-      en_IN:'There are no records found linked to your mobile number',
-      hi_IN: 'आपके मोबाइल नंबर से जुड़े कोई रिकॉर्ड नहीं मिले हैं'
+      en_IN:'Sorry 😥 !  Your mobile number is not linked to selected service.',
+      hi_IN: 'सॉरी 😥 ! आपका मोबाइल नंबर चयनित सेवा से लिंक नहीं है।'
     },
     error:{
       en_IN:'Sorry. Some error occurred on server.',
@@ -740,7 +889,7 @@ let messages = {
         hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
       },
       multipleRecordsSameService: {
-        en_IN: 'Following <service records> records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
+        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
           en_IN: 'Consumer Number - {{id}}\nLocality: {{locality}} , {{city}}',
@@ -764,14 +913,22 @@ let messages = {
   mobileLinkage:{
     notLinked: {
       en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\nPlease contact your nearest municipality office to link the number.\n\n👉 You can still proceed to search payment history by using your account information.',
-      hi_IN: 'ऐसा लगता है कि आपके द्वारा उपयोग किया जा रहा मोबाइल नंबर {{service}} सेवा से लिंक नहीं है। कृपया अपने खाता नंबर को {{service}} सेवा से जोड़ने के लिए शहरी स्थानीय निकाय पर जाएँ। फिर भी आप अपनी खाता जानकारी खोजकर सेवा का लाभ उठा सकते हैं।'
+      hi_IN: 'ऐसा लगता है कि आपके द्वारा उपयोग किया जा रहा मोबाइल नंबर {{service}} सेवा से लिंक नहीं है। कृपया अपने खाता नंबर को {{service}} सेवा से जोड़ने के लिए शहरी स्थानीय निकाय पर जाएँ। फिर भी आप अपनी खाता जानकारी खोजकर सेवा का लाभ उठा सकते हैं।',
+      resultHeader:{
+        en_IN: 'Here are your past bill payment 👇',
+      hi_IN: 'ये रहा आपका भुगतान इतिहास 👇',
+      }
     },
   },
   searchParams:{
     question: {
       preamble: {
-        en_IN: 'Please type and send the number for your option 👇',
-        hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें:'
+        en_IN: 'Please type and send the number for your option👇\n\n*1.* Yes\n*2.* No',
+        hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
+      },
+      confirmation:{
+        en_IN: 'Do you have the {{searchOption}} to proceed with the payment ?\n',
+        hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },
     error:{
@@ -782,8 +939,8 @@ let messages = {
   },
   paramInput: {
     question: {
-      en_IN: 'Please enter the {{option}}.\n\n👉 To go back to the main menu, type and send mseva.',
-      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें। {{example}}\n\nऔर टाइप करें "mseva" और मुख्य मेनू पर वापस जाएं।'
+      en_IN: 'Please enter the {{option}}.',
+      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें।'
     },
     re_enter: {
       en_IN: 'Sorry, the value you have provided is incorrect.\nPlease re-enter the {{option}} again to fetch the bills.\n\nOr Type and send \'mseva\' to Go ⬅️ Back to main menu.',
@@ -805,7 +962,7 @@ let messages = {
         hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
       },
       multipleRecordsSameService: {
-        en_IN: 'Following <service records> records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
+        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
           en_IN: 'Consumer Number - {{id}}\nLocality: {{locality}} , {{city}}',
@@ -816,8 +973,8 @@ let messages = {
   },
   paramInputInitiate: {
     question: {
-      en_IN: '\nWant to search and view payment receipt for other payments or services?\n\n👉 Type and Send *1* to search and view other payment receipt.\n\n👉 To go back to the main menu, type and send mseva.',
-      hi_IN: '\nअन्य सेवाओं के भुगतान रसीद खोजने के लिए कृपया ’1’ टाइप करें और भेजें या मुख्य मेनू पर वापस जाएँ के लिए mseva टाइप करें और भेजें'
+      en_IN: '👉 To view last payment receipt, type and send *1* \n\n👉 To go back to the main menu, type and send *mseva*.',
+      hi_IN: '👉 अंतिम भुगतान रसीद देखने के लिए, टाइप करें और भेजें *1* \n\n👉 मुख्य मेनू पर वापस जाने के लिए, *mseva* टाइप करें और भेजें।'
     },
     error:{
       en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
@@ -841,16 +998,60 @@ let messages = {
       hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
     },
     multipleReceipts: {
-      en_IN: 'Your {{service}} payment receipt for consumer number {{id}} against property in  {{locality}},{{city}} is given 👇 below:\n\nClick on the link to view and download a copy of bill or payment receipt.\n\nLast {{count}} Payment Receipt Details',
-      hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\nअंतिम {{count}} भुगतान रसीद विवरण',
+      en_IN: 'Here is your payment history 👇',
+      hi_IN: 'ये रहा आपका भुगतान इतिहास 👇',
       receiptTemplate: {
-        en_IN: '{{date}} - Rs.  {{amount}} -  {{transactionNumber}} \nLink: {{receiptDocumentLink}}',
-        hi_IN: '{{date}} - रु.  {{amount}} -  {{transactionNumber}} \nपलक: {{receiptDocumentLink}}'
+        en_IN: '{{date}}   {{status}}    {{amount}}',
+        hi_IN: '{{date}}   {{amount}}    {{status}}'
+      }
+    },
+    header:{
+      en_IN: '{{date}}        {{status}}   {{amount}}',
+      hi_IN: '{{date}}        {{amount}}   {{status}}',
+      date:{
+        en_IN:'Date',
+        hi_IN:'तारीख'
+      },
+      amount:{
+        en_IN:'Amount',
+        hi_IN:'रकम'
+      },
+      status:{
+        en_IN:'Status',
+        hi_IN:'स्थिति'
+      },
+      paid:{
+        en_IN:'Paid',
+        hi_IN:'भुगतान किया'
       }
     }
     
   },
+  pdfReceiptList:{
+    en_IN:"To view the receipt, please type and send the number for your option 👇",
+    hi_IN:"रसीद देखने के लिए कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें 👇",
+    receiptTemplate:{
+      en_IN: "*Paid:*₹ {{amount}} | *Date:* {{date}}",
+      hi_IN: "*भुगतान किया गया:*₹ {{amount}} | *तारीख:* {{date}}"
+    }
+  },
+  lastState:{
+    en_IN: '👉 To go back to the main menu, type and send *mseva*.',
+    hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और *mseva* भेजें।',
+    template: {
+      en_IN: 'Consumer Number {{id}}\nAmount Paid   {{amount}}\nPaid On   {{date}}',
+      hi_IN: 'Consumer Number {{id}}\nAmount Paid   {{amount}}\nPaid On   {{date}}'
+    }
+  }
   
+};
+let grammer = {
+  confirmation: {
+    choice: [
+      {intention: 'Yes', recognize: ['1', 'yes', 'Yes']},
+      {intention: 'No', recognize: ['2', 'no', 'No']}
+    ]
+  }
 };
 
 module.exports = receipts;

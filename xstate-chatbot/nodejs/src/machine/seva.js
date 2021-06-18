@@ -479,7 +479,7 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n1. File a complaint\n2. Track your complaints.\n3. Pay Water & Sewerage Bill.\n4. Pay Prperty Tax Bill.\n5. View Payments Receipts.\n6. Change Language.\n\n👉  At any stage type and send mseva to go back to the main menu.',
+      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Prperty Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
       hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें:\n\n1. शिकायतों के लिए\n2. बिलों के लिए\n3. रसीदों के लिए\n4. भाषा बदलने के लिए'
     }
   },

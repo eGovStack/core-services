@@ -78,20 +78,17 @@ class ReceiptService {
         }
         let searchOptions = [];
         if(service === 'WS') {
-          searchOptions = [ 'mobile', 'connectionNumber', 'consumerNumber' ];
+          searchOptions = [ 'connectionNumber'];
+        } else if(service === 'PT') {
+          searchOptions = [ 'propertyId'];
+        } else if(service === 'TL') {
+          searchOptions = [ 'tlApplicationNumber' ];
+        } else if(service === 'FIRENOC') {
+          searchOptions = [ 'nocApplicationNumber' ];
+        } else if(service === 'BPA') {
+          searchOptions = [ 'bpaApplicationNumber' ];
         }
-        else if(service === 'PT') {
-          searchOptions = [ 'mobile', 'propertyId', 'consumerNumber' ];
-        } 
-        else if(service === 'TL') {
-          searchOptions = [ 'mobile', 'tlApplicationNumber' ];
-        } 
-        else if(service === 'FIRENOC') {
-          searchOptions = [ 'mobile', 'nocApplicationNumber' ];
-        } 
-        else if(service === 'BPA') {
-          searchOptions = [ 'mobile', 'bpaApplicationNumber' ];
-        }
+        
         return { searchOptions, messageBundle };
     }
     getOptionAndExampleMessageBundle(service, searchParamOption) {
@@ -246,11 +243,11 @@ class ReceiptService {
             id: consumerCode,
             locality: undefined, //to do
             city: tenantId, //to do
-            amount: result.totalDue,
+            amount: result.totalAmountPaid,
             date: transactionDate,
             businessService: businessService,
             transactionNumber: result.transactionNumber,
-            receiptDocumentLink: await this.receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber,locale)
+            fileStoreId: result.fileStoreId
           }
           Payments['Payments'].push(data);
           lookup.push(consumerCode);
@@ -318,7 +315,7 @@ class ReceiptService {
        var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
        searchEndpoint= searchEndpoint.replace(/\$module/g,service);
       let paymentUrl = config.egovServices.externalHost + searchEndpoint;
-      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
+      paymentUrl =  paymentUrl + '?tenantId=' + "pb.amritsar";
       
       if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
         
@@ -396,7 +393,7 @@ class ReceiptService {
           return await this.findreceiptsList(user,service,user.locale);
     }
 
-    async multipleRecordReceipt(user,service,consumerCodes){ 
+    async multipleRecordReceipt(user,service,consumerCodes,transactionNumber, forPdf){ 
       
       let requestBody = {
         RequestInfo: {
@@ -407,9 +404,12 @@ class ReceiptService {
       var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
       searchEndpoint= searchEndpoint.replace(/\$module/g,service);
       let paymentUrl = config.egovServices.egovServicesHost + searchEndpoint;
-      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
+      paymentUrl =  paymentUrl + '?tenantId=' + 'pb.amritsar';
       paymentUrl+='&';
-      paymentUrl +='consumerCodes='+consumerCodes;
+      if(forPdf)
+        paymentUrl +='transactionNumber='+transactionNumber;
+      else
+        paymentUrl +='consumerCodes='+consumerCodes;
 
       let options = {
         method: 'POST',
@@ -424,8 +424,12 @@ class ReceiptService {
       let results;
       if(response.status === 200) {
         let responseBody = await response.json();
-        if(responseBody.Payments.length>0)
+        if(responseBody.Payments.length>0){
+          if(forPdf){
+            return responseBody.Payments[0];
+          }
           results=await this.preparePaymentResult(responseBody, user.authToken, user.locale,true);
+        }
       } else {
         console.error('Error in fetching the payment data');
         return undefined;
