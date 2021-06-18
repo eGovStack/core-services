@@ -2,9 +2,7 @@ const fetch = require('node-fetch');
 const config = require('../../env-variables');
 
 class BedsService {
-
   async getHospitalsByMobileNumber(mobileNumber) {
-
     const url = config.covaApiConfigs.cova2Url.concat(
       config.covaApiConfigs.getHospitalsByMobileNumber,
     );
@@ -34,23 +32,20 @@ class BedsService {
         console.log(`Hospital details info fetched failure : ${data.sys_message}`);
       }
       return data;
-
-    } else {
-      const responseBody = await response.json();
-      console.error(`Cova (getHospitalsByMobileNumber) responded with ${JSON.stringify(responseBody)}`);
     }
-
+    const responseBody = await response.json();
+    console.error(`Cova (getHospitalsByMobileNumber) responded with ${JSON.stringify(responseBody)}`);
   }
 
   async updatehospitaldata(hospital) {
-    let url = config.covaApiConfigs.covaUrlHospital.concat(
+    const url = config.covaApiConfigs.covaUrlHospital.concat(
       config.covaApiConfigs.updateHospitalById,
     );
-    let headers = {
+    const headers = {
       'Content-Type': 'application/json',
       Authorization: config.covaApiConfigs.covaAuthorization,
     };
-    let requestBody = {
+    const requestBody = {
       hospital_Id: hospital.id,
       hospital_type_Id: '3',
       hospital_level_Id: hospital.hospital_level_Id,
@@ -89,12 +84,10 @@ class BedsService {
         console.error(`Error while updating hospital data or report to Cova. Message: ${responseBody.sys_message}`);
       }
       return data;
-
     } else {
       const responseBody = await response.json();
       console.error(`Error while updating hospital data or reports to Cova.\nStatus: ${response.status}; Response: ${JSON.stringify(responseBody)}`);
     }
-
   }
 }
 
