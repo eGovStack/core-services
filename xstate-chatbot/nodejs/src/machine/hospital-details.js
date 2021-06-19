@@ -87,30 +87,30 @@ const hospitalFlow = {
             if (context.slots.previoushospitaldata.hospital_level_Id == '1') {
               const message = dialog.get_message(messages.L2L3hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message);
-              context.validMessage = true;
+              context.data='4';
             } else
             if (context.slots.previoushospitaldata.hospital_level_Id == '2') {
               const message_2 = dialog.get_message(messages.L2hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message_2);
-              context.isValid = false;
+              context.data='5';
             } else
             if (context.slots.previoushospitaldata.hospital_level_Id == '3') {
               const message_3 = dialog.get_message(messages.L3hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message_3);
-              context.isValid = true;
+              context.data='6';
             }
           }),
           always: [
             {
-              cond: (context) => context.isValid == false,
+              cond: (context) => context.data=='5',
               target: '#l2Hospital',
             },
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data=='6',
               target: '#l3Hospital',
             },
             {
-              cond: (context) => context.validMessage == true,
+              cond: (context) => context.data=='4',
               target: '#l2l3Hospital',
             },
           ],
@@ -123,19 +123,19 @@ const hospitalFlow = {
       states: {
         process: {
           onEntry: assign((context, event) => {
-            if (new Date().getHours() >= 14 && new Date().getHours() <= 18) {
-              context.isValid = true;
+            if (new Date().getHours() >= 14 && new Date().getHours() <= 16) {
+              context.data='12';
             } else {
-              context.isValid = false;
+              context.data='13';
             }
           }),
           always: [
             {
-              cond: (context) => context.isValid == false,
+              cond: (context) => context.data =='13',
               target: '#l2AvailableOxygenBeds',
             },
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) =>  context.data =='12',
               target: '#l2HospitalUpdate',
             },
           ],
@@ -725,18 +725,18 @@ const hospitalFlow = {
         process: {
           onEntry: assign((context, event) => {
             if (new Date().getHours() >= 14 && new Date().getHours() <= 18) {
-              context.isValid = true;
+              context.data='14';
             } else {
-              context.isValid = false;
+              context.data='15';
             }
           }),
           always: [
             {
-              cond: (context) => context.isValid == false,
+              cond: (context) => context.data == '15',
               target: '#l3BedswithoutVentilators',
             },
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data == '14',
               target: '#l3HospitalUpdate',
             },
           ],
@@ -764,25 +764,24 @@ const hospitalFlow = {
             const availableBedWithoutVent = parseInt(message);
             const totalBedCountWithoutVent = parseInt(context.slots.previoushospitaldata.bed_capacity_L3);
 
-            if (event.message.type == 'text' && availableBedWithoutVent > totalBedCountWithoutVent) context.isValid = true;
+            if (event.message.type == 'text' && availableBedWithoutVent > totalBedCountWithoutVent) 
+              context.data = '16';
             else
             if (event.message.type == 'text' && availableBedWithoutVent <= totalBedCountWithoutVent) {
               context.slots.hospital.bed_vacant_L3 = message;
-              context.isValid = false;
-              context.validMessage = true;
-            } else {
-              context.validMessage = false;
-              context.isValid = false;
+              context.data = '17';
+             } else {
+              context.data = '16';
             }
           }),
           always: [
             {
-              cond: (context) => context.validMessage,
+              cond: (context) => context.data == '17',
               target: '#l3BedswithVentilators',
 
             },
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data == '16',
               target: 'error',
             },
             {
@@ -818,30 +817,29 @@ const hospitalFlow = {
             const message = dialog.get_input(event, false);
             const availableBedWithVent = parseInt(message);
             const totalBedCountWithVent = parseInt(context.slots.previoushospitaldata.bed_capacity_icu_L3);
-            if (event.message.type == 'text' && availableBedWithVent > totalBedCountWithVent) context.isValid = true;
+            if (event.message.type == 'text' && availableBedWithVent > totalBedCountWithVent) 
+            context.data='9';
             else
             if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '3' && availableBedWithVent <= totalBedCountWithVent) {
               const message = dialog.get_input(event, false);
               context.slots.hospital.bed_capacity_icu_L3 = message;
-              context.validMessage = true;
-              context.isValid = false;
+              context.data='10';
             } else
             if (event.message.type == 'text' && context.slots.previoushospitaldata.hospital_level_Id == '1') {
-              context.validMessage = false;
-              context.isValid = false;
+              context.data='11';
             }
           }),
           always: [
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data =='9',
               target: 'error',
             },
             {
-              cond: (context) => context.validMessage == true,
+              cond: (context) => context.data =='10',
               target: '#l3HospitalUpdate',
             },
             {
-              cond: (context) => context.validMessage == false,
+              cond: (context) => context.data =='11',
               target: '#l1HospitalUpdate',
             },
             {
@@ -1122,18 +1120,18 @@ const hospitalFlow = {
         process: {
           onEntry: assign((context, event) => {
             if (new Date().getHours() >= 14 && new Date().getHours() <= 18) {
-              context.isValid = true;
+              context.data='7';
             } else {
-              context.isValid = false;
+              context.data='8';
             }
           }),
           always: [
             {
-              cond: (context) => context.isValid == false,
+              cond: (context) => context.data=='8',
               target: '#l2AvailableOxygenBeds',
             },
             {
-              cond: (context) => context.isValid == true,
+              cond: (context) => context.data=='7',
               target: '#l1HospitalUpdate',
             },
           ],
