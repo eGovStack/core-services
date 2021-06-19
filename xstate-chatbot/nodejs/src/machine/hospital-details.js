@@ -60,6 +60,7 @@ const hospitalFlow = {
                   context.slots.previoushospitaldata.no_cases_on_intubated_invasive_venti_l3 = event.data.data[0].no_cases_on_intubated_invasive_venti_l3;
                   context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3 = event.data.data[0].discharged_covid_patients_with_venti_l3;
                   context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3 = event.data.data[0].deaths_covid_patients_with_venti_l3;
+                  context.slots.previoushospitaldata.time_2_6_flag=event.data.data[0].time_2_6_flag;
                   dialog.sendMessage(context, dialog.get_message(messages.nodalOfficer.prompt, context.user.locale));
                 }),
                 target: '#hospitalTypeId',
@@ -123,7 +124,7 @@ const hospitalFlow = {
       states: {
         process: {
           onEntry: assign((context, event) => {
-            if (new Date().getHours() >= 14 && new Date().getHours() <= 16) {
+            if (context.slots.previoushospitaldata.time_2_6_flag == '1') {
               context.data='12';
             } else {
               context.data='13';
@@ -724,7 +725,7 @@ const hospitalFlow = {
       states: {
         process: {
           onEntry: assign((context, event) => {
-            if (new Date().getHours() >= 14 && new Date().getHours() <= 18) {
+            if (context.slots.previoushospitaldata.time_2_6_flag == '1') {
               context.data='14';
             } else {
               context.data='15';
@@ -1119,7 +1120,7 @@ const hospitalFlow = {
       states: {
         process: {
           onEntry: assign((context, event) => {
-            if (new Date().getHours() >= 14 && new Date().getHours() <= 18) {
+            if (context.slots.previoushospitaldata.time_2_6_flag == '1') {
               context.data='7';
             } else {
               context.data='8';
