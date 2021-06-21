@@ -9,7 +9,7 @@ class VitalsService {
     return { flag: true, msg: 'RMO Present', id: null };
   }
 
-  async getMoSubmitReport(caseid, mophone, remarks, specRequire, hospRequire) {
+  async getMoSubmitReport(caseid, mophone, remarks, specRequire, hospRequire, isPatientStable) {
     return {
       flag: true,
       msg: 'Status Updated',

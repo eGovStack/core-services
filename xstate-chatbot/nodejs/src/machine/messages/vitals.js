@@ -42,7 +42,7 @@ const messages = {
       hi_IN: 'कार्रवाई का चयन',
     },
     options: {
-      list: ['specializedAdvice', 'hospitalization'],
+      list: ['specializedAdvice', 'hospitalization' ,'patientStable'],
       messageBundle: {
         specializedAdvice: {
           en_IN: 'Patient need Specialized Advice',
@@ -50,9 +50,14 @@ const messages = {
           hi_IN: 'रोगी को विशेष सलाह की आवश्यकता है',
         },
         hospitalization: {
-          en_IN: 'Patients need hospitalization',
+          en_IN: 'Patients need Hospitalization',
           pa_IN: 'ਮਰੀਜ਼ ਨੂੰ ਹਸਪਤਾਲ ਦਾਖਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
           hi_IN: 'रोगी को अस्पताल में भर्ती होने की आवश्यकता है',
+        },
+        patientStable: {
+          en_IN: 'Patient is Stable and does not need Specialized Advice',
+          pa_IN: 'ਰੋਗੀ ਸਥਿਰ ਹੁੰਦਾ ਹੈ ਅਤੇ ਇਸ ਨੂੰ ਵਿਸ਼ੇਸ਼ ਸਲਾਹ ਦੀ ਜ਼ਰੂਰਤ ਨਹੀਂ ਹੁੰਦੀ',
+          hi_IN: 'रोगी स्थिर है और उसे विशेष सलाह की आवश्यकता नहीं है',
         },
       },
     },
