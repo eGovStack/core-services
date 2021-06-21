@@ -26,6 +26,9 @@ import { getValue } from "./utils/commons";
 import { getFileStoreIds, insertStoreIds } from "./queries";
 import { listenConsumer } from "./kafka/consumer";
 import { convertFooterStringtoFunctionIfExist } from "./utils/commons";
+const signer = require('./signer');
+
+
 
 var jp = require("jsonpath");
 //create binary
@@ -367,11 +370,12 @@ app.post(
       //
 
       var valid = validateRequest(req, res, key, tenantId, requestInfo);
+
       if(req.body.Licenses[0].businessService === 'TL'){
-        //console.log("RECEIVED TL REQUEST !!!!!");
-        var reqBody = await certificateSignerAPICall(req.body);
+        console.log("RECEIVED TL REQUEST !!!!!");
+        var reqBody = await signer.signAndSave(req.body);
         req.body = reqBody;
-        //console.log("#####", reqBody);
+        console.log("#####", reqBody);
       }
 
       if (valid) {
