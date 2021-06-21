@@ -61,7 +61,7 @@ const hospitalFlow = {
                   context.slots.previoushospitaldata.discharged_covid_patients_with_venti_l3 = event.data.data[0].discharged_covid_patients_with_venti_l3;
                   context.slots.previoushospitaldata.deaths_covid_patients_with_venti_l3 = event.data.data[0].deaths_covid_patients_with_venti_l3;
                   context.slots.previoushospitaldata.time_2_6_flag=event.data.data[0].time_2_6_flag;
-                  dialog.sendMessage(context, dialog.get_message(messages.nodalOfficer.prompt, context.user.locale));
+                  context.slots.previoushospitaldata.nodalmessage= dialog.get_message(messages.nodalOfficer.prompt, context.user.locale);
                 }),
                 target: '#hospitalTypeId',
               },
@@ -86,19 +86,26 @@ const hospitalFlow = {
           onEntry: assign((context, event) => {
             // context.slots.hospital.mobileNumber=context.user.mobileNumber;
             if (context.slots.previoushospitaldata.hospital_level_Id == '1') {
-              const message = dialog.get_message(messages.L2L3hospitalDetails, context.user.locale);
+              var message=context.slots.previoushospitaldata.nodalmessage.toString();
+              message += '\n';
+              message += dialog.get_message(messages.L2L3hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message);
               context.data='4';
             } else
             if (context.slots.previoushospitaldata.hospital_level_Id == '2') {
-              const message_2 = dialog.get_message(messages.L2hospitalDetails, context.user.locale);
+              var message_2=context.slots.previoushospitaldata.nodalmessage.toString();
+              message_2 += '\n';
+              message_2 += dialog.get_message(messages.L2hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message_2);
               context.data='5';
             } else
             if (context.slots.previoushospitaldata.hospital_level_Id == '3') {
-              const message_3 = dialog.get_message(messages.L3hospitalDetails, context.user.locale);
+              var message_3=context.slots.previoushospitaldata.nodalmessage.toString();
+              message_3 += '\n';
+              message_3 += dialog.get_message(messages.L3hospitalDetails, context.user.locale);
               dialog.sendMessage(context, message_3);
               context.data='6';
+
             }
           }),
           always: [
