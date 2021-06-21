@@ -23,7 +23,9 @@ const receipts = {
               let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
               context.grammer = grammer;
               prompt = prompt.replace(/\n/g,"\n\n");
-              dialog.sendMessage(context, `${preamble}${prompt}` , true);
+              let message = `${preamble}${prompt}`+'\n\n';
+              message = message + dialog.get_message(messages.lastState, context.user.locale);
+              dialog.sendMessage(context, message, true);
             }),
             on: {
               USER_MESSAGE:'process'
@@ -780,6 +782,7 @@ const receipts = {
               (async() => {
                 var receiptIndex = context.receipts.slots.receiptNumber;
                 let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
+                context.extraInfo.fileName = receiptData.id;
                 
                 var consumerCode, businessService, transactionNumber
                 if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
@@ -789,24 +792,28 @@ const receipts = {
                   consumerCode = receiptData.id;
                   businessService = receiptData.businessService;
                   transactionNumber = receiptData.transactionNumber;
-                  context.extraInfo.fileName = consumerCode;
 
                   let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
                   context.receipts.slots.fileStoreId = await pdfService.generatePdf(businessService, payment, context.user.locale, context.user.authToken, context.user.userInfo);
                 }
 
+                let messageContent = [];
                 var pdfContent = {
                   output: context.receipts.slots.fileStoreId,
                   type: "pdf",
                 };
-                dialog.sendMessage(context, pdfContent);
+                //dialog.sendMessage(context, pdfContent);
+                messageContent.push(pdfContent);
 
                 let message = dialog.get_message(messages.lastState.template,context.user.locale);
                 message = message.replace('{{id}}',receiptData.id);
                 message = message.replace('{{amount}}',receiptData.amount);
                 message = message.replace('{{date}}',receiptData.date);
-                dialog.sendMessage(context, message);
-                dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));   
+                //dialog.sendMessage(context, message);
+                //dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale),false);
+                messageContent.push(message);
+                messageContent.push(dialog.get_message(messages.lastState,context.user.locale));
+                dialog.sendMessage(context, messageContent);
               })();
             }),
             always:[
@@ -892,8 +899,8 @@ let messages = {
         en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
-          en_IN: 'Consumer Number - {{id}}\nLocality: {{locality}} , {{city}}',
-          hi_IN: 'उपभोक्ता संख्या - {{id}} , {{locality}} , {{city}}'
+          en_IN: '*Consumer Number* {{id}}\nLocality: {{locality}} , {{city}}',
+          hi_IN: '*उपभोक्ता संख्या* {{id}} ,\nइलाका: {{locality}} , {{city}}'
         }
       }
     },
@@ -927,7 +934,7 @@ let messages = {
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
       confirmation:{
-        en_IN: 'Do you have the {{searchOption}} to proceed with the payment ?\n',
+        en_IN: 'Do you have the *{{searchOption}}* to view the payment history?\n',
         hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },
@@ -973,7 +980,7 @@ let messages = {
   },
   paramInputInitiate: {
     question: {
-      en_IN: '👉 To view last payment receipt, type and send *1* \n\n👉 To go back to the main menu, type and send *mseva*.',
+      en_IN: '👉 To view last payment receipt, type and send *1*\n\n👉 To go back to the main menu, type and send *mseva*.',
       hi_IN: '👉 अंतिम भुगतान रसीद देखने के लिए, टाइप करें और भेजें *1* \n\n👉 मुख्य मेनू पर वापस जाने के लिए, *mseva* टाइप करें और भेजें।'
     },
     error:{
@@ -1002,12 +1009,12 @@ let messages = {
       hi_IN: 'ये रहा आपका भुगतान इतिहास 👇',
       receiptTemplate: {
         en_IN: '{{date}}   {{status}}    {{amount}}',
-        hi_IN: '{{date}}   {{amount}}    {{status}}'
+        hi_IN: '{{date}}   {{status}}    {{amount}}'
       }
     },
     header:{
-      en_IN: '{{date}}        {{status}}   {{amount}}',
-      hi_IN: '{{date}}        {{amount}}   {{status}}',
+      en_IN: '*{{date}}*            *{{status}}*   *{{amount}}*',
+      hi_IN: '*{{date}}*            *{{status}}*   *{{amount}}*',
       date:{
         en_IN:'Date',
         hi_IN:'तारीख'
@@ -1031,16 +1038,16 @@ let messages = {
     en_IN:"To view the receipt, please type and send the number for your option 👇",
     hi_IN:"रसीद देखने के लिए कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें 👇",
     receiptTemplate:{
-      en_IN: "*Paid:*₹ {{amount}} | *Date:* {{date}}",
-      hi_IN: "*भुगतान किया गया:*₹ {{amount}} | *तारीख:* {{date}}"
+      en_IN: "*Paid:* ₹ {{amount}} | *Date:* {{date}}",
+      hi_IN: "*भुगतान किया गया:* ₹ {{amount}} | *तारीख:* {{date}}"
     }
   },
   lastState:{
     en_IN: '👉 To go back to the main menu, type and send *mseva*.',
     hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और *mseva* भेजें।',
     template: {
-      en_IN: 'Consumer Number {{id}}\nAmount Paid   {{amount}}\nPaid On   {{date}}',
-      hi_IN: 'Consumer Number {{id}}\nAmount Paid   {{amount}}\nPaid On   {{date}}'
+      en_IN: '*Consumer Number* {{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}',
+      hi_IN: '*Consumer Number* {{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}'
     }
   }
   

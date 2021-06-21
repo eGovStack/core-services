@@ -20,7 +20,7 @@ class BillService {
     let services = this.services;
     let messageBundle = {
       WS: {
-        en_IN: 'Water and Sewerage Bill',
+        en_IN: 'Water and Sewerage',
         hi_IN: 'पानी और सीवरेज बिल'
       },
       PT: {
