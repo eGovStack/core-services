@@ -191,7 +191,7 @@ class VitalsService {
     return { response: 0 };
   }
 
-  async getMoSubmitReport(caseid, mophone, remarks, specRequire, hospRequire) {
+  async getMoSubmitReport(caseid, mophone, remarks, specRequire, hospRequire, isPatientStable) {
     let url;
     if (specRequire == 'yes') {
       url = config.covaApiConfigs.covidApiSuffix.concat(
@@ -207,6 +207,15 @@ class VitalsService {
         config.covaApiConfigs.covidApiHospitalNeed.concat(caseid).concat('/').concat(mophone)
           .concat('/')
           .concat(hospRequire)
+          .concat('/')
+          .concat(remarks),
+      );
+    }  else
+    if (isPatientStable == 'yes') {
+      url = config.covaApiConfigs.covidApiSuffix.concat(
+        config.covaApiConfigs.covidApiPatientStable.concat(caseid).concat('/').concat(mophone)
+          .concat('/')
+          .concat(isPatientStable)
           .concat('/')
           .concat(remarks),
       );

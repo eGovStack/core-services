@@ -75,6 +75,7 @@ const envVariables = {
     covidApiSrfid: 'isPatient/',
     covidApiHospitalNeed: 'isHospitalNeed/',
     covidApiSpecializationNeed: 'isSpecializationNeed/',
+    covidApiPatientStable: 'isPatientStable/',
     covaReminderSuffix: 'get-quaranitinrd-data-search-api',
     getHospitalsByMobileNumber: 'get-hospital-l2l3-data-by-id',
     updateHospitalById: 'update-hospital-data-new-for-app',

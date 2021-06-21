@@ -120,19 +120,34 @@ const vitalsFlow = {
           }),
           always: [
             {
-              cond: (context) => context.intention == 'specializedAdvice',
+              cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
+              target: 'error',
+            },{
               actions: assign((context, event) => {
-                context.slots.person.isSpecializationRequired = 'yes';
-                context.slots.person.isHospitalizationRequired = 'no';
-              }),
-              target: '#doctorRemark',
-
-            },
-            {
-              cond: (context) => context.intention == 'hospitalization',
-              actions: assign((context, event) => {
-                context.slots.person.isHospitalizationRequired = 'yes';
-                context.slots.person.isSpecializationRequired = 'no';
+                if(context.intention == 'specializedAdvice')
+                {
+                  console.log(context.intention)
+                  context.slots.person.isSpecializationRequired = 'yes';
+                  context.slots.person.isHospitalizationRequired = 'no';
+                  context.slots.person.isPatientStable='no';
+                }
+                else
+                if(context.intention == 'hospitalization')
+                {
+                  console.log(context.intention)
+                  context.slots.person.isHospitalizationRequired = 'yes';
+                  context.slots.person.isSpecializationRequired = 'no';
+                  context.slots.person.isPatientStable='no';
+                }
+                else
+                if(context.intention == 'patientStable')
+                {
+                  console.log(context.intention)
+                  context.slots.person.isHospitalizationRequired = 'no';
+                  context.slots.person.isSpecializationRequired = 'no';
+                  context.slots.person.isPatientStable='yes';
+                }
+                
               }),
               target: '#doctorRemark',
             },
@@ -169,7 +184,7 @@ const vitalsFlow = {
           }),
           invoke: {
             src: (context, event) => vitalsService.getMoSubmitReport(context.slots.person.caseId, context.slots.person.mobileNumber,
-              context.message, context.slots.person.isSpecializationRequired, context.slots.person.isHospitalizationRequired),
+              context.message, context.slots.person.isSpecializationRequired, context.slots.person.isHospitalizationRequired,context.slots.person.isPatientStable),
             onDone: [
               {
                 actions: assign((context, event) => {
