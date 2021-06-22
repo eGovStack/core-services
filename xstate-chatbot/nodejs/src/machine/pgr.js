@@ -277,17 +277,15 @@ const pgr =  {
                   }
                 },
                 process: {
-                  /*invoke: {
+                  invoke: {
                     id: 'getCityAndLocality',
                     src: (context, event) => {
-                      console.log("\nevent-->"+JSON.stringify(event)+"\n");
                       if(event.message.type === 'location') {
                         context.slots.pgr.geocode = event.message.input;
                         return pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
                       }
-                      else{
-                        return event.message.input;
-                      }
+                      context.message = event.message.input;
+                      return Promise.resolve();
                     },
                     onDone: [
                       {
@@ -299,12 +297,20 @@ const pgr =  {
                       },
                       {
                         target: '#city',
-                        cond: (context, event) => event.data == '1' && !config.pgrUseCase.geoSearch
+                        cond: (context, event) => !event.data && context.message ==='1' && !config.pgrUseCase.geoSearch
                         
                       },
                       {
                         target: '#nlpCitySearch',
-                        cond: (context, event) => event.data == '1' && config.pgrUseCase.geoSearch
+                        cond: (context, event) => !event.data && context.message ==='1' && config.pgrUseCase.geoSearch
+                      },
+                      {
+                        target: '#geoLocation',
+                        cond: (context, event) => !event.data && context.message !='1',
+                        actions: assign((context, event) => {
+                          let message = dialog.get_message(messages.fileComplaint.imageUpload.error, context.user.locale);
+                          dialog.sendMessage(context, message);
+                        })
                       }
                     ],
                     onError: [
@@ -319,12 +325,11 @@ const pgr =  {
                       }
 
                     ],
+                  },
 
-                    
 
 
-                  },*/
-                  onEntry: assign((context, event) => {
+                 /* onEntry: assign((context, event) => {
                     if(event.message.type === 'location') {
                       context.slots.pgr.geocode = event.message.input;
                       context.pgr.detectedLocation = pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
@@ -350,7 +355,7 @@ const pgr =  {
                     {
                       target: '#geoLocation'
                     }
-                  ]
+                  ]*/
                 }
               }
             },

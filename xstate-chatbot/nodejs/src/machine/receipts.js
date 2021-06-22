@@ -778,7 +778,60 @@ const receipts = {
         initial:'start',
         states:{
           start:{
-            onEntry: assign((context, event) => {
+            invoke: {
+              id: 'fetchPdfilestoreId',
+              src: (context, event) => {
+                var receiptIndex = context.receipts.slots.receiptNumber;
+                let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
+                context.extraInfo.fileName = receiptData.id;
+                
+                var businessService, transactionNumber
+                if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
+                  context.receipts.slots.fileStoreId = receiptData.fileStoreId;
+                }
+                else {
+                    businessService = receiptData.businessService;
+                    transactionNumber = receiptData.transactionNumber;
+
+                    let payment = receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
+                    context.receipts.slots.fileStoreId = pdfService.generatePdf(businessService, payment, context.user.locale, context.user.authToken, context.user.userInfo);
+                }
+                var pdfContent = {
+                  output: context.receipts.slots.fileStoreId,
+                  type: "pdf",
+                };
+                dialog.sendMessage(context, pdfContent, true);
+                return Promise.resolve();
+              },
+              onDone: {
+                target:'#lastState',
+                actions: assign((context, event) => {
+                  var receiptIndex = context.receipts.slots.receiptNumber;
+                  let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
+                  let messageContent = [];
+                  let message = dialog.get_message(messages.lastState.template,context.user.locale);
+                  message = message.replace('{{id}}',receiptData.id);
+                  message = message.replace('{{amount}}',receiptData.amount);
+                  message = message.replace('{{date}}',receiptData.date);
+                  var receiptInfo = {
+                    output: message,
+                    type: "text"
+                  };
+                  messageContent.push(receiptInfo);
+
+                  var endStatement = {
+                    output: dialog.get_message(messages.lastState,context.user.locale),
+                    type: "text"
+                  };
+                  messageContent.push(endStatement);
+
+                  dialog.sendMessage(context, messageContent);
+                })
+              }
+
+            },
+
+           /* onEntry: assign((context, event) => {
               (async() => {
                 var receiptIndex = context.receipts.slots.receiptNumber;
                 let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
@@ -822,13 +875,7 @@ const receipts = {
 
                 dialog.sendMessage(context, messageContent);
               })();
-            }),
-            always:[
-              {
-                target:'#lastState',
-
-              }
-            ]
+            }),*/
 
             
           },
