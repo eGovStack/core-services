@@ -67,7 +67,7 @@ const pgr =  {
       states: {
         type: {
           id: 'type',
-          initial: 'complaintType',
+          initial: 'complaintType2Step',
           states: {
             complaintType: {
               id: 'complaintType',
@@ -143,7 +143,7 @@ const pgr =  {
 
                             let lengthOfList = grammer.length;
                             let otherTypeGrammer = { intention: 'Others', recognize: [ (lengthOfList + 1).toString() ] };
-                            prompt += `\n${lengthOfList + 1}. ` + dialog.get_message(messages.fileComplaint.complaintType2Step.category.question.otherType, context.user.locale);
+                            prompt += `\n*${lengthOfList + 1}.* ` + dialog.get_message(messages.fileComplaint.complaintType2Step.category.question.otherType, context.user.locale);
                             grammer.push(otherTypeGrammer);
 
                             context.grammer = grammer; // save the grammer in context to be used in next step
@@ -164,7 +164,7 @@ const pgr =  {
                       }),
                       always: [
                         {
-                          target: '#location',
+                          target: '#other',
                           cond: (context) => context.intention == 'Others',
                           actions: assign((context, event) => {
                             context.slots.pgr["complaint"] = context.intention;
@@ -199,6 +199,9 @@ const pgr =  {
                           actions: assign((context, event) => {
                             let { complaintItems, messageBundle } = event.data;
                             let preamble = dialog.get_message(messages.fileComplaint.complaintType2Step.item.question.preamble, context.user.locale);
+                            let localisationPrefix = 'CS_COMPLAINT_TYPE_';
+                            let complaintType = localisationService.getMessageBundleForCode(localisationPrefix + context.intention.toUpperCase());
+                            preamble = preamble.replace('{{complaint}}',dialog.get_message(complaintType,context.user.locale));
                             let {prompt, grammer} = dialog.constructListPromptAndGrammer(complaintItems, messageBundle, context.user.locale, false, true);
                             context.grammer = grammer; // save the grammer in context to be used in next step
                             dialog.sendMessage(context, `${preamble}${prompt}`);
@@ -222,7 +225,7 @@ const pgr =  {
                           cond: (context) => context.intention == dialog.INTENTION_GOBACK
                         },
                         {
-                          target: '#location',
+                          target: '#other',
                           cond: (context) => context.intention != dialog.INTENTION_UNKOWN,
                           actions: assign((context, event) => {
                             context.slots.pgr["complaint"]= context.intention;
@@ -274,14 +277,17 @@ const pgr =  {
                   }
                 },
                 process: {
-                  invoke: {
+                  /*invoke: {
                     id: 'getCityAndLocality',
                     src: (context, event) => {
+                      console.log("\nevent-->"+JSON.stringify(event)+"\n");
                       if(event.message.type === 'location') {
                         context.slots.pgr.geocode = event.message.input;
                         return pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
                       }
-                      return Promise.resolve();
+                      else{
+                        return event.message.input;
+                      }
                     },
                     onDone: [
                       {
@@ -292,13 +298,59 @@ const pgr =  {
                         })
                       },
                       {
-                        target: '#city'
+                        target: '#city',
+                        cond: (context, event) => event.data == '1' && !config.pgrUseCase.geoSearch
+                        
+                      },
+                      {
+                        target: '#nlpCitySearch',
+                        cond: (context, event) => event.data == '1' && config.pgrUseCase.geoSearch
                       }
                     ],
-                    onError: {
-                      target: '#city'
+                    onError: [
+                      {
+                        target: '#city',
+                        cond: (context, event) => !config.pgrUseCase.geoSearch,
+
+                      },
+                      {
+                        target: '#nlpCitySearch',
+                        cond: (context, event) => config.pgrUseCase.geoSearch,
+                      }
+
+                    ],
+
+                    
+
+
+                  },*/
+                  onEntry: assign((context, event) => {
+                    if(event.message.type === 'location') {
+                      context.slots.pgr.geocode = event.message.input;
+                      context.pgr.detectedLocation = pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
                     }
-                  }
+                    else{
+                      context.message = event.message.input;
+                    }
+                  }),
+                  always:[
+                    {
+                      target: '#confirmLocation',
+                      cond: (context, event) => context.pgr.detectedLocation,
+                    },
+                    {
+                      target: '#city',
+                      cond: (context, event) => context.message == '1' && !config.pgrUseCase.geoSearch
+                      
+                    },
+                    {
+                      target: '#nlpCitySearch',
+                      cond: (context, event) => context.message == '1' && config.pgrUseCase.geoSearch
+                    },
+                    {
+                      target: '#geoLocation'
+                    }
+                  ]
                 }
               }
             },
@@ -339,7 +391,7 @@ const pgr =  {
                   }),
                   always: [
                     {
-                      target: '#other',
+                      target: '#persistComplaint',
                       cond: (context, event) => context.slots.pgr["locationConfirmed"]  && context.slots.pgr["locality"]
                     },
                     {
@@ -350,6 +402,217 @@ const pgr =  {
                       target: '#city'
                     }
                   ]
+                }
+              }
+            },
+            nlpCitySearch: {
+              id: 'nlpCitySearch',
+              initial: 'question',
+              states: {
+                question: {
+                  onEntry: assign((context, event) => {
+                    let message = dialog.get_message(messages.fileComplaint.cityFuzzySearch.question, context.user.locale)
+                    dialog.sendMessage(context, message);
+                  }),
+                  on: {
+                    USER_MESSAGE: 'process'
+                  }
+                },
+                process: {
+                  invoke: {
+                    id: 'cityFuzzySearch',
+                    src: (context, event) => pgrService.getCity(event.message.input,context.user.locale),
+                    onDone: {
+                      target: 'route',
+                      cond: (context, event) => event.data,
+                      actions: assign((context, event) => {
+                        let {predictedCityCode, predictedCity, isCityDataMatch} = event.data;
+                        context.slots.pgr["predictedCityCode"] = predictedCityCode;
+                        context.slots.pgr["predictedCity"] = predictedCity;
+                        context.slots.pgr["isCityDataMatch"] = isCityDataMatch;
+                        context.slots.pgr["city"] = predictedCityCode;
+                      })
+                    }, 
+                    onError: {
+                      target: '#system_error'
+                    }
+
+                  },
+                },
+                route:{
+                  onEntry: assign((context, event) => {
+                  }),
+                  always: [
+                    {
+                      target: '#nlpLocalitySearch',
+                      cond: (context) => context.slots.pgr["isCityDataMatch"] && context.slots.pgr["predictedCity"] != null && context.slots.pgr["predictedCityCode"] != null
+                    },
+                    {
+                      target: '#confirmationFuzzyCitySearch',
+                      cond: (context) => !context.slots.pgr["isCityDataMatch"] && context.slots.pgr["predictedCity"] != null && context.slots.pgr["predictedCityCode"] != null
+                    },
+                    {
+                      target: '#nlpCitySearch',
+                      cond: (context) => !context.slots.pgr["isCityDataMatch"] && context.slots.pgr["predictedCity"] == null && context.slots.pgr["predictedCityCode"] == null,
+                      actions: assign((context, event) => {
+                        let message = dialog.get_message(messages.fileComplaint.cityFuzzySearch.noRecord, context.user.locale)
+                        dialog.sendMessage(context, message);
+                      })
+
+                    }
+                  ]
+
+                },
+                confirmationFuzzyCitySearch:{
+                  id: 'confirmationFuzzyCitySearch',
+                  initial: 'question',
+                  states:{
+                    question: {
+                      onEntry: assign((context, event) => {
+                        let message = dialog.get_message(messages.fileComplaint.cityFuzzySearch.confirmation, context.user.locale);
+                        message = message.replace('{{city}}',context.slots.pgr["predictedCity"]);
+                        dialog.sendMessage(context, message);
+                      }),
+                      on: {
+                        USER_MESSAGE: 'process'
+                      }
+                    },
+                    process: {
+                      onEntry: assign((context, event) => {
+                        if(dialog.validateInputType(event, 'text'))
+                          context.intention = dialog.get_intention(grammer.confirmation.choice, event, true);
+                        else
+                          context.intention = dialog.INTENTION_UNKOWN;
+                      }),
+                      always: [
+                        {
+                          target: '#nlpLocalitySearch',
+                          cond: (context) => context.intention == 'Yes'
+                        },
+                        {
+                          target: '#nlpCitySearch',
+                          cond: (context) => context.intention == 'No',
+                        },
+                        {
+                          target: 'error',
+                        }
+                      ]
+                    },
+                    error: {
+                      onEntry: assign((context, event) => {
+                        let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
+                        dialog.sendMessage(context, message, false);
+                      }),
+                      always: 'question'
+                    }
+
+                  }
+
+                }
+              }  
+            },
+            nlpLocalitySearch: {
+              id: 'nlpLocalitySearch',
+              initial: 'question',
+              states: {
+                question: {
+                  onEntry: assign((context, event) => {
+                    let message = dialog.get_message(messages.fileComplaint.localityFuzzySearch.question, context.user.locale)
+                    dialog.sendMessage(context, message);
+                  }),
+                  on: {
+                    USER_MESSAGE: 'process'
+                  }
+                },
+                process: {
+                  invoke: {
+                    id: 'localityFuzzySearch',
+                    src: (context, event) => pgrService.getLocality(event.message.input, context.slots.pgr["city"], context.user.locale),
+                    onDone: {
+                      target: 'route',
+                      cond: (context, event) => event.data,
+                      actions: assign((context, event) => {
+                        let {predictedLocalityCode, predictedLocality, isLocalityDataMatch} = event.data;
+                        context.slots.pgr["predictedLocalityCode"] = predictedLocalityCode;
+                        context.slots.pgr["predictedLocality"] = predictedLocality;
+                        context.slots.pgr["isLocalityDataMatch"] = isLocalityDataMatch;
+                        context.slots.pgr["locality"] = predictedLocalityCode;
+                      })
+                    }, 
+                    onError: {
+                      target: '#system_error'
+                    }
+                  },
+                },
+                route:{
+                  onEntry: assign((context, event) => {
+                  }),
+                  always: [
+                    {
+                      target: '#persistComplaint',
+                      cond: (context) => context.slots.pgr["isLocalityDataMatch"] && context.slots.pgr["predictedLocality"] != null && context.slots.pgr["predictedLocalityCode"] != null
+                    },
+                    {
+                      target: '#confirmationFuzzyLocalitySearch',
+                      cond: (context) => !context.slots.pgr["isLocalityDataMatch"] && context.slots.pgr["predictedLocality"] != null && context.slots.pgr["predictedLocalityCode"] != null
+                    },
+                    {
+                      target: '#nlpLocalitySearch',
+                      cond: (context) => !context.slots.pgr["isLocalityDataMatch"] && context.slots.pgr["predictedLocality"] == null && context.slots.pgr["predictedLocalityCode"] == null,
+                      actions: assign((context, event) => {
+                        let message = dialog.get_message(messages.fileComplaint.localityFuzzySearch.noRecord, context.user.locale)
+                        dialog.sendMessage(context, message);
+                      })
+
+                    }
+                  ]
+
+                },
+                confirmationFuzzyLocalitySearch:{
+                  id: 'confirmationFuzzyLocalitySearch',
+                  initial: 'question',
+                  states:{
+                    question: {
+                      onEntry: assign((context, event) => {
+                        let message = dialog.get_message(messages.fileComplaint.localityFuzzySearch.confirmation, context.user.locale);
+                        message = message.replace('{{locality}}',context.slots.pgr["predictedLocality"]);
+                        dialog.sendMessage(context, message);
+                      }),
+                      on: {
+                        USER_MESSAGE: 'process'
+                      }
+                    },
+                    process: {
+                      onEntry: assign((context, event) => {
+                        if(dialog.validateInputType(event, 'text'))
+                          context.intention = dialog.get_intention(grammer.confirmation.choice, event, true);
+                        else
+                          context.intention = dialog.INTENTION_UNKOWN;
+                      }),
+                      always: [
+                        {
+                          target: '#persistComplaint',
+                          cond: (context) => context.intention == 'Yes'
+                        },
+                        {
+                          target: '#nlpLocalitySearch',
+                          cond: (context) => context.intention == 'No',
+                        },
+                        {
+                          target: 'error',
+                        }
+                      ]
+                    },
+                    error: {
+                      onEntry: assign((context, event) => {
+                        let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
+                        dialog.sendMessage(context, message, false);
+                      }),
+                      always: 'question'
+                    }
+
+                  }
+
                 }
               }
             },
@@ -434,7 +697,7 @@ const pgr =  {
                   }),
                   always : [
                     {
-                      target: '#other',
+                      target: '#persistComplaint',
                       cond: (context) => context.intention != dialog.INTENTION_UNKOWN,
                       actions: assign((context, event) => context.slots.pgr["locality"] = context.intention)
                     },
@@ -485,7 +748,7 @@ const pgr =  {
                     }
                     else{
                       let parsed = event.message.input;
-                      let isValid = (parsed === "No");
+                      let isValid = (parsed === "1");
                       context.message = {
                         isValid: isValid,
                         messageContent: event.message.input
@@ -500,7 +763,7 @@ const pgr =  {
                       }
                     },
                     {
-                      target: '#persistComplaint',
+                      target: '#location',
                       cond: (context, event) => {
                         return context.message.isValid;
                       }
@@ -607,8 +870,8 @@ let messages = {
       category: {
         question: {
           preamble: {
-            en_IN : 'Please enter the number for your complaint category👇',
-            hi_IN : 'अपनी शिकायत श्रेणी के लिए नंबर दर्ज करें'
+            en_IN : 'What do you want to complaint for? Please type and send the number of your option 👇',
+            hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇'
           },
           otherType: {
             en_IN: 'Others',
@@ -619,16 +882,16 @@ let messages = {
       item: {
         question: {
           preamble : {
-            en_IN : 'Please enter the number for your complaint item',
-            hi_IN : 'अपनी शिकायत के लिए नंबर दर्ज करें'
+            en_IN : 'Please select the problem category for {{complaint}}',
+            hi_IN : 'कृपया {{complaint}} के लिए समस्या श्रेणी चुनें'
           },
         }
       },
     }, // complaintType2Step
     geoLocation: {
       question: {
-        en_IN :'If you are at the grievance site, please share your location. Otherwise type any character.',
-        hi_IN : 'यदि आप शिकायत स्थल पर हैं, तो कृपया अपना स्थान साझा करें। अगर नहीं किसी भी चरित्र को टाइप करें।'
+        en_IN :'If you are at the grievance site, please share your location.\n\n👉  Kindly refer the image below to understand steps for sharing the location.\n\n👉  To continue without sharing the location, type and send  *1*.',
+        hi_IN : 'यदि आप शिकायत स्थल पर हैं, तो कृपया अपना स्थान साझा करें।\n\n👉 स्थान साझा करने के चरणों को समझने के लिए कृपया नीचे दी गई छवि देखें।\n\n👉 स्थान साझा किए बिना जारी रखने के लिए, टाइप करें और *1* भेजें।'
       }
     }, // geoLocation 
     confirmLocation: {
@@ -659,8 +922,8 @@ let messages = {
     }, // locality
     imageUpload: {
       question: {
-        en_IN: 'Please attach a picture of the complaint. Otherwise, type and send "No"',
-        hi_IN: 'कृपया शिकायत की एक तस्वीर भेजें। अन्यथा टाइप करें "No" और भेजें ।'
+        en_IN: 'If possible, please attach a photo about your grievance.\n\nTo continue without photo, type and send *1*',
+        hi_IN: 'यदि संभव हो, तो कृपया अपनी शिकायत के बारे में एक फोटो संलग्न करें।\n\nबिना फोटो के जारी रखने के लिए, टाइप करें और भेजें *1*'
       },
       error:{
         en_IN : 'Sorry, I didn\'t understand',
@@ -668,11 +931,11 @@ let messages = {
       }
     },
     persistComplaint: {
-      en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : {{complaintNumber}}\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
+      en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : *{{complaintNumber}}*\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
       hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
     },
     closingStatement: {
-      en_IN: '\nPlease type and send “mseva” whenever you need my assistance',
+      en_IN: '\nPlease type and send *“mseva”* whenever you need my assistance',
       hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
     },
     cityFuzzySearch: {
@@ -681,8 +944,12 @@ let messages = {
         hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - जालंधर, अमृतसर, लुधियाना"
       },
       confirmation: {
-        en_IN: "Our system detected {{city}} as your city.\n\n👉 Type and send *1* to confirm your city.\n👉 Type and send 2 to re-enter the city name.",
-        hi_IN: "हमारे सिस्टम ने {{city}} को आपके शहर के रूप में पहचाना।\n\n👉 अपने शहर की पुष्टि करने के लिए *1* टाइप करें और भेजें।\n👉 शहर का नाम फिर से दर्ज करने के लिए 2 टाइप करें और भेजें।"
+        en_IN: "Did you mean *“{{city}}”* ?\n\n👉  Type and send *1* to confirm.\n\n👉  Type and send *2* to write again.",
+        hi_IN: "क्या आपका मतलब *“{{city}}”* ?\n\n👉 टाइप करें और पुष्टि करने के लिए *1* भेजें।\n\n👉 फिर से लिखने के लिए *2* टाइप करें और भेजें।"
+      },
+      noRecord:{
+        en_IN: 'Provided city is miss-spelled or not present in our system record.\nPlease enter the details again.',
+        hi_IN: 'आपके द्वारा दर्ज किया गया शहर गलत वर्तनी वाला है या हमारे सिस्टम रिकॉर्ड में मौजूद नहीं है।\nकृपया फिर से विवरण दर्ज करें।'
       }
     },
     localityFuzzySearch: {
@@ -691,8 +958,12 @@ let messages = {
         hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - अजीत नगर, मोहल्ला कांगो"
       },
       confirmation: {
-        en_IN: "Our system detected {{locality}} as your locality.\n\n👉 Type and send *1* to confirm your locality.\n👉 Type and send *2* to re-enter the locality name.",
-        hi_IN: "हमारे सिस्टम ने {{locality}} को आपके इलाके के रूप में पहचाना।\n\n👉 अपने इलाके की पुष्टि करने के लिए *1* टाइप करें और भेजें।\n👉 इलाके का नाम फिर से दर्ज करने के लिए *2* टाइप करें और भेजें।"
+        en_IN: "Did you mean *“{{locality}}”* ?\n\n👉  Type and send *1* to confirm.\n\n👉  Type and send *2* to write again.",
+        hi_IN: "क्या आपका मतलब *“{{locality}}”* ?\n\n👉 टाइप करें और पुष्टि करने के लिए *1* भेजें।\n\n👉 फिर से लिखने के लिए *2* टाइप करें और भेजें।"      
+      },
+      noRecord:{
+        en_IN: 'Provided locality is miss-spelled or not present in our system record.\nPlease enter the details again.',
+        hi_IN: 'आपके द्वारा दर्ज किया गया स्थान गलत वर्तनी वाला है या हमारे सिस्टम रिकॉर्ड में मौजूद नहीं है।\nकृपया फिर से विवरण दर्ज करें।'
       }
     }
   }, // fileComplaint
@@ -725,5 +996,11 @@ let grammer = {
       {intention: 'track_existing_complaints', recognize: ['2', 'track', 'existing']}
     ]
   },
+  confirmation: {
+    choice: [
+      {intention: 'Yes', recognize: ['1', 'yes', 'Yes']},
+      {intention: 'No', recognize: ['2', 'no', 'No']}
+    ]
+  }
 };
 module.exports = pgr;

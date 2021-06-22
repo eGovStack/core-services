@@ -479,8 +479,8 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Prperty Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
-      hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें:\n\n1. शिकायतों के लिए\n2. बिलों के लिए\n3. रसीदों के लिए\n4. भाषा बदलने के लिए'
+      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Property Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
+      hi_IN: 'आज हम आपकी सेवा कैसे कर सकते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें👇\n\n*1.* शिकायत दर्ज करें\n\n*2.* अपनी शिकायतों को ट्रैक करें।\n\n*3.* पानी और सीवरेज बिल का भुगतान करें।\n\ n*4.* संपत्ति कर बिल का भुगतान करें।\n\n*5.* भुगतान रसीद देखें।\n\n*6.* भाषा बदलें।\n\n👉 किसी भी स्तर पर टाइप करें और वापस जाने के लिए *mseva* भेजें मुख्य मेनू के लिए।'
     }
   },
   endstate: {

@@ -512,24 +512,24 @@ let messages = {
       en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     },
     multipleRecords: {
       en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     },
     multipleRecordsSameService: {
       en_IN: 'Following unpaid bills are found with your mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     }
   },
@@ -600,24 +600,24 @@ let messages = {
       en_IN: 'Following unpaid bills are found 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     },
     multipleRecords: {
       en_IN: 'Following unpaid bills are found 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     },
     multipleRecordsSameService: {
       en_IN: 'Following unpaid bills are found 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*      {{id}}\n*Owner Name*         {{payerName}}\n*Amount Due*          Rs {{dueAmount}}\n*Due Date*             {{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*  {{id}}\n*स्वामी का नाम*  {{payerName}}\n*देय राशि*  रु {{dueAmount}}\n*देय तिथि *  {{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
       }
     }
   },

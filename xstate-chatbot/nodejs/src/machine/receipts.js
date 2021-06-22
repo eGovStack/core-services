@@ -802,17 +802,24 @@ const receipts = {
                   output: context.receipts.slots.fileStoreId,
                   type: "pdf",
                 };
-                //dialog.sendMessage(context, pdfContent);
                 messageContent.push(pdfContent);
 
                 let message = dialog.get_message(messages.lastState.template,context.user.locale);
                 message = message.replace('{{id}}',receiptData.id);
                 message = message.replace('{{amount}}',receiptData.amount);
                 message = message.replace('{{date}}',receiptData.date);
-                //dialog.sendMessage(context, message);
-                //dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale),false);
-                messageContent.push(message);
-                messageContent.push(dialog.get_message(messages.lastState,context.user.locale));
+                var receiptInfo = {
+                  output: message,
+                  type: "text"
+                };
+                messageContent.push(receiptInfo);
+
+                var endStatement = {
+                  output: dialog.get_message(messages.lastState,context.user.locale),
+                  type: "text"
+                };
+                messageContent.push(endStatement);
+
                 dialog.sendMessage(context, messageContent);
               })();
             }),
@@ -899,8 +906,8 @@ let messages = {
         en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
-          en_IN: '*Consumer Number* {{id}}\nLocality: {{locality}} , {{city}}',
-          hi_IN: '*उपभोक्ता संख्या* {{id}} ,\nइलाका: {{locality}} , {{city}}'
+          en_IN: '*Consumer Number*\n{{id}}\n*Locality:* {{locality}} , {{city}}',
+          hi_IN: '*उपभोक्ता संख्या*\n{{id}} ,\n*इलाका:* {{locality}} , {{city}}'
         }
       }
     },
@@ -1013,8 +1020,8 @@ let messages = {
       }
     },
     header:{
-      en_IN: '*{{date}}*            *{{status}}*   *{{amount}}*',
-      hi_IN: '*{{date}}*            *{{status}}*   *{{amount}}*',
+      en_IN: '*{{date}}*               *{{status}}*    *{{amount}}*',
+      hi_IN: '*{{date}}*               *{{status}}*    *{{amount}}*',
       date:{
         en_IN:'Date',
         hi_IN:'तारीख'
@@ -1046,8 +1053,8 @@ let messages = {
     en_IN: '👉 To go back to the main menu, type and send *mseva*.',
     hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और *mseva* भेजें।',
     template: {
-      en_IN: '*Consumer Number* {{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}',
-      hi_IN: '*Consumer Number* {{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}'
+      en_IN: '*Consumer Number*\n{{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}',
+      hi_IN: '*Consumer Number*\n{{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}'
     }
   }
   
