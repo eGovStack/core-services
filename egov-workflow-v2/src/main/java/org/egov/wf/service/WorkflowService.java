@@ -140,6 +140,29 @@ public class WorkflowService {
 
         return new LinkedList<>(businessIdToProcessInstanceMap.values());
     }
+    
+    public List statusCount(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        List result;
+        if(criteria.isNull()){
+        	enrichSearchCriteriaFromUser(requestInfo, criteria);
+            result = workflowRepository.getInboxStatusCount(criteria);
+        }
+        else {
+//        	List<String> origCriteriaStatuses = criteria.getStatus();
+        	// enrichSearchCriteriaFromUser(requestInfo, criteria);
+//        	String tenantId = (criteria.getTenantId() == null ? (requestInfo.getUserInfo().getTenantId()) :(criteria.getTenantId()));
+//        	List<String> finalCriteriaStatuses = new ArrayList<String>();
+//        	if(origCriteriaStatuses != null && !origCriteriaStatuses.isEmpty()) {
+//        		origCriteriaStatuses.forEach((status) ->{
+//        			finalCriteriaStatuses.add(tenantId+":"+status);
+//        		});
+//        		criteria.setStatus(finalCriteriaStatuses);
+//        	}
+        	result = workflowRepository.getProcessInstancesStatusCount(criteria);
+        }
+
+        return result;
+    }
 
     /**
      * Enriches processInstance search criteria based on requestInfo

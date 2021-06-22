@@ -86,15 +86,32 @@ public class WorKflowRepository {
      */
     public Integer getInboxCount(ProcessInstanceSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getInboxCount(criteria, preparedStmtList);
+        String query = queryBuilder.getInboxCount(criteria, preparedStmtList,Boolean.FALSE);
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
 
     public Integer getProcessInstancesCount(ProcessInstanceSearchCriteria criteria){
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getProcessInstanceCount(criteria, preparedStmtList);
+        String query = queryBuilder.getProcessInstanceCount(criteria, preparedStmtList,Boolean.FALSE);
         return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+    }
+
+    /**
+     * Returns the count based on the search criteria
+     * @param criteria
+     * @return
+     */
+    public List getInboxStatusCount(ProcessInstanceSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getInboxCount(criteria, preparedStmtList,Boolean.TRUE);
+        return jdbcTemplate.queryForList(query, preparedStmtList.toArray());
+    }
+
+    public List getProcessInstancesStatusCount(ProcessInstanceSearchCriteria criteria){
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getProcessInstanceCount(criteria, preparedStmtList,Boolean.TRUE);
+        return  jdbcTemplate.queryForList(query, preparedStmtList.toArray());
     }
 
 
