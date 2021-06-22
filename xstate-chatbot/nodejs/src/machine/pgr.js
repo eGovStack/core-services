@@ -326,36 +326,6 @@ const pgr =  {
 
                     ],
                   },
-
-
-
-                 /* onEntry: assign((context, event) => {
-                    if(event.message.type === 'location') {
-                      context.slots.pgr.geocode = event.message.input;
-                      context.pgr.detectedLocation = pgrService.getCityAndLocalityForGeocode(event.message.input, context.extraInfo.tenantId);
-                    }
-                    else{
-                      context.message = event.message.input;
-                    }
-                  }),
-                  always:[
-                    {
-                      target: '#confirmLocation',
-                      cond: (context, event) => context.pgr.detectedLocation,
-                    },
-                    {
-                      target: '#city',
-                      cond: (context, event) => context.message == '1' && !config.pgrUseCase.geoSearch
-                      
-                    },
-                    {
-                      target: '#nlpCitySearch',
-                      cond: (context, event) => context.message == '1' && config.pgrUseCase.geoSearch
-                    },
-                    {
-                      target: '#geoLocation'
-                    }
-                  ]*/
                 }
               }
             },
@@ -401,10 +371,20 @@ const pgr =  {
                     },
                     {
                       target: '#locality',
-                      cond: (context, event) => context.slots.pgr["locationConfirmed"] 
+                      cond: (context, event) => !config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
                     },
                     {
-                      target: '#city'
+                      target: '#nlpLocalitySearch',
+                      cond: (context, event) => config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
+                    },
+                    {
+                      target: '#city',
+                      cond: (context, event) => !config.pgrUseCase.geoSearch,
+
+                    },
+                    {
+                      target: '#nlpCitySearch',
+                      cond: (context, event) => config.pgrUseCase.geoSearch,
                     }
                   ]
                 }
