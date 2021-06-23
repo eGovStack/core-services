@@ -165,8 +165,11 @@ public class SearchUtils {
 						operator =  "=";
 						paramValue = ((String) paramValue).toLowerCase();
 					}
-					
-					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
+					if(operator.equals("LIKE"))
+					whereClause.append(param.getName()).append(" " + operator + " %").append(":" + param.getName() + "%" );
+					else 
+						whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
+
 				}
 
 				preparedStatementValues.put(param.getName(), paramValue);
