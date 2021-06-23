@@ -172,6 +172,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 // ENDPOINTS
+/*
 app.post('/sign-tl-data', (req, res) => {
   let jsonMessage = req.body;
       try {
@@ -187,7 +188,7 @@ app.post('/sign-tl-data', (req, res) => {
 
 const port = process.env.PORT || 8082;
 app.listen(port, () => console.log(`Listening on port ${port}..`));
-
+*/
 module.exports = {
   signAndSave,
   signJSON,
