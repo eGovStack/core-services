@@ -1,8 +1,6 @@
-import sys
-sys.path.insert(0, '..')
 from flask import Flask, jsonify, request, send_file
 from fuzzywuzzy import fuzz
-from configuration.Config import *
+from Config import *
 import json
 import requests
 import string

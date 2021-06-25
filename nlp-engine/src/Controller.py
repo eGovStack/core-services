@@ -1,7 +1,5 @@
-import sys
-sys.path.insert(0, '..')
-from service.CitySearch import *
-from service.LocalitySearch import *
+from CitySearch import *
+from LocalitySearch import *
 from flask import Flask, jsonify, request, send_file
 
 controller = Flask(__name__)

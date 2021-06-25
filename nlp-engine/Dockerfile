@@ -13,4 +13,4 @@ RUN pip install dist/libindic-inexactsearch*.tar.gz
 WORKDIR /code
 
 COPY src/ .
-CMD [ "python", "./controller/Controller.py" ] 
+CMD [ "python", "./Controller.py" ] 

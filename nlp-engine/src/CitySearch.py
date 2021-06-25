@@ -1,9 +1,7 @@
-import sys
-sys.path.insert(0, '..')
 from fuzzywuzzy import fuzz
 from googletrans import Translator
 from nltk.util import ngrams
-from configuration.Config import *
+from Config import *
 import string
 import nltk
 import requests
