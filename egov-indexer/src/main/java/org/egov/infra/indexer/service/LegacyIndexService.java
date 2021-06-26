@@ -205,6 +205,7 @@ public class LegacyIndexService {
                                 threadRun = false;
                                 break;
                             } else {
+                            	log.info("ResponseFromServiceAPI: " + mapper.writeValueAsString(response));
                                 List<Object> searchResponse = JsonPath.read(response, legacyIndexRequest.getApiDetails().getResponseJsonPath());
                                 if (!CollectionUtils.isEmpty(searchResponse)) {
                                     childThreadExecutor(legacyIndexRequest, mapper, response);

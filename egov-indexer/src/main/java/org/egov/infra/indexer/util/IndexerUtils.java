@@ -309,6 +309,7 @@ public class IndexerUtils {
 	 */
 	public JSONArray constructArrayForBulkIndex(String kafkaJson, Index index, boolean isBulk) throws Exception {
 		JSONArray kafkaJsonArray = null;
+		log.info("kafkaJson: {}", kafkaJson);
 		try {
 			if (isBulk) {
 				// Validating if the request is a valid json array.
@@ -339,6 +340,8 @@ public class IndexerUtils {
 			log.error("Object: " + kafkaJson);
 			throw e;
 		}
+		log.info("kafkaJsonArray: {}", kafkaJsonArray);
+
 		return transformData(index, kafkaJsonArray);
 	}
 
