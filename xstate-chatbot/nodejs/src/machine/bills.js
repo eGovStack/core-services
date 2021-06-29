@@ -507,7 +507,7 @@ const bills = {
                     bttnUrlComponent: bttnUrlComponent
                   };
 
-                  dialog.sendMessage(context, templateContent, true);
+                  dialog.sendMessage(context, templateContent, false);
                 }
               } else {
                 dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
@@ -536,7 +536,7 @@ const bills = {
               }
             }
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-            dialog.sendMessage(context, endStatement,false);
+            dialog.sendMessage(context, endStatement);
           }),
           always: '#endstate'
         }
