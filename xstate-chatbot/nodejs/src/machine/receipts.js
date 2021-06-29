@@ -523,11 +523,11 @@ const receipts = {
           process: {
             onEntry: assign((context, event) => {
               let messageText = event.message.input;
-              let parsed = parseInt(event.message.input.trim())
-              let isValid = parsed === 1;
+              messageText = messageText.toLowerCase();
+              let isValid = (messageText === 'main menu' || messageText === 'view receipts');
               context.message = {
                 isValid: isValid,
-                messageContent: event.message.input
+                messageContent: messageText
               };
             }),
             always: [
@@ -538,7 +538,16 @@ const receipts = {
                 }
               },
               {
-                target: '#pdfReceiptList'
+                target: '#pdfReceiptList',
+                cond: (context, event) => {
+                  return (context.message.isValid && context.message.messageContent ==='view receipts');
+                }
+              },
+              {
+                target: '#sevamenu',
+                cond: (context, event) => {
+                  return (context.message.isValid && context.message.messageContent ==='main menu');
+                }
               }
             ]
           },

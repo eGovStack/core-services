@@ -15,7 +15,9 @@ let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTY
 
 let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"4\",\"@MEDIADATA\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
-let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@MSGTYPE\":\"3\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
+let buttontemplateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@MSGTYPE\":\"3\",\"@B_URLINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
+
+let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
 class ValueFirstWhatsAppProvider {
 
@@ -220,7 +222,14 @@ class ValueFirstWhatsAppProvider {
                 messageBody['@TEXT'] = encodedMessage;
             } 
             else if(type == 'template'){
-                messageBody = JSON.parse(templateMessageBody);
+
+                if(extraInfo.bttnUrlComponent){
+                    messageBody = JSON.parse(buttontemplateMessageBody);
+                    messageBody['@B_URLINFO'] = extraInfo.bttnUrlComponent;
+                }
+                else
+                    messageBody = JSON.parse(templateMessageBody);
+
                 let combinedStringForTemplateInfo = extraInfo.templateId;
             
                 if(extraInfo.params){

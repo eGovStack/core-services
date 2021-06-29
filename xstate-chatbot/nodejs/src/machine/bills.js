@@ -51,11 +51,24 @@ const bills = {
     personalBills: {
       id: 'personalBills',
       onEntry: assign((context, event) => {
+        let templateList;
         let bills = context.bills.pendingBills;
+        let localeList = config.supportedLocales.split(',');
+        let localeIndex = localeList.indexOf(context.user.locale);
+        if(context.service == 'WS')
+          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+        else
+          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+
+        if(templateList[localeIndex])
+          context.extraInfo.templateId = templateList[localeIndex];
+        else
+          context.extraInfo.templateId = templateList[0];
+
         if(bills.length === 1) {
           let bill = bills[0];
           dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
-          let billTemplate = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
+          /*let billTemplate = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
           billTemplate = billTemplate.replace('{{service}}', bill.service);
           billTemplate = billTemplate.replace('{{id}}', bill.id);
           billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
@@ -63,7 +76,26 @@ const bills = {
           billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
           billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
           billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-          dialog.sendMessage(context, billTemplate, false);
+          dialog.sendMessage(context, billTemplate, false);*/
+
+          let params=[];
+          params.push(bill.id);
+          params.push(bill.payerName);
+          params.push(bill.dueAmount);
+          params.push(bill.dueDate);
+
+          context.extraInfo.params = params;
+
+          let urlComponemt = bill.paymentLink.split('/');
+          let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+          context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+          var templateContent = {
+            output: context.extraInfo.templateId,
+            type: "template",
+          };
+
+          dialog.sendMessage(context, templateContent, false);
         } else {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
@@ -71,20 +103,39 @@ const bills = {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
-              let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
+              /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
               billTemplate = billTemplate.replace('{{service}}', bill.service);
               billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
               billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
               billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
               billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
 
-              dialog.sendMessage(context, billTemplate, false);
+              dialog.sendMessage(context, billTemplate, false);*/
+
+              let params=[];
+              params.push(bill.id);
+              params.push(bill.payerName);
+              params.push(bill.dueAmount);
+              params.push(bill.dueDate);
+
+              context.extraInfo.params = params;
+
+              let urlComponemt = bill.paymentLink.split('/');
+              let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+              var templateContent = {
+                output: context.extraInfo.templateId,
+                type: "template",
+              };
+
+              dialog.sendMessage(context, templateContent, false);
             }
           } else {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
-              let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
+              /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
               billTemplate = billTemplate.replace('{{service}}', bill.service);
               billTemplate = billTemplate.replace('{{id}}', bill.id);
               billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
@@ -92,7 +143,26 @@ const bills = {
               billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
               billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
 
-              dialog.sendMessage(context, billTemplate, false);
+              dialog.sendMessage(context, billTemplate, false);*/
+
+              let params=[];
+              params.push(bill.id);
+              params.push(bill.payerName);
+              params.push(bill.dueAmount);
+              params.push(bill.dueDate);
+
+              context.extraInfo.params = params;
+
+              let urlComponemt = bill.paymentLink.split('/');
+              let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+              var templateContent = {
+                output: context.extraInfo.templateId,
+                type: "template",
+              };
+
+              dialog.sendMessage(context, templateContent, false);
             }
           }
         }
@@ -406,19 +476,51 @@ const bills = {
         },
         results: {
           onEntry: assign((context, event) => {
+            let templateList;
             let bills = context.bills.searchResults;
+            let localeList = config.supportedLocales.split(',');
+            let localeIndex = localeList.indexOf(context.user.locale);
+            if(context.service == 'WS')
+              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+            else
+              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+
+            if(templateList[localeIndex])
+              context.extraInfo.templateId = templateList[localeIndex];
+            else
+              context.extraInfo.templateId = templateList[0];
+
+
             if(bills.length === 1) {
               let bill = bills[0];
               dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), false);
-              let billTemplate = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
+              /*let billTemplate = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
               billTemplate = billTemplate.replace('{{service}}', bill.service);
               billTemplate = billTemplate.replace('{{id}}', bill.id);
               billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
               billTemplate = billTemplate.replace('{{period}}', bill.period);
               billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
               billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-              billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-              dialog.sendMessage(context, billTemplate, false);
+              billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);*/
+
+              let params=[];
+              params.push(bill.id);
+              params.push(bill.payerName);
+              params.push(bill.dueAmount);
+              params.push(bill.dueDate);
+
+              context.extraInfo.params = params;
+
+              let urlComponemt = bill.paymentLink.split('/');
+              let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+              var templateContent = {
+                output: context.extraInfo.templateId,
+                type: "template",
+              };
+
+              dialog.sendMessage(context, templateContent, false);
             } else {
               let services = bills.map(element => element.service);
               let serviceSet = new Set(services);
@@ -426,27 +528,63 @@ const bills = {
                 dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), false);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
-                  let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
+                  /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
                   billTemplate = billTemplate.replace('{{service}}', bill.service);
                   billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
                   billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
                   billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
                   billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-                  dialog.sendMessage(context, billTemplate, false);
+                  dialog.sendMessage(context, billTemplate, false);*/
+
+                  let params=[];
+                  params.push(bill.id);
+                  params.push(bill.payerName);
+                  params.push(bill.dueAmount);
+                  params.push(bill.dueDate);
+
+                  context.extraInfo.params = params;
+
+                  let urlComponemt = bill.paymentLink.split('/');
+                  let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+                  context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+                  var templateContent = {
+                    output: context.extraInfo.templateId,
+                    type: "template",
+                  };
+
+                  dialog.sendMessage(context, templateContent, false);
                 }
               } else {
                 dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
-                  let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
+                  /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
                   billTemplate = billTemplate.replace('{{service}}', bill.service);
                   billTemplate = billTemplate.replace('{{id}}', bill.id);
                   billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
                   billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
                   billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-                  billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
+                  billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);*/
 
-                  dialog.sendMessage(context, billTemplate, false);
+                  let params=[];
+                  params.push(bill.id);
+                  params.push(bill.payerName);
+                  params.push(bill.dueAmount);
+                  params.push(bill.dueDate);
+
+                  context.extraInfo.params = params;
+
+                  let urlComponemt = bill.paymentLink.split('/');
+                  let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+                  context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+                  var templateContent = {
+                    output: context.extraInfo.templateId,
+                    type: "template",
+                  };
+
+                  dialog.sendMessage(context, templateContent, false);
                 }
               }
             }
