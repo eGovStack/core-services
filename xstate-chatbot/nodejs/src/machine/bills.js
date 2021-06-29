@@ -67,16 +67,7 @@ const bills = {
 
         if(bills.length === 1) {
           let bill = bills[0];
-          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
-          /*let billTemplate = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
-          billTemplate = billTemplate.replace('{{service}}', bill.service);
-          billTemplate = billTemplate.replace('{{id}}', bill.id);
-          billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-          billTemplate = billTemplate.replace('{{period}}', bill.period);
-          billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-          billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-          billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-          dialog.sendMessage(context, billTemplate, false);*/
+          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), true);
 
           let params=[];
           params.push(bill.id);
@@ -95,22 +86,14 @@ const bills = {
             type: "template",
           };
 
-          dialog.sendMessage(context, templateContent, false);
+          dialog.sendMessage(context, templateContent, true);
         } else {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
           if(services.length === serviceSet.size) {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), true);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
-              /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
-              billTemplate = billTemplate.replace('{{service}}', bill.service);
-              billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-              billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-              billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-              billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-
-              dialog.sendMessage(context, billTemplate, false);*/
 
               let params=[];
               params.push(bill.id);
@@ -129,21 +112,12 @@ const bills = {
                 type: "template",
               };
 
-              dialog.sendMessage(context, templateContent, false);
+              dialog.sendMessage(context, templateContent, true);
             }
           } else {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), true);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
-              /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
-              billTemplate = billTemplate.replace('{{service}}', bill.service);
-              billTemplate = billTemplate.replace('{{id}}', bill.id);
-              billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-              billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-              billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-              billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-
-              dialog.sendMessage(context, billTemplate, false);*/
 
               let params=[];
               params.push(bill.id);
@@ -162,7 +136,7 @@ const bills = {
                 type: "template",
               };
 
-              dialog.sendMessage(context, templateContent, false);
+              dialog.sendMessage(context, templateContent, true);
             }
           }
         }
@@ -493,15 +467,7 @@ const bills = {
 
             if(bills.length === 1) {
               let bill = bills[0];
-              dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), false);
-              /*let billTemplate = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
-              billTemplate = billTemplate.replace('{{service}}', bill.service);
-              billTemplate = billTemplate.replace('{{id}}', bill.id);
-              billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-              billTemplate = billTemplate.replace('{{period}}', bill.period);
-              billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-              billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-              billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);*/
+              dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), true);
 
               let params=[];
               params.push(bill.id);
@@ -520,21 +486,14 @@ const bills = {
                 type: "template",
               };
 
-              dialog.sendMessage(context, templateContent, false);
+              dialog.sendMessage(context, templateContent, true);
             } else {
               let services = bills.map(element => element.service);
               let serviceSet = new Set(services);
               if(services.length === serviceSet.size) {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), false);
+                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), true);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
-                  /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
-                  billTemplate = billTemplate.replace('{{service}}', bill.service);
-                  billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-                  billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-                  billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-                  billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);
-                  dialog.sendMessage(context, billTemplate, false);*/
 
                   let params=[];
                   params.push(bill.id);
@@ -553,19 +512,12 @@ const bills = {
                     type: "template",
                   };
 
-                  dialog.sendMessage(context, templateContent, false);
+                  dialog.sendMessage(context, templateContent, true);
                 }
               } else {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
+                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), true);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
-                  /*let billTemplate = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
-                  billTemplate = billTemplate.replace('{{service}}', bill.service);
-                  billTemplate = billTemplate.replace('{{id}}', bill.id);
-                  billTemplate = billTemplate.replace('{{payerName}}', bill.payerName);
-                  billTemplate = billTemplate.replace('{{dueAmount}}', bill.dueAmount);
-                  billTemplate = billTemplate.replace('{{dueDate}}', bill.dueDate);
-                  billTemplate = billTemplate.replace('{{paymentLink}}', bill.paymentLink);*/
 
                   let params=[];
                   params.push(bill.id);
@@ -584,7 +536,7 @@ const bills = {
                     type: "template",
                   };
 
-                  dialog.sendMessage(context, templateContent, false);
+                  dialog.sendMessage(context, templateContent, true);
                 }
               }
             }
