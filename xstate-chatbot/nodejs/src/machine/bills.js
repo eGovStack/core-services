@@ -56,9 +56,9 @@ const bills = {
         let localeList = config.supportedLocales.split(',');
         let localeIndex = localeList.indexOf(context.user.locale);
         if(context.service == 'WS')
-          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
         else
-          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+          templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
 
         if(templateList[localeIndex])
           context.extraInfo.templateId = templateList[localeIndex];
@@ -481,10 +481,10 @@ const bills = {
             let localeList = config.supportedLocales.split(',');
             let localeIndex = localeList.indexOf(context.user.locale);
             if(context.service == 'WS')
-              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
             else
-              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
-
+              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
+  
             if(templateList[localeIndex])
               context.extraInfo.templateId = templateList[localeIndex];
             else
