@@ -21,7 +21,7 @@ const messages = {
           },
           bedAvailability: {
             en_IN: 'Information about availability of Covid Beds',
-            pa_IN: 'ਫਤਿਹ ਕਿੱਟ ਦੀ ਵਰਤੋਂ ਕਿਵੇਂ ਕਰੀਏ',
+            pa_IN: 'ਕੋਵਿਡ ਬੈੱਡਾਂ ਦੀ ਉਪਲਬਧਤਾ ਬਾਰੇ ਜਾਣਕਾਰੀ',
             hi_IN: 'कोविड बेड की उपलब्धता के बारे में जानकारी',
           },
           vaccinationCenters: {
