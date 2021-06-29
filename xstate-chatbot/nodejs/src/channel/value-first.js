@@ -15,7 +15,7 @@ let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTY
 
 let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"4\",\"@MEDIADATA\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
-let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
+let templateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@MSGTYPE\":\"3\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
 class ValueFirstWhatsAppProvider {
 
@@ -218,7 +218,20 @@ class ValueFirstWhatsAppProvider {
                 messageBody = JSON.parse(textMessageBody);
                 let encodedMessage=urlencode(message, 'utf8');
                 messageBody['@TEXT'] = encodedMessage;
-            } else {
+            } 
+            else if(type == 'template'){
+                messageBody = JSON.parse(templateMessageBody);
+                let combinedStringForTemplateInfo = extraInfo.templateId;
+            
+                if(extraInfo.params){
+                    let templateParams = extraInfo.params;
+                    for(let param of templateParams)
+                        combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
+                }
+
+                messageBody['@TEMPLATEINFO'] = combinedStringForTemplateInfo;
+            }     
+            else {
                 // TODO for non-textual messages
                 let fileStoreId;
                 if(message)

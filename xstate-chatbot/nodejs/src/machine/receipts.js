@@ -2,6 +2,7 @@ const { assign } = require('xstate');
 const { receiptService } = require('./service/service-loader');
 const dialog = require('./util/dialog');
 const pdfService = require('./util/pdf-service');
+const config = require('../env-variables');
 
 
 const receipts = {
@@ -497,8 +498,23 @@ const receipts = {
         states: {
           receiptQuestion: {
             onEntry: assign((context, event) => {
-              let message = dialog.get_message(messages.paramInputInitiate.question, context.user.locale);
-              dialog.sendMessage(context, message , true);
+              let localeList = config.supportedLocales.split(',');
+              let localeIndex = localeList.indexOf(context.user.locale);
+              let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+              if(templateList[localeIndex])
+                context.extraInfo.templateId = templateList[localeIndex];
+              else
+                context.extraInfo.templateId = templateList[0];
+
+              var templateContent = {
+                output: context.extraInfo.templateId,
+                type: "template",
+              };
+              dialog.sendMessage(context, templateContent, true);
+
+
+              //let message = dialog.get_message(messages.paramInputInitiate.question, context.user.locale);
+              //dialog.sendMessage(context, message , true);
             }),
             on: {
               USER_MESSAGE: 'process'
