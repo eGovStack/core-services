@@ -67,7 +67,7 @@ const bills = {
 
         if(bills.length === 1) {
           let bill = bills[0];
-          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), true);
+          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
 
           let params=[];
           params.push(bill.id);
@@ -75,23 +75,22 @@ const bills = {
           params.push(bill.dueAmount);
           params.push(bill.dueDate);
 
-          context.extraInfo.params = params;
-
           let urlComponemt = bill.paymentLink.split('/');
           let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-          context.extraInfo.bttnUrlComponent = bttnUrlComponent;
 
           var templateContent = {
             output: context.extraInfo.templateId,
             type: "template",
+            params: params,
+            bttnUrlComponent: bttnUrlComponent
           };
 
-          dialog.sendMessage(context, templateContent, true);
+          dialog.sendMessage(context, templateContent, false);
         } else {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
           if(services.length === serviceSet.size) {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), true);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
 
@@ -101,21 +100,20 @@ const bills = {
               params.push(bill.dueAmount);
               params.push(bill.dueDate);
 
-              context.extraInfo.params = params;
-
               let urlComponemt = bill.paymentLink.split('/');
               let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
 
               var templateContent = {
                 output: context.extraInfo.templateId,
                 type: "template",
+                params: params,
+                bttnUrlComponent: bttnUrlComponent
               };
 
-              dialog.sendMessage(context, templateContent, true);
+              dialog.sendMessage(context, templateContent, false);
             }
           } else {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), true);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
 
@@ -125,18 +123,17 @@ const bills = {
               params.push(bill.dueAmount);
               params.push(bill.dueDate);
 
-              context.extraInfo.params = params;
-
               let urlComponemt = bill.paymentLink.split('/');
               let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
 
               var templateContent = {
                 output: context.extraInfo.templateId,
                 type: "template",
+                params: params,
+                bttnUrlComponent: bttnUrlComponent
               };
 
-              dialog.sendMessage(context, templateContent, true);
+              dialog.sendMessage(context, templateContent, false);
             }
           }
         }
@@ -467,7 +464,7 @@ const bills = {
 
             if(bills.length === 1) {
               let bill = bills[0];
-              dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), true);
+              dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), false);
 
               let params=[];
               params.push(bill.id);
@@ -475,23 +472,22 @@ const bills = {
               params.push(bill.dueAmount);
               params.push(bill.dueDate);
 
-              context.extraInfo.params = params;
-
               let urlComponemt = bill.paymentLink.split('/');
               let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-              context.extraInfo.bttnUrlComponent = bttnUrlComponent;
 
               var templateContent = {
                 output: context.extraInfo.templateId,
                 type: "template",
+                params: params,
+                bttnUrlComponent: bttnUrlComponent
               };
 
-              dialog.sendMessage(context, templateContent, true);
+              dialog.sendMessage(context, templateContent, false);
             } else {
               let services = bills.map(element => element.service);
               let serviceSet = new Set(services);
               if(services.length === serviceSet.size) {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), true);
+                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), false);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
 
@@ -501,21 +497,20 @@ const bills = {
                   params.push(bill.dueAmount);
                   params.push(bill.dueDate);
 
-                  context.extraInfo.params = params;
-
                   let urlComponemt = bill.paymentLink.split('/');
                   let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-                  context.extraInfo.bttnUrlComponent = bttnUrlComponent;
 
                   var templateContent = {
                     output: context.extraInfo.templateId,
                     type: "template",
+                    params: params,
+                    bttnUrlComponent: bttnUrlComponent
                   };
 
                   dialog.sendMessage(context, templateContent, true);
                 }
               } else {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), true);
+                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
 
@@ -525,8 +520,6 @@ const bills = {
                   params.push(bill.dueAmount);
                   params.push(bill.dueDate);
 
-                  context.extraInfo.params = params;
-
                   let urlComponemt = bill.paymentLink.split('/');
                   let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
                   context.extraInfo.bttnUrlComponent = bttnUrlComponent;
@@ -534,14 +527,16 @@ const bills = {
                   var templateContent = {
                     output: context.extraInfo.templateId,
                     type: "template",
+                    params: params,
+                    bttnUrlComponent: bttnUrlComponent
                   };
 
-                  dialog.sendMessage(context, templateContent, true);
+                  dialog.sendMessage(context, templateContent, false);
                 }
               }
             }
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-            dialog.sendMessage(context, endStatement);
+            dialog.sendMessage(context, endStatement,false);
           }),
           always: '#endstate'
         }

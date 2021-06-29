@@ -223,17 +223,17 @@ class ValueFirstWhatsAppProvider {
             } 
             else if(type == 'template'){
 
-                if(extraInfo.bttnUrlComponent){
+                if(messages[i].bttnUrlComponent){
                     messageBody = JSON.parse(buttontemplateMessageBody);
-                    messageBody['@B_URLINFO'] = extraInfo.bttnUrlComponent;
+                    messageBody['@B_URLINFO'] = messages[i].bttnUrlComponent;
                 }
                 else
                     messageBody = JSON.parse(templateMessageBody);
 
-                let combinedStringForTemplateInfo = extraInfo.templateId;
+                let combinedStringForTemplateInfo = message;
             
-                if(extraInfo.params){
-                    let templateParams = extraInfo.params;
+                if(messages[i].params){
+                    let templateParams = messages[i].params;
                     for(let param of templateParams)
                         combinedStringForTemplateInfo = combinedStringForTemplateInfo + "~" + param;
                 }
