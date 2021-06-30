@@ -313,9 +313,12 @@ class ValueFirstWhatsAppProvider {
         if(Object.keys(requestBody).length === 0)
             requestBody  = req.body; 
             
-        //var requestValidation= await this.isValid(requestBody);
-
-        //if(requestValidation){
+        if(requestBody.media_type && requestBody.media_type === 'button')
+            return null;
+        
+        if(requestBody.buttonLabel && requestBody.buttonLabel != '$btnLabel')
+            return null;
+        
         reformattedMessage = await this.getTransformedRequest(requestBody);
         return reformattedMessage;
         //}

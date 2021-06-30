@@ -7,7 +7,8 @@ const express = require('express'),
 router.post('/message', async (req, res) =>  {
     try {
         let reformattedMessage = await channelProvider.processMessageFromUser(req);
-        sessionManager.fromUser(reformattedMessage);
+        if(reformattedMessage != null)
+            sessionManager.fromUser(reformattedMessage);        
     } catch(e) {
         console.log(e);
     }
@@ -16,15 +17,9 @@ router.post('/message', async (req, res) =>  {
 
 router.post('/status', async (req, res) => {
     try {
-        let requestBody = req.query;
-
-        if(Object.keys(requestBody).length === 0)
-            requestBody  = req.body;
-        if(requestBody.buttonLabel != '$btnLabel'){
-            let reformattedMessage = await channelProvider.processMessageFromUser(req);
-            sessionManager.fromUser(reformattedMessage);
-        }  
-        
+        let reformattedMessage = await channelProvider.processMessageFromUser(req);
+        if(reformattedMessage != null)
+            sessionManager.fromUser(reformattedMessage); 
     } catch(e) {
         console.log(e);
     }
