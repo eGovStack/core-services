@@ -69,6 +69,9 @@ const sevaMachine = Machine({
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.onboarding.onboardingWelcome, context.user.locale);
             dialog.sendMessage(context, message, false);
+
+            let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
+            dialog.sendMessage(context, nameInformationMessage, false);
           }),
           always: '#onboardingName'
         },
@@ -442,13 +445,13 @@ let messages = {
     },
     onboardingName: {
       question: {
-        en_IN: 'As per our records,  we have not found any name linked to this mobile number.\n\n👉  Please write your name to continue.',
+        en_IN: 'As per our records, we have not found any name linked to this mobile number.\n\n👉  Please provide your name to continue.',
         hi_IN: 'हमारे रिकॉर्ड के अनुसार, हमें इस मोबाइल नंबर से जुड़ा कोई नाम नहीं मिला है।\n\n👉 जारी रखने के लिए कृपया अपना नाम लिखें।'
       }      
     },
     onBoardingUserProfileConfirmation: {
       question: {
-        en_IN: 'As per our records,  we have found the name  *“{{name}}”* linked with this mobile number.\n\n👉  Type and send 1 to confirm the name.\n\n👉  Type and send 2 to change the name.',
+        en_IN: 'As per our records, we have found the name  *“{{name}}”* linked with this mobile number.\n\n👉  Type and send *1* to confirm the name.\n\n👉  Type and send *2* to change the name.',
         hi_IN: 'हमारे रिकॉर्ड के अनुसार, हमें इस मोबाइल नंबर से जुड़ा हुआ नाम *“{{name}}”* मिला है।\n\n👉 नाम की पुष्टि करने के लिए 1 टाइप करें और भेजें।\n\n👉 टाइप करें और बदलने के लिए 2 भेजें। नाम।'
       }      
     },
@@ -459,17 +462,21 @@ let messages = {
       }
     },
     onboardingNameConfirmation: {
-      en_IN: "Confirm Name : {{name}} ?\n\n👉  Type and Send *1* to confirm the name.\n\n👉  Type and Send *2* to change the name.",
+      en_IN: "Confirm Name : {{name}}?\n\n👉  Type and send *1* to confirm the name.\n\n👉  Type and send *2* to change the name.",
       hi_IN: "कृपया अपने नाम {{name}} की पुष्टि करने के लिए “1” टाइप करें। यदि आप अपना नाम बदलना चाहते हैं, तो “2” टाइप कीजिए।"
     },
     onboardingThankYou: {
-      en_IN: 'Thanks for providing the confirmation 👍 We are happy to serve you 😊',
+      en_IN: 'Thanks for providing the confirmation 👍\nWe are happy to serve you 😊',
       hi_IN: 'विवरण के लिए आपका बहुत-बहुत धन्यवाद {{name}}, हम आपकी सेवा करके प्रसन्न हैं।'
-    }  
+    },
+    nameInformation: {
+      en_IN: 'For a personalized experience, we would like to confirm your name.',
+      hi_IN: 'व्यक्तिगत अनुभव के लिए, हम आपके नाम की पुष्टि करना चाहेंगे।'
+    }
   },
   locale : {
     question: {
-      en_IN: "Please choose your preferred language\n1. English\n2. हिंदी",
+      en_IN: "To select the language simply type and send the number of the preferred option  👇\n\n1.   English\n2.   हिन्दी\n3.   ਪੰਜਾਬੀ",
       hi_IN: "कृपया अपनी पसंदीदा भाषा चुनें\n1. English\n2. हिंदी"
     }
   },
@@ -479,7 +486,7 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'How can we serve you today? Please type and send the number of your option👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Property Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
+      en_IN : 'How can we serve you today? Please type and send the number of your option 👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Property Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
       hi_IN: 'आज हम आपकी सेवा कैसे कर सकते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें👇\n\n*1.* शिकायत दर्ज करें\n\n*2.* अपनी शिकायतों को ट्रैक करें।\n\n*3.* पानी और सीवरेज बिल का भुगतान करें।\n\ n*4.* संपत्ति कर बिल का भुगतान करें।\n\n*5.* भुगतान रसीद देखें।\n\n*6.* भाषा बदलें।\n\n👉 किसी भी स्तर पर टाइप करें और वापस जाने के लिए *mseva* भेजें मुख्य मेनू के लिए।'
     }
   },

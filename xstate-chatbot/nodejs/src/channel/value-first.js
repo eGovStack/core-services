@@ -85,23 +85,32 @@ class ValueFirstWhatsAppProvider {
         let reformattedMessage={};
         let type;
         let input;
-        if(requestBody.media_type)
-            type = requestBody.media_type;
-        else
-            type = "unknown";
 
-        if(type === "location") {
-            input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
+        if(requestBody.buttonLabel && requestBody.buttonLabel != '$btnLabel'){
+            type = 'text'
+            input = requestBody.buttonLabel;
+            requestBody.from = requestBody.TO;
+            requestBody.to = config.whatsAppBusinessNumber;
+        }
+        else{
+            if(requestBody.media_type)
+                type = requestBody.media_type;
+            else
+                type = "unknown";
+
+            if(type === "location") {
+                input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
+            } 
+            else if(type === 'image'){
+                var imageInBase64String = requestBody.MediaData;
+                input = await this.convertFromBase64AndStore(imageInBase64String);
+            }
+            else if(type === 'unknown' || type === 'document')
+                input = ' ';
+            else {
+                input = requestBody.text;
+            }
         } 
-        else if(type === 'image'){
-            var imageInBase64String = requestBody.MediaData;
-            input = await this.convertFromBase64AndStore(imageInBase64String);
-        }
-        else if(type === 'unknown' || type === 'document')
-            input = ' ';
-        else {
-            input = requestBody.text;
-        }
 
         reformattedMessage.message = {
             input: input,

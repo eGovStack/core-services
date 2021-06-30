@@ -802,7 +802,7 @@ const pgr =  {
               let complaints = event.data;
   
               let message = dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale);
-              message += '\n';
+              dialog.sendMessage(context, message);
               for(let i = 0; i < complaints.length; i++) {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
                 let complaint = complaints[i];
@@ -811,11 +811,10 @@ const pgr =  {
                 template = template.replace('{{filedDate}}', complaint.filedDate);
                 template = template.replace('{{complaintStatus}}', complaint.complaintStatus);
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
-                message += '\n\n' + (i + 1) + '. ' + template;
+                dialog.sendMessage(context, template);
               }
               let closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
-              message = message +'\n'+ closingStatement;
-              dialog.sendMessage(context, message);
+              dialog.sendMessage(context, closingStatement);
             })
           },
           {
@@ -855,8 +854,8 @@ let messages = {
       category: {
         question: {
           preamble: {
-            en_IN : 'What do you want to complaint for? Please type and send the number of your option 👇',
-            hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇'
+            en_IN : 'Please type and send the number to select a\ncomplaint type from the list below 👇\n\n',
+            hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇\n\n'
           },
           otherType: {
             en_IN: 'Others',
@@ -867,7 +866,7 @@ let messages = {
       item: {
         question: {
           preamble : {
-            en_IN : 'Please select the problem category for {{complaint}}',
+            en_IN : 'What is the problem you are facing with {{complaint}}?\n\n',
             hi_IN : 'कृपया {{complaint}} के लिए समस्या श्रेणी चुनें'
           },
         }
@@ -875,7 +874,7 @@ let messages = {
     }, // complaintType2Step
     geoLocation: {
       question: {
-        en_IN :'If you are at the grievance site, please share your location.\n\n👉  Kindly refer the image below to understand steps for sharing the location.\n\n👉  To continue without sharing the location, type and send  *1*.',
+        en_IN :'Please share your location if you are at the grievance site.\n\n👉  Kindly refer the image below to understand steps for sharing the location.\n\n👉  To continue without sharing the location, type and send  *1*.',
         hi_IN : 'यदि आप शिकायत स्थल पर हैं, तो कृपया अपना स्थान साझा करें।\n\n👉 स्थान साझा करने के चरणों को समझने के लिए कृपया नीचे दी गई छवि देखें।\n\n👉 स्थान साझा किए बिना जारी रखने के लिए, टाइप करें और *1* भेजें।'
       }
     }, // geoLocation 
@@ -907,7 +906,7 @@ let messages = {
     }, // locality
     imageUpload: {
       question: {
-        en_IN: 'If possible, please attach a photo about your grievance.\n\nTo continue without photo, type and send *1*',
+        en_IN: 'If possible, attach a photo of your grievance.\n\nTo continue without photo, type and send *1*',
         hi_IN: 'यदि संभव हो, तो कृपया अपनी शिकायत के बारे में एक फोटो संलग्न करें।\n\nबिना फोटो के जारी रखने के लिए, टाइप करें और भेजें *1*'
       },
       error:{
@@ -916,16 +915,16 @@ let messages = {
       }
     },
     persistComplaint: {
-      en_IN: 'Thank You! You have successfully filed a complaint through mSeva Punjab.\nYour Complaint No is : *{{complaintNumber}}*\nYou can view and track your complaint  through the link below:\n{{complaintLink}}\n',
+      en_IN: 'Thank You 😃 Your complaint is registered successfully with mSeva.\n\nThe Complaint No is : *{{complaintNumber}}*\n\nClick on the link below to view and track your complaint:\n{{complaintLink}}\n',
       hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
     },
     closingStatement: {
-      en_IN: '\nPlease type and send *“mseva”* whenever you need my assistance',
+      en_IN: '\nIn case of any help please type and send *"mseva"*',
       hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
     },
     cityFuzzySearch: {
       question: {
-        en_IN: "Please enter the name of your city. For example - Jalandhar, Amritsar, Ludhiana",
+        en_IN: "Enter the name of your city.\n\n(For example - Jalandhar, Amritsar, Ludhiana)",
         hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - जालंधर, अमृतसर, लुधियाना"
       },
       confirmation: {
@@ -939,7 +938,7 @@ let messages = {
     },
     localityFuzzySearch: {
       question: {
-        en_IN: "Please enter the name of your locality. For example - Ajit Nagar, Mohalla Kango",
+        en_IN: "Enter the name of your locality.\n\n(For example - Ajit Nagar)",
         hi_IN: "कृपया अपने शहर का नाम दर्ज करें। उदाहरण के लिए - अजीत नगर, मोहल्ला कांगो"
       },
       confirmation: {
@@ -959,16 +958,16 @@ let messages = {
     },
     results: {
       preamble: {
-        en_IN: 'Your Open Complaints',
+        en_IN: 'Following are your open complaints',
         hi_IN: 'आपकी पंजीकृत ओपन शिकायतें'
       },
       complaintTemplate: {
-        en_IN: '*{{complaintType}}*\nComplaint No: {{complaintNumber}}\nFiled Date: {{filedDate}}\nCurrent Complaint Status: *{{complaintStatus}}*\nTap on the link below to view the complaint\n{{complaintLink}}',
-        hi_IN: '*{{complaintType}}*\nशिकायत संख्या: {{complaintNumber}}\nदायर तिथि: {{filedDate}}\nशिकायत की स्थिति: *{{complaintStatus}}*\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
+        en_IN: '*{{complaintType}}*\n\nComplaint No: {{complaintNumber}}\n\nFiled Date: {{filedDate}}\n\nCurrent Complaint Status: *{{complaintStatus}}*\n\nTap on the link below to view the complaint\n{{complaintLink}}',
+        hi_IN: '*{{complaintType}}*\n\nशिकायत संख्या: {{complaintNumber}}\n\nदायर तिथि: {{filedDate}}\n\nशिकायत की स्थिति: *{{complaintStatus}}*\n\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
       },
       closingStatement: {
-        en_IN: '\nPlease type and send “mseva” whenever you need my assistance',
-        hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
+        en_IN: '👉 To go back to the main menu, type and send mseva.',
+        hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।'
       }
     }
   }
