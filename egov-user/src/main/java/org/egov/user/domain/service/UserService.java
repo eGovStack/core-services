@@ -293,7 +293,7 @@ public class UserService {
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
-            return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
+            return restTemplate.postForEntity("http://egov-user.egov:8080" + "/user/oauth/token", request, Map.class).getBody();
 
         } catch (Exception e) {
             log.error("Error occurred while logging-in via register flow", e);
