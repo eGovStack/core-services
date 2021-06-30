@@ -156,7 +156,7 @@ public class SearchUtils {
 						operator = "!=";
 					} else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
 
-						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+						paramValue= "%" + paramValue + "%";
 					} else if (operator.equals("TOUPPERCASE")) {
 						
 						operator =  "=";
