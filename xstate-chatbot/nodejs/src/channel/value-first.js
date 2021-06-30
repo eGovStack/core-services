@@ -316,7 +316,7 @@ class ValueFirstWhatsAppProvider {
         if(requestBody.media_type && requestBody.media_type === 'button')
             return null;
         
-        if(requestBody.buttonLabel && requestBody.buttonLabel != '$btnLabel')
+        if(requestBody.buttonLabel && requestBody.buttonLabel == '$btnLabel')
             return null;
         
         reformattedMessage = await this.getTransformedRequest(requestBody);
