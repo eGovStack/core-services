@@ -151,7 +151,8 @@ const bills = {
             let message = dialog.get_message(messages.searchBillInitiate.question, context.user.locale);
             message = message.replace(/{{billserviceName}}/g, billServiceName);
             dialog.sendMessage(context, message);*/
-          }),
+            let message = dialog.get_message(messages.endStatement, context.user.locale);
+            dialog.sendMessage(context, message);          }),
           on: {
             USER_MESSAGE: 'process'
           }
