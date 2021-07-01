@@ -124,7 +124,7 @@ class PaymentStatusUpdateEventFormatter{
           type: "pdf"
         };
         message.push(pdfContent);
-        await valueFirst.sendMessageToUser(user, messages, extraInfo);
+        await valueFirst.sendMessageToUser(user, message, extraInfo);
 
         await this.prepareSucessMessage(user, payment, locale, extraInfo);
       }
@@ -153,7 +153,7 @@ class PaymentStatusUpdateEventFormatter{
       params: params
     };
     message.push(templateContent);
-    await valueFirst.sendMessageToUser(user, messages, extraInfo);
+    await valueFirst.sendMessageToUser(user, message, extraInfo);
   }
 
   async prepareTransactionFailedMessage(request){
