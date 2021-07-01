@@ -794,7 +794,7 @@ const pgr =  {
         src: (context) => pgrService.fetchOpenComplaints(context.user),
         onDone: [
           {
-            target: '#endstate',
+            target: '#pgrClosingState',
             cond: (context, event) => {
               return event.data.length>0;
             },
@@ -813,8 +813,6 @@ const pgr =  {
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
                 dialog.sendMessage(context, template);
               }
-              let closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
-              dialog.sendMessage(context, closingStatement);
             })
           },
           {
@@ -826,7 +824,15 @@ const pgr =  {
           }
         ]
       }
-    } // trackComplaint
+    }, // trackComplaint
+    pgrClosingState:{
+      id: 'pgrClosingState',
+      onEntry: assign( (context, event) => {
+        let closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
+        dialog.sendMessage(context, closingStatement);
+      }),
+      always : '#endstate'
+    }
   } // pgr.states
 }; // pgr
 
@@ -854,8 +860,8 @@ let messages = {
       category: {
         question: {
           preamble: {
-            en_IN : 'Please type and send the number to select a\ncomplaint type from the list below 👇\n\n',
-            hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇\n\n'
+            en_IN : 'Please type and send the number to select a complaint type from the list below 👇',
+            hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇'
           },
           otherType: {
             en_IN: 'Others',
@@ -866,7 +872,7 @@ let messages = {
       item: {
         question: {
           preamble : {
-            en_IN : 'What is the problem you are facing with {{complaint}}?\n\n',
+            en_IN : 'What is the problem you are facing with {{complaint}}?',
             hi_IN : 'कृपया {{complaint}} के लिए समस्या श्रेणी चुनें'
           },
         }

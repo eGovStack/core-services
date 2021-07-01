@@ -118,38 +118,42 @@ class PaymentStatusUpdateEventFormatter{
           fileName: key
         };
 
-        let messages = await this.prepareSucessMessage(payment,responseBody.filestoreIds[0],locale);
-    
-        await valueFirst.sendMessageToUser(user, messages,extraInfo);
+        let message = [];
+        var pdfContent = {
+          output: filestoreIds[0],
+          type: "pdf"
+        };
+        message.push(pdfContent);
+        await valueFirst.sendMessageToUser(user, messages, extraInfo);
+
+        await this.prepareSucessMessage(user, payment, locale, extraInfo);
       }
     }
 
   }
 
-  async prepareSucessMessage(payment,filestoreId,locale){
-    let message=[];
-    let template = dialog.get_message(messageBundle.paymentSucess,locale);
-    template = template.replace('{{transaction_number}}',payment.transactionNumber);
+  async prepareSucessMessage(user, payment, locale, extraInfo){
+    let message = [];
+    let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOwnerBillSuccessTemplateid.split(',');
+    let localeList   =  config.supportedLocales.split(',');
+    let localeIndex  =  localeList.indexOf(locale);
 
-    var content = {
-      output:template,
-      type: "text"
+    let templateId;
+    if(templateList[localeIndex])
+      templateId = templateList[localeIndex];
+    else
+      templateId = templateList[0];
+
+    let params=[];
+    params.push(payment.transactionNumber);
+
+    var templateContent = {
+      output: templateId,
+      type: "template",
+      params: params
     };
-    message.push(content);
-
-    var pdfContent = {
-      output: filestoreId,
-      type: "pdf"
-    };
-    message.push(pdfContent);
-
-    var endStatement = {
-      output:dialog.get_message(messageBundle.endStatement,locale),
-      type: "text"
-    };
-    message.push(endStatement);
-
-    return message;
+    message.push(templateContent);
+    await valueFirst.sendMessageToUser(user, messages, extraInfo);
   }
 
   async prepareTransactionFailedMessage(request){

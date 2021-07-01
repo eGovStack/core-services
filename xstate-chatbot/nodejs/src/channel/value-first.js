@@ -87,7 +87,7 @@ class ValueFirstWhatsAppProvider {
         let input;
 
         if(requestBody.buttonLabel && requestBody.buttonLabel != '$btnLabel'){
-            type = 'text'
+            type = 'button'
             input = requestBody.buttonLabel;
             requestBody.from = requestBody.TO;
             requestBody.to = config.whatsAppBusinessNumber;
@@ -321,7 +321,6 @@ class ValueFirstWhatsAppProvider {
         
         reformattedMessage = await this.getTransformedRequest(requestBody);
         return reformattedMessage;
-        //}
 
     }
 

@@ -146,11 +146,11 @@ const bills = {
       states: {
         question: {
           onEntry: assign((context, event) => {
-            let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
+            /*let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
             let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
             let message = dialog.get_message(messages.searchBillInitiate.question, context.user.locale);
             message = message.replace(/{{billserviceName}}/g, billServiceName);
-            dialog.sendMessage(context, message);
+            dialog.sendMessage(context, message);*/
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -159,11 +159,11 @@ const bills = {
         process: {
           onEntry: assign((context, event) => {
             let messageText = event.message.input;
-            let parsed = parseInt(event.message.input.trim())
-            let isValid = parsed === 1;
+            messageText = messageText.toLowerCase();
+            let isValid = ((messageText === 'main menu' || messageText === 'pay other bill') && dialog.validateInputType(event, 'button'));
             context.message = {
               isValid: isValid,
-              messageContent: event.message.input
+              messageContent: messageText
             };
           }),
           always: [
@@ -174,7 +174,16 @@ const bills = {
               }
             },
             {
-              target: '#billServices'
+              target: '#billServices',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='pay other bill');
+              }
+            },
+            {
+              target: '#sevamenu',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='main menu');
+              }
             }
           ]
         },
@@ -300,7 +309,7 @@ const bills = {
 
             let message = dialog.get_message(messages.billServices.question.confirmation, context.user.locale);
             message = message + "\n"+dialog.get_message(messages.billServices.question.preamble, context.user.locale);;
-            message = message.replace('{{searchOption}}', optionMessage);
+            message = message.replace(/{{searchOption}}/g,optionMessage);
             dialog.sendMessage(context, message);
 
           }),
@@ -594,7 +603,7 @@ const bills = {
 let messages = {
   personalBills: {
     singleRecord: {
-      en_IN: 'Following unpaid bills are found with your mobile number 👇',
+      en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
@@ -602,7 +611,7 @@ let messages = {
       }
     },
     multipleRecords: {
-      en_IN: 'Following unpaid bills are found with your mobile number 👇',
+      en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
@@ -610,7 +619,7 @@ let messages = {
       }
     },
     multipleRecordsSameService: {
-      en_IN: 'Following unpaid bills are found with your mobile number 👇',
+      en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
@@ -620,7 +629,7 @@ let messages = {
   },
   noBills: {
     notLinked: {
-      en_IN: 'Sorry, it seems like your mobile number is not linked to any service.\n\nPlease contact your nearest municipality office to link the number.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to the selected service.\n\nWe can still proceed with the payment using the {{searchOption}} mentioned in your bill/receipt.',
       hi_IN: 'क्षमा करें, आपका मोबाइल नंबर किसी सेवा से लिंक नहीं है। इसे लिंक करने के लिए अपने शहरी स्थानीय निकाय से संपर्क करें। आप नीचे दी गई जानकारी के अनुसार अपनी खाता जानकारी खोज कर सेवा प्राप्त कर सकते हैं:'
     },
     noPending: {
@@ -634,18 +643,18 @@ let messages = {
       hi_IN: '\nकृपया अन्य बिल या शुल्क के लिए खोज और भुगतान करें जो आपके मोबाइल नंबर से लिंक नहीं हैं, टाइप करें ‘1’ और भेजें। मुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     },
     error:{
-      en_IN: "Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.",
+      en_IN: "Option you have selected seems to be invalid  😐\nKindly click on the above button to proceed further.",
       hi_IN: "क्षमा करें, मुझे समझ में नहीं आया"
     }
   },
   billServices: {
     question: {
       preamble: {
-        en_IN: 'Please type and send the number for your option👇\n\n*1.* Yes\n*2.* No',
+        en_IN: 'Type and send the option number to indicate if you know the {{searchOption}} 👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
       confirmation:{
-        en_IN: 'Do you have the *{{searchOption}}* to proceed with the payment ?\n',
+        en_IN: 'Do you have the *{{searchOption}}* to proceed for the payment ?\n',
         hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },

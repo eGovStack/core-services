@@ -524,7 +524,7 @@ const receipts = {
             onEntry: assign((context, event) => {
               let messageText = event.message.input;
               messageText = messageText.toLowerCase();
-              let isValid = (messageText === 'main menu' || messageText === 'view receipts');
+              let isValid = ((messageText === 'main menu' || messageText === 'view receipts') && dialog.validateInputType(event, 'button'));
               context.message = {
                 isValid: isValid,
                 messageContent: messageText
