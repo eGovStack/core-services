@@ -800,12 +800,8 @@ const pgr =  {
             },
             actions: assign((context, event) => {     
               let complaints = event.data;
-              let messageContent = [];
-              var preamble = {
-                output: dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale),
-                type: "text"
-              };
-              messageContent.push(preamble);
+              var preamble =  dialog.get_message(messages.trackComplaint.results.preamble, context.user.locale);
+              dialog.sendMessage(context, preamble, false);
               for(let i = 0; i < complaints.length; i++) {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
                 let complaint = complaints[i];
@@ -815,18 +811,10 @@ const pgr =  {
                 template = template.replace('{{complaintStatus}}', complaint.complaintStatus);
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
 
-                var templateContent = {
-                  output: template,
-                  type: "text"
-                };
-                messageContent.push(templateContent);
+                dialog.sendMessage(context, template, false);
               }
-              var closingStatement = {
-                output: dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale),
-                type: "text"
-              };
-              messageContent.push(closingStatement);
-              dialog.sendMessage(context, messageContent);
+              var closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
+              dialog.sendMessage(context, closingStatement);
             })
           },
           {

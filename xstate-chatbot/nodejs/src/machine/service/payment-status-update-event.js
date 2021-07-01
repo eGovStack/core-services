@@ -120,7 +120,7 @@ class PaymentStatusUpdateEventFormatter{
 
         let message = [];
         var pdfContent = {
-          output: filestoreIds[0],
+          output: responseBody.filestoreIds[0],
           type: "pdf"
         };
         message.push(pdfContent);
