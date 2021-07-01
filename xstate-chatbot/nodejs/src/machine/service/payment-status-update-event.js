@@ -57,6 +57,7 @@ class PaymentStatusUpdateEventFormatter{
 
   async paymentStatusMessage(request){
     let payment = request.Payment;
+    console.log("\n"+JSON.stringify(payment)+"\n");
     let locale = config.supportedLocales.split(',');
     locale = locale[0];
     let user = await userService.getUserForMobileNumber(payment.mobileNumber, config.rootTenantId);
@@ -124,16 +125,16 @@ class PaymentStatusUpdateEventFormatter{
           type: "pdf"
         };
         message.push(pdfContent);
-        await valueFirst.sendMessageToUser(user, message, extraInfo);
 
-        await this.prepareSucessMessage(user, payment, locale, extraInfo);
+        let templateContent = await this.prepareSucessMessage(payment, locale);
+        message.push(templateContent);
+        await valueFirst.sendMessageToUser(user, message, extraInfo);
       }
     }
 
   }
 
-  async prepareSucessMessage(user, payment, locale, extraInfo){
-    let message = [];
+  async prepareSucessMessage(payment, locale){
     let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOwnerBillSuccessTemplateid.split(',');
     let localeList   =  config.supportedLocales.split(',');
     let localeIndex  =  localeList.indexOf(locale);
@@ -152,8 +153,8 @@ class PaymentStatusUpdateEventFormatter{
       type: "template",
       params: params
     };
-    message.push(templateContent);
-    await valueFirst.sendMessageToUser(user, message, extraInfo);
+    
+    return templateContent;
   }
 
   async prepareTransactionFailedMessage(request){

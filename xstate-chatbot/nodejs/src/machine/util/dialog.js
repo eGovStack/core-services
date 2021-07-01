@@ -76,7 +76,7 @@ function sendMessage(context, message, immediate = true) {
 let global_messages = {
   error: {
     retry: {
-      en_IN: 'I am sorry, I didn\'t understand. Let\'s try again.',
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
       hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
     proceeding: {

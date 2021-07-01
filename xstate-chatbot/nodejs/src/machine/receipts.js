@@ -177,8 +177,12 @@ const receipts = {
       noReceipts:{
         id:'noReceipts',
         onEntry: assign((context, event) => {
+          let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+          context.receipts.slots.searchParamOption = searchOptions[0];
+          let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
+          let optionMessage = dialog.get_message(option, context.user.locale);
           let message = dialog.get_message(messages.receiptSlip.not_found, context.user.locale);
-          //context.chatInterface.toUser(context.user, message);
+          message = message.replace('{{searchOption}}', optionMessage);
           dialog.sendMessage(context, message, false);
         }),
         always:'#openSearchInititate'
@@ -196,7 +200,6 @@ const receipts = {
               let optionMessage = dialog.get_message(option, context.user.locale);
   
               let message = dialog.get_message(messages.searchParams.question.confirmation, context.user.locale);
-              message = message + "\n"+dialog.get_message(messages.searchParams.question.preamble, context.user.locale);;
               message = message.replace('{{searchOption}}', optionMessage);
               dialog.sendMessage(context, message);
   
@@ -294,10 +297,11 @@ const receipts = {
       mobileLinkage:{
         id:'mobileLinkage',
         onEntry: assign((context, event) => {
-          let message1=dialog.get_message(messages.mobileLinkage.notLinked,context.user.locale);
-          //message1 = message1.replace(/{{service}}/g,context.receipts.slots.service);
-          //context.chatInterface.toUser(context.user, message1);
-          dialog.sendMessage(context, message1, false);
+          let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
+          let optionMessage = dialog.get_message(option, context.user.locale);
+          let message = dialog.get_message(messages.mobileLinkage.notLinked,context.user.locale);
+          message = message.replace('{{searchOption}}', optionMessage);
+          dialog.sendMessage(context, message , false);
         }),
         always:[
           {
@@ -831,14 +835,7 @@ const receipts = {
               onDone: {
                 target:'#lastState',
                 actions: assign((context, event) => {
-                  var receiptIndex = context.receipts.slots.receiptNumber;
-              let receiptData = context.receipts.slots.multipleRecordReceipt[receiptIndex-1];
-              let message = dialog.get_message(messages.lastState.template,context.user.locale);
-              message = message.replace('{{id}}',receiptData.id);
-              message = message.replace('{{amount}}',receiptData.amount);
-              message = message.replace('{{date}}',receiptData.date);
-              dialog.sendMessage(context, message, true);
-              dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale), true);
+                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale), true);
                 })
               }
 
@@ -886,7 +883,7 @@ let messages = {
   services:{
     question: {
       preamble: {
-        en_IN: 'Please type and send the number for your option👇',
+        en_IN: 'Type and send the option number to view payment history for the preferred service  👇',
         hi_IN: 'कृपया नीचे 👇 दिए गए सूची से अपना विकल्प टाइप करें और भेजें:'
       },
     },
@@ -903,7 +900,7 @@ let messages = {
   },
   receiptSlip:{
     not_found:{
-      en_IN:'Sorry 😥 !  Your mobile number is not linked to selected service.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the {{searchOption}} mentioned in your bill/receipt.',
       hi_IN: 'सॉरी 😥 ! आपका मोबाइल नंबर चयनित सेवा से लिंक नहीं है।'
     },
     error:{
@@ -916,7 +913,7 @@ let messages = {
         hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
       },
       multipleRecordsSameService: {
-        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
+        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the applicable option number to view the payment history 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
           en_IN: '*Consumer Number*\n{{id}}\n*Locality:* {{locality}} , {{city}}',
@@ -939,7 +936,7 @@ let messages = {
   },
   mobileLinkage:{
     notLinked: {
-      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\nPlease contact your nearest municipality office to link the number.\n\n👉 You can still proceed to search payment history by using your account information.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the {{searchOption}} mentioned in your bill/receipt.',
       hi_IN: 'ऐसा लगता है कि आपके द्वारा उपयोग किया जा रहा मोबाइल नंबर {{service}} सेवा से लिंक नहीं है। कृपया अपने खाता नंबर को {{service}} सेवा से जोड़ने के लिए शहरी स्थानीय निकाय पर जाएँ। फिर भी आप अपनी खाता जानकारी खोजकर सेवा का लाभ उठा सकते हैं।',
       resultHeader:{
         en_IN: 'Here are your past bill payment 👇',
@@ -954,7 +951,7 @@ let messages = {
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
       confirmation:{
-        en_IN: 'Do you have the *{{searchOption}}* to view the payment history?\n',
+        en_IN: 'Type and send option number to indicate if you know the {{searchOption}} 👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },
@@ -970,7 +967,7 @@ let messages = {
       hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें।'
     },
     re_enter: {
-      en_IN: 'Sorry, the value you have provided is incorrect.\nPlease re-enter the {{option}} again to fetch the bills.\n\nOr Type and send \'mseva\' to Go ⬅️ Back to main menu.',
+      en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',
       hi_IN: 'क्षमा करें, आपके द्वारा प्रदान किया गया मान गलत है। \n कृपया फिर से बिल प्राप्त करने के लिए {{option}} फिर से दर्ज करें।\n\nऔर टाइप करें "mseva" और मुख्य मेनू पर वापस जाएं।'
     }
   },

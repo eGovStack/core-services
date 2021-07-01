@@ -202,7 +202,12 @@ const bills = {
       onEntry: assign( (context, event) => {
         let message;
         if(context.totalBills === 0) {
+          let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+          context.slots.bills.searchParamOption = searchOptions[0];
+          let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+          let optionMessage = dialog.get_message(option, context.user.locale);
           message = dialog.get_message(messages.noBills.notLinked, context.user.locale);
+          message = message.replace(/{{searchOption}}/g,optionMessage);
         } else {
           message = dialog.get_message(messages.noBills.noPending, context.user.locale);
         }
@@ -682,7 +687,7 @@ let messages = {
       hi_IN: 'बिल देखने के लिए कृपया {{option}} डालें।'
     },
     re_enter: {
-      en_IN: 'Sorry, the value you have provided is incorrect.\nPlease re-enter the {{option}} again to fetch the bills.\n\nOr Type and send \'mseva\' to Go ⬅️ Back to main menu.',
+      en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',
       hi_IN: 'क्षमा करें, आपके द्वारा प्रदान किया गया मूल्य गलत है। बिलों को प्राप्त करने के लिए \n कृपया फिर से {{option}} दर्ज करें।\n\nमुख्य मेनू पर वापस जाने के लिए ‘mseva’ टाइप करें और भेजें ।'
     }
   },
