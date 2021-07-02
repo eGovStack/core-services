@@ -825,12 +825,13 @@ const receipts = {
                     let payment = receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
                     context.receipts.slots.fileStoreId = pdfService.generatePdf(businessService, payment, context.user.locale, context.user.authToken, context.user.userInfo);
                 }
+                dialog.sendMessage(context, dialog.get_message(messages.wait,context.user.locale), true);
                 var pdfContent = {
                   output: context.receipts.slots.fileStoreId,
                   type: "pdf",
                 };
                 dialog.sendMessage(context, pdfContent, true);
-                new Promise(resolve => setTimeout(resolve, 3000));
+                receiptService.sleep(3000);
                 return Promise.resolve();
               },
               onDone: {
@@ -1067,6 +1068,10 @@ let messages = {
       en_IN: '*Consumer Number*\n{{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}',
       hi_IN: '*Consumer Number*\n{{id}}\n*Amount Paid*   {{amount}}\n*Paid On*   {{date}}'
     }
+  },
+  wait:{
+    en_IN: "🙏 Please wait for sometime while your receipt pdf getting generated. 🙏",
+    hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
   }
   
 };
