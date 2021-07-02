@@ -118,6 +118,14 @@ class PaymentStatusUpdateEventFormatter{
           fileName: key
         };
 
+        let waitMessage = [];
+        var messageContent = {
+          output: dialog.get_message(messageBundle.wait,locale),
+          type: "text"
+        };
+        waitMessage.push(messageContent);
+        await valueFirst.sendMessageToUser(user, waitMessage, extraInfo);
+
         let message = [];
         var pdfContent = {
           output: responseBody.filestoreIds[0],
@@ -228,6 +236,10 @@ let messageBundle = {
   paymentFail:{
     en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nIf the amount is debited from your account please give us 2-3 hours to get confirmation on payment.\n\nIf the amount is  not deducted from your account you can retry using the following payment link:\n{{link}}",
     hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\n यदि राशि आपके खाते से डेबिट होती है, तो कृपया भुगतान पर पुष्टि प्राप्त करने के लिए हमें 2-3 घंटे का समय दें।\n\n यदि आपके खाते से राशि नहीं काटी जाती है, तो आप निम्नलिखित भुगतान लिंक का उपयोग करके पुन: प्रयास कर सकते हैं:\n{{link}}"
+  },
+  wait:{
+    en_IN: "🙏 Please wait for sometime while you receipt pdf getting generated. 🙏",
+    hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
   },
   endStatement:{
     en_IN: "👉 To go back to the main menu, type and send mseva.",

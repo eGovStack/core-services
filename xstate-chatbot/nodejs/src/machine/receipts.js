@@ -830,6 +830,7 @@ const receipts = {
                   type: "pdf",
                 };
                 dialog.sendMessage(context, pdfContent, true);
+                new Promise(resolve => setTimeout(resolve, 3000));
                 return Promise.resolve();
               },
               onDone: {
