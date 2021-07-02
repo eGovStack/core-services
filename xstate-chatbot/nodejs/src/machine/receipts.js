@@ -815,22 +815,23 @@ const receipts = {
                 context.extraInfo.fileName = receiptData.id;
                 
                 var businessService, transactionNumber
+                dialog.sendMessage(context, dialog.get_message(messages.wait,context.user.locale), true);
+
                 if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
-                  context.receipts.slots.fileStoreId = receiptData.fileStoreId;
+                  var pdfContent = {
+                    output: receiptData.fileStoreId,
+                    type: "pdf",
+                  };
+                  dialog.sendMessage(context, pdfContent);
                 }
                 else {
-                    businessService = receiptData.businessService;
-                    transactionNumber = receiptData.transactionNumber;
-
-                    let payment = receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
-                    context.receipts.slots.fileStoreId = pdfService.generatePdf(businessService, payment, context.user.locale, context.user.authToken, context.user.userInfo);
+                    (async() => {
+                      businessService = receiptData.businessService;
+                      transactionNumber = receiptData.transactionNumber;
+                      let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
+                      await receiptService.getPdfFilestoreId(businessService, payment, context.user);
+                    })();
                 }
-                dialog.sendMessage(context, dialog.get_message(messages.wait,context.user.locale), true);
-                var pdfContent = {
-                  output: context.receipts.slots.fileStoreId,
-                  type: "pdf",
-                };
-                dialog.sendMessage(context, pdfContent);
                 return new Promise(resolve => setTimeout(resolve, 3000));
               },
               onDone: {
@@ -1069,7 +1070,7 @@ let messages = {
     }
   },
   wait:{
-    en_IN: "🙏 Please wait for sometime while your receipt pdf getting generated. 🙏",
+    en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",
     hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
   }
   

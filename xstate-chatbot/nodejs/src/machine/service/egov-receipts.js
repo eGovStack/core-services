@@ -3,6 +3,7 @@ const fetch = require("node-fetch");
 const moment = require("moment-timezone");
 const localisationService = require('../util/localisation-service');
 const dialog = require('../util/dialog');
+const pdfService = require('../util/pdf-service');
 
 let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fireNoc\",\"WS\" : \"ws-services\",\"SW\" : \"sw-services\",\"PT\" : \"PT\",\"BPA\" : \"bpa-services\"}";
 
@@ -599,6 +600,8 @@ class ReceiptService {
       return messageBundle;  
     }
 
-
+    async getPdfFilestoreId(businessService, payment, user){
+      await pdfService.generatePdf(businessService, payment, user.locale, user.authToken, user.userInfo, user.mobileNumber);
+    }
   }
 module.exports = new ReceiptService();

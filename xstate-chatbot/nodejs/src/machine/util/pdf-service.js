@@ -1,9 +1,10 @@
 const config = require('../../env-variables');
 const fetch = require('node-fetch');
+const channel = require('../../channel');
 
 class PdfService {
 
-    async generatePdf(businessService, payment, locale, authToken, userInfo){
+    async generatePdf(businessService, payment, locale, authToken, userInfo, mobileNumber){
         let key;
         if(businessService === 'TL')
             key = 'tradelicense-receipt';
@@ -43,10 +44,24 @@ class PdfService {
         let response = await fetch(pdfUrl, options);
         if(response.status == 201){
             let responseBody = await response.json();
-            return responseBody.filestoreIds[0];
+
+            let user = {
+                mobileNumber: mobileNumber
+              };
+            let extraInfo = {
+                whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2)
+            };
+
+            let message = [];
+            var pdfContent = {
+              output: responseBody.filestoreIds[0],
+              type: "pdf"
+            };
+            message.push(pdfContent);
+
+            await channel.sendMessageToUser(user, message, extraInfo);
+    
         }
-        else
-            return null;
 
     }
 }
