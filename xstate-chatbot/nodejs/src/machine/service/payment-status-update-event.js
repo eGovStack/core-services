@@ -129,7 +129,7 @@ class PaymentStatusUpdateEventFormatter{
         let payBillmessage = [];
         let templateContent = await this.prepareSucessMessage(payment, locale);
         payBillmessage.push(templateContent);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
       }
     }
