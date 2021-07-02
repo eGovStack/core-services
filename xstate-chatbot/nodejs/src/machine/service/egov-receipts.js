@@ -599,13 +599,6 @@ class ReceiptService {
       return messageBundle;  
     }
 
-    async sleep(milliseconds){
-      var currentTimestamp = new Date().getTime();
-      for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - currentTimestamp) > milliseconds)
-          break;
-      }
-    }
 
   }
 module.exports = new ReceiptService();

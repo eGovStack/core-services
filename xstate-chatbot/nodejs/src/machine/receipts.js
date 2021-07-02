@@ -830,14 +830,13 @@ const receipts = {
                   output: context.receipts.slots.fileStoreId,
                   type: "pdf",
                 };
-                dialog.sendMessage(context, pdfContent, true);
-                receiptService.sleep(3000);
-                return Promise.resolve();
+                dialog.sendMessage(context, pdfContent);
+                return new Promise(resolve => setTimeout(resolve, 3000));
               },
               onDone: {
                 target:'#lastState',
                 actions: assign((context, event) => {
-                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale), true);
+                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));
                 })
               }
 
