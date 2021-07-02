@@ -57,7 +57,6 @@ class PaymentStatusUpdateEventFormatter{
 
   async paymentStatusMessage(request){
     let payment = request.Payment;
-    console.log("\n"+JSON.stringify(payment)+"\n");
     let locale = config.supportedLocales.split(',');
     locale = locale[0];
     let user = await userService.getUserForMobileNumber(payment.mobileNumber, config.rootTenantId);
@@ -125,10 +124,13 @@ class PaymentStatusUpdateEventFormatter{
           type: "pdf"
         };
         message.push(pdfContent);
-
-        let templateContent = await this.prepareSucessMessage(payment, locale);
-        message.push(templateContent);
         await valueFirst.sendMessageToUser(user, message, extraInfo);
+
+        let payBillmessage = [];
+        let templateContent = await this.prepareSucessMessage(payment, locale);
+        payBillmessage.push(templateContent);
+        await new Promise(resolve => setTimeout(resolve, 300));
+        await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
       }
     }
 
