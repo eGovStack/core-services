@@ -599,7 +599,7 @@ const bills = {
               }
             },
             {
-              target: '#endState',
+              target: '#endstate',
               cond: (context, event) => {
                 return (context.message.isValid && context.message.messageContent ==='1');
               },
@@ -609,7 +609,7 @@ const bills = {
               })
             },
             {
-              target: '#endState',
+              target: '#endstate',
               cond: (context, event) => {
                 return (context.message.isValid && context.message.messageContent ==='2');
               },

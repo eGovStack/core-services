@@ -153,6 +153,13 @@ class PaymentStatusUpdateEventFormatter{
         let payBillmessage = [];
         let templateContent = await this.prepareSucessMessage(payment, locale, isOwner);
         payBillmessage.push(templateContent);
+        if(!isOwner){
+          var reegistrationMessage = {
+            output: dialog.get_message(messageBundle.reegistration,locale),
+            type: "text"
+          }
+          payBillmessage.push(reegistrationMessage);
+        }
         await new Promise(resolve => setTimeout(resolve, 3000));
         await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
       }
@@ -298,7 +305,7 @@ class PaymentStatusUpdateEventFormatter{
         propertyId = searchResults.SewerageConnections[0].propertyId;
       }
 
-      isMobileNumberPresent = getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken);
+      isMobileNumberPresent = this.getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken);
       if(isMobileNumberPresent)
         return true;
       
@@ -361,6 +368,10 @@ let messageBundle = {
   wait:{
     en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",
     hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
+  },
+  reegistration:{
+    en_IN: 'If you want to receive bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
+    hi_IN: 'यदि आप इस मोबाइल नंबर प्रकार पर {{उपभोक्ता कोड}} के लिए बिल अलर्ट प्राप्त करना चाहते हैं और भेजें *1*\n\nअन्यथा टाइप करें और *2* भेजें'
   },
   endStatement:{
     en_IN: "👉 To go back to the main menu, type and send mseva.",
