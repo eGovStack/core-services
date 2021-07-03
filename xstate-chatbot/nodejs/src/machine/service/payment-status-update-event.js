@@ -309,9 +309,11 @@ class PaymentStatusUpdateEventFormatter{
       if(isMobileNumberPresent)
         return true;
       
-      for(let connectionHolder of connectionHolders){
-        if(connectionHolder.mobileNumber === mobileNumber)
-          return true;
+      if(connectionHolders != null){
+        for(let connectionHolder of connectionHolders){
+          if(connectionHolder.mobileNumber === mobileNumber)
+            return true;
+        }
       }
     }
     return false;
