@@ -192,7 +192,7 @@ const bills = {
         error: {
           onEntry: assign( (context, event) => {
             let message = dialog.get_message(messages.searchBillInitiate.error, context.user.locale);
-            dialog.sendMessage(context, message, false);
+            dialog.sendMessage(context, message);
           }),
           always : 'question'
         }
@@ -554,7 +554,79 @@ const bills = {
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
             dialog.sendMessage(context, endStatement);
           }),
-          always: '#endstate'
+          always: '#haltState'
+        }
+      }
+    },
+    haltState:{
+      id: 'haltState',
+      initial: 'question',
+      states: {
+        question: {
+          onEntry: assign((context, event) => { }),
+          on: {
+            USER_MESSAGE: 'process'
+          }
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            let messageText = event.message.input;
+            messageText = messageText.toLowerCase();
+            let isValid = ((messageText === 'main menu' || messageText === 'pay other bill') && dialog.validateInputType(event, 'button'));
+            let textValid = (messageText === '1' || messageText === '2');
+            context.message = {
+              isValid: (isValid || textValid),
+              messageContent: messageText
+            };
+          }),
+          always: [
+            {
+              target: 'error',
+              cond: (context, event) => {
+                return ! context.message.isValid;
+              }
+            },
+            {
+              target: '#billServices',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='pay other bill');
+              }
+            },
+            {
+              target: '#sevamenu',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='main menu');
+              }
+            },
+            {
+              target: '#endState',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='1');
+              },
+              actions: assign((context, event) => {
+                let message = dialog.get_message(messages.newNumberregistration.confirm, context.user.locale);
+                dialog.sendMessage(context, message);              
+              })
+            },
+            {
+              target: '#endState',
+              cond: (context, event) => {
+                return (context.message.isValid && context.message.messageContent ==='2');
+              },
+              actions: assign((context, event) => {
+                let message = dialog.get_message(messages.newNumberregistration.decline, context.user.locale);
+                dialog.sendMessage(context, message);              
+              })
+            }
+
+          ]
+        },
+        error: {
+          onEntry: assign( (context, event) => {
+            let message = dialog.get_message(messages.searchBillInitiate.error, context.user.locale);
+            dialog.sendMessage(context, message);
+          }),
+          always : 'question'
         }
       }
     },
@@ -735,6 +807,16 @@ let messages = {
   openSearch: {
     en_IN: "You can search and pay {{billserviceName}} by clicking on 👇\n\n{{link}}\n\nPlease refer to image below to understand the steps for search and paying {{billserviceName}} from this link.",
     hi_IN: "आप नीचे दिए गए लिंक पर क्लिक करके {{billserviceName}} खोज और भुगतान कर सकते हैं👇\n\n{{link}}\n\nइस लिंक से {{billserviceName}} खोजने और भुगतान करने के चरणों को समझने के लिए कृपया नीचे दी गई छवि देखें।"
+  },
+  newNumberregistration:{
+    confirm:{
+      en_IN: 'Thank you for the response 🙏\n\n You will now receive {{service}} bill alerts for *{{consumerCode}}* on *{{mobileNumber}}*.',
+      hi_IN: 'प्रतिक्रिया के लिए धन्यवाद 🙏\n\nअब आप *{{mobileNumber}}* पर *{{consumerCode}}* के लिए {{service}} बिल अलर्ट प्राप्त करेंगे।'
+    },
+    decline:{
+      en_IN: 'Thank you for the response 🙏\n\n👉 To go back to the main menu, type and send *mseva*',
+      hi_IN: 'प्रतिक्रिया के लिए धन्यवाद 🙏\n\n👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और भेजें *mseva*'
+    }
   },
   endStatement: {
     en_IN: "👉 To go back to the main menu, type and send *mseva*",

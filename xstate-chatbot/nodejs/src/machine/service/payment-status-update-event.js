@@ -69,15 +69,21 @@ class PaymentStatusUpdateEventFormatter{
       tenantId = tenantId.split(".")[0]; 
 
       let businessService = payment.paymentDetails[0].businessService;
+      let consumerCode    = payment.paymentDetails[0].bill.consumerCode;
+      let isOwner = true;
       let key;
       if(businessService === 'TL')
         key = 'tradelicense-receipt';
 
-      else if(businessService === 'PT')
+      else if(businessService === 'PT'){
         key = 'property-receipt';
+        isOwner = this.getPTOwnerDetails(consumerCode, payment.tenantId, payment.mobileNumber, request.RequestInfo.authToken);
+      }
       
-      else if(businessService === 'WS' || businessService === 'SW')
+      else if(businessService === 'WS' || businessService === 'SW'){
         key = 'ws-onetime-receipt';
+        isOwner = this.getWnsOwnerDeatils(consumerCode, payment.tenantId, businessService, payment.mobileNumber, request.RequestInfo.authToken);
+      }
 
       else
         key = 'consolidatedreceipt';
@@ -118,6 +124,16 @@ class PaymentStatusUpdateEventFormatter{
           fileName: key
         };
 
+        if(isOwner){
+          chatState.context.bills.paidBy = 'OWNER'
+        }
+        else
+          chatState.context.bills.paidBy = 'OTHER'
+
+        let active = !chatState.done;
+        await chatStateRepository.updateState(user.userId, active, JSON.stringify(chatState));
+
+
         let waitMessage = [];
         var messageContent = {
           output: dialog.get_message(messageBundle.wait,locale),
@@ -135,7 +151,7 @@ class PaymentStatusUpdateEventFormatter{
         await valueFirst.sendMessageToUser(user, message, extraInfo);
 
         let payBillmessage = [];
-        let templateContent = await this.prepareSucessMessage(payment, locale);
+        let templateContent = await this.prepareSucessMessage(payment, locale, isOwner);
         payBillmessage.push(templateContent);
         await new Promise(resolve => setTimeout(resolve, 3000));
         await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
@@ -144,8 +160,23 @@ class PaymentStatusUpdateEventFormatter{
 
   }
 
-  async prepareSucessMessage(payment, locale){
-    let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOwnerBillSuccessTemplateid.split(',');
+  async prepareSucessMessage(payment, locale, isOwner){
+    let templateList;
+    let params=[];
+    if(isOwner){
+      templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOwnerBillSuccessTemplateid.split(',');
+      params.push(payment.transactionNumber);
+    }
+    else{
+      if(payment.paymentDetails[0].businessService === 'PT')
+        templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOtherPTBillSuccessTemplateid.split(',');
+
+      if(payment.paymentDetails[0].businessService === 'WS' || payment.paymentDetails[0].businessService === 'SW')
+        templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOtherWSBillSuccessTemplateid.split(',');
+      
+        params.push(payment.paymentDetails[0].bill.consumerCode);
+      params.push(payment.transactionNumber);
+    }
     let localeList   =  config.supportedLocales.split(',');
     let localeIndex  =  localeList.indexOf(locale);
 
@@ -155,8 +186,6 @@ class PaymentStatusUpdateEventFormatter{
     else
       templateId = templateList[0];
 
-    let params=[];
-    params.push(payment.transactionNumber);
 
     var templateContent = {
       output: templateId,
@@ -224,6 +253,98 @@ class PaymentStatusUpdateEventFormatter{
     var finalPath = UIHost + paymentPath;
     var link = await this.getShortenedURL(finalPath);
     return link;
+  }
+
+  async getWnsOwnerDeatils(consumerCode, tenantId, businessService, mobileNumber, authToken){
+    let requestBody = {
+      RequestInfo: {
+        authToken: authToken
+      }
+    };
+
+    let options = {
+      method: 'POST',
+      origin: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    };
+
+    let url = config.egovServices.externalHost;
+    if(businessService === 'WS'){
+      url = url + config.egovServices.waterConnectionSearch;
+    }
+    if(businessService === 'SW'){
+      url = url + config.egovServices.sewerageConnectionSearch;;
+    }
+
+    url = url + '&tenantId='+tenantId;
+    url = url + '&connectionNumber='+consumerCode;
+    let response = await fetch(url,options);
+    let searchResults;
+    
+    if(response.status === 200) {
+      searchResults = await response.json();
+      let connectionHolders;
+      let propertyId;
+
+      if(businessService === 'WS'){
+        connectionHolders = searchResults.WaterConnection[0].connectionHolders
+        propertyId = searchResults.WaterConnection[0].propertyId;
+      }
+      if(businessService === 'SW'){
+        connectionHolders = searchResults.SewerageConnections[0].connectionHolders
+        propertyId = searchResults.SewerageConnections[0].propertyId;
+      }
+
+      isMobileNumberPresent = getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken);
+      if(isMobileNumberPresent)
+        return true;
+      
+      for(let connectionHolder of connectionHolders){
+        if(connectionHolder.mobileNumber === mobileNumber)
+          return true;
+      }
+    }
+    return false;
+  }
+
+  async getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken){
+
+    let isMobileNumberPresent = false;
+
+    let requestBody = {
+      RequestInfo: {
+        authToken: authToken
+      }
+    };
+
+    let options = {
+      method: 'POST',
+      origin: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    };
+
+    let url = config.egovServices.externalHost + 'property-services/property/_search';
+    url = url + '?tenantId='+tenantId;
+    url = url + '&propertyIds='+propertyId;
+    let response = await fetch(url,options);
+    let searchResults;
+    
+    if(response.status === 200) {
+      searchResults = await response.json();
+      let ownerList = searchResults.Properties[0].owners;
+
+      for(let owner of ownerList){
+        if(owner.mobileNumber === mobileNumber)
+          isMobileNumberPresent = true;
+      }
+    }
+    return isMobileNumberPresent;
   }
 
 }

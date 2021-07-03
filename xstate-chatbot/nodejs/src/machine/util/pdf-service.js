@@ -49,7 +49,8 @@ class PdfService {
                 mobileNumber: mobileNumber
               };
             let extraInfo = {
-                whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2)
+                whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
+                fileName: key
             };
 
             let message = [];
