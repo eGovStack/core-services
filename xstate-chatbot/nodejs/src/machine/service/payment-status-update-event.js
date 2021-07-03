@@ -154,8 +154,10 @@ class PaymentStatusUpdateEventFormatter{
         let templateContent = await this.prepareSucessMessage(payment, locale, isOwner);
         payBillmessage.push(templateContent);
         if(!isOwner){
+          let question = dialog.get_message(messageBundle.registration,locale);
+          question = question.replace('{{consumerCode}}',consumerCode);
           var reegistrationMessage = {
-            output: dialog.get_message(messageBundle.reegistration,locale),
+            output: question,
             type: "text"
           }
           payBillmessage.push(reegistrationMessage);
@@ -182,7 +184,7 @@ class PaymentStatusUpdateEventFormatter{
         templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationOtherWSBillSuccessTemplateid.split(',');
       
         params.push(payment.paymentDetails[0].bill.consumerCode);
-      params.push(payment.transactionNumber);
+        params.push(payment.transactionNumber);
     }
     let localeList   =  config.supportedLocales.split(',');
     let localeIndex  =  localeList.indexOf(locale);
@@ -371,7 +373,7 @@ let messageBundle = {
     en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",
     hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
   },
-  reegistration:{
+  registration:{
     en_IN: 'If you want to receive bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
     hi_IN: 'यदि आप इस मोबाइल नंबर प्रकार पर {{उपभोक्ता कोड}} के लिए बिल अलर्ट प्राप्त करना चाहते हैं और भेजें *1*\n\nअन्यथा टाइप करें और *2* भेजें'
   },

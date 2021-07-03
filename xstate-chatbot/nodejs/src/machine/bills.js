@@ -604,7 +604,12 @@ const bills = {
                 return (context.message.isValid && context.message.messageContent ==='1');
               },
               actions: assign((context, event) => {
+                let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
+                let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
                 let message = dialog.get_message(messages.newNumberregistration.confirm, context.user.locale);
+                message = message.replace('{{service}}', billServiceName);
+                message = message.replace('{{consumerCode}}', slots.paramInput);
+                message = message.replace('{{mobileNumber}}', context.user.mobileNumber);
                 dialog.sendMessage(context, message);              
               })
             },
