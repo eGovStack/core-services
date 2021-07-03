@@ -305,7 +305,7 @@ class PaymentStatusUpdateEventFormatter{
         propertyId = searchResults.SewerageConnections[0].propertyId;
       }
 
-      let isMobileNumberPresent = this.getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken);
+      let isMobileNumberPresent = await this.getPTOwnerDetails(propertyId, tenantId, mobileNumber, authToken);
       if(isMobileNumberPresent)
         return true;
       
