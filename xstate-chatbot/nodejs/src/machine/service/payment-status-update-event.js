@@ -280,12 +280,12 @@ class PaymentStatusUpdateEventFormatter{
       body: JSON.stringify(requestBody)
     };
 
-    let url;
+    let url = config.egovServices.externalHost;    
     if(businessService === 'WS'){
-      url = config.egovServices.waterServiceHost + config.egovServices.waterConnectionSearch;
+      url = url + config.egovServices.waterConnectionSearch;
     }
     if(businessService === 'SW'){
-      url = config.egovServices.sewerageServiceHost + config.egovServices.sewerageConnectionSearch;;
+      url = url + config.egovServices.sewerageConnectionSearch;;
     }
 
     url = url + '&tenantId='+tenantId;
@@ -340,7 +340,7 @@ class PaymentStatusUpdateEventFormatter{
       body: JSON.stringify(requestBody)
     };
 
-    let url = config.egovServices.ptServiceHost + 'property-services/property/_search';
+    let url = config.egovServices.externalHost + 'property-services/property/_search';
     url = url + '?tenantId='+tenantId;
     url = url + '&propertyIds='+propertyId;
     let response = await fetch(url,options);
