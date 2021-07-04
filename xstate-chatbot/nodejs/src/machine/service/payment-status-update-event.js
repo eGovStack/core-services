@@ -77,12 +77,12 @@ class PaymentStatusUpdateEventFormatter{
 
       else if(businessService === 'PT'){
         key = 'property-receipt';
-        isOwner = await this.getPTOwnerDetails(consumerCode, payment.tenantId, payment.mobileNumber, request.RequestInfo.authToken);
+        isOwner = await this.getPTOwnerDetails(consumerCode, payment.tenantId, payment.mobileNumber, user.authToken);
       }
       
       else if(businessService === 'WS' || businessService === 'SW'){
         key = 'ws-onetime-receipt';
-        isOwner = await this.getWnsOwnerDeatils(consumerCode, payment.tenantId, businessService, payment.mobileNumber, request.RequestInfo.authToken);
+        isOwner = await this.getWnsOwnerDeatils(consumerCode, payment.tenantId, businessService, payment.mobileNumber, user.authToken);
       }
 
       else
