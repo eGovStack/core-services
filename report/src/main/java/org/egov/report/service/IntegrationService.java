@@ -16,6 +16,7 @@ import org.egov.swagger.model.MetadataResponse;
 import org.egov.swagger.model.ReportDefinition;
 import org.egov.swagger.model.SearchColumn;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,6 +29,9 @@ public class IntegrationService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Value("${id.timezone}")
+    private String timezone;
 
     public MetadataResponse getData(ReportDefinition reportDefinition, MetadataResponse metadataResponse, RequestInfo requestInfo, String moduleName) {
 
@@ -114,7 +118,7 @@ public class IntegrationService {
 
                         columnDetail.setDefaultValue(map);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("Exception while fetching data: " + e.getMessage());
                     }
 
                 }
@@ -125,15 +129,16 @@ public class IntegrationService {
 
     private RequestInfoWrapper generateRequestInfoWrapper(RequestInfo requestInfo) {
         RequestInfoWrapper riw = new RequestInfoWrapper();
-        org.egov.swagger.model.RequestInfo ri = new org.egov.swagger.model.RequestInfo();
+        RequestInfo ri = new RequestInfo();
         ri.setAction(requestInfo.getAction());
         ri.setAuthToken(requestInfo.getAuthToken());
-        ri.apiId(requestInfo.getApiId());
+        ri.setApiId(requestInfo.getApiId());
         ri.setVer(requestInfo.getVer());
         ri.setTs(1L);
         ri.setDid(requestInfo.getDid());
         ri.setKey(requestInfo.getKey());
         ri.setMsgId(requestInfo.getMsgId());
+        ri.setUserInfo(requestInfo.getUserInfo());
 //        ri.setRequesterId(requestInfo.getRequesterId());
         riw.setRequestInfo(ri);
         return riw;
@@ -141,7 +146,7 @@ public class IntegrationService {
 
     public long getCurrentTime() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        calendar.setTimeZone(TimeZone.getTimeZone(timezone));
         return calendar.getTimeInMillis();
     }
 }

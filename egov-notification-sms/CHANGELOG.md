@@ -1,4 +1,10 @@
+## 1.1.2 - 11-05-2021
 
+- added size validations
+
+## 1.1.1 - 26-02-2021
+
+- Updated hashing algorithm
 
 ## 1.1.0 - 26-06-2020
 

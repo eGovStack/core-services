@@ -7,7 +7,7 @@ serviceMaps:
     isTransaction: true
     queryMaps:
 
-    - query: INSERT INTO eg_wf_processinstance_v2( id,tenantid,businessService,businessId,moduleName,action,status,comment, assigner, stateSla,businessServiceSla, previousStatus, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_wf_processinstance_v2( id,tenantid,businessService,businessId,moduleName,action,status,comment, assigner, stateSla,businessServiceSla, previousStatus, createdby, lastmodifiedby, createdtime, lastmodifiedtime, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: ProcessInstances.*
       jsonMaps:
       - jsonPath: $.ProcessInstances.*.id
@@ -42,7 +42,7 @@ serviceMaps:
 
       - jsonPath: $.ProcessInstances.*.auditDetails.lastModifiedTime
 
-
+      - jsonPath: $.ProcessInstances.*.rating
 
 
     - query: INSERT INTO eg_wf_document_v2( id, tenantid, active, documenttype,documentUid, processinstanceid, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -158,12 +158,14 @@ serviceMaps:
 
 
 
-    - query: INSERT INTO eg_wf_action_v2( uuid,tenantId, currentState, action, nextstate, roles, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_wf_action_v2( uuid,tenantId,active, currentState, action, nextstate, roles, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: BusinessServices.*.states.*.actions.*
       jsonMaps:
       - jsonPath: $.BusinessServices.*.states.*.actions.*.uuid
 
       - jsonPath: $.BusinessServices.*.states.*.actions.*.tenantId
+
+      - jsonPath: $.BusinessServices.*.states.*.actions.*.active
 
       - jsonPath: $.BusinessServices.*.states[*][?({uuid} in @.actions[*].uuid)].uuid
 
@@ -245,13 +247,15 @@ serviceMaps:
 
       - jsonPath: $.BusinessServices.*.states.*.auditDetails.lastModifiedTime
 
-    - query: INSERT INTO eg_wf_action_v2( uuid,tenantId, currentState, action, nextstate, roles, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (uuid) DO UPDATE SET action=EXCLUDED.action, nextstate=EXCLUDED.nextstate, roles=EXCLUDED.roles, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime;
+    - query: INSERT INTO eg_wf_action_v2( uuid,tenantId,active, currentState, action, nextstate, roles, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (uuid) DO UPDATE SET action=EXCLUDED.action, nextstate=EXCLUDED.nextstate, roles=EXCLUDED.roles, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime;
       basePath: BusinessServices.*.states.*.actions.*
       jsonMaps:
 
       - jsonPath: $.BusinessServices.*.states.*.actions.*.uuid
 
       - jsonPath: $.BusinessServices.*.states.*.actions.*.tenantId
+
+      - jsonPath: $.BusinessServices.*.states.*.actions.*.active
 
       - jsonPath: $.BusinessServices.*.states[*][?({uuid} in @.actions[*].uuid)].uuid
 

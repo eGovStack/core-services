@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -47,20 +48,26 @@ public class Action   {
         @JsonProperty("currentState")
         private String currentState;
 
+        @NotNull
         @Size(max=256)
         @JsonProperty("action")
         private String action;
 
+        @NotNull
         @Size(max=256)
         @JsonProperty("nextState")
         private String nextState;
 
+        @NotNull
         @Size(max=1024)
         @JsonProperty("roles")
         @Valid
         private List<String> roles;
 
         private AuditDetails auditDetails;
+
+        @JsonProperty("active")
+        private Boolean active;
 
 
         public Action addRolesItem(String rolesItem) {

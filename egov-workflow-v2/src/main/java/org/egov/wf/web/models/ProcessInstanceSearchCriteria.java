@@ -1,6 +1,7 @@
 package org.egov.wf.web.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -39,6 +40,23 @@ public class ProcessInstanceSearchCriteria {
 
     @JsonProperty("limit")
     private Integer limit;
+
+    @JsonProperty("businessService")
+    private String businessService;
+
+    @JsonProperty("moduleName")
+    private String moduleName;
+
+    @JsonIgnore
+    private List<String> tenantSpecifiStatus;
+
+    @JsonIgnore
+    private List<String> multipleAssignees;
+
+    @JsonIgnore
+    private List<String> statesToIgnore;
+
+
 
 
     public Boolean isNull(){

@@ -1,6 +1,7 @@
 package org.egov.wf.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
@@ -19,6 +20,7 @@ import java.util.*;
 
 
 @Service
+@Slf4j
 public class UserService {
 
 
@@ -56,6 +58,22 @@ public class UserService {
             idToUserMap.put(user.getUuid(),user);
         });
         return idToUserMap;
+    }
+
+    public List<String> searchUserUuidsBasedOnRoleCodes(UserSearchRequest userSearchRequest){
+        StringBuilder url = new StringBuilder(config.getUserHost());
+        url.append(config.getUserSearchEndpoint());
+        UserDetailResponse userDetailResponse = userCall(userSearchRequest,url);
+        if(CollectionUtils.isEmpty(userDetailResponse.getUser()))
+            throw new CustomException("INVALID USER","No user found for the roleCodes: " + userSearchRequest.getRoleCodes());
+        List<String> roleSpecificUsersUuids = new ArrayList<>();
+        userDetailResponse.getUser().forEach(user -> {
+           roleSpecificUsersUuids.add(user.getUuid());
+        });
+        // ############ REMOVE ME LATER
+        log.info(roleSpecificUsersUuids.toString());
+        // ############################
+        return roleSpecificUsersUuids;
     }
 
 
@@ -117,7 +135,7 @@ public class UserService {
         try {
             d = f.parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Error while parsing user date",e);
         }
         return  d.getTime();
     }

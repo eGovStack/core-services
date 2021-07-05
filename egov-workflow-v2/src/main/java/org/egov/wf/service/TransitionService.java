@@ -144,8 +144,11 @@ public class TransitionService {
          * object
          */
         List<ProcessInstance> processInstancesFromDB = repository.getProcessInstances(criteria);
-        Map<String, ProcessInstance> businessStateMap = processInstancesFromDB.stream()
-                .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
+
+        Map<String, ProcessInstance> businessStateMap = new LinkedHashMap<>();
+        for(ProcessInstance processInstance : processInstancesFromDB){
+            businessStateMap.put(processInstance.getBusinessId(), processInstance);
+        }
 
         return businessStateMap;
     }
@@ -156,7 +159,7 @@ public class TransitionService {
         BusinessServiceSearchCriteria criteria = new BusinessServiceSearchCriteria();
         String tenantId = processInstances.get(0).getTenantId();
         String businessService = processInstances.get(0).getBusinessService();
-        criteria.setTenantIds(Collections.singletonList(tenantId));
+        criteria.setTenantId(tenantId);
         criteria.setBusinessServices(Collections.singletonList(businessService));
         List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
         if(CollectionUtils.isEmpty(businessServices))

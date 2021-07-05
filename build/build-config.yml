@@ -171,6 +171,12 @@ config:
       - work-dir: "zuul"
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/core-services/internal-gateway"
+    build:
+      - work-dir: "internal-gateway"
+        image-name: "internal-gateway"
+        dockerfile: "build/maven/Dockerfile"
         
   - name: "builds/core-services/egov-user-event"
     build:
@@ -236,9 +242,28 @@ config:
     build:
       - work-dir: "libraries/enc-client"
         image-name: "enc-client"
+<<<<<<< HEAD
+=======
+        
+  - name: "builds/core-services/libraries/tracer"
+    build:
+      - work-dir: "libraries/tracer"
+        image-name: "tracer"
+>>>>>>> develop
 
   - name: "builds/core-services/nlp-engine"
     build:
       - work-dir: "nlp-engine"
         image-name: "nlp-engine"
+<<<<<<< HEAD
         dockerfile: "nlp-engine/Dockerfile"
+=======
+        dockerfile: "nlp-engine/Dockerfile"
+
+  - name: "builds/core-services/xstate-chatbot"
+    build:
+      - work-dir: "xstate-chatbot/nodejs"
+        image-name: "xstate-chatbot"
+      - work-dir: "xstate-chatbot/nodejs/db"
+        image-name: "xstate-chatbot-db"
+>>>>>>> develop
