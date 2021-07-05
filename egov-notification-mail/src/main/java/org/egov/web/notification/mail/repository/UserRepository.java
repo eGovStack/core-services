@@ -34,6 +34,7 @@ public class UserRepository {
 
 	public List<String> getEmailsByMobileNo(String tenantId, String mobileNo) {
 		List<String> emails = null;
+		if(mobileNo.equalsIgnoreCase("9999999999")){
 		try {
 			String rcvData = objectMapper.writeValueAsString(fetchUser(tenantId, mobileNo));
 			Object document = Configuration.defaultConfiguration().jsonProvider().parse(rcvData);
@@ -44,20 +45,14 @@ public class UserRepository {
 			throw new CustomException("EMAIL_NOTIFICATION_USER_SEARCH_FAILED",
 					"Deserialization failed, for user response");
 		}
+		}
 		return emails;
 	}
 
 	private Object fetchUser(String tenantId, String mobileNo) {
-		UserSearchRequest searchRequest = null;
-		String url = null;
-		/*
-		 * Adding default mobile no validation to solve mail service crash loop back issue when user search goes with default mob no.*/
-		if(!mobileNo.equalsIgnoreCase("9999999999")){
-		url = config.getUserHost().concat(config.getUserContextPath()).concat(config.getUserSearchEndpoint());
-		searchRequest = UserSearchRequest.builder().mobileNumber(mobileNo).tenantId(tenantId).build();
-		}
+		String url = config.getUserHost().concat(config.getUserContextPath()).concat(config.getUserSearchEndpoint());
+		UserSearchRequest searchRequest = UserSearchRequest.builder().mobileNumber(mobileNo).tenantId(tenantId).build();
 		return serviceRequestRepository.fetchResult(new StringBuilder(url), searchRequest);
-		
-		}
+	}
 
 }
