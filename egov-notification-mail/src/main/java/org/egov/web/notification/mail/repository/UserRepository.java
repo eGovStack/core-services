@@ -48,9 +48,16 @@ public class UserRepository {
 	}
 
 	private Object fetchUser(String tenantId, String mobileNo) {
-		String url = config.getUserHost().concat(config.getUserContextPath()).concat(config.getUserSearchEndpoint());
-		UserSearchRequest searchRequest = UserSearchRequest.builder().mobileNumber(mobileNo).tenantId(tenantId).build();
+		UserSearchRequest searchRequest = null;
+		String url = null;
+		/*
+		 * Adding default mobile no validation to solve mail service crash loop back issue when user search goes with default mob no.*/
+		if(!mobileNo.equalsIgnoreCase("9999999999")){
+		url = config.getUserHost().concat(config.getUserContextPath()).concat(config.getUserSearchEndpoint());
+		searchRequest = UserSearchRequest.builder().mobileNumber(mobileNo).tenantId(tenantId).build();
+		}
 		return serviceRequestRepository.fetchResult(new StringBuilder(url), searchRequest);
-	}
+		
+		}
 
 }
