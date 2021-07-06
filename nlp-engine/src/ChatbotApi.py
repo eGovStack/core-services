@@ -22,6 +22,7 @@ translator= Translator()
 
 languages = LANGUAGE_CODES
 
+# LANGUAGE FUZZY MATCHING
 def close_to(entry):
     entry=entry.lower()
     for i in languages.keys():
@@ -35,7 +36,8 @@ ChatbotApi = Flask(__name__)
 def reply():
     requestData=request.get_json()
     inp=""
-
+    
+    # IF INPUT IS A VOICE MESSAGE
     if requestData["payload"]["type"]=="audio" :
         audioUrl=requestData["payload"]["payload"]["url"]
         getAudioFile=requests.get(audioUrl, allow_redirects=True)
@@ -69,7 +71,9 @@ def reply():
       'apikey': '37cef3c8bf164df7cdc0a36eae94beec',
       'cache-control': 'no-cache'
                       }
-
+                      
+                      
+    # INPUT IS TAKEN AS CITY NAME
     if len(inp.split())==1 and inp not in GREETINGS:
         answer=find_city(inp)[0].upper()
         answer=answer[0]+answer[1:].lower()
@@ -89,7 +93,9 @@ def reply():
     result= process(inp)
     
     resultArray=result.split()
-
+    
+    
+    # IF OUTPUT IS A WELCOME MESSAGE
     if resultArray[0]==WELCOME_RESULT :
         
         k=payload.index(MESSAGE_TOKEN)
@@ -104,7 +110,7 @@ def reply():
         
             
         
-        
+    #OUTPUT IS A RECEIPT    
     elif resultArray[0]==RECEIPT_TOKEN:
         if WATER in resultArray:
             payload = PREFIX+destination+ WATER_RECEIPTS+ SRC_NAME
@@ -121,7 +127,8 @@ def reply():
             
             k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME 
-
+            
+    #OUTPUT IS A BILL
     elif resultArray[0]==BILL_TOKEN:
         
         
