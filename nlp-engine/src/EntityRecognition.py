@@ -14,8 +14,8 @@ def ent_reg(sent):
     maxRatio=0
     for i in bigrams:
         guess=' '.join(list(i))
-        if fuzz.ratio(guess,'trade license')>=60:
-            entity='trade license'
+        if fuzz.ratio(guess,TRADE_LICENSE)>=60:
+            entity=TRADE_LICENSE
 
     
     record= dict()
@@ -33,15 +33,15 @@ def ent_reg(sent):
     result = list()
     result.append(entity)
     
-    if entity=='water' or entity=='sewerage':
+    if entity==WATER or entity==SEWERAGE:
         result.append(WATER_LINK_PAID)
         result.append(WATER_LINK_UNPAID)
         
-    elif entity=='property':
+    elif entity==PROPERTY:
         result.append(PROPERTY_LINK_PAID)
         result.append(PROPERTY_LINK_UNPAID)
         
-    elif entity=='trade license':
+    elif entity==TRADE_LICENSE:
         result.append(TRADE_LINK_PAID)
         result.append(TRADE_LINK_UNPAID)
         

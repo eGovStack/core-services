@@ -37,7 +37,7 @@ notDue=result['KeyWords'][0]['bigrams'][1]['values']
 for i in range(len(notDue)):
     notDue[i]=result['KeyWords'][0]['bigrams'][1]['prefix']+' '+notDue[i]
 
-toBePaid=['to be paid', 'to be paid','not paid yet','not yet paid']
+toBePaid= TO_BE_PAID
 
 
 notToBePaid=result['KeyWords'][0]['bigrams'][2]['values']
@@ -95,21 +95,18 @@ def process(sentence):
     
     
     
-    if sentence=="invalid":
-        return "Sorry, I did not understand that. Please try again."
+    if sentence==INVALID:
+        return SORRY
 
-    if sentence=="hello":
-        welcomeMessage= "Welcome to the *DIGIT* platform ! Now you can pay your bills and retrieve paid receipts for property, water and sewerage and trade licenses.\n"
-        welcomeMessage+="Type in your queries and I will try my best to help you !\n"
-        welcomeMessage+="At any stage, type *quit* if you want to exit."
-        return welcomeMessage
+    if sentence in GREETINGS:
+        return WELCOME_BILLS
         
     
     b=translator.translate(sentence,dest='en').text
     for i in b.split():
         for j in quitSynonyms:
             if fuzz.ratio(i,j)>=75:
-                return "Exiting..."
+                return EXIT
 
     
     
@@ -142,7 +139,7 @@ def process(sentence):
                 
                 
                 
-            return "Showing your "+ent_reg(sentence)[0]+ " receipts "+ ent_reg(sentence)[1]
+            return RECEIPT_TOKEN+' '+ent_reg(sentence)[0]+ RECEIPTS+ ent_reg(sentence)[1]
             
         elif countTrigrams>0:
             if(ent_reg(sentence)[0]==''):
@@ -150,9 +147,9 @@ def process(sentence):
                 return CATEGORY_ERROR
                 
             if flag==1:
-                return 'You may visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                return YOU_MAY_VISIT+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
             else:
-                return 'Visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                return BILL_TOKEN+' '+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
             
         else:
             if(ent_reg(sentence)[0]==''):
@@ -161,13 +158,13 @@ def process(sentence):
                 
             
             if countNotDue>0:
-                return "Showing your "+ent_reg(sentence)[0]+  " receipts "+ ent_reg(sentence)[1]
+                return RECEIPT_TOKEN+' '+ent_reg(sentence)[0]+  RECEIPTS+ ent_reg(sentence)[1]
                 
             else:
                 if flag==1:
-                    return 'You may visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                    return YOU_MAY_VISIT+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
                 else:
-                    return 'Visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                    return BILL_TOKEN+' '+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
 
     else:
             
@@ -182,7 +179,7 @@ def process(sentence):
                 return CATEGORY_ERROR
                 
             
-            return "Showing your "+ent_reg(sentence)[0]+  " receipts "+ ent_reg(sentence)[1]
+            return RECEIPT_TOKEN+' '+ent_reg(sentence)[0]+  RECEIPTS+ ent_reg(sentence)[1]
             
         else:
             answer=classifier.classify(features(sentence))
@@ -193,11 +190,11 @@ def process(sentence):
             
             if answer=='paid':
             
-                return "Showing your "+ent_reg(sentence)[0]+  " receipts "+ ent_reg(sentence)[1]
+                return RECEIPT_TOKEN+' '+ent_reg(sentence)[0]+  RECEIPTS+ ent_reg(sentence)[1]
                 
             elif answer=='unpaid':
                 if flag==1:
-                    return 'You may visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                    return YOU_MAY_VISIT+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
                 else:
-                    return 'Visit '+ent_reg(sentence)[2]+' for paying your '+ent_reg(sentence)[0]+ " bills "
+                    return BILL_TOKEN+' '+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
   

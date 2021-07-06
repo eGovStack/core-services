@@ -4,6 +4,7 @@ from  CityExtract import *
 from flask_ngrok import run_with_ngrok
 import json
 from googletrans import Translator
+from Config import *
 
 translator= Translator()
 
@@ -16,7 +17,7 @@ cacheFinal={}
 source={}
 
 
-welcomeMessage= "Welcome to the *DIGIT* platform ! Please type in your city name.\n"
+welcomeMessage= WELCOME_MESSAGE
 
 
 @CityGupshup.route('/',methods=['POST'])
@@ -26,47 +27,47 @@ def reply():
 
     destination=requestData["payload"]["source"]
 
-    default = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=Please%20mention%20a%20category&src.name=LocalitySearch'
+    default = PREFIX +destination+ CATEGORY + SRC_NAME_LOCALITY
 
     payload=default
     inp=inp.lower()
     inp_2=inp
 
-    if (inp=="hi" or inp=="hello" or inp=="नमस्ते" or inp=="नमस्कार" or inp=="ਹਾਇ" or inp=="ਸਤ ਸ੍ਰੀ ਅਕਾਲ"):
+    if (inp in GREETINGS):
         inp=translator.translate(inp,dest='en')
         src=inp.src
         inp=inp.text
         inp=inp.lower()
         source["src"]=src
 
-    if (inp!="hi" and inp!="hello"):
+    if (inp not in GREETINGS):
         inp=inp_2
 
-    url_2 = "https://api.gupshup.io/sm/api/v1/msg"
+    url_2 = GUPSHUP_URL
     headers = {
       'Cache-Control': 'no-cache',
       'Content-Type': 'application/x-www-form-urlencoded',
       'apikey': '443fbc250a744864c880cc6d373692cb',
       'cache-control': 'no-cache'
                       }
-    if(inp=="hi" or inp=="hello" or inp=="mseva"):
+    if(inp in GREETINGS):
         cacheCities.clear()
         cacheFinal.clear()
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate(welcomeMessage,dest=source["src"]).text+ "&src.name=LocalitySearch"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(welcomeMessage,dest=source["src"]).text+ SRC_NAME_LOCALITY
         
 
     elif (inp>="1" and inp<="9" and int(inp)>=1 and int(inp)<=9):
         if (int(inp)>len(cacheCities) or int(inp)<1):
             
-            k=payload.index("&message")
-            payload=payload[0:k]+"&message="+translator.translate("Please enter a valid selection",dest=source["src"]).text+translator.translate("Type 'mseva' to return back to the main menu.",dest=source["src"]).text+ "&src.name=LocalitySearch"
+            k=payload.index(MESSAGE_TOKEN)
+            payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(VALID_SELECTION,dest=source["src"]).text+translator.translate(MSEVA,dest=source["src"]).text+ SRC_NAME_LOCALITY
 
         else:
             
             city= cacheCities[int(inp)]
-            k=payload.index("&message")
-            payload=payload[0:k]+"&message=*"+translator.translate((city[0].upper()+city[1:].lower()),dest=source["src"]).text+"* \n"+ translator.translate("Type 'mseva' to return back to the main menu.",dest=source["src"]).text+"&src.name=LocalitySearch"
+            k=payload.index(MESSAGE_TOKEN)
+            payload=payload[0:k]+ MESSAGE_TOKEN +translator.translate((city[0].upper()+city[1:].lower()),dest=source["src"]).text+" \n"+ translator.translate(MSEVA,dest=source["src"]).text+ SRC_NAME_LOCALITY
             
             cacheCities.clear()
             
@@ -74,10 +75,10 @@ def reply():
     else:
         if (len(cacheCities)==0):
             m={"input_city":inp,"input_lang":"hindi"}
-            response=requests.post(url="http://127.0.0.1:8080/nlp-engine/fuzzy/city", data=json.dumps(m), headers={"Content-Type": "application/json"})
+            response=requests.post(url=CITY_LOCALHOST, data=json.dumps(m), headers={"Content-Type": "application/json"})
             cities=json.loads(response.text)["city_detected"]
             count=1
-            cityList=translator.translate("Did you mean any one of the following cities ? Enter the number of your city.",dest=source["src"]).text+'\n'
+            cityList=translator.translate(CITY_LIST,dest=source["src"]).text+'\n'
             
             for i in cities:
                 cacheCities[count]=i[3:]
@@ -86,14 +87,14 @@ def reply():
                 count+=1
 
             cityList+='\n'
-            cityList+=translator.translate("Type 'mseva' to return back to the main menu.",dest=source["src"]).text
+            cityList+=translator.translate(MSEVA,dest=source["src"]).text
 
-            k=payload.index("&message")
-            payload=payload[0:k]+"&message="+cityList+"&src.name=LocalitySearch"
+            k=payload.index(MESSAGE_TOKEN)
+            payload=payload[0:k]+MESSAGE_TOKEN+cityList+ SRC_NAME_LOCALITY
 
         
 
-    payload=payload.encode('utf-8')
+    payload=payload.encode(UTF_8)
             
     response = requests.request("POST", url_2, headers=headers, data = payload)
 
