@@ -3,6 +3,7 @@ import requests
 from flask_ngrok import run_with_ngrok
 from SkewTest import *
 import json
+from Config import *
 
 OcrGupshup= Flask(__name__)
 run_with_ngrok(OcrGupshup)
@@ -11,15 +12,15 @@ run_with_ngrok(OcrGupshup)
 def reply():
     requestData=request.get_json()
 
-    welcomeMessage= "Welcome to the *DIGIT* platform! You can now scan your documents online and get them verified.\nGo ahead and upload an image of your document!"
+    welcomeMessage= WELCOME_MESSAGE
 
     destination=requestData["payload"]["source"]
 
-    default = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=Please%20mention%20a%20category&src.name=LocalitySearch'
+    default = PREFIX+destination+CATEGORY+SRC_NAME
 
     payload=default
 
-    url_2 = "https://api.gupshup.io/sm/api/v1/msg"
+    url_2 = GUPSHUP_URL
     headers = {
       'Cache-Control': 'no-cache',
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,16 +32,16 @@ def reply():
         imageUrl= requestData["payload"]["payload"]["url"]
         imageFile=requests.get(imageUrl, allow_redirects=True)
         open('gupshup_test.jpg', 'wb').write(imageFile.content)
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+ocr("gupshup_test.jpg")+ "&src.name=LocalitySearch"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+ocr("gupshup_test.jpg")+ SRC_NAME
         response = requests.request("POST", url_2, headers=headers, data = payload)
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+"Type 'mseva' to go back to the main menu"+ "&src.name=LocalitySearch"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+MSEVA+ SRC_NAME
         response = requests.request("POST", url_2, headers=headers, data = payload)
 
     else:
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+welcomeMessage+ "&src.name=LocalitySearch"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+welcomeMessage+ SRC_NAME
         response = requests.request("POST", url_2, headers=headers, data = payload)
         
 

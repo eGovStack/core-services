@@ -7,8 +7,8 @@ from PIL import Image
 import re
 from fuzzywuzzy import fuzz
 import imutils
+from Config import *
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
 #function for displaying image on pyplot
@@ -82,34 +82,34 @@ def ocr(img):
     for i in result:
         
         #Regex for id number [Aadhar]
-        if bool(re.search("[0-9]{4}\\s[0-9]{4}\\s[0-9]{4}", i))==True:
-            category="Aadhar"
-            id_no = re.search("[0-9]{4}\\s[0-9]{4}\\s[0-9]{4}", i)[0]
+        if bool(re.search(AADHAR_FORMAT, i))==True:
+            category=AADHAR
+            id_no = re.search(AADHAR_FORMAT, i)[0]
             
         #Regex for id number [PAN]
-        elif bool(re.search("[A-Z]{5}[0-9]{4}[A-Z]{1}", i))==True:
-            category="PAN"
-            id_no=re.search("[A-Z]{5}[0-9]{4}[A-Z]{1}", i)[0]
+        elif bool(re.search(PAN_FORMAT, i))==True:
+            category=PAN
+            id_no=re.search(PAN_FORMAT, i)[0]
 
         #Regex for id number [Driving license]
-        elif "number" in i.lower():
-            number_start=i.lower().find("number")
+        elif NUMBER in i.lower():
+            number_start=i.lower().find(NUMBER)
             id_no = i[number_start+6:len(i)]
-            category="Driving License- Punjab"
+            category= DRIVING_LICENSE
             
         #Regex for date of birth
-        if "dob" in i.lower():
-            dob_start=i.lower().find("dob")
+        if DOB in i.lower():
+            dob_start=i.lower().find(DOB)
             if dob_flag==0:
                 dob_flag=1
                 dob=i[dob_start+3:len(i)]
 
-        elif bool(re.search("[0-9][0-9][\/\-][0-9][0-9][\/\-]\d{4}",i))==True and dob_flag==0:
-            dob=re.search("[0-9][0-9][\/\-][0-9][0-9][\/\-]\d{4}$",i)[0]
+        elif bool(re.search(DOB_FORMAT,i))==True and dob_flag==0:
+            dob=re.search(DOB_FINAL,i)[0]
             
             
         #Regex for name [PAN]
-        if ((i.upper() ==i) and ("GOVT." not in i) and  ("INCOME" not in i) and ("TAX" not in i) and ("DEPARTMENT" not in i) and ("GOVERNMENT" not in i) and ("INDIA" not in i) and ("DEPT." not in i)):
+        if ((i.upper() ==i) and (GOVT not in i) and  (INCOME not in i) and (TAX not in i) and (DEPARTMENT not in i) and (GOVERNMENT not in i) and (INDIA not in i) and (DEPT not in i)):
             if flag==0 and is_name(i):
                 temp= i
                 for j in temp:
@@ -124,8 +124,8 @@ def ocr(img):
                 flag=2
                 
         #Regex for name [Driving license]
-        elif "name" in i.lower():
-            name_start=i.lower().find("name")
+        elif NAME in i.lower():
+            name_start=i.lower().find(NAME)
             name=i[name_start+4:len(i)]
             if is_name(name):
                 flag=1
@@ -143,23 +143,23 @@ def ocr(img):
                 flag=1
             
         #Regex for date of issue
-        if "issued on " in i.lower():
-            doi_start=i.lower().find("issued on ")
+        if ISSUE_DATE in i.lower():
+            doi_start=i.lower().find(ISSUE_DATE)
             doi=i[doi_start+10 :len(i)]
             
         #Regex for s/d/w
-        if "s/d/w of " in i.lower():
-            sdw_start=i.lower().find("s/d/w of ")
+        if SDW in i.lower():
+            sdw_start=i.lower().find(SDW)
             sdw=i[sdw_start+9:len(i)]
             
         #Regex for gender
         for j in i.split():
-            if fuzz.ratio(j.lower(),"male")>=60 and fuzz.ratio(j.lower(),"male")>gender_ratio:
-                gender_ratio=fuzz.ratio(j.lower(),"male")
-                gender="Male"
-            if fuzz.ratio(j.lower(),"female")>=60 and fuzz.ratio(j.lower(),"female")>gender_ratio:
-                gender_ratio=fuzz.ratio(j.lower(),"female")
-                gender="Female"
+            if fuzz.ratio(j.lower(),MALE)>=60 and fuzz.ratio(j.lower(),MALE)>gender_ratio:
+                gender_ratio=fuzz.ratio(j.lower(),MALE)
+                gender=MALE
+            if fuzz.ratio(j.lower(),FEMALE)>=60 and fuzz.ratio(j.lower(),FEMALE)>gender_ratio:
+                gender_ratio=fuzz.ratio(j.lower(),FEMALE)
+                gender=FEMALE
 
     #getting rid of non-ascii characters
     dob=[i for i in dob if i>='0' and i<='9' or i=='/'  or i=='-']
@@ -167,29 +167,29 @@ def ocr(img):
     name=[i for i in name if (i>='A' and i<='Z') or (i>='a' and i<='z') or i==' ']
     name="".join(name)
 
-    output_string= "The following information has been captured: \n\n"
-    output_string+="Category: "
+    output_string= HEADER
+    output_string+= CATEGORY_HEAD
     output_string+=category
-    output_string+="\n\nName: "
+    output_string+=NAME_HEAD
     output_string+=name
-    output_string+="\n\nID No. "
+    output_string+=ID_HEAD
     output_string+=id_no
-    output_string+="\n\nDOB: "
+    output_string+=DOB_HEAD
     output_string+=dob
 
     if doi!="":
-        output_string+="\n\nDOI: "
+        output_string+=DOI_HEAD
         output_string+=doi
     if sdw!="":
-        output_string+="\n\nS/D/W of: "
+        output_string+=SDW_HEAD
         output_string+=sdw
 
-    if father!="" and category=="PAN":
-        output_string+="\n\nFather's name: "
+    if father!="" and category==PAN:
+        output_string+=FATHER_NAME
         output_string+=father
 
-    if gender!="" and category=="Aadhar":
-        output_string+="\n\nGender: "
+    if gender!="" and category==AADHAR:
+        output_string+=GENDER_HEAD
         output_string+=gender
 
     
@@ -197,7 +197,3 @@ def ocr(img):
     return output_string
     
 ############
-
-op=ocr("punjab_20_cw.jpg")
-print(op)
-        

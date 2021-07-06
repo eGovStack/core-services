@@ -3,8 +3,6 @@ from flask import Flask, jsonify, request, send_file
 
 CityApi = Flask(__name__)
 
-
-
 @CityApi.route('/', methods=['POST'])
 def reply():
     request_data=request.get_json()

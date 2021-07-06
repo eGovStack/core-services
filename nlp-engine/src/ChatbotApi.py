@@ -5,6 +5,7 @@ import requests
 from googletrans import Translator
 from fuzzywuzzy import fuzz
 from Config import *
+import json
 
 from CityExtract import find_city
 import time
@@ -13,15 +14,46 @@ import speech_recognition as sr
 from os import path
 from pydub import AudioSegment
 
-translator= Translator()
-#languages={
-#    'english':'en',
-#    'hindi':'hi',
-#    'marathi': 'mr', 'gujarati':'gu', 'punjabi':'pa',  'kannada':'kn', 'tamil':'ta', 'malayalam': 'ml', 'telugu':'te', 'bengali': 'bn', 'bangla': 'bn'
-#    }
+#CALLING THE LOCALIZATION SERVICE
 
+url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
+payload = json.dumps({
+  "RequestInfo": {}
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+responseData = json.loads(response.text)
+
+#FETCHING THE VARIABLES FROM THE LOCALIZATION
+
+PREFIX  = [i["message"] for i in responseData["messages"] if i["code"]=="PREFIX"][0]
+CATEGORY = [i["message"] for i in responseData["messages"] if i["code"]=="CATEGORY"][0]
+SRC_NAME = [i["message"] for i in responseData["messages"] if i["code"]=="SRC_NAME"][0]
+MESSAGE_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="MESSAGE_TOKEN"][0]
+CITY_PART_1 = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_PART_1"][0]
+CITY_PART_2 = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_PART_2"][0]
+CITY_CONFIRMATION = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_CONFIRMATION"][0]
+WELCOME_RESULT = [i["message"] for i in responseData["messages"] if i["code"]=="WELCOME_RESULT"][0]
+ASK_CITY_NAME = [i["message"] for i in responseData["messages"] if i["code"]=="ASK_CITY_NAME"][0]
+RECEIPT_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="RECEIPT_TOKEN"][0]
+WATER_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="WATER_RECEIPTS"][0]
+TRADE_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_RECEIPTS"][0]
+PROPERTY_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY_RECEIPTS"][0]
+BILL_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="BILL_TOKEN"][0]
+BILL_TOKEN_NEW = [i["message"] for i in responseData["messages"] if i["code"]=="BILL_TOKEN_NEW"][0]
+UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0]
+WATER_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="WATER_BILL"][0]
+TRADE_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_BILLBILL"][0]
+PROPERTY_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY_BILL"][0]
+
+translator= Translator()
 languages = LANGUAGE_CODES
 
+# LANGUAGE FUZZY MATCHING
 def close_to(entry):
     entry=entry.lower()
     for i in languages.keys():
@@ -35,7 +67,8 @@ ChatbotApi = Flask(__name__)
 def reply():
     requestData=request.get_json()
     inp=""
-
+    
+    # IF INPUT IS A VOICE MESSAGE
     if requestData["payload"]["type"]=="audio" :
         audioUrl=requestData["payload"]["payload"]["url"]
         getAudioFile=requests.get(audioUrl, allow_redirects=True)
@@ -54,7 +87,7 @@ def reply():
 
     destination=requestData["payload"]["source"]
 
-    default = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=Please%20mention%20a%20category&src.name=chatbotpayment'
+    default = PREFIX+destination + CATEGORY +SRC_NAME
 
     payload= default
     
@@ -69,16 +102,18 @@ def reply():
       'apikey': '37cef3c8bf164df7cdc0a36eae94beec',
       'cache-control': 'no-cache'
                       }
-
-    if len(inp.split())==1 and inp!="hi" and inp!="hello":
+                      
+                      
+    # INPUT IS TAKEN AS CITY NAME
+    if len(inp.split())==1 and inp not in GREETINGS:
         answer=find_city(inp)[0].upper()
         answer=answer[0]+answer[1:].lower()
 
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate("We have detected *"+answer+"* as your city.",dest='en').text+ "&src.name=chatbotpayment"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(CITY_PART_1 +answer+ CITY_PART_2,dest='en').text+ SRC_NAME
         response = requests.request("POST", url, headers=headers, data = payload)
 
-        payload=payload[0:k]+"&message="+translator.translate("If your city is detected correctly, you can continue with your bill/receipt queries.\n Else, kindly type your city name again.\n ",dest='en').text+ "&src.name=chatbotpayment"
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(CITY_CONFIRMATION,dest='en').text+ SRC_NAME
         response = requests.request("POST", url, headers=headers, data = payload)
         return ""
         
@@ -89,89 +124,69 @@ def reply():
     result= process(inp)
     
     resultArray=result.split()
-
-    if resultArray[0]=="Welcome" :
+    
+    # IF OUTPUT IS A WELCOME MESSAGE
+    if resultArray[0]==WELCOME_RESULT :
         
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
         response = requests.request("POST", url, headers=headers, data = payload)
         
         
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate("Please enter your city name\n",dest=sourceLanguage).text+ "&src.name=chatbotpayment"
-        
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(ASK_CITY_NAME,dest=sourceLanguage).text+ SRC_NAME
+    
+    #OUTPUT IS A RECEIPT    
+    elif resultArray[0]==RECEIPT_TOKEN:
+        if WATER in resultArray:
+            payload = PREFIX+destination+ WATER_RECEIPTS+ SRC_NAME
 
-        
-            
-        
-        
-    elif resultArray[0]=='Showing':
-        if 'water' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Water_Sewerage_receipts.pdf%22%7D&src.name=chatbotpayment'
+        elif TRADE in resultArray:
+            payload = PREFIX+destination+ TRADE_RECEIPTS + SRC_NAME
 
-        elif 'trade' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Trade_license_receipts.pdf%22%7D&src.name=chatbotpayment'
-
-        elif 'property' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Property_Tax_receipts.pdf%22%7D&src.name=chatbotpayment'
+        elif PROPERTY in resultArray:
+            payload = PREFIX+destination+ PROPERTY_RECEIPTS + SRC_NAME
 
         else:
         
             #Send out a message that entity is not mentioned properly.
             
-            k=payload.index("&message")
-            payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment" 
-
-    elif resultArray[0]=='Visit':
+            k=payload.index(MESSAGE_TOKEN)
+            payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME 
+            
+    #OUTPUT IS A BILL
+    elif resultArray[0]==BILL_TOKEN:
         
-        
-        
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment"
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
 
-    elif resultArray[0]=='You':
+    elif resultArray[0]==BILL_TOKEN_NEW:
 
-        if 'water' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Water_Sewerage_bills.pdf%22%7D&src.name=chatbotpayment'
+        if WATER in resultArray:
+            payload = PREFIX +destination + WATER_BILL + SRC_NAME
 
-        elif 'trade' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Trade_license_bills.pdf%22%7D&src.name=chatbotpayment'
+        elif TRADE in resultArray:
+            payload = PREFIX +destination+ TRADE_BILL + SRC_NAME
 
-        elif 'property' in resultArray:
-            payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Property_Tax_bills.pdf%22%7D&src.name=chatbotpayment'
-
-        
+        elif PROPERTY in resultArray:
+            payload = PREFIX +destination+ PROPERTY_BILL + SRC_NAME
 
         response = requests.request("POST", url, headers=headers, data = payload)
 
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment"
-
-        
-
-        
-   
-
-   
-        
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
+    
     else:
-        
-        
-        k=payload.index("&message")
-        payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment"
-    
          
+        k=payload.index(MESSAGE_TOKEN)
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
     
-    if resultArray[0]!="Showing":
-        payload=payload.encode('utf-8')
+    if resultArray[0]!= RECEIPT_TOKEN:
+        payload=payload.encode(UTF_8)
 
-        
-     
     response = requests.request("POST", url, headers=headers, data = payload)
 
     return ""
-
-
 
 ChatbotApi.run()
     

@@ -11,23 +11,6 @@ translator= Translator()
 
 punctuations= string.punctuation
 
-"""cityNames= requests.get('https://raw.githubusercontent.com/egovernments/egov-mdms-data/DEV/data/pb/Chatbot/CityNames.json')
-cityLocale= requests.get('https://raw.githubusercontent.com/egovernments/egov-mdms-data/DEV/data/pb/Chatbot/CityLocaleMasterData.json')
-resultName= json.loads(cityNames.text)
-resultLocale= json.loads(cityLocale.text)
-
-cities=resultName["CityNames"][0]["cities"]
-citiesHindi=resultName["CityNames"][1]["cities"]
-cityPunjabi=resultName["CityNames"][2]["cities"]
-
-master= resultLocale["CityLocaleMasterData"]
-
-for i in range(0,len(cities)):
-    cities[i]= cities[i].lower()
-
-
-cities=cities+citiesHindi+cityPunjabi """
-
 url = MDMS_HOST + MDMS_SEARCH_URL
 data = {"RequestInfo":{},"MdmsCriteria":{"tenantId": "","moduleDetails":[{"moduleName":"", "masterDetails":[]}]}}
 data["MdmsCriteria"]["tenantId"] = STATE_LEVEL_TENANTID
@@ -47,19 +30,15 @@ cities=[]
 for data in citiesData:
     cities = cities + data['cities']
 
-
 def find_city(city):
     city= [i for i in city if i not in punctuations]
     city= ''.join(city)
     city=city.lower()
-
     maxRatio=0
     cityResult=[[0,"Please try again"]]
-    
-    
+     
     for j in master:
-
-        
+    
         if (city == j["cityName"].lower()[0:len(city)]):
             cityResult.append([100,j["tenantId"]])
 

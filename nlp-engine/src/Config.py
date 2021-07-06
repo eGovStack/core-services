@@ -16,14 +16,6 @@ TRADE_LINK_UNPAID = "https://cdma.ap.gov.in/en/trade-license"
 KEYWORD_LINK = "https://raw.githubusercontent.com/egovernments/egov-mdms-data/DEV/data/pb/Chatbot/KeyWords.json"
 STOPWORD_LINK = "https://raw.githubusercontent.com/egovernments/egov-mdms-data/DEV/data/pb/Chatbot/StopWords.json"
 
-CATEGORY_ERROR = "Please mention a category for bill payment/receipts."
-    
-
-
-
-
-
-
 
 ########### MDMS SERVICE #####################
 
@@ -37,7 +29,12 @@ CITY_LOCALE_MASTER = 'CityLocaleMasterData'
 EGOV_LOCATION_HOST = 'http://egov-location.egov:8080/'
 EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
-
 STATE_LEVEL_TENANTID = 'pb'
 
 GUPSHUP_URL = "https://api.gupshup.io/sm/api/v1/msg"
+GREETINGS = ["hi","hello","mseva","नमस्ते","नमस्कार","ਹਾਇ","ਸਤ ਸ੍ਰੀ ਅਕਾਲ"]
+CITY_LOCALHOST = "http://127.0.0.1:8080/nlp-engine/fuzzy/city"
+LOCALITY_LOCALHOST = "http://127.0.0.1:8080/nlp-engine/fuzzy/locality"
+TO_BE_PAID = ['to be paid', 'to be paid','not paid yet','not yet paid']
+KEEP_WORDS = ['are','to','be','not']
+MISCELLANEOUS = ['to','be','hi','hello','water', 'sewerage', 'electricity', 'property','income','trade license','show','see','bills']

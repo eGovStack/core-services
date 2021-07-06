@@ -15,7 +15,7 @@ stopwords = stopwords["StopWords"]
 
 rem=stopwords
 
-keep=['are','to','be','not']
+keep=KEEP_WORDS
 from autocorrect import Speller
 spell=Speller(lang='en')
 
@@ -23,7 +23,7 @@ keyWords= requests.get(KEYWORD_LINK)
 result=json.loads(keyWords.text)
 
 
-toBePaid=['to be paid', 'to be paid','not paid yet','not yet paid']
+toBePaid= TO_BE_PAID
 
 synonyms=result['KeyWords'][0]['synonyms']
 
@@ -48,12 +48,12 @@ for i in range(len(notToBePaid)):
 
 
 
-keywordList=synonyms+antonyms+pastSynonyms+quitSynonyms+ ['to','be','hi','hello','water', 'sewerage', 'electricity', 'property','income','trade license','show','see','bills']
+keywordList=synonyms+antonyms+pastSynonyms+quitSynonyms+ MISCELLANEOUS
 keywordList=list(set(keywordList))
 
 def rectify(sentence):
     sentence=sentence.lower()
-    if sentence=="hi" or sentence=="hello":
+    if sentence in GREETINGS:
         return ("hello",0)
     
     sentence=sentence.replace('to see', 'show')
