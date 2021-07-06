@@ -242,22 +242,16 @@ config:
     build:
       - work-dir: "libraries/enc-client"
         image-name: "enc-client"
-<<<<<<< HEAD
-=======
         
   - name: "builds/core-services/libraries/tracer"
     build:
       - work-dir: "libraries/tracer"
         image-name: "tracer"
->>>>>>> develop
 
   - name: "builds/core-services/nlp-engine"
     build:
       - work-dir: "nlp-engine"
         image-name: "nlp-engine"
-<<<<<<< HEAD
-        dockerfile: "nlp-engine/Dockerfile"
-=======
         dockerfile: "nlp-engine/Dockerfile"
 
   - name: "builds/core-services/xstate-chatbot"
@@ -266,4 +260,3 @@ config:
         image-name: "xstate-chatbot"
       - work-dir: "xstate-chatbot/nodejs/db"
         image-name: "xstate-chatbot-db"
->>>>>>> develop

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 LANGUAGE_CODES = {
     'english':'en',
     'hindi':'hi',
@@ -19,18 +18,13 @@ STOPWORD_LINK = "https://raw.githubusercontent.com/egovernments/egov-mdms-data/D
 
 CATEGORY_ERROR = "Please mention a category for bill payment/receipts."
     
-MDMS_HOST = 'http://egov-mdms-service.egov:8080/'
-MDMS_SEARCH_URL = 'egov-mdms-service/v1/_search'
-MDMS_MODULE_NAME = 'Chatbot'
 
-EGOV_LOCATION_HOST = 'http://egov-location.egov:8080/'
-EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
-CITY_MASTER = 'CityNames'
-CITY_LOCALE_MASTER = 'CityLocaleMasterData'
 
-STATE_LEVEL_TENANTID = 'pb'
-=======
+
+
+
+
 ########### MDMS SERVICE #####################
 
 MDMS_HOST = 'http://egov-mdms-service.egov:8080/'
@@ -45,4 +39,3 @@ EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
 
 STATE_LEVEL_TENANTID = 'pb'
->>>>>>> develop

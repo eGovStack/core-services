@@ -13,8 +13,4 @@ RUN pip install dist/libindic-inexactsearch*.tar.gz
 WORKDIR /code
 
 COPY src/ .
-<<<<<<< HEAD
-CMD [ "python", "./locality_api.py" ] 
-=======
 CMD [ "python", "./Controller.py" ] 
->>>>>>> develop
