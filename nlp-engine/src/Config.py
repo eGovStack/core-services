@@ -39,3 +39,5 @@ EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
 
 STATE_LEVEL_TENANTID = 'pb'
+
+GUPSHUP_URL = "https://api.gupshup.io/sm/api/v1/msg"

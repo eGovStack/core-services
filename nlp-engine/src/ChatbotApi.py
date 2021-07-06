@@ -62,7 +62,7 @@ def reply():
     inp=inp.lower()
     
 
-    url = "https://api.gupshup.io/sm/api/v1/msg"
+    url = GUPSHUP_URL
     headers = {
       'Cache-Control': 'no-cache',
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -116,6 +116,8 @@ def reply():
             payload = 'channel=whatsapp&source=917834811114&destination='+destination+'&message=%7B%22type%22%3A%22file%22%2C%22url%22%3A%22https%3A//www.buildquickbots.com/whatsapp/media/sample/pdf/sample01.pdf%22%2C%22caption%22%3A%22%22%2C%22filename%22%3A%22Property_Tax_receipts.pdf%22%7D&src.name=chatbotpayment'
 
         else:
+        
+            #Send out a message that entity is not mentioned properly.
             
             k=payload.index("&message")
             payload=payload[0:k]+"&message="+translator.translate(result,dest=sourceLanguage).text+ "&src.name=chatbotpayment" 
