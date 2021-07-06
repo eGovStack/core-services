@@ -214,10 +214,10 @@ class PaymentStatusUpdateEventFormatter{
       locale = chatState.context.user.locale;
 
     let transactionNumber = request.Transaction.txnId;
-    let consumerCode = request.Transaction.consumerCode;
+    /*let consumerCode = request.Transaction.consumerCode;
     let tenantId = request.Transaction.tenantId;
     let businessService = request.Transaction.module;
-    let link = await this.getPaymentLink(consumerCode,tenantId,businessService,locale);
+    let link = await this.getPaymentLink(consumerCode,tenantId,businessService,locale);*/
 
     let user = {
       mobileNumber: request.Transaction.user.mobileNumber
@@ -230,12 +230,12 @@ class PaymentStatusUpdateEventFormatter{
     let message = [];
     let template = dialog.get_message(messageBundle.paymentFail,locale);
     template = template.replace('{{transaction_number}}',transactionNumber);
-    template = template.replace('{{link}}',link);
+    //template = template.replace('{{link}}',link);
     message.push(template);
     await valueFirst.sendMessageToUser(user, message,extraInfo);
   }
 
-  async getShortenedURL(finalPath){
+  /*async getShortenedURL(finalPath){
     var url = config.egovServices.egovServicesHost + config.egovServices.urlShortnerEndpoint;
     var request = {};
     request.url = finalPath; 
@@ -262,7 +262,7 @@ class PaymentStatusUpdateEventFormatter{
     var finalPath = UIHost + paymentPath;
     var link = await this.getShortenedURL(finalPath);
     return link;
-  }
+  }*/
 
   async getWnsOwnerDeatils(consumerCode, tenantId, businessService, mobileNumber, authToken){
     let requestBody = {
@@ -366,8 +366,8 @@ let messageBundle = {
     hi_IN: "धन्यवाद😃! आपने mSeva पंजाब के माध्यम से अपने बिल का सफलतापूर्वक भुगतान किया है। आपका ट्रांजेक्शन नंबर {{transaction_number}} है। \n\n कृपया अपने संदर्भ के लिए संलग्न रसीद प्राप्त करें।"
   },
   paymentFail:{
-    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nIf the amount is debited from your account please give us 2-3 hours to get confirmation on payment.\n\nIf the amount is  not deducted from your account you can retry using the following payment link:\n{{link}}",
-    hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\n यदि राशि आपके खाते से डेबिट होती है, तो कृपया भुगतान पर पुष्टि प्राप्त करने के लिए हमें 2-3 घंटे का समय दें।\n\n यदि आपके खाते से राशि नहीं काटी जाती है, तो आप निम्नलिखित भुगतान लिंक का उपयोग करके पुन: प्रयास कर सकते हैं:\n{{link}}"
+    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nTo go back to the main menu, type and send mseva.",
+    hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
   },
   wait:{
     en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",

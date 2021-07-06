@@ -40,7 +40,7 @@ const bills = {
           }
         ],
         onError: {
-          target: 'searchBillInitiate',
+          target: '#endstate',
           actions: assign((context, event) => {
             let message = dialog.get_message(dialog.global_messages.system_error, context.user.locale);
             dialog.sendMessage(context, message, false);
@@ -137,6 +137,8 @@ const bills = {
             }
           }
         }
+        let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
+        dialog.sendMessage(context, endStatement); 
       }),
       always: '#searchBillInitiate'
     },
@@ -150,9 +152,7 @@ const bills = {
             let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
             let message = dialog.get_message(messages.searchBillInitiate.question, context.user.locale);
             message = message.replace(/{{billserviceName}}/g, billServiceName);
-            dialog.sendMessage(context, message);*/
-            let message = dialog.get_message(messages.endStatement, context.user.locale);
-            dialog.sendMessage(context, message);          
+            dialog.sendMessage(context, message);*/        
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -191,7 +191,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            let message = dialog.get_message(messages.searchBillInitiate.error, context.user.locale);
+            let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
             dialog.sendMessage(context, message);
           }),
           always : 'question'
@@ -420,8 +420,8 @@ const bills = {
             message = message.replace('{{option}}', optionMessage);
             dialog.sendMessage(context, message);
           }),
-          on: {
-            USER_MESSAGE: 'process'
+          always:{
+            target: 'question'
           }
         }
       }
@@ -628,7 +628,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            let message = dialog.get_message(messages.searchBillInitiate.error, context.user.locale);
+            let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
             dialog.sendMessage(context, message);
           }),
           always : 'question'
@@ -674,7 +674,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            let message = dialog.get_message(messages.paramInputInitiate.error, context.user.locale);
+            let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
             dialog.sendMessage(context, message, false);
           }),
           always : 'question'

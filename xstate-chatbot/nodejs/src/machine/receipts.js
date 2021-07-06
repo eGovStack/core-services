@@ -604,9 +604,9 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message);
             }),
-            always : '#services'
+            always : 'receiptQuestion'
           }
         },
       },
@@ -817,25 +817,28 @@ const receipts = {
                 var businessService, transactionNumber
                 dialog.sendMessage(context, dialog.get_message(messages.wait,context.user.locale), true);
 
-                if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
-                  var pdfContent = {
-                    output: receiptData.fileStoreId,
-                    type: "pdf",
-                  };
-                  dialog.sendMessage(context, pdfContent);
-                }
-                else {
-                    (async() => {
-                      businessService = receiptData.businessService;
-                      transactionNumber = receiptData.transactionNumber;
-                      let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
-                      await receiptService.getPdfFilestoreId(businessService, payment, context.user);
-                    })();
-                }
-                return new Promise(resolve => setTimeout(resolve, 3000));
+                (async() => {
+                  if(receiptData.fileStoreId && receiptData.fileStoreId!= null){
+                    var pdfContent = {
+                      output: receiptData.fileStoreId,
+                      type: "pdf",
+                    };
+                    dialog.sendMessage(context, pdfContent);
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                  }
+                  else {
+                        businessService = receiptData.businessService;
+                        transactionNumber = receiptData.transactionNumber;
+                        let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
+                        await receiptService.getPdfFilestoreId(businessService, payment, context.user);
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                  }
+                })();
+
+                return Promise.resolve();
               },
               onDone: {
-                target:'#lastState',
+                target:'#endstate',
                 actions: assign((context, event) => {
                   dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));
                 })
@@ -890,8 +893,8 @@ let messages = {
       },
     },
     error:{
-      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
-      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
+      hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
   },
   trackReceipts:{
@@ -930,8 +933,8 @@ let messages = {
       hi_IN:'पिछले भुगतानों के खोज और दृश्य के लिए जो आपके मोबाइल नंबर से लिंक नहीं हैं| कृपया 1 टाइप करें और भेजें',
     },
     error:{
-      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
-      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
+      hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
 
 
@@ -958,8 +961,8 @@ let messages = {
       }
     },
     error:{
-      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
-      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
+      hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
 
   },
@@ -1003,8 +1006,8 @@ let messages = {
       hi_IN: '👉 अंतिम भुगतान रसीद देखने के लिए, टाइप करें और भेजें *1* \n\n👉 मुख्य मेनू पर वापस जाने के लिए, *mseva* टाइप करें और भेजें।'
     },
     error:{
-      en_IN: 'Option you have selected seems to be invalid  😐\nKindly select the valid option to proceed further.',
-      hi_IN: 'क्षमा करें, मुझे समझ में नहीं आया। कृपया पुन: प्रयास करें।'
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
+      hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
 
   },

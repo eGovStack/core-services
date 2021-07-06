@@ -172,7 +172,10 @@ const pgr =  {
                         },
                         {
                           target: '#complaintItem',
-                          cond: (context) => context.intention != dialog.INTENTION_UNKOWN
+                          cond: (context) => context.intention != dialog.INTENTION_UNKOWN,
+                          actions: assign((context, event) => {
+                            context.slots.pgr["complaint"] = context.intention;
+                          })
                         },
                         {
                           target: 'error'
@@ -193,14 +196,14 @@ const pgr =  {
                   states: {
                     question: {
                       invoke:  {                  
-                        src: (context) => pgrService.fetchComplaintItemsForCategory(context.intention,context.extraInfo.tenantId),
+                        src: (context) => pgrService.fetchComplaintItemsForCategory(context.slots.pgr.complaint,context.extraInfo.tenantId),
                         id: 'fetchComplaintItemsForCategory',
                         onDone: {
                           actions: assign((context, event) => {
                             let { complaintItems, messageBundle } = event.data;
                             let preamble = dialog.get_message(messages.fileComplaint.complaintType2Step.item.question.preamble, context.user.locale);
                             let localisationPrefix = 'CS_COMPLAINT_TYPE_';
-                            let complaintType = localisationService.getMessageBundleForCode(localisationPrefix + context.intention.toUpperCase());
+                            let complaintType = localisationService.getMessageBundleForCode(localisationPrefix + context.slots.pgr.complaint.toUpperCase());
                             preamble = preamble.replace('{{complaint}}',dialog.get_message(complaintType,context.user.locale));
                             let {prompt, grammer} = dialog.constructListPromptAndGrammer(complaintItems, messageBundle, context.user.locale, false, true);
                             context.grammer = grammer; // save the grammer in context to be used in next step
@@ -217,7 +220,7 @@ const pgr =  {
                     }, //question
                     process: {
                       onEntry: assign((context, event) => {
-                        context.intention = dialog.get_intention(context.grammer, event) 
+                        context.intention = dialog.get_intention(context.grammer, event, true) 
                       }),
                       always: [
                         {
@@ -308,8 +311,8 @@ const pgr =  {
                         target: '#geoLocation',
                         cond: (context, event) => !event.data && context.message !='1',
                         actions: assign((context, event) => {
-                          let message = dialog.get_message(messages.fileComplaint.imageUpload.error, context.user.locale);
-                          dialog.sendMessage(context, message);
+                          let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
+                          dialog.sendMessage(context, message,false);
                         })
                       }
                     ],
@@ -757,7 +760,7 @@ const pgr =  {
                 },
                 error: {
                   onEntry: assign( (context, event) => {
-                    let message = dialog.get_message(messages.fileComplaint.imageUpload.error, context.user.locale);
+                    let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
                     dialog.sendMessage(context, message, false);
                   }),
                   always : 'question'

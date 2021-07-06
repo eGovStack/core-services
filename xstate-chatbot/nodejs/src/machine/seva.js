@@ -437,7 +437,7 @@ let messages = {
   },
   onboarding: {
     onboardingWelcome:{
-      en_IN: 'Dear Citizen,\n\nWelcome to mSeva Punjab 🙏\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.',
+      en_IN: 'Dear Citizen,\n\nWelcome to mSeva 🙏\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.',
       hi_IN: 'प्रिय नागरिक,\n\nएमसेवा पंजाब में आपका स्वागत है 🙏\n\nअब आप व्हाट्सएप के माध्यम से अपनी शिकायतें दर्ज/ट्रैक कर सकते हैं और अपने बिलों का भुगतान कर सकते हैं।'
     }, 
     onboardingLocale: {
@@ -486,7 +486,7 @@ let messages = {
   },
   sevamenu: {
     question: {
-      en_IN : 'How can we serve you today? Please type and send the number of your option 👇\n\n*1.* File a complaint\n\n*2.* Track your complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Property Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
+      en_IN : 'How can we serve you today? Please type and send the number of your option 👇\n\n*1.* File complaint\n\n*2.* Track complaints.\n\n*3.* Pay Water & Sewerage Bill.\n\n*4.* Pay Property Tax Bill.\n\n*5.* View Payments Receipts.\n\n*6.* Change Language.\n\n👉  At any stage type and send *mseva* to go back to the main menu.',
       hi_IN: 'आज हम आपकी सेवा कैसे कर सकते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें👇\n\n*1.* शिकायत दर्ज करें\n\n*2.* अपनी शिकायतों को ट्रैक करें।\n\n*3.* पानी और सीवरेज बिल का भुगतान करें।\n\ n*4.* संपत्ति कर बिल का भुगतान करें।\n\n*5.* भुगतान रसीद देखें।\n\n*6.* भाषा बदलें।\n\n👉 किसी भी स्तर पर टाइप करें और वापस जाने के लिए *mseva* भेजें मुख्य मेनू के लिए।'
     }
   },
