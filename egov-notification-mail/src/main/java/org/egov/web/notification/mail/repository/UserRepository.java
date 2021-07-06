@@ -34,7 +34,7 @@ public class UserRepository {
 
 	public List<String> getEmailsByMobileNo(String tenantId, String mobileNo) {
 		List<String> emails = null;
-		if(mobileNo.equalsIgnoreCase("9999999999")){
+		if(mobileNo!=null && !mobileNo.equalsIgnoreCase("9999999999")){
 		try {
 			String rcvData = objectMapper.writeValueAsString(fetchUser(tenantId, mobileNo));
 			Object document = Configuration.defaultConfiguration().jsonProvider().parse(rcvData);
