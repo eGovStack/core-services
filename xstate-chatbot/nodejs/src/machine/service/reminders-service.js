@@ -19,7 +19,9 @@ class RemindersService {
     for (let userId of userIdList) {
       let chatState = await repoProvider.getActiveStateForUserId(userId);
       if(chatState.context.user.userId == 'eecb3833-6be9-402f-ab9d-ea6484bdc366'){
-        if(chatState.value !='start' || chatState.value.sevamenu != 'question'){
+        if(chatState.value =='start' || chatState.value.sevamenu == 'question')
+          continue;
+        else{
           let mobileNumber = await this.getMobileNumberFromUserId(userId);
           if(mobileNumber == null)
             continue;

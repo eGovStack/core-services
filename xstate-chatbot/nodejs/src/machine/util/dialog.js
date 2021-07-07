@@ -93,8 +93,8 @@ let global_messages = {
     hi_IN : "और देखें ..."
   },
   [INTENTION_GOBACK]: {
-    en_IN : 'To go back ...',
-    hi_IN : 'पीछे जाना ...'
+    en_IN : 'Go Back',
+    hi_IN : 'पीछे जाना'
   },
 }
 
