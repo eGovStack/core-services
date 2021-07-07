@@ -825,6 +825,7 @@ const receipts = {
                     };
                     dialog.sendMessage(context, pdfContent);
                     await new Promise(resolve => setTimeout(resolve, 3000));
+                    dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));
                   }
                   else {
                         businessService = receiptData.businessService;
@@ -832,16 +833,14 @@ const receipts = {
                         let payment = await receiptService.multipleRecordReceipt(context.user,businessService,null,transactionNumber, true);
                         await receiptService.getPdfFilestoreId(businessService, payment, context.user);
                         await new Promise(resolve => setTimeout(resolve, 3000));
+                        dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));
                   }
                 })();
 
                 return Promise.resolve();
               },
               onDone: {
-                target:'#endstate',
-                actions: assign((context, event) => {
-                  dialog.sendMessage(context, dialog.get_message(messages.lastState,context.user.locale));
-                })
+                target:'#endstate'
               }
 
             },
