@@ -15,8 +15,10 @@ class RemindersService {
     for (let userId of userIdList) {
 
       let chatState = await repoProvider.getActiveStateForUserId(userId);
-      console.log(JSON.stringify(chatState));
-      break;
+      if(chatState.context.user.userId == 'eecb3833-6be9-402f-ab9d-ea6484bdc366'){
+        console.log(JSON.stringify(chatState));
+        break;
+      }
     }
   }
 }
