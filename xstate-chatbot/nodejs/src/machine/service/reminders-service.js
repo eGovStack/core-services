@@ -33,7 +33,7 @@ class RemindersService {
   }
 
   async getMobileNumberFromUserId(userId){
-    let url = envVariables.egovServices.egovServicesHost + '/user/_search';
+    let url = envVariables.egovServices.egovServicesHost + 'user/_search';
 
     let requestBody = {
       RequestInfo: null,
