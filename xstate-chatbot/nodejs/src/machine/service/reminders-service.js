@@ -5,8 +5,6 @@ const repoProvider = require('../../session/repo');
 
 class RemindersService {
   async triggerReminders() {
-    const people = await personService.fetchAllHomeIsolatedPatients();
-
     console.log('Sending reminders to people');
     let userIdList = await repoProvider.getUserId(true);
     await this.sendMessages(userIdList);
@@ -14,9 +12,6 @@ class RemindersService {
   }
 
   async sendMessages(userIdList) {
-    const extraInfo = {
-      whatsAppBusinessNumber: envVariables.whatsAppBusinessNumber,
-    };
     for (let userId of userIdList) {
 
       let chatState = await repoProvider.getActiveStateForUserId(userId);
