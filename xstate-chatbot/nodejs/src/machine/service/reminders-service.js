@@ -2,6 +2,7 @@ const channelProvider = require('../../channel')
 const envVariables = require('../../env-variables');
 const dialog = require('../util/dialog.js');
 const repoProvider = require('../../session/repo');
+const fetch = require("node-fetch");
 
 class RemindersService {
   async triggerReminders() {
