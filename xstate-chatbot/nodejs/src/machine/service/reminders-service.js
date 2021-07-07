@@ -14,7 +14,7 @@ class RemindersService {
 
   async sendMessages(userIdList) {
     const extraInfo = {
-      whatsAppBusinessNumber: envVariables.whatsAppBusinessNumber,
+      whatsAppBusinessNumber: envVariables.whatsAppBusinessNumber.slice(2),
     };
     for (let userId of userIdList) {
       let chatState = await repoProvider.getActiveStateForUserId(userId);
