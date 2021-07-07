@@ -1,4 +1,3 @@
-const sha256 = require('js-sha256');
 const channelProvider = require('../../channel')
 const envVariables = require('../../env-variables');
 const dialog = require('../util/dialog.js');
