@@ -23,6 +23,12 @@ class StateRepository {
         }
     }
 
+    async getUserId(active){
+        const query = 'SELECT DISTINCT user_id FROM eg_chat_state_v2 WHERE active = $1';
+        let result = await pool.query(query, [active]);
+        return result;
+    }
+
 }
 
 module.exports = new StateRepository();

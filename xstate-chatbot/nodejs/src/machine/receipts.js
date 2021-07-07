@@ -835,7 +835,7 @@ const receipts = {
                   }
                 })();
 
-                return new Promise(resolve => setTimeout(resolve, 3000));
+                return Promise.resolve();
               },
               onDone: {
                 target:'#endstate',

@@ -3,6 +3,8 @@ const express = require('express'),
     config = require('../../env-variables'),
     sessionManager = require('../../session/session-manager'),
     channelProvider = require('../');
+    remindersService = require('../../machine/service/reminders-service');
+
 
 router.post('/message', async (req, res) =>  {
     try {
@@ -25,6 +27,11 @@ router.post('/status', async (req, res) => {
     }
     res.end();
 });
+
+router.post('/reminder', async (req, res) => {
+    await remindersService.triggerReminders();
+    res.end();
+  });
 
 router.get('/health', (req, res) => res.sendStatus(200));
 
