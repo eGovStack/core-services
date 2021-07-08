@@ -2,7 +2,29 @@ import nltk
 from fuzzywuzzy import fuzz
 from nltk.util import ngrams
 from Config import *
+import requests
+import json
 
+#CALLING THE LOCALIZATION SERVICE
+
+url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
+payload = json.dumps({
+  "RequestInfo": {}
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+responseData = json.loads(response.text)
+
+#FETCHING THE VARIABLES FROM THE LOCALIZATION
+
+WATER = [i["message"] for i in responseData["messages"] if i["code"]=="WATER"][0]
+SEWERAGE = [i["message"] for i in responseData["messages"] if i["code"]=="SEWERAGE"][0]
+PROPERTY = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY"][0]
+TRADE_LICENSE = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_LICENSE"][0]
 
 def ent_reg(sent):
     sent=sent.lower()

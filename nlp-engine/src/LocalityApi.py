@@ -8,40 +8,8 @@ from Config import *
 
 punctuations= string.punctuation
 
-#LocalityApi = Flask(__name__)
-
-"""
-@LocalityApi.route('/nlp-engine/fuzzy/city', methods=['POST'])
-def reply():
-    requestData=request.get_json()
-    inp= requestData['input_city']
-    lang=requestData['input_lang']
-
-    k= find_city(inp)
-    response=dict()
-    response['city_detected']= k[0]
-    response['match']= k[1]
-
-    return jsonify(response)
-
-
-
-
-@LocalityApi.route('/nlp-engine/fuzzy/locality',methods=['POST'])
-
-"""
-
 def findLocality(city, locality):
-    #requestData=request.get_json()
-    #city=requestData['city']
-    #locality=requestData['locality']
     
-
-    #payload="{\r\n\r\n   \"apiId\": \"asset-services\",\r\n   \"ver\": null,\r\n   \"ts\": null,\r\n   \"action\": null,\r\n   \"did\": null,\r\n   \"key\": null,\r\n   \"msgId\": \"search with from and to values\",\r\n   \"authToken\": \"{{qaAuth}}}\",\r\n   \"correlationId\": null,\r\n   \"userInfo\": {\r\n     \"id\": \"1\",\r\n     \"userName\": null,\r\n     \"name\": null,\r\n     \"type\": null,\r\n     \"mobileNumber\": null,\r\n     \"emailId\": null,\r\n     \"roles\": null\r\n   }\r\n \r\n}"
-
-    #url="https://qa.digit.org/egov-location/location/v11/boundarys/_search?tenantId="+str(city.lower())
-
-    #response=requests.request("POST",url, data=payload, headers={"Content-Type": "application/json"})
     payload = {"RequestInfo":{}}
     payload = json.dumps(payload)
     url= EGOV_LOCATION_HOST + EGOV_LOCATION_SEARCH_URL + "?tenantId="+str(city.lower())
@@ -115,5 +83,3 @@ def findLocality(city, locality):
     
     g={"predictions":predictions}
     return g
-    
-#LocalityApi.run(host='0.0.0.0',port=8080)

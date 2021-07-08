@@ -5,6 +5,7 @@ import requests
 from googletrans import Translator
 from fuzzywuzzy import fuzz
 from Config import *
+import json
 
 from CityExtract import find_city
 import time
@@ -13,13 +14,43 @@ import speech_recognition as sr
 from os import path
 from pydub import AudioSegment
 
-translator= Translator()
-#languages={
-#    'english':'en',
-#    'hindi':'hi',
-#    'marathi': 'mr', 'gujarati':'gu', 'punjabi':'pa',  'kannada':'kn', 'tamil':'ta', 'malayalam': 'ml', 'telugu':'te', 'bengali': 'bn', 'bangla': 'bn'
-#    }
+#CALLING THE LOCALIZATION SERVICE
 
+url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
+payload = json.dumps({
+  "RequestInfo": {}
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+responseData = json.loads(response.text)
+
+#FETCHING THE VARIABLES FROM THE LOCALIZATION
+
+PREFIX  = [i["message"] for i in responseData["messages"] if i["code"]=="PREFIX"][0]
+CATEGORY = [i["message"] for i in responseData["messages"] if i["code"]=="CATEGORY"][0]
+SRC_NAME = [i["message"] for i in responseData["messages"] if i["code"]=="SRC_NAME"][0]
+MESSAGE_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="MESSAGE_TOKEN"][0]
+CITY_PART_1 = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_PART_1"][0]
+CITY_PART_2 = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_PART_2"][0]
+CITY_CONFIRMATION = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_CONFIRMATION"][0]
+WELCOME_RESULT = [i["message"] for i in responseData["messages"] if i["code"]=="WELCOME_RESULT"][0]
+ASK_CITY_NAME = [i["message"] for i in responseData["messages"] if i["code"]=="ASK_CITY_NAME"][0]
+RECEIPT_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="RECEIPT_TOKEN"][0]
+WATER_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="WATER_RECEIPTS"][0]
+TRADE_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_RECEIPTS"][0]
+PROPERTY_RECEIPTS = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY_RECEIPTS"][0]
+BILL_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="BILL_TOKEN"][0]
+BILL_TOKEN_NEW = [i["message"] for i in responseData["messages"] if i["code"]=="BILL_TOKEN_NEW"][0]
+UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0]
+WATER_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="WATER_BILL"][0]
+TRADE_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_BILLBILL"][0]
+PROPERTY_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY_BILL"][0]
+
+translator= Translator()
 languages = LANGUAGE_CODES
 
 # LANGUAGE FUZZY MATCHING
@@ -94,7 +125,6 @@ def reply():
     
     resultArray=result.split()
     
-    
     # IF OUTPUT IS A WELCOME MESSAGE
     if resultArray[0]==WELCOME_RESULT :
         
@@ -105,11 +135,7 @@ def reply():
         
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(ASK_CITY_NAME,dest=sourceLanguage).text+ SRC_NAME
-        
-
-        
-            
-        
+    
     #OUTPUT IS A RECEIPT    
     elif resultArray[0]==RECEIPT_TOKEN:
         if WATER in resultArray:
@@ -131,8 +157,6 @@ def reply():
     #OUTPUT IS A BILL
     elif resultArray[0]==BILL_TOKEN:
         
-        
-        
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
 
@@ -147,38 +171,22 @@ def reply():
         elif PROPERTY in resultArray:
             payload = PREFIX +destination+ PROPERTY_BILL + SRC_NAME
 
-        
-
         response = requests.request("POST", url, headers=headers, data = payload)
 
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
-
-        
-
-        
-   
-
-   
-        
+    
     else:
-        
-        
+         
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(result,dest=sourceLanguage).text+ SRC_NAME
-    
-         
     
     if resultArray[0]!= RECEIPT_TOKEN:
         payload=payload.encode(UTF_8)
 
-        
-     
     response = requests.request("POST", url, headers=headers, data = payload)
 
     return ""
-
-
 
 ChatbotApi.run()
     

@@ -6,6 +6,36 @@ import json
 import speech_recognition as sr
 from pydub import AudioSegment
 from Config import *
+import json
+
+#CALLING THE LOCALIZATION SERVICE
+
+url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
+payload = json.dumps({
+  "RequestInfo": {}
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+responseData = json.loads(response.text)
+
+#FETCHING THE VARIABLES FROM THE LOCALIZATION
+
+WELCOME_MESSAGE = [i["message"] for i in responseData["messages"] if i["code"]=="WELCOME_MESSAGE"][0]
+DESTINATION = [i["message"] for i in responseData["messages"] if i["code"]=="DESTINATION"][0]
+PREFIX = [i["message"] for i in responseData["messages"] if i["code"]=="PREFIX"][0]
+CATEGORY = [i["message"] for i in responseData["messages"] if i["code"]=="CATEGORY"][0]
+SRC_NAME_LOCALITY = [i["message"] for i in responseData["messages"] if i["code"]=="SRC_NAME_LOCALITY"][0]
+MESSAGE_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="MESSAGE_TOKEN"][0]
+INVALID_SELECTION = [i["message"] for i in responseData["messages"] if i["code"]=="INVALID_SELECTION"][0]
+LOCALITY_DETECTED = [i["message"] for i in responseData["messages"] if i["code"]=="LOCALITY_DETECTED"][0]
+ASK_LOCALITY_NAME = [i["message"] for i in responseData["messages"] if i["code"]=="ASK_LOCALITY_NAME"][0]
+CITY_LIST = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_LIST"][0]
+LOCALITY_LIST = [i["message"] for i in responseData["messages"] if i["code"]=="LOCALITY_LIST"][0]
+UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0]
 
 CityAudio=Flask(__name__)
 run_with_ngrok(CityAudio)
@@ -48,13 +78,8 @@ def reply():
     else:
         inp=requestData["payload"]["payload"]["text"]
 
-    
-
     inp=inp.lower()
-    
-
-    
-
+   
     if(inp in GREETINGS):
         cacheCities.clear()
         cacheFinal.clear()
@@ -62,7 +87,6 @@ def reply():
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+welcomeMessage+ SRC_NAME_LOCALITY
         
-
     elif (inp>="1" and inp<="9" and int(inp)>=1 and int(inp)<=9):
         
         if (int(inp)>len(cacheCities) or int(inp)<1):
@@ -70,11 +94,9 @@ def reply():
             payload=payload[0:k] + INVALID_SELECTION + SRC_NAME_LOCALITY
 
         else:
-            
-            
+                      
             if (len(cacheLocalities)!=0):
-                
-                
+                                
                 locality=cacheLocalities[int(inp)]
                 
                 k=payload.index(MESSAGE_TOKEN)
@@ -82,16 +104,13 @@ def reply():
                 cacheCities.clear()
                 cacheFinal.clear()
                 cacheLocalities.clear()
-                
-                
+                                
             else:
                 city= cacheCities[int(inp)]
                 k=payload.index(MESSAGE_TOKEN)
                 payload=payload[0:k]+MESSAGE_TOKEN+"*"+(city[0].upper()+city[1:].lower())+"* \n"+ ASK_LOCALITY_NAME+ SRC_NAME_LOCALITY
                 cacheFinal["city"]=city
                 
-            
-
     else:
         if (len(cacheCities)==0):
             m={"input_city":inp,"input_lang":"hindi"}
@@ -128,10 +147,7 @@ def reply():
             k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+localList+ SRC_NAME_LOCALITY
         
-       
-
     payload=payload.encode(UTF_8)
-            
     response = requests.request("POST", url_2, headers=headers, data = payload)
 
     return ""

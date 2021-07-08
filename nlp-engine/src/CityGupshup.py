@@ -5,9 +5,35 @@ from flask_ngrok import run_with_ngrok
 import json
 from googletrans import Translator
 from Config import *
+import json
 
 translator= Translator()
 
+#CALLING THE LOCALIZATION SERVICE
+
+url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
+payload = json.dumps({
+  "RequestInfo": {}
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+responseData = json.loads(response.text)
+
+#FETCHING THE VARIABLES FROM THE LOCALIZATION
+
+WELCOME_MESSAGE = [i["message"] for i in responseData["messages"] if i["code"]=="WELCOME_MESSAGE"][0]
+PREFIX = [i["message"] for i in responseData["messages"] if i["code"]=="PREFIX"][0]
+CATEGORY = [i["message"] for i in responseData["messages"] if i["code"]=="CATEGORY"][0]
+SRC_NAME_LOCALITY = [i["message"] for i in responseData["messages"] if i["code"]=="SRC_NAME_LOCALITY"][0]
+MESSAGE_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="MESSAGE_TOKEN"][0]
+VALID_SELECTION = [i["message"] for i in responseData["messages"] if i["code"]=="VALID_SELECTION"][0]
+MSEVA = [i["message"] for i in responseData["messages"] if i["code"]=="MSEVA"][0]
+CITY_LIST = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_LIST"][0]
+UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0]
 
 CityGupshup=Flask(__name__)
 run_with_ngrok(CityGupshup)
@@ -15,7 +41,6 @@ run_with_ngrok(CityGupshup)
 cacheCities={}
 cacheFinal={}
 source={}
-
 
 welcomeMessage= WELCOME_MESSAGE
 
@@ -92,10 +117,7 @@ def reply():
             k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+cityList+ SRC_NAME_LOCALITY
 
-        
-
-    payload=payload.encode(UTF_8)
-            
+    payload=payload.encode(UTF_8)          
     response = requests.request("POST", url_2, headers=headers, data = payload)
 
     return ""
