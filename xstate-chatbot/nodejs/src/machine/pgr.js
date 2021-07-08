@@ -809,7 +809,6 @@ const pgr =  {
                 let template = dialog.get_message(messages.trackComplaint.results.complaintTemplate, context.user.locale);
                 let complaint = complaints[i];
                 template = template.replace('{{complaintType}}',complaint.complaintType);
-                template = template.replace('{{complaintNumber}}', complaint.complaintNumber);
                 template = template.replace('{{filedDate}}', complaint.filedDate);
                 template = template.replace('{{complaintStatus}}', complaint.complaintStatus);
                 template = template.replace('{{complaintLink}}', complaint.complaintLink);
@@ -857,7 +856,7 @@ let messages = {
       category: {
         question: {
           preamble: {
-            en_IN : 'Please type and send the number to select a complaint type from the list below 👇',
+            en_IN : 'Please type and send the number to select a complaint type from the list below 👇\n',
             hi_IN : 'आप किस लिए शिकायत करना चाहते हैं? कृपया टाइप करें और अपने विकल्प का नंबर भेजें 👇'
           },
           otherType: {
@@ -869,7 +868,7 @@ let messages = {
       item: {
         question: {
           preamble : {
-            en_IN : 'What is the problem you are facing with {{complaint}}?',
+            en_IN : 'What is the problem you are facing with {{complaint}}?\n',
             hi_IN : 'कृपया {{complaint}} के लिए समस्या श्रेणी चुनें'
           },
         }
@@ -877,7 +876,7 @@ let messages = {
     }, // complaintType2Step
     geoLocation: {
       question: {
-        en_IN :'Please share your location if you are at the grievance site.\n\n👉  Kindly refer the image below to understand steps for sharing the location.\n\n👉  To continue without sharing the location, type and send  *1*.',
+        en_IN :'Please share your location if you are at the grievance site.\n\n👉  Refer the image below to understand steps for sharing the location.\n\n👉  To continue without sharing the location, type and send  *1*.',
         hi_IN : 'यदि आप शिकायत स्थल पर हैं, तो कृपया अपना स्थान साझा करें।\n\n👉 स्थान साझा करने के चरणों को समझने के लिए कृपया नीचे दी गई छवि देखें।\n\n👉 स्थान साझा किए बिना जारी रखने के लिए, टाइप करें और *1* भेजें।'
       }
     }, // geoLocation 
@@ -922,7 +921,7 @@ let messages = {
       hi_IN: 'धन्यवाद! आपने mSeva Punjab के माध्यम से सफलतापूर्वक शिकायत दर्ज की है।\nआपकी शिकायत संख्या: {{complaintNumber}}\n आप नीचे दिए गए लिंक के माध्यम से अपनी शिकायत देख और ट्रैक कर सकते हैं:\n {{complaintLink}}\n'
     },
     closingStatement: {
-      en_IN: '\nIn case of any help please type and send *"mseva"*',
+      en_IN: '\nIn case of any help please type and send "mseva"',
       hi_IN: '\nजब भी आपको मेरी सहायता की आवश्यकता हो तो कृपया "mseva" लिखें और भेजें'
     },
     cityFuzzySearch: {
@@ -965,8 +964,8 @@ let messages = {
         hi_IN: 'आपकी पंजीकृत ओपन शिकायतें'
       },
       complaintTemplate: {
-        en_IN: '*{{complaintType}}*\n\nComplaint No: {{complaintNumber}}\n\nFiled Date: {{filedDate}}\n\nCurrent Complaint Status: *{{complaintStatus}}*\n\nTap on the link below to view the complaint\n{{complaintLink}}',
-        hi_IN: '*{{complaintType}}*\n\nशिकायत संख्या: {{complaintNumber}}\n\nदायर तिथि: {{filedDate}}\n\nशिकायत की स्थिति: *{{complaintStatus}}*\n\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
+        en_IN: '*{{complaintType}}*\n\nFiled Date: {{filedDate}}\n\nCurrent Complaint Status: *{{complaintStatus}}*\n\nTap on the link below to view details\n{{complaintLink}}',
+        hi_IN: '*{{complaintType}}*\n\nदायर तिथि: {{filedDate}}\n\nशिकायत की स्थिति: *{{complaintStatus}}*\n\nशिकायत देखने के लिए नीचे दिए गए लिंक पर टैप करें\n{{complaintLink}}'
       },
       closingStatement: {
         en_IN: '👉 To go back to the main menu, type and send mseva.',

@@ -85,7 +85,7 @@ const bills = {
             bttnUrlComponent: bttnUrlComponent
           };
 
-          dialog.sendMessage(context, templateContent, false);
+          dialog.sendMessage(context, templateContent);
         } else {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
@@ -110,7 +110,10 @@ const bills = {
                 bttnUrlComponent: bttnUrlComponent
               };
 
-              dialog.sendMessage(context, templateContent, false);
+              if(i==bills.length-1)
+                dialog.sendMessage(context, templateContent);
+              else
+                dialog.sendMessage(context, templateContent, false);
             }
           } else {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
@@ -133,12 +136,12 @@ const bills = {
                 bttnUrlComponent: bttnUrlComponent
               };
 
-              dialog.sendMessage(context, templateContent, false);
-            }
+              if(i == bills.length-1)
+                dialog.sendMessage(context, templateContent);
+              else
+                dialog.sendMessage(context, templateContent, false);            }
           }
         }
-        let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-        dialog.sendMessage(context, endStatement); 
       }),
       always: '#searchBillInitiate'
     },
@@ -202,6 +205,9 @@ const bills = {
       id: 'noBills',
       onEntry: assign( (context, event) => {
         let message;
+        let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
+        let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
+
         if(context.totalBills === 0) {
           let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
           context.slots.bills.searchParamOption = searchOptions[0];
@@ -209,6 +215,7 @@ const bills = {
           let optionMessage = dialog.get_message(option, context.user.locale);
           message = dialog.get_message(messages.noBills.notLinked, context.user.locale);
           message = message.replace(/{{searchOption}}/g,optionMessage);
+          message = message.replace(/{{service}}/g,billServiceName);
         } else {
           message = dialog.get_message(messages.noBills.noPending, context.user.locale);
         }
@@ -314,8 +321,7 @@ const bills = {
             let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
             let optionMessage = dialog.get_message(option, context.user.locale);
 
-            let message = dialog.get_message(messages.billServices.question.confirmation, context.user.locale);
-            message = message + "\n"+dialog.get_message(messages.billServices.question.preamble, context.user.locale);;
+            let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
             message = message.replace(/{{searchOption}}/g,optionMessage);
             dialog.sendMessage(context, message);
 
@@ -348,19 +354,22 @@ const bills = {
         openSearch:{
           onEntry: assign((context, event) => {
             (async() => {
-            context.slots.bills.openSearchLink = await billService.getOpenSearchLink(context.service);
-            let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
-            let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
-            let message = dialog.get_message(messages.openSearch, context.user.locale);
-            message = message.replace(/{{billserviceName}}/g,billServiceName);
-            message = message.replace('{{link}}',context.slots.bills.openSearchLink);
+              context.slots.bills.openSearchLink = await billService.getOpenSearchLink(context.service);
+              let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
+              let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
+              let message = dialog.get_message(messages.openSearch, context.user.locale);
+              message = message.replace(/{{billserviceName}}/g,billServiceName);
+              message = message.replace('{{link}}',context.slots.bills.openSearchLink);
 
-            dialog.sendMessage(context, message, true);
-            var imageMessage = {
-              type: 'image',
-              output: config.pgrUseCase.informationImageFilestoreId
-            };
-            dialog.sendMessage(context, imageMessage);
+              dialog.sendMessage(context, message, true);
+              var imageMessage = {
+                type: 'image',
+                output: config.pgrUseCase.informationImageFilestoreId
+              };
+              dialog.sendMessage(context, imageMessage);
+              await new Promise(resolve => setTimeout(resolve, 3000));
+              let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
+              dialog.sendMessage(context, endStatement);
             })();
           }),
 
@@ -384,9 +393,9 @@ const bills = {
             let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
             let message = dialog.get_message(messages.paramInput.question, context.user.locale);
             let optionMessage = dialog.get_message(option, context.user.locale);
-            //let exampleMessage = dialog.get_message(example, context.user.locale);
+            let exampleMessage = dialog.get_message(example, context.user.locale);
             message = message.replace('{{option}}', optionMessage);
-            //message = message.replace('{{example}}', exampleMessage);
+            message = message.replace('{{example}}', exampleMessage);
             dialog.sendMessage(context, message);
           }),
           on: {
@@ -713,7 +722,7 @@ let messages = {
   },
   noBills: {
     notLinked: {
-      en_IN: 'Sorry 😥 !  Your mobile number is not linked to the selected service.\n\nWe can still proceed with the payment using the {{searchOption}} mentioned in your bill/receipt.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to the selected service.\n\nWe can still proceed with the payment using the *{{searchOption}}* mentioned in your {{service}} bill/receipt.',
       hi_IN: 'क्षमा करें, आपका मोबाइल नंबर किसी सेवा से लिंक नहीं है। इसे लिंक करने के लिए अपने शहरी स्थानीय निकाय से संपर्क करें। आप नीचे दी गई जानकारी के अनुसार अपनी खाता जानकारी खोज कर सेवा प्राप्त कर सकते हैं:'
     },
     noPending: {
@@ -734,11 +743,11 @@ let messages = {
   billServices: {
     question: {
       preamble: {
-        en_IN: 'Type and send the option number to indicate if you know the {{searchOption}} 👇\n\n*1.* Yes\n*2.* No',
+        en_IN: 'Type and send the option number to indicate if you know the *{{searchOption}}* 👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
       confirmation:{
-        en_IN: 'Do you have the *{{searchOption}}* to proceed for the payment ?\n',
+        en_IN: 'Do you have the *{{searchOption}}* to proceed for payment ?\n',
         hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },
@@ -761,8 +770,8 @@ let messages = {
   },
   paramInput: {
     question: {
-      en_IN: 'Please enter the {{option}}.',
-      hi_IN: 'बिल देखने के लिए कृपया {{option}} डालें।'
+      en_IN: 'Please enter the {{option}}\n\n{{example}}',
+      hi_IN: 'बिल देखने के लिए कृपया {{option}} डालें\n\n{{example}}'
     },
     re_enter: {
       en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',
@@ -810,7 +819,7 @@ let messages = {
     }
   },
   openSearch: {
-    en_IN: "You can search and pay {{billserviceName}} by clicking on 👇\n\n{{link}}\n\nPlease refer to image below to understand the steps for search and paying {{billserviceName}} from this link.",
+    en_IN: "Click on the link below to search and pay your {{billserviceName}} bill -\n{{link}}\n\nThe image below shows you how to search and pay {{billserviceName}} bill using this link. 👇.",
     hi_IN: "आप नीचे दिए गए लिंक पर क्लिक करके {{billserviceName}} खोज और भुगतान कर सकते हैं👇\n\n{{link}}\n\nइस लिंक से {{billserviceName}} खोजने और भुगतान करने के चरणों को समझने के लिए कृपया नीचे दी गई छवि देखें।"
   },
   newNumberregistration:{

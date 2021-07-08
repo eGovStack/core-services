@@ -119,12 +119,22 @@ const receipts = {
               onDone:[
                 {
                   cond: (context, event) => {
-                    return ( event .data && event.data.length>0);
+                    return ( event .data && event.data.length>1);
                   },
                   actions: assign((context, event) => {
                     context.receipts.slots.searchresults = event.data;
                   }),
                   target: 'listofreceipts',
+                },
+                {
+                  cond: (context, event) => {
+                    return ( event .data && event.data.length==1);
+                  },
+                  actions: assign((context, event) => {
+                    context.receipts.slots.searchresults = event.data;
+                    context.receipts.slots.receiptNumber = 1;
+                  }),
+                  target: '#multipleRecordReceipt',
                 },
                 {
                   target:'#noReceipts'
@@ -153,12 +163,20 @@ const receipts = {
               let receipts=context.receipts.slots.searchresults;
               let message = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService, context.user.locale);
               message = message.replace('{{service records}}', receiptServiceName);
+
+              let { searchOptions, messageBundle2 } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+              context.receipts.slots.searchParamOption = searchOptions[0];
+              let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+
               for(let i = 0; i < receipts.length; i++) {
                 let receipt = receipts[i];
                 let receiptTemplate = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService.receiptTemplate, context.user.locale);
                 receiptTemplate = receiptTemplate.replace('{{id}}', receipt.id);
                 receiptTemplate = receiptTemplate.replace('{{locality}}', receipt.locality);
                 receiptTemplate = receiptTemplate.replace('{{city}}', receipt.city);
+                receiptTemplate = receiptTemplate.replace('{{consumerNumber}}', optionMessage);
+                
                 message += '\n\n';
                 message += (i + 1) + '. ';
                 message += receiptTemplate;
@@ -177,12 +195,20 @@ const receipts = {
       noReceipts:{
         id:'noReceipts',
         onEntry: assign((context, event) => {
-          let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+
+          let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
+          let businessService = context.receipts.slots.service;
+          let receiptServiceName = dialog.get_message(messageBundle[businessService],context.user.locale);
+
+          let { searchOptions, messageBundle2 } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
           context.receipts.slots.searchParamOption = searchOptions[0];
           let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
           let optionMessage = dialog.get_message(option, context.user.locale);
+
           let message = dialog.get_message(messages.receiptSlip.not_found, context.user.locale);
           message = message.replace('{{searchOption}}', optionMessage);
+          message = message.replace('{{service}}', receiptServiceName);
+
           dialog.sendMessage(context, message, false);
         }),
         always:'#openSearchInititate'
@@ -297,10 +323,17 @@ const receipts = {
       mobileLinkage:{
         id:'mobileLinkage',
         onEntry: assign((context, event) => {
+          let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
+          let businessService = context.receipts.slots.service;
+          let receiptServiceName = dialog.get_message(messageBundle[businessService],context.user.locale);
+
           let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
           let optionMessage = dialog.get_message(option, context.user.locale);
+          
           let message = dialog.get_message(messages.mobileLinkage.notLinked,context.user.locale);
           message = message.replace('{{searchOption}}', optionMessage);
+          message = message.replace('{{service}}', receiptServiceName);
+
           dialog.sendMessage(context, message , false);
         }),
         always:[
@@ -364,7 +397,11 @@ const receipts = {
               let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
               let message = dialog.get_message(messages.paramInput.question, context.user.locale);
               let optionMessage = dialog.get_message(option, context.user.locale);
+              let exampleMessage = dialog.get_message(example, context.user.locale);
+
               message = message.replace('{{option}}', optionMessage);
+              message = message.replace('{{example}}', exampleMessage);
+
               dialog.sendMessage(context, message , true);
             }),
             on: {
@@ -465,7 +502,7 @@ const receipts = {
               let receipts=context.receipts.slots.searchresults;
 
               let message = dialog.get_message(messages.mobileLinkage.notLinked.resultHeader, context.user.locale);
-              dialog.sendMessage(context, message , false);
+              //dialog.sendMessage(context, message , false);
 
               let receiptMessage = dialog.get_message(messages.multipleRecordReceipt.header, context.user.locale);
               receiptMessage = receiptMessage.replace('{{date}}', dialog.get_message(messages.multipleRecordReceipt.header.date,context.user.locale));
@@ -482,7 +519,9 @@ const receipts = {
                 receiptMessage += '\n';
                 receiptMessage += receiptTemplate;
               }
-              dialog.sendMessage(context, receiptMessage ,true);
+
+              message = message + receiptMessage;
+              dialog.sendMessage(context, message ,true);
               
             }),
             always:[
@@ -655,7 +694,7 @@ const receipts = {
               let receipts = context.receipts.slots.multipleRecordReceipt;
 
               let message = dialog.get_message(messages.multipleRecordReceipt.multipleReceipts, context.user.locale);
-              dialog.sendMessage(context, message , false);
+              //dialog.sendMessage(context, message , false);
                 
               let receiptMessage = dialog.get_message(messages.multipleRecordReceipt.header, context.user.locale);
               receiptMessage = receiptMessage.replace('{{date}}', dialog.get_message(messages.multipleRecordReceipt.header.date,context.user.locale));
@@ -672,7 +711,8 @@ const receipts = {
                 receiptMessage += receiptTemplate;
               }
                 //context.chatInterface.toUser(context.user,message);
-              dialog.sendMessage(context, receiptMessage , false);
+              message = message + receiptMessage;
+              dialog.sendMessage(context, message , false);
 
             }),
             always:[
@@ -698,7 +738,10 @@ const receipts = {
               let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
               let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
               context.grammer = grammer;
-              dialog.sendMessage(context, `${preamble}${prompt}` , true);
+              prompt = prompt.replace(/\n/g,"\n\n");
+              let message = `${preamble}${prompt}`+'\n\n';
+              message = message + dialog.get_message(messages.lastState, context.user.locale);
+              dialog.sendMessage(context, message, true);
             }),
             on: {
               USER_MESSAGE:'process'
@@ -904,7 +947,7 @@ let messages = {
   },
   receiptSlip:{
     not_found:{
-      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the {{searchOption}} mentioned in your bill/receipt.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the *{{searchOption}}* mentioned in your {{service}} bill/receipt.',
       hi_IN: 'सॉरी 😥 ! आपका मोबाइल नंबर चयनित सेवा से लिंक नहीं है।'
     },
     error:{
@@ -920,7 +963,7 @@ let messages = {
         en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the applicable option number to view the payment history 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
-          en_IN: '*Consumer Number*\n{{id}}\n*Locality:* {{locality}} , {{city}}',
+          en_IN: '*{{consumerNumber}}*\n{{id}}\n*Locality:* {{locality}} , {{city}}',
           hi_IN: '*उपभोक्ता संख्या*\n{{id}} ,\n*इलाका:* {{locality}} , {{city}}'
         }
       }
@@ -940,11 +983,11 @@ let messages = {
   },
   mobileLinkage:{
     notLinked: {
-      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the {{searchOption}} mentioned in your bill/receipt.',
+      en_IN: 'Sorry 😥 !  Your mobile number is not linked to selected service.\n\n👉 We can still proceed to view payment history using the {{searchOption}} mentioned in your {{service}} bill/receipt.',
       hi_IN: 'ऐसा लगता है कि आपके द्वारा उपयोग किया जा रहा मोबाइल नंबर {{service}} सेवा से लिंक नहीं है। कृपया अपने खाता नंबर को {{service}} सेवा से जोड़ने के लिए शहरी स्थानीय निकाय पर जाएँ। फिर भी आप अपनी खाता जानकारी खोजकर सेवा का लाभ उठा सकते हैं।',
       resultHeader:{
-        en_IN: 'Here are your past bill payment 👇',
-      hi_IN: 'ये रहा आपका भुगतान इतिहास 👇',
+        en_IN: 'Here are your past bill payment 👇\n\n',
+        hi_IN: 'ये रहा आपका भुगतान इतिहास 👇\n\n',
       }
     },
   },
@@ -954,8 +997,8 @@ let messages = {
         en_IN: 'Please type and send the number for your option👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें👇\n\n1.हां\n2.नहीं'
       },
-      confirmation:{
-        en_IN: 'Type and send option number to indicate if you know the {{searchOption}} 👇\n\n*1.* Yes\n*2.* No',
+      confirmation: {
+        en_IN: 'Type and send option number to indicate if you know the *{{searchOption}}* 👇\n\n*1.* Yes\n*2.* No',
         hi_IN: 'क्या आपके पास भुगतान के लिए आगे बढ़ने के लिए {{searchOption}} है ?\n'
       }
     },
@@ -963,12 +1006,11 @@ let messages = {
       en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
       hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
     },
-
   },
   paramInput: {
     question: {
-      en_IN: 'Please enter the {{option}}.',
-      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें।'
+      en_IN: 'Please enter the {{option}}\n\n{{example}}',
+      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें।\n\n{{example}}'
     },
     re_enter: {
       en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',
@@ -990,7 +1032,7 @@ let messages = {
         hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
       },
       multipleRecordsSameService: {
-        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the number for your option 👇',
+        en_IN: 'Following {{service records}} records found linked to your mobile number.\n\nPlease type and send the applicable option number to view the payment history 👇',
         hi_IN: 'कई रिकॉर्ड मिले हैं। आगे बढ़ने के लिए एक रिकॉर्ड का चयन करें। आप हमेशा वापस आ सकते हैं और एक और रिकॉर्ड चुन सकते हैं।',
         receiptTemplate: {
           en_IN: 'Consumer Number - {{id}}\nLocality: {{locality}} , {{city}}',
@@ -1026,7 +1068,7 @@ let messages = {
       hi_IN: 'आपकी {{service}} {{locality}}, {{city}} में संपत्ति के खिलाफ उपभोक्ता संख्या {{id}} के लिए भुगतान रसीद नीचे दी गई है 👇:\n\n भुगतान की प्रति देखने और डाउनलोड करने के लिए लिंक पर क्लिक करें ।\n\n {{date}} - रु {{amount}} - {{transactionNumber}} \n पलक: {{receiptDocumentLink}}\n\n'
     },
     multipleReceipts: {
-      en_IN: 'Here is your payment history 👇',
+      en_IN: 'Here is your payment history 👇\n\n',
       hi_IN: 'ये रहा आपका भुगतान इतिहास 👇',
       receiptTemplate: {
         en_IN: '{{date}}    {{status}}       {{amount}}',
@@ -1056,7 +1098,7 @@ let messages = {
     
   },
   pdfReceiptList:{
-    en_IN:"To view the receipt, please type and send the number for your option 👇",
+    en_IN:"To view the receipt, please type and send the option number 👇",
     hi_IN:"रसीद देखने के लिए कृपया टाइप करें और अपने विकल्प के लिए नंबर भेजें 👇",
     receiptTemplate:{
       en_IN: "*Paid:* ₹ {{amount}} | *Date:* {{date}}",
@@ -1072,8 +1114,8 @@ let messages = {
     }
   },
   wait:{
-    en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",
-    hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
+    en_IN: "Please wait while your receipt is being generated.",
+    hi_IN: "कृपया प्रतीक्षा करें जब तक कि आपकी रसीद उत्पन्न न हो जाए।"
   }
   
 };

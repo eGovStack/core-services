@@ -39,7 +39,12 @@ function constructListPromptAndGrammer(keys, message_bundle, locale, more = fals
     if (value === undefined) {
       value = element;
     }
-    prompt+= `\n*${index+1}.*  ` + value;
+    var numberAsString = (index+1).toString();
+    if(numberAsString.length ===1)
+      prompt+= `\n*${index+1}.*  ` + value;
+    else
+      prompt+= `\n*${index+1}.* ` + value;
+
     grammer.push({intention: element, recognize: [(index+1).toString()]});
   });
   return {prompt, grammer};

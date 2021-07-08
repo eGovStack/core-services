@@ -123,8 +123,8 @@ class ReceiptService {
           hi_IN: 'कनेक्शन नंबर'
         };
         example = {
-         en_IN: ' ',
-         hi_IN: ' '
+          en_IN: '(Connection No must be in format\nWS/XXX/XX-XX/XXXXX)',
+          hi_IN: '(कनेक्शन नंबर WS/XXX/XX-XX/XXXXX प्रारूप में होना चाहिए)'
         }
       }
   
@@ -134,8 +134,8 @@ class ReceiptService {
           hi_IN: 'संपत्ति आईडी'
         };
         example = {
-         en_IN: ' ',
-         hi_IN: ' '
+          en_IN: '(Property ID must be in format\nPT-PB-XXXX-XX-XX-XXXXX)',
+          hi_IN: '(प्रॉपर्टी आईडी प्रारूप में होनी चाहिए\nPT-PB-XXXX-XX-XX-XXXXX)'
         }
       }
   

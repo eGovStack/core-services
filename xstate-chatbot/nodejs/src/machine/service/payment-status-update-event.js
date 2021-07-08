@@ -4,6 +4,7 @@ const fetch = require("node-fetch");
 const dialog = require('../util/dialog');
 const userService = require('../../session/user-service');
 const chatStateRepository = require('../../session/repo');
+const localisationService = require('../util/localisation-service');
 
 const consumerGroupOptions = require('../../session/kafka/kafka-consumer-group-options');
 
@@ -153,17 +154,23 @@ class PaymentStatusUpdateEventFormatter{
         let payBillmessage = [];
         let templateContent = await this.prepareSucessMessage(payment, locale, isOwner);
         payBillmessage.push(templateContent);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
+
         if(!isOwner){
           let question = dialog.get_message(messageBundle.registration,locale);
           question = question.replace('{{consumerCode}}',consumerCode);
-          var reegistrationMessage = {
+          let localisationCode = "BILLINGSERVICE_BUSINESSSERVICE_"+businessService;
+          let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
+          question = question.replace('{{service}}',dialog.get_message(localisationMessages,locale));
+          var registrationMessage = {
             output: question,
             type: "text"
-          }
-          payBillmessage.push(reegistrationMessage);
+          };
+
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          await valueFirst.sendMessageToUser(user, [registrationMessage], extraInfo);
         }
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
       }
     }
 
@@ -370,11 +377,11 @@ let messageBundle = {
     hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
   },
   wait:{
-    en_IN: "🙏 Please wait for sometime while your receipt pdf is getting generated. 🙏",
-    hi_IN: "🙏 कृपया कुछ समय प्रतीक्षा करें जब तक कि आपकी रसीद पीडीएफ उत्पन्न न हो जाए। 🙏"
+    en_IN: "Please wait while your receipt is being generated.",
+    hi_IN: "कृपया प्रतीक्षा करें जब तक कि आपकी रसीद उत्पन्न न हो जाए।"
   },
   registration:{
-    en_IN: 'If you want to receive bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
+    en_IN: 'If you want to receive {{service}} bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
     hi_IN: 'यदि आप इस मोबाइल नंबर प्रकार पर {{उपभोक्ता कोड}} के लिए बिल अलर्ट प्राप्त करना चाहते हैं और भेजें *1*\n\nअन्यथा टाइप करें और *2* भेजें'
   },
   endStatement:{
