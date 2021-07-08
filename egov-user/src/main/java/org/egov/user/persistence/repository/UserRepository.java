@@ -126,7 +126,7 @@ public class UserRepository {
 
         final Map<String, Object> parametersMap = new HashMap<String, Object>();
         parametersMap.put("userName", userName);
-        parametersMap.put("tenantId", tenantId);
+        parametersMap.put("tenantId", "'%"+tenantId+"%'");
         parametersMap.put("userType", userType.toString());
 
         int count = namedParameterJdbcTemplate.queryForObject(query, parametersMap, Integer.class);
