@@ -215,7 +215,7 @@ const bills = {
           let optionMessage = dialog.get_message(option, context.user.locale);
           message = dialog.get_message(messages.noBills.notLinked, context.user.locale);
           message = message.replace(/{{searchOption}}/g,optionMessage);
-          message = message.replace(/{{service}}/g,billServiceName);
+          message = message.replace(/{{service}}/g,billServiceName.toLowerCase());
         } else {
           message = dialog.get_message(messages.noBills.noPending, context.user.locale);
         }
@@ -358,7 +358,7 @@ const bills = {
               let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
               let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
               let message = dialog.get_message(messages.openSearch, context.user.locale);
-              message = message.replace(/{{billserviceName}}/g,billServiceName);
+              message = message.replace(/{{billserviceName}}/g,billServiceName.toLowerCase());
               message = message.replace('{{link}}',context.slots.bills.openSearchLink);
 
               dialog.sendMessage(context, message, true);
@@ -616,7 +616,7 @@ const bills = {
                 let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
                 let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
                 let message = dialog.get_message(messages.newNumberregistration.confirm, context.user.locale);
-                message = message.replace('{{service}}', billServiceName);
+                message = message.replace('{{service}}', billServiceName.toLowerCase());
                 message = message.replace('{{consumerCode}}', context.slots.bills.paramInput);
                 message = message.replace('{{mobileNumber}}', context.user.mobileNumber);
                 dialog.sendMessage(context, message);              
@@ -770,8 +770,8 @@ let messages = {
   },
   paramInput: {
     question: {
-      en_IN: 'Please enter the {{option}}\n\n{{example}}',
-      hi_IN: 'बिल देखने के लिए कृपया {{option}} डालें\n\n{{example}}'
+      en_IN: 'Please enter the *{{option}}*\n\n{{example}}',
+      hi_IN: 'बिल देखने के लिए कृपया *{{option}}* डालें\n\n{{example}}'
     },
     re_enter: {
       en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',

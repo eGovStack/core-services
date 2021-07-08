@@ -162,7 +162,7 @@ const receipts = {
               let receiptServiceName = dialog.get_message(messageBundle[businessService],context.user.locale);
               let receipts=context.receipts.slots.searchresults;
               let message = dialog.get_message(messages.receiptSlip.listofreceipts.multipleRecordsSameService, context.user.locale);
-              message = message.replace('{{service records}}', receiptServiceName);
+              message = message.replace('{{service records}}', receiptServiceName.toLowerCase());
 
               let { searchOptions, messageBundle2 } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
               context.receipts.slots.searchParamOption = searchOptions[0];
@@ -207,7 +207,7 @@ const receipts = {
 
           let message = dialog.get_message(messages.receiptSlip.not_found, context.user.locale);
           message = message.replace('{{searchOption}}', optionMessage);
-          message = message.replace('{{service}}', receiptServiceName);
+          message = message.replace('{{service}}', receiptServiceName.toLowerCase());
 
           dialog.sendMessage(context, message, false);
         }),
@@ -332,7 +332,7 @@ const receipts = {
           
           let message = dialog.get_message(messages.mobileLinkage.notLinked,context.user.locale);
           message = message.replace('{{searchOption}}', optionMessage);
-          message = message.replace('{{service}}', receiptServiceName);
+          message = message.replace('{{service}}', receiptServiceName.toLowerCase());
 
           dialog.sendMessage(context, message , false);
         }),
@@ -1009,8 +1009,8 @@ let messages = {
   },
   paramInput: {
     question: {
-      en_IN: 'Please enter the {{option}}\n\n{{example}}',
-      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया {{option}} डालें।\n\n{{example}}'
+      en_IN: 'Please enter the *{{option}}*\n\n{{example}}',
+      hi_IN: 'भुगतान रसीदें देखने के लिए कृपया *{{option}}* डालें।\n\n{{example}}'
     },
     re_enter: {
       en_IN: 'The entered {{option}} is not found in our records.\n\nPlease check the entered details and try again.\n\n👉 To go back to the main menu, type and send mseva.',

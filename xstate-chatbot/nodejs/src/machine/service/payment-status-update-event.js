@@ -162,7 +162,8 @@ class PaymentStatusUpdateEventFormatter{
           question = question.replace('{{consumerCode}}',consumerCode);
           let localisationCode = "BILLINGSERVICE_BUSINESSSERVICE_"+businessService;
           let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
-          question = question.replace('{{service}}',dialog.get_message(localisationMessages,locale));
+          let service = dialog.get_message(localisationMessages,locale)
+          question = question.replace('{{service}}', service.toLowerCase());
           var registrationMessage = {
             output: question,
             type: "text"
