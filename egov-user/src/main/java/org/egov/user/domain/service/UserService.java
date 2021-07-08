@@ -231,7 +231,7 @@ public class UserService {
     }
 
     private String getStateLevelTenantForCitizen(String tenantId, UserType userType) {
-        if (!isNull(userType) && userType.equals(UserType.CITIZEN) && !isEmpty(tenantId) && tenantId.contains("."))
+        if (!isNull(userType) && !isEmpty(tenantId) && tenantId.contains("."))
             return tenantId.split("\\.")[0];
         else
             return tenantId;
