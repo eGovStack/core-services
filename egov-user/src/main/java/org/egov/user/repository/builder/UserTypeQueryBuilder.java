@@ -132,8 +132,8 @@ public class UserTypeQueryBuilder {
 
         if (userSearchCriteria.getTenantId() != null) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
-            selectQuery.append(" u.tenantid like '%?%'");
-            preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
+            selectQuery.append(" u.tenantid like ?");
+            preparedStatementValues.add("%"+userSearchCriteria.getTenantId().trim()+"%");
         }
 
         if (userSearchCriteria.getUserName() != null) {
