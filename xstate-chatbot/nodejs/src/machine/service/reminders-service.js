@@ -55,7 +55,7 @@ class RemindersService {
       let responseBody = await response.json();
 
       let mobileNumber = null;
-      if(responseBody.user.length > 1 && responseBody.user[0].mobileNumber)
+      if(responseBody.user.length > 0 && responseBody.user[0].mobileNumber)
         mobileNumber = responseBody.user[0].mobileNumber;
         
       return mobileNumber;
