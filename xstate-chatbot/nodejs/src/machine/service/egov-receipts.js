@@ -316,7 +316,7 @@ class ReceiptService {
        var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
        searchEndpoint= searchEndpoint.replace(/\$module/g,service);
       let paymentUrl = config.egovServices.externalHost + searchEndpoint;
-      paymentUrl =  paymentUrl + '?tenantId=' + "pb.amritsar";
+      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       
       if(user.hasOwnProperty('paramOption') && (user.paramOption!=null) ){
         
@@ -405,7 +405,7 @@ class ReceiptService {
       var searchEndpoint = config.egovServices.collectonServicSearchEndpoint;
       searchEndpoint= searchEndpoint.replace(/\$module/g,service);
       let paymentUrl = config.egovServices.egovServicesHost + searchEndpoint;
-      paymentUrl =  paymentUrl + '?tenantId=' + 'pb.amritsar';
+      paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       paymentUrl+='&';
       if(forPdf)
         paymentUrl +='transactionNumber='+transactionNumber;

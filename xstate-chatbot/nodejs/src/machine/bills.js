@@ -72,7 +72,7 @@ const bills = {
           let params=[];
           params.push(bill.id);
           params.push(bill.payerName);
-          params.push(bill.dueAmount);
+          params.push("₹ "+bill.dueAmount);
           params.push(bill.dueDate);
 
           let urlComponemt = bill.paymentLink.split('/');
@@ -97,7 +97,7 @@ const bills = {
               let params=[];
               params.push(bill.id);
               params.push(bill.payerName);
-              params.push(bill.dueAmount);
+              params.push("₹ "+bill.dueAmount);
               params.push(bill.dueDate);
 
               let urlComponemt = bill.paymentLink.split('/');
@@ -123,7 +123,7 @@ const bills = {
               let params=[];
               params.push(bill.id);
               params.push(bill.payerName);
-              params.push(bill.dueAmount);
+              params.push("₹ "+bill.dueAmount);
               params.push(bill.dueDate);
 
               let urlComponemt = bill.paymentLink.split('/');
@@ -494,7 +494,7 @@ const bills = {
               let params=[];
               params.push(bill.id);
               params.push(bill.payerName);
-              params.push(bill.dueAmount);
+              params.push("₹ "+bill.dueAmount);
               params.push(bill.dueDate);
 
               let urlComponemt = bill.paymentLink.split('/');
@@ -519,7 +519,7 @@ const bills = {
                   let params=[];
                   params.push(bill.id);
                   params.push(bill.payerName);
-                  params.push(bill.dueAmount);
+                  params.push("₹ "+bill.dueAmount);
                   params.push(bill.dueDate);
 
                   let urlComponemt = bill.paymentLink.split('/');
@@ -542,7 +542,7 @@ const bills = {
                   let params=[];
                   params.push(bill.id);
                   params.push(bill.payerName);
-                  params.push(bill.dueAmount);
+                  params.push("₹ "+bill.dueAmount);
                   params.push(bill.dueDate);
 
                   let urlComponemt = bill.paymentLink.split('/');
