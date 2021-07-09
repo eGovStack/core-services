@@ -364,7 +364,7 @@ const bills = {
               dialog.sendMessage(context, message, true);
               var imageMessage = {
                 type: 'image',
-                output: config.pgrUseCase.informationImageFilestoreId
+                output: config.billsAndReceiptsUseCase.openSearchImageFilestoreId
               };
               dialog.sendMessage(context, imageMessage);
               await new Promise(resolve => setTimeout(resolve, 3000));

@@ -53,7 +53,11 @@ class RemindersService {
     let response = await fetch(url, options);
     if(response.status == 200){
       let responseBody = await response.json();
-      let mobileNumber = responseBody.user[0].mobileNumber;
+
+      let mobileNumber = null;
+      if(responseBody.user.length > 1 && responseBody.user[0].mobileNumber)
+        mobileNumber = responseBody.user[0].mobileNumber;
+        
       return mobileNumber;
     }
      
