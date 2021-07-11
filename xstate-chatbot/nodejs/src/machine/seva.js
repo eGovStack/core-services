@@ -68,10 +68,7 @@ const sevaMachine = Machine({
           id: 'onboardingWelcome',
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.onboarding.onboardingWelcome, context.user.locale);
-            dialog.sendMessage(context, message, false);
-
-            let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
-            dialog.sendMessage(context, nameInformationMessage, false);
+            dialog.sendMessage(context, message);
           }),
           always: '#onboardingName'
         },
@@ -92,8 +89,13 @@ const sevaMachine = Machine({
             },
             question: {
               onEntry: assign((context, event) => {
-                let message = dialog.get_message(messages.onboarding.onboardingName.question, context.user.locale);
-                dialog.sendMessage(context, message);
+                (async() => {          
+                  await new Promise(resolve => setTimeout(resolve, 5000)); 
+                  let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
+                  dialog.sendMessage(context, nameInformationMessage);   
+                  let message = dialog.get_message(messages.onboarding.onboardingName.question, context.user.locale);
+                  dialog.sendMessage(context, message);
+                })();
               }),
               on: {
                 USER_MESSAGE: 'process'
@@ -123,9 +125,15 @@ const sevaMachine = Machine({
           states: {
             question: {
               onEntry: assign((context, event) => {
-                let message = dialog.get_message(messages.onboarding.onBoardingUserProfileConfirmation.question, context.user.locale);
-                message = message.replace('{{name}}', context.user.name);
-                dialog.sendMessage(context, message);
+                (async() => {  
+                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
+                  dialog.sendMessage(context, nameInformationMessage);               
+                  let message = dialog.get_message(messages.onboarding.onBoardingUserProfileConfirmation.question, context.user.locale);
+                  message = message.replace('{{name}}', context.user.name);
+                  dialog.sendMessage(context, message);
+                })();
+
               }),
               on: {
                 USER_MESSAGE: 'process'
@@ -242,11 +250,11 @@ const sevaMachine = Machine({
                 cond: (context) => context.onboarding.name
               },
               {
-                target: '#welcome'
+                target: '#onboardingThankYou'
               }
             ],
             onError: {
-              target: '#welcome'
+              target: '#sevamenu'
             }
           }
         },
@@ -254,10 +262,9 @@ const sevaMachine = Machine({
           id: 'onboardingThankYou',
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.onboarding.onboardingThankYou, context.user.locale);
-            message = message.replace('{{name}}', context.user.name);
             dialog.sendMessage(context, message, false);
           }),
-          always: '#welcome'
+          always: '#sevamenu'
         },
       }
     },

@@ -367,9 +367,6 @@ const bills = {
                 output: config.billsAndReceiptsUseCase.openSearchImageFilestoreId
               };
               dialog.sendMessage(context, imageMessage);
-              await new Promise(resolve => setTimeout(resolve, 3000));
-              let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-              dialog.sendMessage(context, endStatement);
             })();
           }),
 
