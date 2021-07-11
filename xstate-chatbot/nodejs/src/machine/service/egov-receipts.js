@@ -412,6 +412,8 @@ class ReceiptService {
       else
         paymentUrl +='consumerCodes='+consumerCodes;
 
+      paymentUrl+='&mobileNumber='+user.mobileNumber;
+
       let options = {
         method: 'POST',
         origin: '*',
