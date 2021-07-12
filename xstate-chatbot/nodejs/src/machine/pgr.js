@@ -359,40 +359,53 @@ const pgr =  {
                     // TODO: Generalised "disagree" intention
                     if(event.message.input.trim().toLowerCase() === '1') {
                       context.slots.pgr["locationConfirmed"] = false;
+                      context.message = {
+                        isValid: true
+                      };
                     } 
-                    if(event.message.input.trim().toLowerCase() === '2'){
+                    else if(event.message.input.trim().toLowerCase() === '2'){
                       context.slots.pgr["locationConfirmed"] = true;
                       context.slots.pgr.city = context.pgr.detectedLocation.city;
                       if(context.pgr.detectedLocation.locality) {
                         context.slots.pgr.locality = context.pgr.detectedLocation.locality;
                       }
+
+                      context.message = {
+                        isValid: true
+                      };
+                    }
+
+                    else {
+                      context.message = {
+                        isValid: false
+                      };
                     }
                   }),
                   always: [
                     {
                       target: '#persistComplaint',
-                      cond: (context, event) => context.slots.pgr["locationConfirmed"]  && context.slots.pgr["locality"]
+                      cond: (context, event) => context.message.isValid && context.slots.pgr["locationConfirmed"]  && context.slots.pgr["locality"]
                     },
                     {
                       target: '#locality',
-                      cond: (context, event) => !config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
+                      cond: (context, event) => context.message.isValid && !config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
                     },
                     {
                       target: '#nlpLocalitySearch',
-                      cond: (context, event) => config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
+                      cond: (context, event) => context.message.isValid && config.pgrUseCase.geoSearch && context.slots.pgr["locationConfirmed"] 
                     },
                     {
                       target: '#city',
-                      cond: (context, event) => !config.pgrUseCase.geoSearch,
+                      cond: (context, event) => context.message.isValid && !config.pgrUseCase.geoSearch,
 
                     },
                     {
                       target: '#nlpCitySearch',
-                      cond: (context, event) => config.pgrUseCase.geoSearch,
+                      cond: (context, event) => context.message.isValid && config.pgrUseCase.geoSearch,
                     },
                     {
                       target: 'process',
-                      cond: (context, event) => (event.message.input.trim().toLowerCase() != '1' && event.message.input.trim().toLowerCase() !='2')
+                      cond: (context, event) => {return !context.message.isValid;}                    
                     }
                   ]
                 }

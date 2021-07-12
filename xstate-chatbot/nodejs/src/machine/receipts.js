@@ -487,12 +487,19 @@ const receipts = {
           },
           norecords:{
             onEntry: assign((context, event) => {
-              let message = dialog.get_message(messages.receiptSearchResults.norecords, context.user.locale);
+              /*let message = dialog.get_message(messages.receiptSearchResults.norecords, context.user.locale);
               let optionMessage = context.receipts.slots.searchParamOption;
               let inputMessage = context.receipts.slots.paramInput;
               let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
               message = message.replace('{{searchparamoption}}', dialog.get_message(messageBundle[optionMessage], context.user.locale));
               message = message.replace('{{paramInput}}', inputMessage);
+              dialog.sendMessage(context, message , false);*/
+
+
+              let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
+              let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+              message = message.replace('{{option}}', optionMessage);
               dialog.sendMessage(context, message , false);
             }),
             always: '#paramReceiptInputInitiate',

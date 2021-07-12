@@ -459,11 +459,17 @@ const bills = {
         },
         noRecords: {
           onEntry: assign((context, event) => {
-            let message = dialog.get_message(messages.billSearchResults.noRecords, context.user.locale);
+            /*let message = dialog.get_message(messages.billSearchResults.noRecords, context.user.locale);
             let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.slots.bills.service);
             message = message.replace('{{searchParamOption}}', dialog.get_message(messageBundle[context.slots.bills.searchParamOption], context.user.locale));
             message = message.replace('{{paramInput}}', context.slots.bills.paramInput);
-            dialog.sendMessage(context, message, false);
+            dialog.sendMessage(context, message, false);*/
+
+            let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
+            let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
+            let optionMessage = dialog.get_message(option, context.user.locale);
+            message = message.replace('{{option}}', optionMessage);
+            dialog.sendMessage(context, message);
           }),
           always: '#paramInputInitiate'
         },
