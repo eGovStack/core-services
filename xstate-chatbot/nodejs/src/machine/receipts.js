@@ -502,7 +502,7 @@ const receipts = {
               message = message.replace('{{option}}', optionMessage);
               dialog.sendMessage(context, message , false);
             }),
-            always: '#paramReceiptInputInitiate',
+            always: '#paramReceiptInput',
           },
           results:{
             onEntry: assign((context, event) => {

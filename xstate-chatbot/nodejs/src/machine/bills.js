@@ -471,7 +471,7 @@ const bills = {
             message = message.replace('{{option}}', optionMessage);
             dialog.sendMessage(context, message);
           }),
-          always: '#paramInputInitiate'
+          always: '#paramInput'
         },
         results: {
           onEntry: assign((context, event) => {
