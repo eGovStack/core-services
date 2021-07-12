@@ -357,14 +357,26 @@ const pgr =  {
                 process: {
                   onEntry: assign((context, event) => {
                     // TODO: Generalised "disagree" intention
-                    if(event.message.input.trim().toLowerCase() === 'no') {
+                    if(event.message.input.trim().toLowerCase() === '1') {
                       context.slots.pgr["locationConfirmed"] = false;
-                    } else {
+                      context.message = {
+                        isValid: true
+                      };
+                    } 
+                    else if(event.message.input.trim().toLowerCase() === '2'){
                       context.slots.pgr["locationConfirmed"] = true;
                       context.slots.pgr.city = context.pgr.detectedLocation.city;
                       if(context.pgr.detectedLocation.locality) {
                         context.slots.pgr.locality = context.pgr.detectedLocation.locality;
                       }
+                      context.message = {
+                        isValid: true
+                      };
+                    }
+                    else{
+                      context.message = {
+                        isValid: false
+                      };
                     }
                   }),
                   always: [
@@ -388,6 +400,10 @@ const pgr =  {
                     {
                       target: '#nlpCitySearch',
                       cond: (context, event) => config.pgrUseCase.geoSearch,
+                    },
+                    {
+                      target: 'process',
+                      cond: (context, event) => {return !context.message.isValid;}
                     }
                   ]
                 }
@@ -882,11 +898,11 @@ let messages = {
     }, // geoLocation 
     confirmLocation: {
       confirmCityAndLocality: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nLocality: {{locality}}\nPlease send "No", if it is incorrect',
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nLocality: {{locality}}\n\nType and send *1* if it is incorrect\nElse, type and send *2* to confirm and proceed',
         hi_IN: 'क्या यह शिकायत का सही स्थान है?\nशहर: {{city}} \n स्थान: {{locality}} \n अगर यह गलत है तो कृपया "No" भेजें ।'
       },
       confirmCity: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nPlease send "No", if it is incorrect.\nOtherwise type any character and send to proceed.',
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nType and send *1* if it is incorrect\nElse, type and send *2* to confirm and proceed',
         hi_IN: 'क्या यह शिकायत का सही स्थान है? \nशहर: {{city}}\n अगर यह गलत है तो कृपया "No" भेजें।\nअन्यथा किसी भी चरित्र को टाइप करें और आगे बढ़ने के लिए भेजें।'
       }
     },
