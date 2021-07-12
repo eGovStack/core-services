@@ -359,24 +359,13 @@ const pgr =  {
                     // TODO: Generalised "disagree" intention
                     if(event.message.input.trim().toLowerCase() === '1') {
                       context.slots.pgr["locationConfirmed"] = false;
-                      context.message = {
-                        isValid: true
-                      };
                     } 
-                    else if(event.message.input.trim().toLowerCase() === '2'){
+                    if(event.message.input.trim().toLowerCase() === '2'){
                       context.slots.pgr["locationConfirmed"] = true;
                       context.slots.pgr.city = context.pgr.detectedLocation.city;
                       if(context.pgr.detectedLocation.locality) {
                         context.slots.pgr.locality = context.pgr.detectedLocation.locality;
                       }
-                      context.message = {
-                        isValid: true
-                      };
-                    }
-                    else{
-                      context.message = {
-                        isValid: false
-                      };
                     }
                   }),
                   always: [
@@ -403,7 +392,7 @@ const pgr =  {
                     },
                     {
                       target: 'process',
-                      cond: (context, event) => {return !context.message.isValid;}
+                      cond: (context, event) => (event.message.input.trim().toLowerCase() != '1' && event.message.input.trim().toLowerCase() !='2')
                     }
                   ]
                 }
@@ -902,7 +891,7 @@ let messages = {
         hi_IN: 'क्या यह शिकायत का सही स्थान है?\nशहर: {{city}} \n स्थान: {{locality}} \n अगर यह गलत है तो कृपया "No" भेजें ।'
       },
       confirmCity: {
-        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\nType and send *1* if it is incorrect\nElse, type and send *2* to confirm and proceed',
+        en_IN: 'Is this the correct location of the complaint?\nCity: {{city}}\n\nType and send *1* if it is incorrect\nElse, type and send *2* to confirm and proceed',
         hi_IN: 'क्या यह शिकायत का सही स्थान है? \nशहर: {{city}}\n अगर यह गलत है तो कृपया "No" भेजें।\nअन्यथा किसी भी चरित्र को टाइप करें और आगे बढ़ने के लिए भेजें।'
       }
     },
