@@ -110,7 +110,7 @@ const envVariables = {
     pgrUseCase: {
         pgrVersion: process.env.PGR_VERSION || 'v2',
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 3,
-        informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '643bfd34-5b28-4ef6-ba80-af7f529fe69b',
+        informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '16dff22d-06dd-485d-a03d-6d11e8564dff',
         pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',
         geoSearch: process.env.GEO_SEARCH || true
     },
@@ -123,7 +123,7 @@ const envVariables = {
 
         paymentUpdateTopic: process.env.PAYMENT_UPDATE_TOPIC || 'egov.collection.payment-create',
         pgUpdateTransaction: process.env.PG_UPDATE_TRANSACTION || 'update-pg-txns',
-        openSearchImageFilestoreId: process.env.OPEN_SEARCH_IMAGE_FILESTORE_ID || '8fe721bf-85e8-4ba1-93bc-7ca34383f76e'
+        openSearchImageFilestoreId: process.env.OPEN_SEARCH_IMAGE_FILESTORE_ID || 'bd150c64-2188-44ba-b77e-3030475bddc8'
     },
 
 }
