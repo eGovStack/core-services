@@ -90,9 +90,9 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 (async() => {          
-                  await new Promise(resolve => setTimeout(resolve, 5000)); 
+                  await new Promise(resolve => setTimeout(resolve, 4000)); 
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
-                  dialog.sendMessage(context, nameInformationMessage);   
+                  dialog.sendMessage(context, nameInformationMessage, false);   
                   let message = dialog.get_message(messages.onboarding.onboardingName.question, context.user.locale);
                   dialog.sendMessage(context, message);
                 })();
@@ -126,9 +126,9 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 (async() => {  
-                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  await new Promise(resolve => setTimeout(resolve, 4000));
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
-                  dialog.sendMessage(context, nameInformationMessage);               
+                  dialog.sendMessage(context, nameInformationMessage, false);               
                   let message = dialog.get_message(messages.onboarding.onBoardingUserProfileConfirmation.question, context.user.locale);
                   message = message.replace('{{name}}', context.user.name);
                   dialog.sendMessage(context, message);
