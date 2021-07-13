@@ -11,7 +11,7 @@ translator= Translator()
 
 #CALLING THE LOCALIZATION SERVICE
 
-url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+url = LOCALIZATION_URL
 
 payload = json.dumps({
   "RequestInfo": {}
@@ -57,6 +57,8 @@ def reply():
     payload=default
     inp=inp.lower()
     inp_2=inp
+    
+    #IF THE INPUT IS A GREETING
 
     if (inp in GREETINGS):
         inp=translator.translate(inp,dest='en')
@@ -64,6 +66,8 @@ def reply():
         inp=inp.text
         inp=inp.lower()
         source["src"]=src
+        
+    #IF INPUT NOT A GREETING
 
     if (inp not in GREETINGS):
         inp=inp_2
@@ -75,19 +79,28 @@ def reply():
       'apikey': '443fbc250a744864c880cc6d373692cb',
       'cache-control': 'no-cache'
                       }
+                      
+    #IF INPUT IS A GREETING MESSAGE
+                      
     if(inp in GREETINGS):
         cacheCities.clear()
         cacheFinal.clear()
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(welcomeMessage,dest=source["src"]).text+ SRC_NAME_LOCALITY
         
-
+    #IF INPUT IS AN INTEGER
+    
     elif (inp>="1" and inp<="9" and int(inp)>=1 and int(inp)<=9):
+    
+        #IF THE INPUT IS NOT A VALID SELECTION
+        
         if (int(inp)>len(cacheCities) or int(inp)<1):
             
             k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(VALID_SELECTION,dest=source["src"]).text+translator.translate(MSEVA,dest=source["src"]).text+ SRC_NAME_LOCALITY
-
+        
+        #IF THE INPUT IS A VALID SELECTION
+        
         else:
             
             city= cacheCities[int(inp)]
@@ -98,12 +111,17 @@ def reply():
             
 
     else:
+        
+        #IF THE INPUT IS NEITHER AN INTEGER NOR GREETING, TAKE IT AS A CITY NAME.
+    
         if (len(cacheCities)==0):
             m={"input_city":inp,"input_lang":"hindi"}
             response=requests.post(url=CITY_LOCALHOST, data=json.dumps(m), headers={"Content-Type": "application/json"})
             cities=json.loads(response.text)["city_detected"]
             count=1
             cityList=translator.translate(CITY_LIST,dest=source["src"]).text+'\n'
+            
+            #CREATE A CITY LIST BASED ON PREDICTIONS.
             
             for i in cities:
                 cacheCities[count]=i[3:]

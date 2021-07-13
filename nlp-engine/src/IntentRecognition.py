@@ -19,6 +19,7 @@ translator= Translator()
 keyWords= requests.get(KEYWORD_LINK)
 result=json.loads(keyWords.text)
 
+#LISTS OF SYNONYMS, ANTONYMS USED FOR TRAINING THE CLASSIFIER
 
 synonyms=result['KeyWords'][0]['synonyms']
 
@@ -30,7 +31,7 @@ pastSynonyms=result['KeyWords'][0]['syn_past']
 
 #CALLING THE LOCALIZATION SERVICE
 
-url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+url = LOCALIZATION_URL
 
 payload = json.dumps({
   "RequestInfo": {}
@@ -56,6 +57,7 @@ FOR_PAYING_PREFIX = [i["message"] for i in responseData["messages"] if i["code"]
 BILLS = [i["message"] for i in responseData["messages"] if i["code"]=="BILLS"][0]
 BILL_TOKEN = [i["message"] for i in responseData["messages"] if i["code"]=="BILL_TOKEN"][0]
 
+#BIGRAMS
 
 notPaid=result['KeyWords'][0]['bigrams'][0]['values']
 for i in range(len(notPaid)):
@@ -72,6 +74,7 @@ notToBePaid=result['KeyWords'][0]['bigrams'][2]['values']
 for i in range(len(notToBePaid)):
     notToBePaid[i]=result['KeyWords'][0]['bigrams'][2]['prefix']+' '+notToBePaid[i]
 
+#PERFORM TOKENIZATION ON THE SENTENCE AND IDENTIFY APPROPRIATE PARTS OF SPEECH FOR FEATURE EXTRACTION.
 
 def features(sentence):
         
@@ -106,7 +109,8 @@ classifier_f = open("dectree.pickle", "rb")
 classifier = pickle.load(classifier_f)
 classifier_f.close()
 
-
+#APPLY FEATURE EXTRACTION, USING N-GRAMS, FEATURES AND PREDICT THE INTENT OF THE SENTENCE.
+#RETURN APPROPRIATE MESSAGES BASED ON THAT.
 def process(sentence):
     sentence=sentence.replace("n't",' not')
     sentence=sentence.replace("'d"," would")
@@ -118,20 +122,25 @@ def process(sentence):
     sentence=newSentence
     (sentence,flag)=rectify(sentence)
     
-    
+    #IRRELEVANT SENTENCES
     
     if sentence==INVALID:
         return SORRY
+        
+    #IF SENTENCE IS A GREETING
 
     if sentence in GREETINGS:
         return WELCOME_BILLS
         
+    #FIND IF THE SENTENCE IS SYNONYMOUS TO EXIT.
     
     b=translator.translate(sentence,dest='en').text
     for i in b.split():
         for j in quitSynonyms:
             if fuzz.ratio(i,j)>=75:
                 return EXIT
+                
+    #GENERATE BIGRAMS, TRIGRAMS AND QUADRA-GRAMS. 
 
     bigrams=ngrams(nltk.word_tokenize(sentence),2)
     trigrams=ngrams(nltk.word_tokenize(sentence),3)
@@ -141,6 +150,8 @@ def process(sentence):
     countBigrams=0
     countNotDue=0
 
+    #COUNT THE RELEVANT N-GRAMS
+    
     for i in quadraGrams:
         if ' '.join(list(i)) in notToBePaid:
             countQuadra +=1
@@ -152,6 +163,8 @@ def process(sentence):
             countBigrams +=1
         elif ' '.join(list(i)) in notDue:
             countNotDue+=1
+            
+    #IF N-GRAMS EXIST IN THE SENTENCE.
 
     if countQuadra + countBigrams + countTrigrams+countNotDue >=1:
         if countQuadra>0:
@@ -187,6 +200,8 @@ def process(sentence):
                     return BILL_TOKEN+' '+ent_reg(sentence)[2]+FOR_PAYING_PREFIX+ent_reg(sentence)[0]+ BILLS
 
     else:
+    
+        #IF N-GRAMS DON'T EXIST IN THE SENTENCE, USE THE PARTS OF SPEECH AS FEATURES.
                 
         countPast=0
         for word in sentence.split():

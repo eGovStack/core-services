@@ -7,7 +7,7 @@ import json
 
 #CALLING THE LOCALIZATION SERVICE
 
-url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+url = LOCALIZATION_URL
 
 payload = json.dumps({
   "RequestInfo": {}
@@ -25,6 +25,9 @@ WATER = [i["message"] for i in responseData["messages"] if i["code"]=="WATER"][0
 SEWERAGE = [i["message"] for i in responseData["messages"] if i["code"]=="SEWERAGE"][0]
 PROPERTY = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY"][0]
 TRADE_LICENSE = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_LICENSE"][0]
+
+#ENTITY RECOGNITION USING FUZZY MATCHING
+#RETURN THE APPROPRIATE LINKS BASED ON THE GUESSED ENTITY.
 
 def ent_reg(sent):
     sent=sent.lower()

@@ -8,8 +8,9 @@ import requests
 import json
 from Config import *
 
+#EXTRACT THE STOP-WORDS.
+
 r_stop=requests.get(STOPWORD_LINK)
-#stopwords=r_stop.text.splitlines()
 stopwords = json.loads(stopwords.text)
 stopwords = stopwords["StopWords"]
 
@@ -24,6 +25,8 @@ result=json.loads(keyWords.text)
 
 
 toBePaid= TO_BE_PAID
+
+#EXTRACT SYNONYMS, ANTONYMS.
 
 synonyms=result['KeyWords'][0]['synonyms']
 
@@ -50,6 +53,8 @@ for i in range(len(notToBePaid)):
 
 keywordList=synonyms+antonyms+pastSynonyms+quitSynonyms+ MISCELLANEOUS
 keywordList=list(set(keywordList))
+
+#RECTIFY THE SENTENCE OF ANY GRAMMATICAL/SPELLING ERRORS.
 
 def rectify(sentence):
     sentence=sentence.lower()
@@ -88,6 +93,7 @@ def rectify(sentence):
     newSentence=newSentence.replace(' wants ', ' ')
     newSentence=newSentence.replace (' wanted ', ' ')
     
+    #RECTIFY SPELLING MISTAKES USING FUZZY MATCHING
     
     finalSentence=''
     count=0

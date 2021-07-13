@@ -16,7 +16,7 @@ from pydub import AudioSegment
 
 #CALLING THE LOCALIZATION SERVICE
 
-url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+url = LOCALIZATION_URL
 
 payload = json.dumps({
   "RequestInfo": {}

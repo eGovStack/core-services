@@ -10,7 +10,7 @@ import json
 
 #CALLING THE LOCALIZATION SERVICE
 
-url = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+url = LOCALIZATION_URL
 
 payload = json.dumps({
   "RequestInfo": {}
@@ -62,6 +62,8 @@ def reply():
     requestData=request.get_json()
     inp=""
     
+    #IF INPUT MESSAGE IS AN AUDIO
+    
     if requestData["payload"]["type"]=="audio" :
         audioUrl=requestData["payload"]["payload"]["url"]
         getAudioFile=requests.get(audioUrl, allow_redirects=True)
@@ -79,6 +81,8 @@ def reply():
         inp=requestData["payload"]["payload"]["text"]
 
     inp=inp.lower()
+    
+    #IF INPUT IS A GREETING MESSAGE
    
     if(inp in GREETINGS):
         cacheCities.clear()
@@ -87,6 +91,8 @@ def reply():
         k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+welcomeMessage+ SRC_NAME_LOCALITY
         
+    #IF INPUT IS A NUMBER FROM 1 TO 9    
+        
     elif (inp>="1" and inp<="9" and int(inp)>=1 and int(inp)<=9):
         
         if (int(inp)>len(cacheCities) or int(inp)<1):
@@ -94,7 +100,7 @@ def reply():
             payload=payload[0:k] + INVALID_SELECTION + SRC_NAME_LOCALITY
 
         else:
-                      
+               #INTERPRET THE INPUT NUMBER AS A LOCALITY NUMBER.       
             if (len(cacheLocalities)!=0):
                                 
                 locality=cacheLocalities[int(inp)]
@@ -104,6 +110,8 @@ def reply():
                 cacheCities.clear()
                 cacheFinal.clear()
                 cacheLocalities.clear()
+                
+               #ELSE INTERPRET THE NUMBER AS A CITY NUMBER.
                                 
             else:
                 city= cacheCities[int(inp)]
@@ -112,6 +120,8 @@ def reply():
                 cacheFinal["city"]=city
                 
     else:
+    
+        #IF INPUT IS NOT A NUMBER, INTERPRET IT AS A CITY IF CACHECITIES IS EMPTY.
         if (len(cacheCities)==0):
             m={"input_city":inp,"input_lang":"hindi"}
             response=requests.post(url=CITY_LOCALHOST, data=json.dumps(m), headers={"Content-Type": "application/json"})
@@ -131,7 +141,7 @@ def reply():
             k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+cityList+ SRC_NAME_LOCALITY
             
-        
+        #IF CACHE CITIES IS NOT EMPTY, ASSUME THE INPUT TO BE A LOCALITY NAME.
         else:
             m={"city":cacheFinal["city"],"locality":inp}
             response=requests.post(url=LOCALITY_LOCALHOST, data=json.dumps(m), headers={"Content-Type": "application/json"})

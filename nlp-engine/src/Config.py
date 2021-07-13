@@ -32,6 +32,8 @@ EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 STATE_LEVEL_TENANTID = 'pb'
 
 GUPSHUP_URL = "https://api.gupshup.io/sm/api/v1/msg"
+LOCALIZATION_URL = "https://qa.digit.org/localization/messages/v1/_search?locale=en_IN&tenantId=pb&module=rainmaker-nlp"
+
 GREETINGS = ["hi","hello","mseva","नमस्ते","नमस्कार","ਹਾਇ","ਸਤ ਸ੍ਰੀ ਅਕਾਲ"]
 CITY_LOCALHOST = "http://127.0.0.1:8080/nlp-engine/fuzzy/city"
 LOCALITY_LOCALHOST = "http://127.0.0.1:8080/nlp-engine/fuzzy/locality"
