@@ -101,7 +101,7 @@ public class IntegrationService {
                             List<Object> keysAfterLoc = new ArrayList<>();
                             List<Object> valuesAfterLoc = new ArrayList<>();
                             for (int i = 0; i < keys.size(); i++) {
-                                String servicecode = ((String) keys.get(i)).replaceAll("\\..*", "").toUpperCase();
+                                String servicecode = ((String) keys.get(i));
                                 String localisationLabel = searchColumn.getLocalisationPrefix() + servicecode;
                                 if (!valuesAfterLoc.contains(localisationLabel)) {
                                     keysAfterLoc.add(servicecode);
