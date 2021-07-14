@@ -56,9 +56,9 @@ const messages = {
     prompt: {
       prompt: {
         preamble: {
-          en_IN: '<b>What would you like to update? </b>',
-          pa_IN: '<b>ਤੁਸੀਂ ਕੀ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?  </b>',
-          hi_IN: '<b>आप क्या अपडेट करना चाहते हैं?  </b>',
+          en_IN: 'What would you like to update? ',
+          pa_IN: 'ਤੁਸੀਂ ਕੀ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?  ',
+          hi_IN: 'आप क्या अपडेट करना चाहते हैं?  ',
         },
         options: {
           list: ['OldHouseNo', 'blockNo', 'ownerName', 'contactNo', 'NoOfFloors', 'WaterConnection', 'SewageConnection', 'propertyId'],
