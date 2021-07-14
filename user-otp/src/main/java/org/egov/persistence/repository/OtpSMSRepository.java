@@ -20,7 +20,8 @@ public class OtpSMSRepository {
 	private static final String LOCALIZATION_KEY_REGISTER_SMS = "sms.register.otp.msg";
 	private static final String LOCALIZATION_KEY_LOGIN_SMS = "sms.login.otp.msg";
 	private static final String LOCALIZATION_KEY_PWD_RESET_SMS = "sms.pwd.reset.otp.msg";
-	
+	@Value("${egov.localisation.tenantid.strip.suffix.count}")
+   	private int tenantIdStripSuffixCount;
 	private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 	private String smsTopic;
 	
