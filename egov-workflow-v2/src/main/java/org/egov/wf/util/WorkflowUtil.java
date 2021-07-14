@@ -141,6 +141,9 @@ public class WorkflowUtil {
     public Map<String,List<String>> getTenantIdToUserRolesMap(RequestInfo requestInfo){
         Map<String,List<String>> tenantIdToUserRoles = new HashMap<>();
         requestInfo.getUserInfo().getRoles().forEach(role -> {
+        	if(role.getTenantId()==null) {
+        		role.setTenantId(requestInfo.getUserInfo().getTenantId());
+        	}
             if(tenantIdToUserRoles.containsKey(role.getTenantId())){
                 tenantIdToUserRoles.get(role.getTenantId()).add(role.getCode());
             }
