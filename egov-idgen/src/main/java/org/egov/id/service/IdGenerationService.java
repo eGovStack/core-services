@@ -447,7 +447,7 @@ public class IdGenerationService {
             throw new CustomException("SEQ_NUMBER_ERROR","Error retrieving seq number from existing seq in DB");
         }
         for (String seqId : sequenceList) {
-            String seqNumber = String.format("%06d", Integer.parseInt(seqId)).toString();
+            String seqNumber = String.format(propertiesManager.getSequenceFormat(), Integer.parseInt(seqId)).toString();
             sequenceLists.add(seqNumber.toString());
         }
         return sequenceLists;

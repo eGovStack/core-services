@@ -96,4 +96,8 @@ public class PropertiesManager {
     public String getTimeZone(){
 		return environment.getProperty("id.timezone");
 	}
+    
+    public String getSequenceFormat(){
+    	return environment.getProperty("sequence.format");
+    }
 }
