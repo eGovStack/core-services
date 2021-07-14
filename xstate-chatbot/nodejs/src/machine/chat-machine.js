@@ -4,6 +4,7 @@ const covidInfoFlow = require('./covid-info');
 const vitalsFlow = require('./vitals');
 const messages = require('./messages/chat-machine');
 const hospitalFlow = require('./hospital-details');
+const gisFlow= require('./gis-details');
 
 const chatStateMachine = Machine({
   id: 'chatMachine',
@@ -21,9 +22,39 @@ const chatStateMachine = Machine({
         context.slots = {};
       }),
       on: {
-        USER_MESSAGE: 'selectLanguage',
+        USER_MESSAGE: 'mvOfficer',
       },
     },
+    mvOfficer: {
+      id: 'mvOfficer',
+      initial: 'process',
+      states: {
+        process: {
+          onEntry: assign((context, event) => {
+            context.message = dialog.get_input(event, false);
+            console.log(context.message);
+          }),
+          always: [
+            {
+              cond: (context) => context.message == 'PBGIS',
+               target: '#gisFlow',
+             },
+            {
+              actions: assign((context, event) => {
+                context.user.locale = context.intention;
+              }),
+              target: '#selectLanguage',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
+          }),
+          always: '',
+        },
+      },
+    }, // Nodal Officer
     selectLanguage: {
       id: 'selectLanguage',
       initial: 'prompt',
@@ -122,6 +153,7 @@ const chatStateMachine = Machine({
     covidInfoFlow,
     vitalsFlow,
     hospitalFlow,
+    gisFlow,
     endstate: {
       id: 'endstate',
       always: '#start',
