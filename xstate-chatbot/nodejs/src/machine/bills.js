@@ -585,7 +585,7 @@ const bills = {
             let messageText = event.message.input;
             messageText = messageText.toLowerCase();
             let isValid = ((messageText === 'main menu' || messageText === 'pay other bill') && dialog.validateInputType(event, 'button'));
-            let textValid = (messageText === '1' || messageText === '2');
+            //let textValid = (messageText === '1' || messageText === '2');
             context.message = {
               isValid: (isValid || textValid),
               messageContent: messageText
@@ -610,7 +610,7 @@ const bills = {
                 return (context.message.isValid && context.message.messageContent ==='main menu');
               }
             },
-            {
+            /*{
               target: '#endstate',
               cond: (context, event) => {
                 return (context.message.isValid && context.message.messageContent ==='1');
@@ -634,7 +634,7 @@ const bills = {
                 let message = dialog.get_message(messages.newNumberregistration.decline, context.user.locale);
                 dialog.sendMessage(context, message);              
               })
-            }
+            }*/
 
           ]
         },
@@ -843,8 +843,8 @@ let messages = {
 let grammer = {
   confirmation: {
     choice: [
-      {intention: 'Yes', recognize: ['1', 'yes', 'Yes']},
-      {intention: 'No', recognize: ['2', 'no', 'No']}
+      {intention: 'Yes', recognize: ['1']},
+      {intention: 'No', recognize: ['2']}
     ]
   }
 }

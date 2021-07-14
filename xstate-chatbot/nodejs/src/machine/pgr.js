@@ -1002,8 +1002,8 @@ let grammer = {
   },
   confirmation: {
     choice: [
-      {intention: 'Yes', recognize: ['1', 'yes', 'Yes']},
-      {intention: 'No', recognize: ['2', 'no', 'No']}
+      {intention: 'Yes', recognize: ['1',]},
+      {intention: 'No', recognize: ['2']}
     ]
   }
 };

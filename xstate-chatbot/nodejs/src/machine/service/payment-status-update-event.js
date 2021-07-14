@@ -158,12 +158,14 @@ class PaymentStatusUpdateEventFormatter{
         await valueFirst.sendMessageToUser(user, payBillmessage, extraInfo);
 
         if(!isOwner){
-          let question = dialog.get_message(messageBundle.registration,locale);
+          /*let question = dialog.get_message(messageBundle.registration,locale);
           question = question.replace('{{consumerCode}}',consumerCode);
           let localisationCode = "BILLINGSERVICE_BUSINESSSERVICE_"+businessService;
           let localisationMessages = await localisationService.getMessageBundleForCode(localisationCode);
           let service = dialog.get_message(localisationMessages,locale)
-          question = question.replace('{{service}}', service.toLowerCase());
+          question = question.replace('{{service}}', service.toLowerCase());*/
+
+          let question = dialog.get_message(messageBundle.endStatement,locale);
           var registrationMessage = {
             output: question,
             type: "text"
