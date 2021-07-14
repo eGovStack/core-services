@@ -389,6 +389,7 @@ public class UserRepository {
                     if (roleCodeMap.containsKey(role.getCode())) {
                         role.setDescription(roleCodeMap.get(role.getCode()).getDescription());
                         role.setName(roleCodeMap.get(role.getCode()).getName());
+                        role.setTenantId(user.getTenantId());
                     }
                 }
             }
