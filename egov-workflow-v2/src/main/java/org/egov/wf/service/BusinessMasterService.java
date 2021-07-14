@@ -8,6 +8,7 @@ import org.egov.wf.web.models.BusinessService;
 import org.egov.wf.web.models.BusinessServiceRequest;
 import org.egov.wf.web.models.BusinessServiceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -33,15 +34,17 @@ public class BusinessMasterService {
 
     private MDMSService mdmsService;
 
+    private CacheManager cacheManager;
 
     @Autowired
     public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService,
-                                 BusinessServiceRepository repository, MDMSService mdmsService) {
+                                 BusinessServiceRepository repository, MDMSService mdmsService, CacheManager cacheManager) {
         this.producer = producer;
         this.config = config;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
         this.mdmsService = mdmsService;
+        this.cacheManager = cacheManager;
     }
 
 
@@ -52,14 +55,12 @@ public class BusinessMasterService {
      * @param request The BusinessServiceRequest to be persisted
      * @return The enriched object which is persisted
      */
-    @Caching(evict = {
-            @CacheEvict("businessService"),
-            @CacheEvict("roleTenantAndStatusesMapping")
-    })
     public List<BusinessService> create(BusinessServiceRequest request){
-       enrichmentService.enrichCreateBusinessService(request);
-       producer.push(config.getSaveBusinessServiceTopic(),request);
-       return request.getBusinessServices();
+        evictAllCacheValues("businessService");
+        evictAllCacheValues("roleTenantAndStatusesMapping");
+        enrichmentService.enrichCreateBusinessService(request);
+        producer.push(config.getSaveBusinessServiceTopic(),request);
+        return request.getBusinessServices();
     }
 
     /**
@@ -77,15 +78,18 @@ public class BusinessMasterService {
     }
 
 
-    
-    @Caching(evict = {
-            @CacheEvict("businessService"),
-            @CacheEvict("roleTenantAndStatusesMapping")
-    })
+
     public List<BusinessService> update(BusinessServiceRequest request){
+        evictAllCacheValues("businessService");
+        evictAllCacheValues("roleTenantAndStatusesMapping");
         enrichmentService.enrichUpdateBusinessService(request);
         producer.push(config.getUpdateBusinessServiceTopic(),request);
         return request.getBusinessServices();
+    }
+
+
+    private void evictAllCacheValues(String cacheName) {
+        cacheManager.getCache(cacheName).clear();
     }
 
 
