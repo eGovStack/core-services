@@ -211,7 +211,7 @@ const receipts = {
 
           dialog.sendMessage(context, message, false);
         }),
-        always:'#openSearchInititate'
+        always:'#paramReceiptInput'
       },
 
       openSearchInititate: {
@@ -435,11 +435,11 @@ const receipts = {
               let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
               let optionMessage = dialog.get_message(option, context.user.locale);
               message = message.replace('{{option}}', optionMessage);
-              dialog.sendMessage(context, message , true);
+              dialog.sendMessage(context, message , false);
             }),
-            on: {
-              USER_MESSAGE: 'process'
-            },
+            always:{
+              target: 'receiptQuestion'
+            }
           },
         },
       },//parameterinput
