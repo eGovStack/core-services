@@ -48,8 +48,7 @@ public class OtpSMSRepository {
 private String getMessageFormat(OtpRequest otpRequest) {
         String tenantId = getRequiredTenantId(otpRequest.getTenantId());
         Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(tenantId, "en_IN", "egov-user");
-	System.out.println("tenandId ==" + tenantId );
-	
+
         if (localisedMsgs.isEmpty()) {
             log.info("Localization Service didn't return any msgs so using default...");
             localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
