@@ -49,6 +49,7 @@
     "tradeType": "ex:tradeType",
     "issuedDate": "ex:issuedDate",
     "validFrom": "ex:validFrom",
-    "validTo": "ex:validTo"
+    "validTo": "ex:validTo",
+    "TradeTypeMessage": "ex:TradeTypeMessage"
   }]
 }
