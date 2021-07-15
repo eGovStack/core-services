@@ -63,11 +63,10 @@ class GisService {
 
     const url = config.covaApiConfigs.addedNewProperty;
     const formdata = new FormData();
-
     formdata.append('UserId', propertyDetails.user_id);
     formdata.append('ParcelID', propertyDetails.tempId);
     formdata.append('OldHouseNo', propertyDetails.houseNo);
-    formdata.append('BlockNo', propertyDetails.OwnerName);
+    formdata.append('BlockNo', propertyDetails.blockNo);
     formdata.append('ContactNo', propertyDetails.contactNo);
     formdata.append('PropertyUse', propertyDetails.typeOfProperty);
     formdata.append('NoOfFloors', propertyDetails.noOfFloors);

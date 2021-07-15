@@ -54,7 +54,6 @@ const messages = {
   },
   updateExistingPropertyMemu: {
     prompt: {
-      prompt: {
         preamble: {
           en_IN: 'What would you like to update? ',
           pa_IN: 'ਤੁਸੀਂ ਕੀ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?  ',
@@ -105,7 +104,6 @@ const messages = {
             },
           },
         },
-      },
     },
   },
   selectLanguageGis: {
@@ -141,7 +139,7 @@ const messages = {
       hi_IN: 'कृपया प्रमाणीकरण के लिए अपना मोबाइल नंबर दर्ज करें',
     },
     error: {
-      en_IN: 'Your Entered Mobile Number is Invalid',
+      en_IN: 'Your Entered Mobile Number is Invalid.If You are GIS officer Please enter your registered number or else press "Hi" if you are citizen',
       pa_IN: 'ਤੁਹਾਡਾ ਦਰਜ ਕੀਤਾ ਮੋਬਾਈਲ ਨੰਬਰ ਗਲਤ ਹੈ ',
       hi_IN: 'आपका दर्ज मोबाइल नंबर गलत है',
     },

@@ -86,6 +86,13 @@ const gisFlow = {
                 target: '#gismenu',
               },
               {
+                cond: (context, event) => context.message=='Hi',
+                actions: assign((context, event) => {
+                  context.slots.property.user_id = event.data.response.user_id;
+                }),
+                target: '#selectLanguage',
+              },
+              {
                 target: 'error',
               },
             ],
@@ -231,20 +238,16 @@ const gisFlow = {
             const input = dialog.get_input(event, false);
             const blockNo = parseInt(input);
 
-            if (isNumeric(blockNo) === true) {
-              context.isValid = true;
-              context.slots.property.blockNo = blockNo;
-            } else {
-              context.isValid = false;
-            }
+            context.isValid = true;
+            context.slots.property.blockNo = blockNo;
           }),
           always: [
             {
-              cond: (context) => context.isValid == false,
-              target: 'error',
+              cond: (context) => context.isValid == true,
+              target: '#ownerName',
             },
             {
-              target: '#ownerName',
+              target: 'error',
             },
           ],
         },
@@ -359,7 +362,7 @@ const gisFlow = {
             if (context.intention === 'INTENTION_UKNOWN')
               context.isValid = false;
             else
-              context.slots.property.TypeOfProperty = context.intention;
+              context.slots.property.typeOfProperty = context.intention;
           }),
           always: [
             {
@@ -394,9 +397,8 @@ const gisFlow = {
         process: {
           onEntry: assign((context, event) => {
             const input = dialog.get_input(event, false);
-            const noOfFloor = parseInt(input);
             context.isValid = true;
-            context.slots.property.noOfFloor = noOfFloor;
+            context.slots.property.noOfFloors = input;
           }),
           always: [
             {
@@ -571,8 +573,8 @@ const gisFlow = {
                   message += `:: ${event.data.response.OldHouseNo} \n`;
                   context.slots.property.OldHouseNo = event.data.response.OldHouseNo;
                   message += dialog.get_message(messages.blockNo.prompt, context.user.locale);
-                  message += `:: ${event.data.response.OldHouseNo} \n`;
-                  context.slots.property.blockNo = event.data.response.OldHouseNo;
+                  message += `:: ${event.data.response.blockNo} \n`;
+                  context.slots.property.blockNo = event.data.response.blockNo;
                   message += dialog.get_message(messages.ownerName.prompt, context.user.locale);
                   message += `:: ${event.data.response.OwnerName} \n`;
                   context.slots.property.ownerName = event.data.response.OwnerName;
@@ -663,7 +665,7 @@ const gisFlow = {
               target: '#updateSewageConnection',
             },
             {
-              cond: (context) => context.intention == 'TypeOfProperty',
+              cond: (context) => context.intention == 'propertyId',
               target: '#updateTypeOfProperty',
             },
             {
@@ -729,7 +731,8 @@ const gisFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            const blockNo = dialog.get_input(event, false);
+            const input = dialog.get_input(event, false);
+            const blockNo = parseInt(input);
             context.isValid = true;
             context.slots.property.blockNo = blockNo;
           }),
@@ -884,7 +887,7 @@ const gisFlow = {
           onEntry: assign((context, event) => {
             const waterconnection = dialog.get_input(event, false);
             context.isValid = true;
-            context.slots.property.waterConnection = input;
+            context.slots.property.waterConnection = waterconnection;
           }),
           always: [
             {
