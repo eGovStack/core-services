@@ -140,6 +140,7 @@ function transformW3(cert) {
                   "tradeAddress": {"tradeAddressLocality" : R.pathOr("", ["name"], cert.Licenses[0].tradeLicenseDetail.address.locality),
                                    "tradeAddressCity" : R.pathOr("", ["city"], cert.Licenses[0].tradeLicenseDetail.address)},
                   "tradeType": R.pathOr("", ["tradeType"], cert.Licenses[0].tradeLicenseDetail.tradeUnits[0]),
+                  "TradeTypeMessage": R.pathOr("", ["TradeTypeMessage"], cert.Licenses[0]),
                   //"accessories": R.pathOr("", ["accessoryCategory"], cert.Licenses[0].tradeLicenseDetail.accessories[0]),
                   "issuedDate": R.pathOr("", ["issuedDate"], cert.Licenses[0]),
                   "validFrom": R.pathOr("", ["validFrom"], cert.Licenses[0]),
