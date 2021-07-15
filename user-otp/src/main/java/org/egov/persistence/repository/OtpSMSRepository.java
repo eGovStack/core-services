@@ -52,7 +52,7 @@ private String getMessageFormat(OtpRequest otpRequest) {
             log.info("Localization Service didn't return any msgs so using default...");
             localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
             localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, "Dear Citizen, Your Login OTP is %s.");
-            localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Your Nagarsewa OTP for recovering password is {#var#}. | 1307162617376356200 | 1301159220429587440");
+            localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Your Nagarsewa OTP for recovering password is %s. | 1307162617376356200 | 1301159220429587440");
         }
         String message = null;
 
