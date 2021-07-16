@@ -109,7 +109,7 @@ class SessionManager {
 
 let grammer = {
   reset: [
-    { intention: 'reset', recognize: ['reset', 'hi', 'hello','pbgis'] },
+    { intention: 'reset', recognize: ['reset', 'hi', 'hello','Pbgis'] },
   ],
 };
 
