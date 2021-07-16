@@ -291,12 +291,29 @@ const messages = {
   },
   anyOtherUpdate: {
     prompt: {
-      en_IN: 'Any Other Update :',
+      preamble:{
+      en_IN: 'Any Other :',
       pa_IN: 'ਕੋਈ ਹੋਰ ਅਪਡੇਟ:',
       hi_IN: 'कोई अन्य अपडेट:',
     },
+    options: {
+      list: ['yestoupdate', 'notoupdate'],
+      messageBundle: {
+        yestoupdate: {
+          en_IN: 'Yes Wants to Update More',
+          pa_IN: 'ਹਾਂ ਹੋਰ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦਾ ਹੈ',
+          hi_IN: 'हाँ अधिक अपडेट करना चाहता है',
+        },
+        notoupdate: {
+          en_IN: 'Wants to save the changes and exit',
+          pa_IN: 'ਕੀਤੀਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਸਟੋਰ ਕਰੋ',
+          hi_IN: 'परिवर्तनों को सहेजें',
+        },
+        },
+      },
+    },
   },
-  updateProperty: {
+ updateProperty: {
     prompt: {
       en_IN: 'Your property have been updated successfully',
       pa_IN: 'ਤੁਹਾਡੀ ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕੀਤੀ ਗਈ ਹੈ ਧੰਨਵਾਦ!',

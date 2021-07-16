@@ -18,15 +18,15 @@ class GisService {
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       const data = await response.json();
-      if (data.response == 1) {
-        console.log('GIS Fetch data through Mobile Number.');
+      if (data.success == 1) {
+        console.log('GIS Validation data through Mobile Number.');
       } else {
-        console.error(`Error while fetching GIS data through Mobile Number.\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
+        console.error(`Error while fetching GIS Validation data through Mobile Number.\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
       }
       return data;
     } else {
       const responseBody = await response.json();
-      console.error(`Error while fetching GIS data through Mobile Number.\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
+      console.error(`Error while fetching GIS Validation data .\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
     }
   }
 
@@ -101,7 +101,7 @@ class GisService {
 
     const url = config.covaApiConfigs.updateNewProperty;
     const formdata = new FormData();
-
+    console.log(propertyDetails)
     formdata.append('UID', propertyDetails.UID);
     formdata.append('UserId', propertyDetails.user_id);
     formdata.append('ParcelID', propertyDetails.tempId);

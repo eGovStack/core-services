@@ -11,7 +11,7 @@ const chatStateMachine = Machine({
   initial: 'start',
   on: {
     USER_RESET: {
-      target: '#selectLanguage',
+      target: '#mvOfficer',
       // actions: assign( (context, event) => dialog.sendMessage(context, dialog.get_message(messages.reset, context.user.locale), false))
     },
   },
@@ -36,7 +36,7 @@ const chatStateMachine = Machine({
           }),
           always: [
             {
-              cond: (context) => context.message == 'PBGIS',
+              cond: (context) => context.message == 'pbgis',
                target: '#gisFlow',
              },
             {
