@@ -64,9 +64,6 @@ const gisFlow = {
       initial: 'process',
       states: {
         process: {
-     //     onEntry: assign((context, event) => {
-        //        context.message = dialog.get_input(event, false);
-          //}),
           invoke: {
             src: (context, event) => gisService.getGisDetailsFromMobileNumber(context.user.mobileNumber),
             onDone: [
