@@ -104,8 +104,8 @@ class GisService {
 
     formdata.append('UID', propertyDetails.UID);
     formdata.append('UserId', propertyDetails.user_id);
-    formdata.append('ParcelID', propertyDetails.UID);
-    formdata.append('OldHouseNo', propertyDetails.houseNo);
+    formdata.append('ParcelID', propertyDetails.tempId);
+    formdata.append('OldHouseNo', propertyDetails.OldHouseNo);
     formdata.append('BlockNo', propertyDetails.blockNo);
     formdata.append('ContactNo', propertyDetails.contactNo);
     formdata.append('PropertyUse', propertyDetails.typeOfProperty);
@@ -128,10 +128,10 @@ class GisService {
       const data = await response.json();
 
       if (data.success == 1) {
-        console.log(`New Property added succesfully in property database : ${data.message}`);
+        console.log(`Property update succesfully in property database : ${data.message}`);
         return data;
       }
-      console.log(`New Property addition failure : ${data.message}`);
+      console.log(`Property update addition failure : ${data.message}`);
       return data;
     } else {
       const responseBody = await response.json();
