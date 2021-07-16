@@ -986,10 +986,11 @@ const gisFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-            context.grammer = grammers.binaryChoice.grammer;
-            let message = dialog.get_message(messages.anyOtherUpdate.prompt, context.user.locale);
-            message += dialog.get_message(grammers.binaryChoice.prompt, context.user.locale);
-            dialog.sendMessage(context, message);
+           let message = dialog.get_message(messages.anyOtherUpdate.prompt.preamble, context.user.locale);
+           const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.anyOtherUpdate.prompt.options.list, messages.anyOtherUpdate.prompt.options.messageBundle, context.user.locale);
+           message += prompt;
+           context.grammer = grammer;
+           dialog.sendMessage(context, message);
           }),
           on: {
             USER_MESSAGE: 'process',
@@ -1001,15 +1002,15 @@ const gisFlow = {
           }),
           always: [
             {
-              cond: (context, event) => context.intention === 'YES',
+              cond: (context, event) => context.intention == 'yestoupdate',
               target: '#updateExistingPropertyMemu',
             },
             {
-              cond: (context, event) => context.intention === 'NO',
+              cond: (context, event) => context.intention == 'notoupdate',
               target: '#updateExistingProperty',
             },
             {
-              cond: (context, event) => context.intention === 'INTENTION_UKNOWN',
+              cond: (context, event) => context.intention == 'INTENTION_UKNOWN',
               target: 'error',
             },
           ],
