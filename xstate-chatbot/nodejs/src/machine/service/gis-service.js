@@ -136,6 +136,7 @@ class GisService {
     } else {
       const responseBody = await response.json();
       console.error(`update  API responded with ${JSON.stringify(responseBody)}`);
+
     }
   }
 
