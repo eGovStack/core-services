@@ -104,7 +104,7 @@ class GisService {
     console.log(propertyDetails)
     formdata.append('UID', propertyDetails.UID);
     formdata.append('UserId', propertyDetails.user_id);
-    formdata.append('ParcelID', propertyDetails.tempId);
+    formdata.append('ParcelID', propertyDetails.user_id);
     formdata.append('OldHouseNo', propertyDetails.OldHouseNo);
     formdata.append('BlockNo', propertyDetails.blockNo);
     formdata.append('ContactNo', propertyDetails.contactNo);

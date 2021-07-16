@@ -958,8 +958,8 @@ const gisFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            const tempId = dialog.get_input(event, false);
-            context.slots.property.tempId = tempId
+            const propertyTax = dialog.get_input(event, false);
+            context.slots.property.propertyTax = propertyTax
             context.isValid = true;
           }),
           always: [
