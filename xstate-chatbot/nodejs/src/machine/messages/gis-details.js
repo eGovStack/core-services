@@ -139,9 +139,9 @@ const messages = {
       hi_IN: 'कृपया प्रमाणीकरण के लिए अपना मोबाइल नंबर दर्ज करें',
     },
     error: {
-      en_IN: 'Your Entered Mobile Number is Invalid.If You are GIS officer Please enter your registered number or else press "Hi" if you are citizen',
-      pa_IN: 'ਤੁਹਾਡਾ ਦਰਜ ਕੀਤਾ ਮੋਬਾਈਲ ਨੰਬਰ ਗਲਤ ਹੈ ',
-      hi_IN: 'आपका दर्ज मोबाइल नंबर गलत है',
+      en_IN: 'You are not registered GIS officer .If You are GIS officer Please send message "pbgis" from  your registered number or else press "Hi" if you are citizen',
+      pa_IN: 'ਤੁਸੀਂ ਰਜਿਸਟਰਡ ਜੀਆਈਐਸ ਅਧਿਕਾਰੀ ਨਹੀਂ ਹੋ .ਜੇ ਤੁਸੀਂ "pbgis" ਅਧਿਕਾਰੀ ਹੋ ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਰਜਿਸਟਰਡ ਨੰਬਰ ਤੋਂ ਮੈਸੇਜ ਪੀਬੀਜਿਸ ਭੇਜੋ ਜਾਂ ਜੇ ਤੁਸੀਂ ਨਾਗਰਿਕ ਹੋ ਤਾਂ "Hi" ਦਬਾਓ. ',
+      hi_IN: 'आप पंजीकृत जीआईएस अधिकारी नहीं हैं। यदि आप "pbgis" अधिकारी हैं तो कृपया अपने पंजीकृत नंबर से संदेश पीबीजीआईएस भेजें या यदि आप नागरिक हैं तो "Hi" दबाएं',
     },
   },
   temporaryParcelId: {

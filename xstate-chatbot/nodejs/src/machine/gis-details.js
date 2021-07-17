@@ -61,22 +61,11 @@ const gisFlow = {
     },
     gisMobileNumber: {
       id: 'gisMobileNumber',
-      initial: 'prompt',
+      initial: 'process',
       states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.gisMobileNumber.prompt, context.user.locale));
-          }),
-          on: {
-            USER_MESSAGE: 'process',
-          },
-        },
         process: {
-          onEntry: assign((context, event) => {
-            context.message = dialog.get_input(event, false);
-          }),
           invoke: {
-            src: (context, event) => gisService.getGisDetailsFromMobileNumber(context.message),
+            src: (context, event) => gisService.getGisDetailsFromMobileNumber(context.user.mobileNumber),
             onDone: [
               {
                 cond: (context, event) => event.data.success == '1',
@@ -86,12 +75,12 @@ const gisFlow = {
                 target: '#gismenu',
               },
               {
-                cond: (context, event) => context.message=='Hi',
+                cond: (context, event) => event.data.success == '0',
                 actions: assign((context, event) => {
-                  context.slots.property.user_id = event.data.response.user_id;
-                }),
-                target: '#selectLanguage',
-              },
+                context.slots.property.user_id = event.data.response.user_id;
+            }),
+             target: '#selectCitizenMode',
+            },
               {
                 target: 'error',
               },
@@ -102,7 +91,43 @@ const gisFlow = {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.gisMobileNumber.error, context.user.locale));
           }),
-          always: 'prompt',
+         // always: 'prompt',
+        },
+      },
+
+    },
+    selectCitizenMode: {
+      id: 'selectCitizenMode',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.gisMobileNumber.error, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const input = dialog.get_input(event, false);
+            context.isValid = true;
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: '#selectLanguage',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.gisMobileNumber.error, context.user.locale));
+          }),
+         // always: 'prompt',
         },
       },
 

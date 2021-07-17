@@ -36,7 +36,7 @@ const chatStateMachine = Machine({
           }),
           always: [
             {
-              cond: (context) => context.message == 'pbgis',
+              cond: (context) => context.message == 'Pbgis',
                target: '#gisFlow',
              },
             {
