@@ -2,6 +2,9 @@ const fetch = require('node-fetch');
 const config = require('../../env-variables');
 const FormData = require('form-data');
 const fs = require('fs');
+var geturl = require("url");
+var path = require("path");
+const axios = require('axios');
 
 class GisService {
 
@@ -75,14 +78,15 @@ class GisService {
     formdata.append('SewerageConnection', propertyDetails.sewageConnection);
     formdata.append('PropertyTax', propertyDetails.propertyId);
     formdata.append('OwnersName', propertyDetails.ownerName);
-
+    
     if(propertyDetails.image){
       let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
-      var content = {
-        documentType: "PHOTO",
-        filestoreId:filestoreId
-      };
-      formdata.append('image', content);
+      console.log(filestoreId)
+      form.append('image', buffer, {
+        contentType: 'text/plain',
+        name: 'file',
+        filename: message.output,
+      });
     }
     console.log(formdata)
     
@@ -157,6 +161,7 @@ class GisService {
     url = `${url}tenantId=${config.rootTenantId}`;
     url = `${url}&`;
     url = `${url}fileStoreIds=${filestoreId}`;
+    console.log(url)
 
     const options = {
       method: 'GET',
@@ -173,6 +178,39 @@ class GisService {
     const file = fs.readFileSync(fileName, 'base64');
     fs.unlinkSync(fileName);
     return file;
+  }
+  async downloadImage(url, filename) {
+    const writer = fs.createWriteStream(filename);
+
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
+    });
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+  }
+  async fileStoreAPICall(fileName, fileData) {
+    let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceUploadEndpoint;
+    url = `${url}&tenantId=${config.rootTenantId}`;
+    const form = new FormData();
+    form.append('file', fileData, {
+      filename: fileName,
+      contentType: 'image/jpg',
+    });
+    const response = await axios.post(url, form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+    });
+
+    const filestore = response.data;
+    return filestore.files[0].fileStoreId;
   }
 
 }
