@@ -68,6 +68,19 @@ def reply():
     requestData=request.get_json()
     inp=""
     
+    #PROCESSING THE REQUEST DATA
+    destination=requestData["payload"]["source"]
+    default = PREFIX+destination + CATEGORY +SRC_NAME
+    payload= default
+            
+    url = GUPSHUP_URL
+    headers = {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'apikey': '37cef3c8bf164df7cdc0a36eae94beec',
+            'cache-control': 'no-cache'
+                      }
+    
     # IF INPUT IS A VOICE MESSAGE
     if requestData["payload"]["type"]=="audio" :
         audioUrl=requestData["payload"]["payload"]["url"]
@@ -76,34 +89,34 @@ def reply():
         sound=AudioSegment.from_ogg("voice_message.ogg")
         
         sound.export("voice_message.wav", format="wav")
+        
+        #AUDIO FILE SIZE VALIDATION --> IF AUDIO FILE IS TOO LARGE, RETURN AN ERROR MESSAGE.
+        audioFilesize = path.getsize("voice_message.wav")
+        
+        if audioFilesize>AUDIO_FILESIZE_LIMIT:
+            
+            payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(AUDIO_ERROR,dest='en').text+ SRC_NAME
+            response = requests.request("POST", url, headers=headers, data = payload)
+            return ""
+                     
 
         AUDIO_FILE = "voice_message.wav"
         r = sr.Recognizer()
         with sr.AudioFile(AUDIO_FILE) as source:
             audio = r.record(source)
             inp=r.recognize_google(audio)
+            
+    #VALIDATE THAT THE INPUT MESSAGE IS IN TEXT FORMAT (IF NOT AUDIO)
+    elif requestData["payload"]["type"]!="text" :
+        payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(FORMAT_ERROR,dest='en').text+ SRC_NAME
+        response = requests.request("POST", url, headers=headers, data = payload)
+        return ""
+    
     else:
         inp=requestData["payload"]["payload"]["text"]
 
-    destination=requestData["payload"]["source"]
-
-    default = PREFIX+destination + CATEGORY +SRC_NAME
-
-    payload= default
-    
-    
     inp=inp.lower()
-    
-
-    url = GUPSHUP_URL
-    headers = {
-      'Cache-Control': 'no-cache',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'apikey': '37cef3c8bf164df7cdc0a36eae94beec',
-      'cache-control': 'no-cache'
-                      }
-                      
-                      
+ 
     # INPUT IS TAKEN AS CITY NAME
     if len(inp.split())==1 and inp not in GREETINGS:
         answer=find_city(inp)[0].upper()
