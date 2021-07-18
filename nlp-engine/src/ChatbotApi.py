@@ -94,7 +94,7 @@ def reply():
         audioFilesize = path.getsize("voice_message.wav")
         
         if audioFilesize>AUDIO_FILESIZE_LIMIT:
-            
+            k=payload.index(MESSAGE_TOKEN)
             payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(AUDIO_ERROR,dest='en').text+ SRC_NAME
             response = requests.request("POST", url, headers=headers, data = payload)
             return ""
@@ -108,6 +108,7 @@ def reply():
             
     #VALIDATE THAT THE INPUT MESSAGE IS IN TEXT FORMAT (IF NOT AUDIO)
     elif requestData["payload"]["type"]!="text" :
+        k=payload.index(MESSAGE_TOKEN)
         payload=payload[0:k]+MESSAGE_TOKEN+translator.translate(FORMAT_ERROR,dest='en').text+ SRC_NAME
         response = requests.request("POST", url, headers=headers, data = payload)
         return ""
