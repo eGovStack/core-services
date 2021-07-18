@@ -60,7 +60,7 @@ class GisService {
   }
 
   async addPropertyDetails(propertyDetails) {
-
+    console.log(propertyDetails)
     const url = config.covaApiConfigs.addedNewProperty;
     const formdata = new FormData();
     formdata.append('UserId', propertyDetails.user_id);
@@ -74,6 +74,17 @@ class GisService {
     formdata.append('SewerageConnection', propertyDetails.sewageConnection);
     formdata.append('PropertyTax', propertyDetails.propertyId);
     formdata.append('OwnersName', propertyDetails.ownerName);
+
+    if(propertyDetails.image){
+      let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
+      var content = {
+        documentType: "PHOTO",
+        filestoreId:filestoreId
+      };
+      formdata.append('image', content);
+    }
+    console.log(formdata)
+    
     const requestOptions = {
       method: 'POST',
       body: formdata,
@@ -137,6 +148,30 @@ class GisService {
       const responseBody = await response.json();
       console.error(`API responded with ${JSON.stringify(responseBody)}`);
     }
+  }
+  
+  async getFileForFileStoreId(filestoreId) {
+    let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceDownloadEndpoint;
+    url = `${url}?`;
+    url = `${url}tenantId=${config.rootTenantId}`;
+    url = `${url}&`;
+    url = `${url}fileStoreIds=${filestoreId}`;
+
+    const options = {
+      method: 'GET',
+      origin: '*',
+    };
+
+    let response = await fetch(url, options);
+    response = await (response).json();
+    const fileURL = response.fileStoreIds[0].url.split(',');
+    let fileName = geturl.parse(fileURL[0]);
+    fileName = path.basename(fileName.pathname);
+    fileName = fileName.substring(13);
+    await this.downloadImage(fileURL[0].toString(), fileName);
+    const file = fs.readFileSync(fileName, 'base64');
+    fs.unlinkSync(fileName);
+    return file;
   }
 
 }

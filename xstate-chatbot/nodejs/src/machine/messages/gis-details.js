@@ -327,6 +327,18 @@ const messages = {
       hi_IN: 'आपकी संपत्ति जोड़ दी गई है। धन्यवाद!',
     },
   },
+  imageUpload: {
+    prompt: {
+      en_IN: 'Please attach a picture of the Property."',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਜਾਇਦਾਦ ਦੀ ਤਸਵੀਰ ਲਗਾਓ!',
+      hi_IN: 'कृपया शिकायत की एक तस्वीर भेजें। '
+    },
+    error:{
+      en_IN : 'Sorry, I didn\'t understand',
+      pa_IN: 'ਮੁਆਫ ਕਰਨਾ, ਮੈਨੂੰ ਸਮਝ ਨਹੀਂ ਆਈ!',
+      hi_IN: 'क्षमा करें, मुझे समझ नहीं आया ।',
+    }
+  },
 };
 const grammers = {
   binaryChoice: {

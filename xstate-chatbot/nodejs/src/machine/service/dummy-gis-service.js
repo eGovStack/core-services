@@ -73,7 +73,12 @@ class GisService {
   }
   
   async updatePropertyDetails(propertyDetails) {
-    return { success: 1, message: '', response: '2' }
+    return { success: 1, message: '', response: '2' };
+  }
+
+  async getFileForFileStoreId(filestoreId) {
+    return null;
+
   }
 }
 

@@ -536,13 +536,51 @@ const gisFlow = {
           always: [
             {
               cond: (context) => context.isValid == true,
-              target: '#addProperty',
+              target: '#imageUpload',
             },
             {
               target: 'error',
             },
           ],
         },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    imageUpload: {
+      id: 'imageUpload',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            let message = dialog.get_message(messages.imageUpload.prompt, context.user.locale);
+            dialog.sendMessage(context, message);
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+            onEntry: assign((context, event) => {
+              if(dialog.validateInputType(event, 'image')) {
+                context.slots.property.image = event.message.input;
+                context.message.isValid=true;
+              }
+              }),
+            always:[
+              {
+                cond: (context) => context.isValid == true,
+                target: '#addProperty',
+              },
+              {
+                target: 'error',
+              },
+            ] 
+          },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
@@ -560,7 +598,6 @@ const gisFlow = {
             cond: (context, event) => event.data.success === 1,
             actions: assign((context, event) => {
               dialog.sendMessage(context, dialog.get_message(messages.propertyAdded.prompt, context.user.locale));
-              context.message = undefined;
             }),
             target: '#endstate',
           },
