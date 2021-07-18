@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const config = require('../../env-variables');
 const FormData = require('form-data');
+const fs = require('fs');
 
 class GisService {
 
