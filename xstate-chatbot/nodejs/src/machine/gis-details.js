@@ -731,6 +731,10 @@ const gisFlow = {
               target: '#updateTypeOfProperty',
             },
             {
+              cond: (context) => context.intention == 'noUpdate',
+              target: '#updateimageUpload',
+            },
+            {
               cond: (context) => context.intention == 'INTENTION_UKNOWN',
               target: 'error',
             },
