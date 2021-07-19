@@ -82,18 +82,14 @@ class GisService {
     if(propertyDetails.image){
       let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
       console.log(filestoreId)
-      form.append('image', buffer, {
-        contentType: 'text/plain',
-        name: 'file',
-        filename: message.output,
-      });
+      formdata.append('image', filestoreId);
     }
     console.log(formdata)
-    
-    const requestOptions = {
+
+    var requestOptions = {
       method: 'POST',
       body: formdata,
-      redirect: 'follow',
+      redirect: 'follow'
     };
 
     const response = await fetch(url, requestOptions);
@@ -161,7 +157,6 @@ class GisService {
     url = `${url}tenantId=${config.rootTenantId}`;
     url = `${url}&`;
     url = `${url}fileStoreIds=${filestoreId}`;
-    console.log(url)
 
     const options = {
       method: 'GET',
