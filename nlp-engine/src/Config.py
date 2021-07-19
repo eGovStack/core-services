@@ -40,7 +40,3 @@ LOCALITY_LOCALHOST = "http://127.0.0.1:8080/nlp-engine/fuzzy/locality"
 TO_BE_PAID = ['to be paid', 'to be paid','not paid yet','not yet paid']
 KEEP_WORDS = ['are','to','be','not']
 MISCELLANEOUS = ['to','be','hi','hello','water', 'sewerage', 'electricity', 'property','income','trade license','show','see','bills']
-
-AUDIO_FILESIZE_LIMIT = 10000000
-AUDIO_ERROR = "Audio message is too large to be processed."
-FORMAT_ERROR = "Please send a text or audio message."

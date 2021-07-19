@@ -49,6 +49,9 @@ UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0
 WATER_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="WATER_BILL"][0]
 TRADE_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="TRADE_BILLBILL"][0]
 PROPERTY_BILL = [i["message"] for i in responseData["messages"] if i["code"]=="PROPERTY_BILL"][0]
+AUDIO_ERROR = [i["message"] for i in responseData["messages"] if i["code"]=="AUDIOFILE_SIZE_ERROR"][0]
+FORMAT_ERROR = [i["message"] for i in responseData["messages"] if i["code"]=="FORMAT_ERROR"][0]
+AUDIO_FILESIZE_LIMIT = int([i["message"] for i in responseData["messages"] if i["code"]=="AUDIO_FILESIZE_LIMIT"][0])
 
 translator= Translator()
 languages = LANGUAGE_CODES

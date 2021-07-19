@@ -36,6 +36,9 @@ ASK_LOCALITY_NAME = [i["message"] for i in responseData["messages"] if i["code"]
 CITY_LIST = [i["message"] for i in responseData["messages"] if i["code"]=="CITY_LIST"][0]
 LOCALITY_LIST = [i["message"] for i in responseData["messages"] if i["code"]=="LOCALITY_LIST"][0]
 UTF_8 = [i["message"] for i in responseData["messages"] if i["code"]=="UTF_8"][0]
+AUDIO_ERROR = [i["message"] for i in responseData["messages"] if i["code"]=="AUDIOFILE_SIZE_ERROR"][0]
+FORMAT_ERROR = [i["message"] for i in responseData["messages"] if i["code"]=="FORMAT_ERROR"][0]
+AUDIO_FILESIZE_LIMIT = int([i["message"] for i in responseData["messages"] if i["code"]=="AUDIO_FILESIZE_LIMIT"][0])
 
 CityAudio=Flask(__name__)
 run_with_ngrok(CityAudio)
