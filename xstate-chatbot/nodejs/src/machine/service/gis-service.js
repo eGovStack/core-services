@@ -110,7 +110,7 @@ class GisService {
   }
 
   async updatePropertyDetails(propertyDetails) {
-
+    console.log(propertyDetails)
     const url = config.covaApiConfigs.updateNewProperty;
     const formdata = new FormData();
     console.log(propertyDetails)
@@ -127,6 +127,13 @@ class GisService {
     formdata.append('PropertyTax', propertyDetails.propertyTax);
     formdata.append('OwnersName', propertyDetails.ownerName);
     formdata.append('add_id', propertyDetails.user_id);
+
+    if(propertyDetails.image){
+      let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
+      console.log(filestoreId)
+      formdata.append('image', filestoreId);
+    }
+    console.log(formdata)
 
     const requestOptions = {
       method: 'POST',

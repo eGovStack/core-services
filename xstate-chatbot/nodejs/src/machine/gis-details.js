@@ -1069,7 +1069,7 @@ const gisFlow = {
             },
             {
               cond: (context, event) => context.intention == 'notoupdate',
-              target: '#updateExistingProperty',
+              target: '#updateimageUpload',
             },
             {
               cond: (context, event) => context.intention == 'INTENTION_UKNOWN',
@@ -1078,6 +1078,44 @@ const gisFlow = {
           ],
 
         },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    updateimageUpload: {
+      id: 'updateimageUpload',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            let message = dialog.get_message(messages.imageUpload.prompt, context.user.locale);
+            dialog.sendMessage(context, message);
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+            onEntry: assign((context, event) => {
+              if(dialog.validateInputType(event, 'image')) {
+                context.slots.property.image = event.message.input;
+                context.message.isValid=true;
+              }
+              }),
+            always:[
+              {
+                cond: (context) => context.isValid == true,
+                target: '#updateExistingProperty',
+              },
+              {
+                target: 'error',
+              },
+            ] 
+          },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
