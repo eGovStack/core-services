@@ -59,6 +59,12 @@ const envVariables = {
     kafkaConsumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID || 'xstate-chatbot',
   },
 
+  egovServices: {
+    egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://dev.digit.org/',
+    egovFilestoreServiceUploadEndpoint: process.env.EGOV_FILESTORE_SERVICE_UPLOAD_ENDPOINT || "filestore/v1/files?module=chatbot",
+    egovFilestoreServiceDownloadEndpoint: process.env.EGOV_FILESTORE_SERVICE_DOWNLOAD_ENDPOINT || "filestore/v1/files/url",
+  },
+
   covaApiConfigs: {
     covaUrl: 'https://covaprod.punjab.gov.in/api/cova/citizen/services/v1/',
     updateSelfInspectionSuffix: 'status/updateSelfInspection',

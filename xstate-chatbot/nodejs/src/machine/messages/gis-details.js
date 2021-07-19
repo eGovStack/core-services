@@ -60,7 +60,7 @@ const messages = {
           hi_IN: 'आप क्या अपडेट करना चाहते हैं?  ',
         },
         options: {
-          list: ['OldHouseNo', 'blockNo', 'ownerName', 'contactNo', 'NoOfFloors', 'WaterConnection', 'SewageConnection', 'propertyId'],
+          list: ['OldHouseNo', 'blockNo', 'ownerName', 'contactNo', 'NoOfFloors', 'WaterConnection', 'SewageConnection', 'propertyId','noUpdate'],
           messageBundle: {
             OldHouseNo: {
               en_IN: 'House Number',
@@ -89,18 +89,23 @@ const messages = {
             },
             WaterConnection: {
               en_IN: 'Water Connection',
-              pa_IN: 'ਮੌਜੂਦਾ ਸੰਪਤੀ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰੋ',
-              hi_IN: 'मौजूदा संपत्ति सत्यापित करें',
+              pa_IN: 'ਪਾਣੀ ਦੇ ਸੰਪਰਕ ਨੰਬਰ',
+              hi_IN: 'जल कनेक्शन',
             },
             SewageConnection: {
-              en_IN: 'Sewage Connection',
-              pa_IN: 'ਮੌਜੂਦਾ ਸੰਪਤੀ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰੋ',
-              hi_IN: 'मौजूदा संपत्ति सत्यापित करें',
+              en_IN: 'Sewerage Connection',
+              pa_IN: 'ਸੀਵਰੇਜ ਕੁਨੈਕਸ਼ਨ',
+              hi_IN: 'सीवरेज कनेक्शन',
             },
             propertyId: {
               en_IN: 'Property Id',
-              pa_IN: 'ਮੌਜੂਦਾ ਸੰਪਤੀ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰੋ',
-              hi_IN: 'मौजूदा संपत्ति सत्यापित करें',
+              pa_IN: 'ਜਾਇਦਾਦ ਆਈ.ਡੀ.',
+              hi_IN: 'संपत्ति आईडी',
+            },
+            noUpdate: {
+              en_IN: 'Press 9 if No Update is required',
+              pa_IN: 'ਜੇ ਕੋਈ ਅਪਡੇਟ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਤਾਂ 9 ਦਬਾਓ',
+              hi_IN: 'यदि अपडेट की आवश्यकता नहीं है तो 9 दबाएं ',
             },
           },
         },
@@ -176,7 +181,7 @@ const messages = {
     prompt: {
       en_IN: 'Please enter your Contact number',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸੰਪਰਕ ਨੰਬਰ ਦਰਜ ਕਰੋ',
-      hi_IN: 'ब्कृपया अपना संपर्क नंबर दर्ज करें',
+      hi_IN: 'कृपया अपना संपर्क नंबर दर्ज करें',
     },
     error: {
       en_IN: 'Entered Mobile Number is incorrect',
@@ -201,8 +206,8 @@ const messages = {
   addwaterconnection: {
     prompt: {
       en_IN: 'Please enter your Water connections number',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪਾਣੀ ਦੇ ਸੰਪਰਕ ਨੰਬਰ ਭਰੋ',
-      hi_IN: 'कृपया अपना जल संपर्क नंबर दर्ज करें',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪਾਣੀ ਕੁਨੈਕਸ਼ਨ ਨੰਬਰ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया अपना जल कनेक्शन नंबर दर्ज करें',
     },
   },
   addsewageconnection: {
@@ -271,8 +276,8 @@ const messages = {
   waterConnection: {
     prompt: {
       en_IN: '7. Water Connection :',
-      pa_IN: '7. ਪਾਣੀ ਦਾ ਸੰਪਰਕ: ',
-      hi_IN: '7. जल संपर्क: ',
+      pa_IN: '7. ਪਾਣੀ ਕੁਨੈਕਸ਼ਨ: ',
+      hi_IN: '7. जल कनेक्शन: ',
     },
   },
   sewerageConnection: {
@@ -326,6 +331,18 @@ const messages = {
       pa_IN: 'ਤੁਹਾਡੀ ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕੀਤੀ ਗਈ ਹੈ ਧੰਨਵਾਦ!',
       hi_IN: 'आपकी संपत्ति जोड़ दी गई है। धन्यवाद!',
     },
+  },
+  imageUpload: {
+    prompt: {
+      en_IN: 'Please attach a picture of the Property."',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਜਾਇਦਾਦ ਦੀ ਤਸਵੀਰ ਲਗਾਓ!',
+      hi_IN: 'कृपया शिकायत की एक तस्वीर भेजें। '
+    },
+    error:{
+      en_IN : 'Sorry, I didn\'t understand',
+      pa_IN: 'ਮੁਆਫ ਕਰਨਾ, ਮੈਨੂੰ ਸਮਝ ਨਹੀਂ ਆਈ!',
+      hi_IN: 'क्षमा करें, मुझे समझ नहीं आया ।',
+    }
   },
 };
 const grammers = {

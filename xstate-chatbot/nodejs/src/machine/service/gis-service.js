@@ -1,6 +1,10 @@
 const fetch = require('node-fetch');
 const config = require('../../env-variables');
 const FormData = require('form-data');
+const fs = require('fs');
+var geturl = require("url");
+var path = require("path");
+const axios = require('axios');
 
 class GisService {
 
@@ -60,7 +64,7 @@ class GisService {
   }
 
   async addPropertyDetails(propertyDetails) {
-
+    console.log(propertyDetails)
     const url = config.covaApiConfigs.addedNewProperty;
     const formdata = new FormData();
     formdata.append('UserId', propertyDetails.user_id);
@@ -74,10 +78,18 @@ class GisService {
     formdata.append('SewerageConnection', propertyDetails.sewageConnection);
     formdata.append('PropertyTax', propertyDetails.propertyId);
     formdata.append('OwnersName', propertyDetails.ownerName);
-    const requestOptions = {
+    
+    if(propertyDetails.image){
+      let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
+      console.log(filestoreId)
+      formdata.append('image', filestoreId);
+    }
+    console.log(formdata)
+
+    var requestOptions = {
       method: 'POST',
       body: formdata,
-      redirect: 'follow',
+      redirect: 'follow'
     };
 
     const response = await fetch(url, requestOptions);
@@ -98,7 +110,7 @@ class GisService {
   }
 
   async updatePropertyDetails(propertyDetails) {
-
+    console.log(propertyDetails)
     const url = config.covaApiConfigs.updateNewProperty;
     const formdata = new FormData();
     console.log(propertyDetails)
@@ -115,6 +127,13 @@ class GisService {
     formdata.append('PropertyTax', propertyDetails.propertyTax);
     formdata.append('OwnersName', propertyDetails.ownerName);
     formdata.append('add_id', propertyDetails.user_id);
+
+    if(propertyDetails.image){
+      let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
+      console.log(filestoreId)
+      formdata.append('image', filestoreId);
+    }
+    console.log(formdata)
 
     const requestOptions = {
       method: 'POST',
@@ -137,6 +156,63 @@ class GisService {
       const responseBody = await response.json();
       console.error(`API responded with ${JSON.stringify(responseBody)}`);
     }
+  }
+  
+  async getFileForFileStoreId(filestoreId) {
+    let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceDownloadEndpoint;
+    url = `${url}?`;
+    url = `${url}tenantId=${config.rootTenantId}`;
+    url = `${url}&`;
+    url = `${url}fileStoreIds=${filestoreId}`;
+
+    const options = {
+      method: 'GET',
+      origin: '*',
+    };
+
+    let response = await fetch(url, options);
+    response = await (response).json();
+    const fileURL = response.fileStoreIds[0].url.split(',');
+    let fileName = geturl.parse(fileURL[0]);
+    fileName = path.basename(fileName.pathname);
+    fileName = fileName.substring(13);
+    await this.downloadImage(fileURL[0].toString(), fileName);
+    const file = fs.readFileSync(fileName, 'base64');
+    fs.unlinkSync(fileName);
+    return file;
+  }
+  async downloadImage(url, filename) {
+    const writer = fs.createWriteStream(filename);
+
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
+    });
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+  }
+  async fileStoreAPICall(fileName, fileData) {
+    let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceUploadEndpoint;
+    url = `${url}&tenantId=${config.rootTenantId}`;
+    const form = new FormData();
+    form.append('file', fileData, {
+      filename: fileName,
+      contentType: 'image/jpg',
+    });
+    const response = await axios.post(url, form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+    });
+
+    const filestore = response.data;
+    return filestore.files[0].fileStoreId;
   }
 
 }
