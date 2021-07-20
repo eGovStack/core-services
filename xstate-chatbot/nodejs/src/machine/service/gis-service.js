@@ -78,6 +78,8 @@ class GisService {
     formdata.append('SewerageConnection', propertyDetails.sewageConnection);
     formdata.append('PropertyTax', propertyDetails.propertyId);
     formdata.append('OwnersName', propertyDetails.ownerName);
+    formdata.append('MohallaOrColony', propertyDetails.mohallaName);
+    formdata.append('TypeOfConstruction', propertyDetails.constructionType);
     
     if(propertyDetails.image){
       let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
@@ -127,6 +129,8 @@ class GisService {
     formdata.append('PropertyTax', propertyDetails.propertyTax);
     formdata.append('OwnersName', propertyDetails.ownerName);
     formdata.append('add_id', propertyDetails.user_id);
+    formdata.append('MohallaOrColony', propertyDetails.mohallaName);
+    formdata.append('TypeOfConstruction', propertyDetails.constructionType);
 
     if(propertyDetails.image){
       let filestoreId = await this.getFileForFileStoreId(propertyDetails.image);
