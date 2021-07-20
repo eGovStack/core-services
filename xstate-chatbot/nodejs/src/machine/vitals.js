@@ -348,6 +348,7 @@ const vitalsFlow = {
                 context.slots.person.com_status = context.intention.com_status;
                 context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
                 context.slots.person.data_source_type = context.intention.data_source_type;
+                context.slots.person.srfC_id=context.intention.srf_Id;
                 context.slots.person.rrt = 'YES';
               }),
               target: '#temperature',
@@ -374,6 +375,7 @@ const vitalsFlow = {
               context.slots.person.com_status = '0';
               context.slots.person.fateh_kit_delivered = 'NO';
               context.slots.person.data_source_type = '';
+              context.slots.person.srfC_id ='';
               context.slots.person.rrt = 'NO';
             }),
             target: '#registerPatient',
