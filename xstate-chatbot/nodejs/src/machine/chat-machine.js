@@ -5,6 +5,7 @@ const vitalsFlow = require('./vitals');
 const messages = require('./messages/chat-machine');
 const hospitalFlow = require('./hospital-details');
 const gisFlow= require('./gis-details');
+const mvFlow= require('./mv-details');
 
 const chatStateMachine = Machine({
   id: 'chatMachine',
@@ -38,6 +39,10 @@ const chatStateMachine = Machine({
             {
               cond: (context) => context.message == 'Pbgis',
                target: '#gisFlow',
+             },
+             {
+              cond: (context) => context.message == 'Pbsbm',
+               target: '#mvFlow',
              },
             {
               actions: assign((context, event) => {
@@ -148,6 +153,7 @@ const chatStateMachine = Machine({
     vitalsFlow,
     hospitalFlow,
     gisFlow,
+    mvFlow,
     endstate: {
       id: 'endstate',
       always: '#start',
