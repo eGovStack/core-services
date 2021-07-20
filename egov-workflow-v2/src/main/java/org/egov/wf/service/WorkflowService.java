@@ -10,6 +10,7 @@ import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -143,7 +144,7 @@ public class WorkflowService {
     
     public List statusCount(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
         List result;
-        if(criteria.isNull()){
+        if(ObjectUtils.isEmpty(criteria)){
         	enrichSearchCriteriaFromUser(requestInfo, criteria);
             result = workflowRepository.getInboxStatusCount(criteria);
         }
