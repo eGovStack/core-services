@@ -2,11 +2,13 @@ package org.egov.wf.util;
 
 import com.jayway.jsonpath.JsonPath;
 import org.egov.tracer.model.CustomException;
+import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,11 +24,14 @@ public class EscalationUtil {
 
     private BusinessMasterService businessMasterService;
 
+    private WorkflowConfig config;
 
     @Autowired
-    public EscalationUtil(BusinessMasterService businessMasterService) {
+    public EscalationUtil(BusinessMasterService businessMasterService, WorkflowConfig config) {
         this.businessMasterService = businessMasterService;
+        this.config = config;
     }
+
 
 
     /**
@@ -129,6 +134,16 @@ public class EscalationUtil {
             String topic  = (String) map.get("topic");
             Long  stateSla = daysToMillisecond((Double) map.get("stateSLA"));
             Long  businessSLa = daysToMillisecond((Double) map.get("businessSLA"));
+            String tenantId  = (String) map.get("tenantId");
+
+            List<String> tenantIds;
+
+            if(tenantId.equalsIgnoreCase(config.getStateLevelTenantId()))
+                tenantIds = getTenantIds(mdmsData);
+            else tenantIds = Collections.singletonList(tenantId);
+
+            if(StringUtils.isEmpty(tenantId))
+                errorMap.put("INVALID_CONFIG","Invalid tenantId for config with state: "+state+" and action: "+action);
 
             if(stateSla == null && businessSLa == null)
                 errorMap.put("INVALID_CONFIG","Both stateSLA and businessSLA are null for config with state: "+state+" and action: "+action);
@@ -139,6 +154,7 @@ public class EscalationUtil {
                                     .stateSlaExceededBy(stateSla)
                                     .moduleName(module)
                                     .topic(topic)
+                                    .tenantIds(tenantIds)
                                     .build();
 
             escalations.add(escalation);

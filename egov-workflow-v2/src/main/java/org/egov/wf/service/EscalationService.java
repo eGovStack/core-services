@@ -55,11 +55,10 @@ public class EscalationService {
 
         Object mdmsData = mdmsService.mDMSCall(requestInfo);
         List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
-        List<String> tenantIds = escalationUtil.getTenantIds(mdmsData);
 
         for(Escalation escalation : escalations){
 
-            processEscalation(requestInfo, escalation, tenantIds);
+            processEscalation(requestInfo, escalation);
 
         }
 
@@ -69,9 +68,10 @@ public class EscalationService {
     /**
      * Processes the escalation
      * @param escalation
-     * @param tenantIds
      */
-    private void processEscalation(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
+    private void processEscalation(RequestInfo requestInfo, Escalation escalation){
+
+        List<String> tenantIds = escalation.getTenantIds();
 
         for(String tenantId: tenantIds){
 
@@ -116,13 +116,12 @@ public class EscalationService {
 
         Object mdmsData = mdmsService.mDMSCall(requestInfo);
         List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
-        List<String> tenantIds = escalationUtil.getTenantIds(mdmsData);
 
         List<String> ids = new LinkedList<>();
 
         for(Escalation escalation : escalations){
 
-            ids.addAll(getEscalations(requestInfo, escalation, tenantIds));
+            ids.addAll(getEscalations(escalation));
 
         }
 
@@ -132,11 +131,11 @@ public class EscalationService {
     /**
      * Temporary added for testing
      * @param escalation
-     * @param tenantIds
      */
-    private List<String> getEscalations(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
+    private List<String> getEscalations(Escalation escalation){
 
         List<String> ids = new LinkedList<>();
+        List<String> tenantIds = escalation.getTenantIds();
 
         for(String tenantId: tenantIds){
 

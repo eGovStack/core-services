@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Builder
 @Data
@@ -34,6 +35,9 @@ public class Escalation {
 
     @JsonProperty("topic")
     private String topic;
+
+    @JsonProperty("tenantIds")
+    private List<String> tenantIds;
 
 
 }
