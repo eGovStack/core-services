@@ -61,7 +61,7 @@ public class ProcessInstanceSearchCriteria {
 
     public Boolean isNull(){
         if(this.getBusinessIds()==null && this.getIds()==null && this.getAssignee()==null &&
-                this.getStatus()==null)
+                this.getStatus()==null && this.getBusinessService()==null)
             return true;
         else return false;
     }
