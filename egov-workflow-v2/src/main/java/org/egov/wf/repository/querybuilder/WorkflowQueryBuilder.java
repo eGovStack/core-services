@@ -36,7 +36,7 @@ public class WorkflowQueryBuilder {
             + "       eg_wf_assignee_v2 asg ON asg.processinstanceid = pi.id " + LEFT_OUTER_JOIN
             + "      eg_wf_document_v2 doc  ON doc.processinstanceid = pi.id " + INNER_JOIN
             + "       eg_wf_state_v2 st ON st.uuid = pi.status" + LEFT_OUTER_JOIN
-            + "       eg_wf_action_v2 ac ON ac.currentState = st.uuid " + "       WHERE ";
+            + "       eg_wf_action_v2 ac ON ac.currentState = st.uuid AND ac.active=TRUE " + "       WHERE ";
 
 
     private static final String WITH_CLAUSE = " select id from eg_wf_processinstance_v2 pi_outer WHERE " ;
