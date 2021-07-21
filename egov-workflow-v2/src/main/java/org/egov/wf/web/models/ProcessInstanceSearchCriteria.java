@@ -58,7 +58,6 @@ public class ProcessInstanceSearchCriteria {
     private List<String> statesToIgnore;
 
     @JsonIgnore
-    @Builder.Default
     private Boolean isStatusCountCall = false;
 
 
