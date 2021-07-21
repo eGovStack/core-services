@@ -118,9 +118,9 @@ const messages = {
               hi_IN: 'निर्माण प्रकार ',
             },
             noUpdate: {
-              en_IN: 'Press 9 if No Update is required',
-              pa_IN: 'ਜੇ ਕੋਈ ਅਪਡੇਟ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਤਾਂ 9 ਦਬਾਓ',
-              hi_IN: 'यदि अपडेट की आवश्यकता नहीं है तो 9 दबाएं ',
+              en_IN: 'Press 12 if No Update is required',
+              pa_IN: 'ਜੇ ਕੋਈ ਅਪਡੇਟ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਤਾਂ 12 ਦਬਾਓ',
+              hi_IN: 'यदि अपडेट की आवश्यकता नहीं है तो 12 दबाएं ',
             },
           },
         },
