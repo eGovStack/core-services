@@ -102,6 +102,7 @@ public class WorkflowController {
     @RequestMapping(value="/process/_statuscount", method = RequestMethod.POST)
         public ResponseEntity<List> StatusCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+            criteria.setIsStatusCountCall(true);
             List  result = workflowService.statusCount(requestInfoWrapper.getRequestInfo(),criteria);
             return new ResponseEntity<>(result,HttpStatus.OK);
         }
