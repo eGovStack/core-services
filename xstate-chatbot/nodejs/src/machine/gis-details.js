@@ -500,6 +500,78 @@ const gisFlow = {
           always: [
             {
               cond: (context) => context.isValid == true,
+              target: '#mohallaName',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    mohallaName: {
+      id: 'mohallaName',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.addmohallaName.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const mohallaName = dialog.get_input(event, false);
+            context.isValid = true;
+            context.slots.property.mohallaName = mohallaName;
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: '#constructionType',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    constructionType: {
+      id: 'constructionType',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.addconstructionType.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const constructionType = dialog.get_input(event, false);
+            context.isValid = true;
+            context.slots.property.constructionType = constructionType;
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
               target: '#propertyId',
             },
             {
@@ -658,6 +730,12 @@ const gisFlow = {
                   message += dialog.get_message(messages.proprtyId.prompt, context.user.locale);
                   message += `:: ${event.data.response.PropertyTax} \n`;
                   context.slots.property.propertyTax = event.data.response.PropertyTax;
+                  message += dialog.get_message(messages.mohallaName.prompt, context.user.locale);
+                  message += `:: ${event.data.response.MohallaOrColony} \n`;
+                  context.slots.property.mohallaName = event.data.response.MohallaOrColony;
+                  message += dialog.get_message(messages.constructionType.prompt, context.user.locale);
+                  message += `:: ${event.data.response.TypeOfConstruction} \n`;
+                  context.slots.property.constructionType = event.data.response.TypeOfConstruction;
                   dialog.sendMessage(context, message);
                 }),
                 target: '#updateExistingPropertyMemu',
@@ -715,6 +793,10 @@ const gisFlow = {
               target: '#updatecontactNo',
             },
             {
+              cond: (context) => context.intention == 'propertyType',
+              target: '#updatepropertyType',
+            },
+            {
               cond: (context) => context.intention == 'NoOfFloors',
               target: '#updateNoOfFloors',
             },
@@ -728,7 +810,15 @@ const gisFlow = {
             },
             {
               cond: (context) => context.intention == 'propertyId',
-              target: '#updateTypeOfProperty',
+              target: '#updatePropertyId',
+            },
+            {
+              cond: (context) => context.intention == 'mohallaName',
+              target: '#updateMohallaName',
+            },
+            {
+              cond: (context) => context.intention == 'constructionType',
+              target: '#updateConstructionType',
             },
             {
               cond: (context) => context.intention == 'noUpdate',
@@ -902,6 +992,52 @@ const gisFlow = {
         },
       },
     },
+    updatepropertyType: {
+      id: 'updatepropertyType',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            let message = dialog.get_message(messages.addpropertyuse.prompt, context.user.locale);
+            const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.propertyUseList.prompt.options.list, messages.propertyUseList.prompt.options.messageBundle, context.user.locale);
+            message += prompt;
+            context.grammer = grammer;
+            dialog.sendMessage(context, message);
+            }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            context.intention = dialog.get_intention(context.grammer, event, true);
+            console.log(context.intention)
+            if (context.intention === 'INTENTION_UKNOWN')
+              context.isValid = false;
+            else
+            {
+            context.isValid=true;  
+            context.slots.property.typeOfProperty = context.intention;
+            }
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: '#anyOtherUpdate',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
     updateNoOfFloors: {
       id: 'updateNoOfFloors',
       initial: 'prompt',
@@ -1010,8 +1146,80 @@ const gisFlow = {
         },
       },
     },
-    updateTypeOfProperty: {
-      id: 'updateTypeOfProperty',
+    updateMohallaName: {
+      id: 'updateMohallaName',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.addmohallaName.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const mohallaName = dialog.get_input(event, false);
+            context.isValid = true;
+            context.slots.property.mohallaName = mohallaName;
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: '#anyOtherUpdate',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    updateConstructionType: {
+      id: 'updateConstructionType',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.addconstructionType.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const constructionType = dialog.get_input(event, false);
+            context.isValid = true;
+            context.slots.property.constructionType = constructionType;
+          }),
+          always: [
+            {
+              cond: (context) => context.isValid == true,
+              target: '#anyOtherUpdate',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    updatePropertyId: {
+      id: 'updatePropertyId',
       initial: 'prompt',
       states: {
         prompt: {

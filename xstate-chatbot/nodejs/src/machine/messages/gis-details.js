@@ -60,7 +60,7 @@ const messages = {
           hi_IN: 'आप क्या अपडेट करना चाहते हैं?  ',
         },
         options: {
-          list: ['OldHouseNo', 'blockNo', 'ownerName', 'contactNo', 'NoOfFloors', 'WaterConnection', 'SewageConnection', 'propertyId','noUpdate'],
+          list: ['OldHouseNo', 'blockNo', 'ownerName', 'contactNo', 'propertyType','NoOfFloors', 'WaterConnection', 'SewageConnection', 'propertyId','mohallaName','constructionType','noUpdate'],
           messageBundle: {
             OldHouseNo: {
               en_IN: 'House Number',
@@ -78,9 +78,14 @@ const messages = {
               hi_IN: 'मालिक का नाम',
             },
             contactNo: {
-              en_IN: 'Contact Name',
-              pa_IN: 'ਸੰਪਰਕ ਨਾਮ',
-              hi_IN: 'संपर्क नाम',
+              en_IN: 'Contact Number',
+              pa_IN: 'ਸੰਪਰਕ ਨੰਬਰ',
+              hi_IN: 'संपर्क संख्या',
+            },
+            propertyType: {
+              en_IN: 'Property Type',
+              pa_IN: 'ਜਾਇਦਾਦ ਦੀ ਕਿਸਮ ',
+              hi_IN: 'संपत्ति के प्रकार ',
             },
             NoOfFloors: {
               en_IN: 'No Of Floors',
@@ -101,6 +106,16 @@ const messages = {
               en_IN: 'Property Id',
               pa_IN: 'ਜਾਇਦਾਦ ਆਈ.ਡੀ.',
               hi_IN: 'संपत्ति आईडी',
+            },
+            mohallaName: {
+              en_IN: 'Mohalla Name',
+              pa_IN: 'ਮੁਹੱਲਾ ਨਾਮ',
+              hi_IN: 'मोहल्ला नाम ',
+            },
+            constructionType: {
+              en_IN: 'Construction Type',
+              pa_IN: 'ਉਸਾਰੀ ਦੀ ਕਿਸਮ ',
+              hi_IN: 'निर्माण प्रकार ',
             },
             noUpdate: {
               en_IN: 'Press 9 if No Update is required',
@@ -217,6 +232,20 @@ const messages = {
       hi_IN: 'कृपया अपना सीवेज कनेक्शन नंबर दर्ज करें',
     },
   },
+  addmohallaName: {
+    prompt: {
+      en_IN: 'Please enter your Mohalla Name',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਮੁਹੱਲਾ ਨਾਮ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया अपना मोहल्ला नाम दर्ज करें',
+    },
+  },
+  addconstructionType: {
+    prompt: {
+      en_IN: 'Please enter type of Construction',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਉਸਾਰੀ ਦੀ ਕਿਸਮ ਦਾਖਲ ਕਰੋ',
+      hi_IN: 'कृपया निर्माण का प्रकार दर्ज करें',
+    },
+  },
   addpropertyId: {
     prompt: {
       en_IN: 'Please enter your Property id as per tax property',
@@ -292,6 +321,20 @@ const messages = {
       en_IN: '9. Property id as per Tax property:',
       pa_IN: '9. ਟੈਕਸ ਪ੍ਰਾਪਰਟੀ ਦੇ ਅਨੁਸਾਰ ਪ੍ਰਾਪਰਟੀ ਆਈਡੀ: ',
       hi_IN: '9. कर संपत्ति के अनुसार संपत्ति आईडी: ',
+    },
+  },
+  mohallaName: {
+    prompt: {
+      en_IN: '10. Mohalla Name :',
+      pa_IN: '10. ਮੁਹੱਲਾ ਨਾਮ: ',
+      hi_IN: '10. मोहल्ला नाम : ',
+    },
+  },
+  constructionType: {
+    prompt: {
+      en_IN: '11. Construction Type:',
+      pa_IN: '11. ਉਸਾਰੀ ਦੀ ਕਿਸਮ: ',
+      hi_IN: '11. निर्माण प्रकार: ',
     },
   },
   anyOtherUpdate: {
