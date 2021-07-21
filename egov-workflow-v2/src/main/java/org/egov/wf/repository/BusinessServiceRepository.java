@@ -78,7 +78,7 @@ public class BusinessServiceRepository {
         if(!CollectionUtils.isEmpty(tenantBusinessServices)){
             BusinessServiceSearchCriteria tenantLevelCriteria = new BusinessServiceSearchCriteria();
             tenantLevelCriteria.setTenantId(criteria.getTenantId());
-            tenantLevelCriteria.setBusinessServices(stateLevelBusinessServices);
+            tenantLevelCriteria.setBusinessServices(tenantBusinessServices);
             List<Object> tenantLevelPreparedStmtList = new ArrayList<>();
             query = queryBuilder.getBusinessServices(tenantLevelCriteria, tenantLevelPreparedStmtList);
             searchResults.addAll(jdbcTemplate.query(query, tenantLevelPreparedStmtList.toArray(), rowMapper));
