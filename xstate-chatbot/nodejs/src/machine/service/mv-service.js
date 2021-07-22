@@ -70,7 +70,7 @@ class MVService {
   }
 
   async submitMVLocationImage(mvlocationdetail) {
-
+    console.log(mvlocationdetail)
     const url = config.covaApiConfigs.getMVByMobileNumber.concat(
       config.covaApiConfigs.submitPostIntermediateReport,
     );
@@ -142,8 +142,11 @@ class MVService {
   }
 
   async getFileForFileStoreId(filestoreId) {
-
     let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceDownloadEndpoint;
+    url = `${url}?`;
+    url = `${url}tenantId=${config.rootTenantId}`;
+    url = `${url}&`;
+    url = `${url}fileStoreIds=${filestoreId}`;
 
     const options = {
       method: 'GET',
@@ -168,7 +171,7 @@ class MVService {
     const response = await axios({
       url,
       method: 'GET',
-      responseType: 'stream'
+      responseType: 'stream',
     });
 
     response.data.pipe(writer);
@@ -176,26 +179,25 @@ class MVService {
     return new Promise((resolve, reject) => {
       writer.on('finish', resolve);
       writer.on('error', reject);
-    })
+    });
   }
 
-  async fileStoreAPICall(fileName, fileData, tenantId) {
-
-    var url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceUploadEndpoint;
-    url = url + '&tenantId=' + tenantId;
-    var form = new FormData();
-    form.append("file", fileData, {
+  async fileStoreAPICall(fileName, fileData) {
+    let url = config.egovServices.egovServicesHost + config.egovServices.egovFilestoreServiceUploadEndpoint;
+    url = `${url}&tenantId=${config.rootTenantId}`;
+    const form = new FormData();
+    form.append('file', fileData, {
       filename: fileName,
-      contentType: "image/jpg"
+      contentType: 'image/jpg',
     });
-    let response = await axios.post(url, form, {
+    const response = await axios.post(url, form, {
       headers: {
-        ...form.getHeaders()
-      }
+        ...form.getHeaders(),
+      },
     });
 
-    var filestore = response.data;
-    return filestore['files'][0]['fileStoreId'];
+    const filestore = response.data;
+    return filestore.files[0].fileStoreId;
   }
 
 }
