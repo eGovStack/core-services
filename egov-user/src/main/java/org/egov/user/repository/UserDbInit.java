@@ -74,7 +74,10 @@ public class UserDbInit {
     @PostConstruct
     private void initSeedUser() {
         if (createDefaultUser) {
-            Role urole = Role.builder().code(defaultRole).build();
+            Role urole = Role.builder().code(defaultRole)
+                    .name("Employee")
+                    .tenantId("pb.amritsar")
+                    .build();
             Set<Role> roleSet = new HashSet<Role>();
             roleSet.add(urole);
             UserType type = UserType.EMPLOYEE;
