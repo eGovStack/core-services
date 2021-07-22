@@ -10,6 +10,7 @@ import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.UserService;
+import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +72,9 @@ public class UserDbInit {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
+
     @PostConstruct
     private void initSeedUser() {
         if (createDefaultUser) {
@@ -110,6 +114,7 @@ public class UserDbInit {
                     .roles(roleSet)
                     .build();
             user.validateNewUser(createUserValidateName);
+            user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
             if (userRepository.isUserPresent(user.getUsername(), user.getTenantId(), user.getType())) {
                 log.info("EG_SYSTEM_USER_ALREADY_EXISTS: " + "System user already exists");
             } else {
