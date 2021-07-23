@@ -258,7 +258,7 @@ const mvFlow = {
           onEntry: assign((context, event) => {
              if(dialog.validateInputType(event, 'image')) {
             context.slots.mv.image = event.message.input;
-            context.isValid = true;
+            context.message.isValid = true;
               }
           }),
           always: [

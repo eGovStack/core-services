@@ -71,7 +71,7 @@ const gisFlow = {
                 cond: (context, event) => event.data.success == '1',
                 actions: assign((context, event) => {
                   context.slots.property.user_id = event.data.response.user_id;
-                }),
+                  }),
                 target: '#gismenu',
               },
               {
@@ -640,7 +640,7 @@ const gisFlow = {
             onEntry: assign((context, event) => {
               if(dialog.validateInputType(event, 'image')) {
                 context.slots.property.image = event.message.input;
-                context.isValid=true;
+                context.message.isValid=true;
               }
               }),
             always:[
