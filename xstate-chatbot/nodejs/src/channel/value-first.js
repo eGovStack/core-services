@@ -289,6 +289,8 @@ class ValueFirstWhatsAppProvider {
             origin: '*',
             body: JSON.stringify(requestBody)
         }
+        console.log(url);
+        console.log(JSON.stringify(request));
         let response = await fetch(url,request);
         if(response.status === 200){
             let messageBack = await response.json();

@@ -50,7 +50,7 @@ const envVariables = {
     valueFirstWhatsAppProvider: {
         valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
         valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
-        valueFirstURL: process.env.VALUEFIRST_SEND_MESSAGE_URL || 'https://api.myvaluefirst.com/psms/servlet/psms.JsonEservice',
+        valueFirstURL: process.env.VALUEFIRST_SEND_MESSAGE_URL || 'https://api.myvfirst.com/psms/servlet/psms.JsonEservice',
         valuefirstNotificationAssignedTemplateid: process.env.VALUEFIRST_NOTIFICATION_ASSIGNED_TEMPLATEID || '205987',
         valuefirstNotificationResolvedTemplateid: process.env.VALUEFIRST_NOTIFICATION_RESOLVED_TEMPLATEID || '205989',
         valuefirstNotificationRejectedTemplateid: process.env.VALUEFIRST_NOTIFICATION_REJECTED_TEMPLATEID || '205991',
