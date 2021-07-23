@@ -277,10 +277,21 @@ class ValueFirstWhatsAppProvider {
 
     async sendMessage(requestBody) {
         let url = config.valueFirstWhatsAppProvider.valueFirstURL;
+        let token = this.generateBearerToken();
+        console.log('token:' + token);
+
+        if(token){
+            token = 'Bearer ' + token;
+
+        }
+        else {
+            console.error('Error in sending message');
+            return undefined;
+        }
 
         let headers = {
             'Content-Type': 'application/json',
-            'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
+            'Authorization': token
         }
 
         var request = {
@@ -332,6 +343,33 @@ class ValueFirstWhatsAppProvider {
         requestBody = await this.getTransformedResponse(user, messages, extraInfo);
         this.sendMessage(requestBody);       
     }
+
+    async generateBearerToken(){
+        let url = config.valueFirstWhatsAppProvider.valueFirstTokenURL;
+
+        let myheaders = {
+            'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
+        }
+        var requestOptions = {
+            method: 'POST',
+            headers: myheaders,
+            origin: '*'
+        };
+        url = url + '?action=generate';
+
+        console.log('URL: ' + url + JSON.stringify(requestOptions));
+        let response = await fetch(url,requestOptions);
+        console.log(JSON.stringify(response));
+        if(response.status === 200){
+            let messageBack = await response.json();
+            return messageBack.token;
+        }
+        else {
+            console.error('Error while generating token');
+            console.error(response);
+            return undefined;
+            }
+        }
 
     async getTransformMessageForTemplate(reformattedMessages){
         if(reformattedMessages.length>0){
