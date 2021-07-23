@@ -302,6 +302,7 @@ class ValueFirstWhatsAppProvider {
         }         
         else {
             console.error('Error in sending message');
+            console.error(response.response);
             return undefined;
           }
     }    
