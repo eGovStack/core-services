@@ -3,7 +3,6 @@ package org.egov.wf.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -57,22 +56,13 @@ public class ProcessInstanceSearchCriteria {
     @JsonIgnore
     private List<String> statesToIgnore;
 
-    @JsonIgnore
-    private Boolean isStatusCountCall = false;
-
 
 
 
     public Boolean isNull(){
         if(this.getBusinessIds()==null && this.getIds()==null && this.getAssignee()==null &&
-                this.getStatus()==null) {
-            if(this.getIsStatusCountCall()){
-                if(this.getBusinessService() != null){
-                    return false;
-                }
-            }
+                this.getStatus()==null)
             return true;
-        }
         else return false;
     }
 
