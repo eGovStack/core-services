@@ -277,7 +277,7 @@ class ValueFirstWhatsAppProvider {
 
     async sendMessage(requestBody) {
         let url = config.valueFirstWhatsAppProvider.valueFirstURL;
-        let token = this.generateBearerToken();
+        let token = await this.generateBearerToken();
         console.log('token:' + token);
 
         if(token){
@@ -359,8 +359,9 @@ class ValueFirstWhatsAppProvider {
 
         console.log('URL: ' + url + JSON.stringify(requestOptions));
         let response = await fetch(url,requestOptions);
-        console.log(JSON.stringify(response));
+        console.log(response);
         if(response.status === 200){
+            console.log('Token generated successfully');
             let messageBack = await response.json();
             return messageBack.token;
         }
