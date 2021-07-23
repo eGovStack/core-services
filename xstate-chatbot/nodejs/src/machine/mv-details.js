@@ -256,10 +256,10 @@ const mvFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            //  if(dialog.validateInputType(event, 'image')) {
+             if(dialog.validateInputType(event, 'image')) {
             context.slots.mv.image = event.message.input;
             context.message.isValid = true;
-            //  }
+              }
           }),
           always: [
             {
@@ -273,7 +273,7 @@ const mvFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOptionsbm, context.user.locale));
           }),
           always: 'prompt',
         },

@@ -71,7 +71,7 @@ const gisFlow = {
                 cond: (context, event) => event.data.success == '1',
                 actions: assign((context, event) => {
                   context.slots.property.user_id = event.data.response.user_id;
-                }),
+                  }),
                 target: '#gismenu',
               },
               {
