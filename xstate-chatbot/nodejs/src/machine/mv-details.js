@@ -226,7 +226,7 @@ const mvFlow = {
 
             {
               cond: (context) => context.isValid == true,
-              target: '#imageUpload',
+              target: '#imageUploadSbm',
             },
             {
               target: 'error',
@@ -241,8 +241,8 @@ const mvFlow = {
         },
       },
     },
-    imageUpload: {
-      id: 'imageUpload',
+    imageUploadSbm: {
+      id: 'imageUploadSbm',
       initial: 'prompt',
       states: {
         prompt: {

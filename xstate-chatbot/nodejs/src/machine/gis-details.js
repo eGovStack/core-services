@@ -608,7 +608,7 @@ const gisFlow = {
           always: [
             {
               cond: (context) => context.isValid == true,
-              target: '#imageUpload',
+              target: '#imageUploadGis',
             },
             {
               target: 'error',
@@ -623,8 +623,8 @@ const gisFlow = {
         },
       },
     },
-    imageUpload: {
-      id: 'imageUpload',
+    imageUploadGis: {
+      id: 'imageUploadGis',
       initial: 'prompt',
       states: {
         prompt: {
@@ -822,7 +822,7 @@ const gisFlow = {
             },
             {
               cond: (context) => context.intention == 'noUpdate',
-              target: '#updateimageUpload',
+              target: '#updateimageUploadGis',
             },
             {
               cond: (context) => context.intention == 'INTENTION_UKNOWN',
@@ -1281,7 +1281,7 @@ const gisFlow = {
             },
             {
               cond: (context, event) => context.intention == 'notoupdate',
-              target: '#updateimageUpload',
+              target: '#updateimageUploadGis',
             },
             {
               cond: (context, event) => context.intention == 'INTENTION_UKNOWN',
@@ -1298,8 +1298,8 @@ const gisFlow = {
         },
       },
     },
-    updateimageUpload: {
-      id: 'updateimageUpload',
+    updateimageUploadGis: {
+      id: 'updateimageUploadGis',
       initial: 'prompt',
       states: {
         prompt: {
