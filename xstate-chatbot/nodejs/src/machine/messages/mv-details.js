@@ -170,6 +170,11 @@ const messages = {
       hi_IN: 'विवरण सफलतापूर्वक सबमिट कर दिया गया है।',
     }
   },
+  invalidOptionsbm: {
+    en_IN: 'Please enter valid input',
+    pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ ਇੰਪੁੱਟ ਦਾਖਲ ਕਰੋ',
+    hi_IN: 'कृपया मान्य इनपुट दर्ज करें',
+  },
 
 };
 const grammers = {

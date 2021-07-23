@@ -273,7 +273,7 @@ const mvFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOptionsbm, context.user.locale));
           }),
           always: 'prompt',
         },

@@ -115,7 +115,6 @@ class GisService {
     console.log(propertyDetails)
     const url = config.covaApiConfigs.updateNewProperty;
     const formdata = new FormData();
-    console.log(propertyDetails)
     formdata.append('UID', propertyDetails.UID);
     formdata.append('UserId', propertyDetails.user_id);
     formdata.append('ParcelID', propertyDetails.user_id);
@@ -137,7 +136,6 @@ class GisService {
       console.log(filestoreId)
       formdata.append('image', filestoreId);
     }
-    console.log(formdata)
 
     const requestOptions = {
       method: 'POST',

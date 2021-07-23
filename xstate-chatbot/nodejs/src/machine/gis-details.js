@@ -640,7 +640,7 @@ const gisFlow = {
             onEntry: assign((context, event) => {
               if(dialog.validateInputType(event, 'image')) {
                 context.slots.property.image = event.message.input;
-                context.message.isValid=true;
+                context.isValid=true;
               }
               }),
             always:[
