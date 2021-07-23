@@ -38,7 +38,7 @@ class MVService {
   }
 
   async submitMVLocation(mvlocationdetail) {
-
+   console.log(mvlocationdetail)
     const url = config.covaApiConfigs.getMVByMobileNumber.concat(
       config.covaApiConfigs.submitPostStartReport,
     );
@@ -57,7 +57,7 @@ class MVService {
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       const data = await response.json();
-      if (data.response == 1) {
+      if (data.success == 1) {
         console.log('MV Submit Intermediate data.');
       } else {
         console.error(`Error while MV Submit Intermediate data (Location only).\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
@@ -92,7 +92,7 @@ class MVService {
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       const data = await response.json();
-      if (data.response == 1) {
+      if (data.success == 1) {
         console.log('MV Submit Intermediate data (Location and Image).');
       } else {
         console.error(`Error while MV Submit Intermediate data (Location and Image).\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
@@ -109,6 +109,7 @@ class MVService {
     const url = config.covaApiConfigs.getMVByMobileNumber.concat(
       config.covaApiConfigs.submitPostEndReport,
     );
+    console.log(mvreportdetail)
 
     var formdata = new FormData();
     formdata.append("user_id", mvreportdetail.user_id);
@@ -128,8 +129,8 @@ class MVService {
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       const data = await response.json();
-      console.log(data.response.user_id)
-      if (data.response == 1) {
+  
+      if (data.success == 1) {
         console.log('MV Submit Intermediate data.');
       } else {
         console.error(`Error while MV Submit Intermediate data.\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
