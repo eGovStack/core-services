@@ -354,7 +354,7 @@ public class WorkflowQueryBuilder {
         String countQuery = null;
 
         if(statuCount) {
-        	countQuery = "select  count(DISTINCT cq.id),cq.applicationStatus,cq.PI_STATUS as statusId from  ( select ppi.id,ppst.applicationstatus,ppi.status as PI_STATUS FROM eg_wf_processinstance_v2 ppi  JOIN eg_wf_state_v2 ppst ON ( ppst.uuid =ppi.status ) WHERE ppi.id IN ({INTERNAL_QUERY}) ) cq GROUP BY cq.applicationStatus,cq.PI_STATUS";
+        	countQuery = "select  count(DISTINCT cq.id),cq.applicationStatus,cq.businessservice,cq.PI_STATUS as statusId from  ( select ppi.id,ppi.businessservice,ppst.applicationstatus,ppi.status as PI_STATUS FROM eg_wf_processinstance_v2 ppi  JOIN eg_wf_state_v2 ppst ON ( ppst.uuid =ppi.status ) WHERE ppi.id IN ({INTERNAL_QUERY}) ) cq GROUP BY cq.applicationStatus,cq.businessservice,cq.PI_STATUS";
 
             countQuery = countQuery.replace("{INTERNAL_QUERY}", query);
         }else {
