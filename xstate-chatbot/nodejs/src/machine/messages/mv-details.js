@@ -165,9 +165,16 @@ const messages = {
   },
   submitmvIntermediateReport: {
     prompt: {
-      en_IN: 'Details have been submitted successfully.',
-      pa_IN: 'ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਦਰਜ ਕੀਤੇ ਗਏ ਹਨ.',
-      hi_IN: 'विवरण सफलतापूर्वक सबमिट कर दिया गया है।',
+      en_IN: 'Intermediate Report have been submitted successfully.',
+      pa_IN: 'ਇੰਟਰਮੀਡੀਏਟ ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਦਰਜ ਕੀਤੇ ਗਏ ਹਨ.',
+      hi_IN: 'इंटरमीडिएट विवरण सफलतापूर्वक सबमिट कर दिया गया है।',
+    }
+  },
+  submitmvEndReport: {
+    prompt: {
+      en_IN: 'End of Day Report have been submitted successfully.',
+      pa_IN: 'ਡੇਅ ਦੀ ਅੰਤ ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਦਰਜ ਕੀਤੇ ਗਏ ਹਨ.',
+      hi_IN: 'दिन के अंत की विवरण सफलतापूर्वक सबमिट कर दिया गया है।',
     }
   },
   invalidOptionsbm: {

@@ -177,7 +177,7 @@ const mvFlow = {
             onDone: [
               {
                 actions: assign((context, event) => {
-                  let message = dialog.get_message(messages.submitmvIntermediateReport.prompt, context.user.locale);
+                  let message = dialog.get_message(messages.locationSuccess.prompt, context.user.locale);
                   dialog.sendMessage(context, message);
                 }),
                 target: '#endstate',
@@ -287,7 +287,7 @@ const mvFlow = {
           {
             cond: (context, event) => event.data.success === 1,
             actions: assign((context, event) => {
-              dialog.sendMessage(context, dialog.get_message(messages.propertyAdded.prompt, context.user.locale));
+              dialog.sendMessage(context, dialog.get_message(messages.submitmvIntermediateReport.prompt, context.user.locale));
             }),
             target: '#endstate',
           },
@@ -532,7 +532,7 @@ const mvFlow = {
           always: [
             {
               cond: (context) => context.validMessage,
-              target: '#submitmvIntermediateReport',
+              target: '#submitmvEndReport',
             },
             {
               target: 'error',
@@ -547,14 +547,14 @@ const mvFlow = {
         },
       },
     },
-    submitmvIntermediateReport: {
-      id: 'submitmvIntermediateReport',
+    submitmvEndReport: {
+      id: 'submitmvEndReport',
       invoke: {
         src: (context) => mvService.submitEndDayReport(context.slots.mv),
         onDone: [
           {
             actions: assign((context, event) => {
-              let message = dialog.get_message(messages.submitmvIntermediateReport.prompt, context.user.locale);
+              let message = dialog.get_message(messages.submitmvEndReport.prompt, context.user.locale);
               dialog.sendMessage(context, message);
             }),
             target: '#endstate',
