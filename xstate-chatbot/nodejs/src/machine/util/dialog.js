@@ -79,12 +79,6 @@ function sendMessage(context, message, immediate = true) {
 }
 
 let global_messages = {
-  wns_paytmlink: {
-    paytm: {
-      en_IN: 'https:/bills.pe/w92Qx',
-      hi_IN: 'https:/bills.pe/w92Qx'
-    }
-  },
   error: {
     retry: {
       en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',

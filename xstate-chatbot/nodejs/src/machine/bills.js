@@ -57,10 +57,10 @@ const bills = {
         let localeIndex = localeList.indexOf(context.user.locale);
         let serviceName = '';
         let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
+        let paytmLinkWnS = config.paytmWnSLink;
 
         if(context.service == 'WS' || context.service == 'SW'){
           serviceName='Water and Sewerage';
-          paymenturlShortnerEndpoint = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
         }      
         else{
@@ -90,7 +90,7 @@ const bills = {
           }
           else{
             console.log('inside wns else singleRecordMessage: '+ singleRecordMessage);
-            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paytmLinkWnS);
           }
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
@@ -137,7 +137,7 @@ const bills = {
               if(serviceName != 'Water and Sewerage')
                 multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
               else
-                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paytmLinkWnS);
 
 
               // let urlComponemt = bill.paymentLink.split('/');
@@ -176,7 +176,7 @@ const bills = {
               if(serviceName != 'Water and Sewerage')
                 multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
               else
-                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paytmLinkWnS);
 
 
               // let urlComponemt = bill.paymentLink.split('/');
