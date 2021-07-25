@@ -78,15 +78,21 @@ const bills = {
           dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
           dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
           let singleRecordMessage = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
+          console.log('singleRecordMessage: '+ singleRecordMessage);
           singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
           singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
           singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-          if(serviceName != 'Water and Sewerage')
+          if(serviceName != 'Water and Sewerage'){
+            console.log('if condition singleRecordMessage: '+ singleRecordMessage);
             singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
-          else
+          }
+          else{
+            console.log('inside wns else singleRecordMessage: '+ singleRecordMessage);
             singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+          }
+          console.log('After singleRecordMessage: '+ singleRecordMessage);
 
           dialog.sendMessage(context, singleRecordMessage);
 
@@ -201,7 +207,8 @@ const bills = {
           onEntry: assign((context,event) => {
             let message = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
             dialog.sendMessage(context, message, true);
-          })
+          }),
+          always : '#searchBillInitiate'          
         }
       }
     },
