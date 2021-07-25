@@ -56,16 +56,17 @@ const bills = {
         let localeList = config.supportedLocales.split(',');
         let localeIndex = localeList.indexOf(context.user.locale);
         let serviceName = '';
+        let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
+
         if(context.service == 'WS' || context.service == 'SW'){
           serviceName='Water and Sewerage';
+          paymenturlShortnerEndpoint = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
         }      
         else{
           serviceName='Property Tax';
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
         }
-
-        let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
 
         if(templateList[localeIndex])
           context.extraInfo.templateId = templateList[localeIndex];
@@ -82,7 +83,11 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
           singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-          singleRecordMessage = singleRecordMessage.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
+          if(serviceName != 'Water and Sewerage')
+            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+          else
+            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+
           dialog.sendMessage(context, singleRecordMessage);
 
           // let params=[];
@@ -123,7 +128,11 @@ const bills = {
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-              multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
+              if(serviceName != 'Water and Sewerage')
+                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+              else
+                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+
 
               // let urlComponemt = bill.paymentLink.split('/');
               // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
@@ -158,7 +167,11 @@ const bills = {
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
+              if(serviceName != 'Water and Sewerage')
+                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+              else
+                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint);
+
 
               // let urlComponemt = bill.paymentLink.split('/');
               // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
@@ -178,28 +191,7 @@ const bills = {
           }
         }
       }),
-      // always: '#searchBillInitiate'
-      always: [        
-        {
-          target: '#paytmLinkForERPWnS',
-          cond: (context) => context.service == 'WS' || context.service == 'SW'
-        },
-        {
-          target: '#searchBillInitiate',
-        }
-      ]
-    },
-    paytmLinkForERPWnS:{
-      id: 'paytmLinkForERPWnS',
-      initial: 'process',
-      states: {
-        process: {
-          onEntry: assign((context,event) => {
-            let message = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
-            dialog.sendMessage(context, message, true);
-          })
-        }
-      }
+      always: '#searchBillInitiate'
     },
     searchBillInitiate: {
       id: 'searchBillInitiate',
