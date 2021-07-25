@@ -55,10 +55,17 @@ const bills = {
         let bills = context.bills.pendingBills;
         let localeList = config.supportedLocales.split(',');
         let localeIndex = localeList.indexOf(context.user.locale);
-        if(context.service == 'WS')
+        let serviceName = '';
+        if(context.service == 'WS' || context.service == 'SW'){
+          serviceName='Water and Sewerage';
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
-        else
+        }      
+        else{
+          serviceName='Property Tax';
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
+        }
+
+        let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
 
         if(templateList[localeIndex])
           context.extraInfo.templateId = templateList[localeIndex];
@@ -68,82 +75,131 @@ const bills = {
         if(bills.length === 1) {
           let bill = bills[0];
           dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
+          dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+          let singleRecordMessage = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
+          singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
+          singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
+          singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
+          singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+          singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+          singleRecordMessage = singleRecordMessage.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
+          dialog.sendMessage(context, singleRecordMessage);
 
-          let params=[];
-          params.push(bill.id);
-          params.push(bill.payerName);
-          params.push("₹ "+bill.dueAmount);
-          params.push(bill.dueDate);
+          // let params=[];
+          // params.push(bill.id);
+          // params.push(bill.payerName);
+          // params.push("₹ "+bill.dueAmount);
+          // params.push(bill.dueDate);
 
-          let urlComponemt = bill.paymentLink.split('/');
-          let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+          // let urlComponemt = bill.paymentLink.split('/');
+          // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
 
-          var templateContent = {
-            output: context.extraInfo.templateId,
-            type: "template",
-            params: params,
-            bttnUrlComponent: bttnUrlComponent
-          };
+          // var templateContent = {
+          //   output: context.extraInfo.templateId,
+          //   type: "template",
+          //   params: params,
+          //   bttnUrlComponent: bttnUrlComponent
+          // };
 
-          dialog.sendMessage(context, templateContent);
+          // dialog.sendMessage(context, templateContent);
         } else {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
           if(services.length === serviceSet.size) {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
 
-              let params=[];
-              params.push(bill.id);
-              params.push(bill.payerName);
-              params.push("₹ "+bill.dueAmount);
-              params.push(bill.dueDate);
+              // let params=[];
+              // params.push(bill.id);
+              // params.push(bill.payerName);
+              // params.push("₹ "+bill.dueAmount);
+              // params.push(bill.dueDate);
+              let multipleRecordsMessage = dialog.get_message(messages.personalBills.multipleRecords.billTemplate, context.user.locale);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{service}}',serviceName);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
 
-              let urlComponemt = bill.paymentLink.split('/');
-              let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+              // let urlComponemt = bill.paymentLink.split('/');
+              // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
 
-              var templateContent = {
-                output: context.extraInfo.templateId,
-                type: "template",
-                params: params,
-                bttnUrlComponent: bttnUrlComponent
-              };
+              // var templateContent = {
+              //   output: context.extraInfo.templateId,
+              //   type: "template",
+              //   params: params,
+              //   bttnUrlComponent: bttnUrlComponent
+              // };
 
               if(i==bills.length-1)
-                dialog.sendMessage(context, templateContent);
+                dialog.sendMessage(context, multipleRecordsMessage);
               else
-                dialog.sendMessage(context, templateContent, false);
+                dialog.sendMessage(context, multipleRecordsMessage, false);
             }
           } else {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
 
-              let params=[];
-              params.push(bill.id);
-              params.push(bill.payerName);
-              params.push("₹ "+bill.dueAmount);
-              params.push(bill.dueDate);
+              // let params=[];
+              // params.push(bill.id);
+              // params.push(bill.payerName);
+              // params.push("₹ "+bill.dueAmount);
+              // params.push(bill.dueDate);
+              let multipleRrdsSameServiceMsgs = dialog.get_message(messages.personalBills.multipleRecordsSameService.billTemplate, context.user.locale);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{service}}',serviceName);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}',paymenturlShortnerEndpoint+'/'+bill.id);
 
-              let urlComponemt = bill.paymentLink.split('/');
-              let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+              // let urlComponemt = bill.paymentLink.split('/');
+              // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
 
-              var templateContent = {
-                output: context.extraInfo.templateId,
-                type: "template",
-                params: params,
-                bttnUrlComponent: bttnUrlComponent
-              };
+              // var templateContent = {
+              //   output: context.extraInfo.templateId,
+              //   type: "template",
+              //   params: params,
+              //   bttnUrlComponent: bttnUrlComponent
+              // };
 
               if(i == bills.length-1)
-                dialog.sendMessage(context, templateContent);
+                dialog.sendMessage(context, multipleRrdsSameServiceMsgs);
               else
-                dialog.sendMessage(context, templateContent, false);            }
+                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);            
+            }
           }
         }
       }),
-      always: '#searchBillInitiate'
+      // always: '#searchBillInitiate'
+      always: [        
+        {
+          target: '#paytmLinkForERPWnS',
+          cond: (context) => context.service == 'WS' || context.service == 'SW'
+        },
+        {
+          target: '#searchBillInitiate',
+        }
+      ]
+    },
+    paytmLinkForERPWnS:{
+      id: 'paytmLinkForERPWnS',
+      initial: 'process',
+      states: {
+        process: {
+          onEntry: assign((context,event) => {
+            let message = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
+            dialog.sendMessage(context, message, true);
+          })
+        }
+      }
     },
     searchBillInitiate: {
       id: 'searchBillInitiate',
@@ -838,6 +894,10 @@ let messages = {
   endStatement: {
     en_IN: "👉 To go back to the main menu, type and send *mseva*",
     hi_IN: "👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और भेजें *mseva*"
+  },
+  paymentDisclaimer: {
+    en_IN: '👉  By clicking on the link you confirm that tax calculated is correct',
+    hi_IN: '👉 लिंक पर क्लिक करके आप पुष्टि करते हैं कि कर की गणना सही है'
   }
 }
 let grammer = {

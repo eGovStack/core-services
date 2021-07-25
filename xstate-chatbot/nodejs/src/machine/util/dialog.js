@@ -79,6 +79,12 @@ function sendMessage(context, message, immediate = true) {
 }
 
 let global_messages = {
+  wns_paytmlink: {
+    paytm: {
+      en_IN: '\nTo pay the Water and Sewerage dues by clicking on the link below\nhttps:/bills.pe/w92Qx',
+      hi_IN: '\nनीचे दिए गए लिंक पर क्लिक करके पानी और सीवरेज बकाया का भुगतान करना\nhttps:/bills.pe/w92Qx'
+    }
+  },
   error: {
     retry: {
       en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
