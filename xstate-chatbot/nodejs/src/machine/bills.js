@@ -85,16 +85,15 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
           singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
           if(serviceName != 'Water and Sewerage'){
-            console.log('if condition singleRecordMessage: '+ singleRecordMessage);
             singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
           }
           else{
-            console.log('inside wns else singleRecordMessage: '+ singleRecordMessage);
             singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paytmLinkWnS);
           }
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
           dialog.sendMessage(context, singleRecordMessage);
+          console.log(paytmLinkWnS);
 
           // let params=[];
           // params.push(bill.id);
@@ -770,7 +769,7 @@ let messages = {
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
     multipleRecords: {
@@ -778,7 +777,7 @@ let messages = {
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
     multipleRecordsSameService: {
@@ -786,7 +785,7 @@ let messages = {
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{PaymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     }
   },
