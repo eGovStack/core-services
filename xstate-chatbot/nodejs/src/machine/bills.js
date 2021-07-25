@@ -193,6 +193,18 @@ const bills = {
       }),
       always: '#searchBillInitiate'
     },
+    paytmLinkForERPWnS:{
+      id: 'paytmLinkForERPWnS',
+      initial: 'process',
+      states: {
+        process: {
+          onEntry: assign((context,event) => {
+            let message = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
+            dialog.sendMessage(context, message, true);
+          })
+        }
+      }
+    },
     searchBillInitiate: {
       id: 'searchBillInitiate',
       initial: 'question',
