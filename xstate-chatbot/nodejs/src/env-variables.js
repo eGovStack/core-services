@@ -24,7 +24,7 @@ const envVariables = {
     dateFormat: process.env.DATEFORMAT || 'DD/MM/YYYY',
     timeZone: process.env.TIMEZONE || 'Asia/Kolkata',
     msgId: process.env.MSG_ID || '20170310130900',
-    paytmWnSLink: process.env.PAYTM_WNS_LINK || 'https:/bills.pe/w92Qx/',
+    paytmWnSLink: process.env.PAYTM_WNS_LINK || 'https://bills.setu.co/cou/biller-details/0679c024-6082-428a-b650-453d10d2469e/Water/PMC000000PUN01',
 
     postgresConfig: {
         dbHost: process.env.DB_HOST || 'localhost',
