@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.3.2 - 2021-07-26
+
+- Added UserInfo to RequstInfo while calling APIs
+- Added support for localization
+
 ## 1.3.1 - 2021-05-11
 
 - Made timezome configurable
