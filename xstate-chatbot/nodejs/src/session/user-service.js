@@ -21,6 +21,7 @@ class UserService {
     }
 
     user = await this.enrichuserDetails(user);
+    console.log("User Response:",user);
     return user;
   }
 
@@ -37,11 +38,13 @@ class UserService {
     if(response.status === 200) {
       let body = await response.json();
       user.userInfo.name = body.name
+      console.log("user name enrichment:",body.name);
     } 
     return user;
   }
 
   async loginUser(mobileNumber, tenantId) {
+    console.log("Inside Login user");
     let data = new URLSearchParams();
     data.append('grant_type', 'password');
     data.append('scope', 'read');
