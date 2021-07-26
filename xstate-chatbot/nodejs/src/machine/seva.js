@@ -289,8 +289,8 @@ const sevaMachine = Machine({
                 if(context.user.name)
                   message = message.replace('{{name}}', context.user.name);
                 else 
-                  message = message.replace(' {{name}}', 'Citizen');
-                dialog.sendMessage(context, message, false);
+                  message = message.replace('{{name}}', 'Citizen');
+                dialog.sendMessage(context, message, true);
               }),
               always: '#sevamenu'
         }
@@ -304,7 +304,7 @@ const sevaMachine = Machine({
         if(context.user.name)
           message = message.replace('{{name}}', context.user.name);
         else 
-          message = message.replace(' {{name}}', '');
+          message = message.replace('{{name}}', '');
         dialog.sendMessage(context, message, false);
       }),
       always: '#sevamenu'
