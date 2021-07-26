@@ -758,8 +758,8 @@ const bills = {
 
 let messages = {
   paytmPaymentMessage: {
-    en_IN: '\nTo pay the Water and Sewerage dues by clicking on the link below\n{{paymentLink}}',
-    hi_IN: '\nनीचे दिए गए लिंक पर क्लिक करके पानी और सीवरेज बकाया का भुगतान करना\n{{paymentLink}}'
+    en_IN: '\n👉 To pay your water and sewerage bill kindly click on the below link\n{{paymentLink}}',
+    hi_IN: '\n👉 अपने पानी और सीवरेज बिल का भुगतान करने के लिए कृपया नीचे दिए गए लिंक पर क्लिक करें\n{{paymentLink}}'
   },
   personalBills: {
     singleRecord: {
@@ -904,8 +904,8 @@ let messages = {
     hi_IN: "👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और भेजें *mseva*"
   },
   paymentDisclaimer: {
-    en_IN: '👉  By clicking on the link you confirm that tax calculated is correct',
-    hi_IN: '👉 लिंक पर क्लिक करके आप पुष्टि करते हैं कि कर की गणना सही है'
+    en_IN: '👉 By clicking on this link you confirm that your calculated property tax is correct',
+    hi_IN: '👉 इस लिंक पर क्लिक करके आप पुष्टि करते हैं कि आपका परिकलित संपत्ति कर सही है'
   }
 }
 let grammer = {
