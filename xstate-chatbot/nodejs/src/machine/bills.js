@@ -24,6 +24,10 @@ const bills = {
         src: (context) => billService.fetchBillsForUser(context.user,context.service),
         onDone: [
           {
+            target: '#paytmLinkForERPWnS',
+            cond: (context) => context.service == 'WS' || context.service == 'SW'
+          },
+          {
             target: 'personalBills',
             cond: (context, event) => {
               return event.data.pendingBills;
@@ -84,12 +88,8 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
           singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-          if(serviceName != 'Water and Sewerage'){
-            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
-          }
-          else{
-            singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paytmLinkWnS);
-          }
+          singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+          
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
           dialog.sendMessage(context, singleRecordMessage);
@@ -133,11 +133,8 @@ const bills = {
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-              if(serviceName != 'Water and Sewerage')
-                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
-              else
-                multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paytmLinkWnS);
-
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+             
 
               // let urlComponemt = bill.paymentLink.split('/');
               // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
@@ -172,11 +169,7 @@ const bills = {
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-              if(serviceName != 'Water and Sewerage')
-                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
-              else
-                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paytmLinkWnS);
-
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
 
               // let urlComponemt = bill.paymentLink.split('/');
               // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
@@ -204,7 +197,8 @@ const bills = {
       states: {
         process: {
           onEntry: assign((context,event) => {
-            let message = dialog.get_message(dialog.global_messages.wns_paytmlink.paytm, context.user.locale);
+            let message = dialog.get_message(messages.paytmPaymentMessage, context.user.locale);
+            message = message.replace('{{paymentLink}}',config.paytmWnSLink);
             dialog.sendMessage(context, message, true);
           }),
           always : '#searchBillInitiate'          
@@ -763,6 +757,10 @@ const bills = {
 };
 
 let messages = {
+  paytmPaymentMessage: {
+    en_IN: '\nTo pay the Water and Sewerage dues by clicking on the link below\n{{paymentLink}}',
+    hi_IN: '\nनीचे दिए गए लिंक पर क्लिक करके पानी और सीवरेज बकाया का भुगतान करना\n{{paymentLink}}'
+  },
   personalBills: {
     singleRecord: {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
