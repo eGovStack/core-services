@@ -60,8 +60,6 @@ const bills = {
         let localeList = config.supportedLocales.split(',');
         let localeIndex = localeList.indexOf(context.user.locale);
         let serviceName = '';
-        let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
-        let paytmLinkWnS = config.paytmWnSLink;
         let serviceId = '';
 
         if(context.service == 'WS' || context.service == 'SW'){
@@ -92,12 +90,11 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
           singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-          singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+          singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
           
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
           dialog.sendMessage(context, singleRecordMessage);
-          console.log(paytmLinkWnS);
 
           // let params=[];
           // params.push(bill.id);
@@ -138,7 +135,7 @@ const bills = {
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-              multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
              
 
               // let urlComponemt = bill.paymentLink.split('/');
@@ -175,7 +172,7 @@ const bills = {
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',paymenturlShortnerEndpoint+'/'+bill.id);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
 
               // let urlComponemt = bill.paymentLink.split('/');
               // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
