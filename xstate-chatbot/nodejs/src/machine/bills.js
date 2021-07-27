@@ -62,13 +62,16 @@ const bills = {
         let serviceName = '';
         let paymenturlShortnerEndpoint = config.egovServices.egovServicesHost+config.egovServices.urlShortnerEndpoint;
         let paytmLinkWnS = config.paytmWnSLink;
+        let serviceId = '';
 
         if(context.service == 'WS' || context.service == 'SW'){
           serviceName='Water and Sewerage';
+          serviceId=dialog.get_message(messages.personalBills.serviceConnectionNo, context.user.locale);
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
         }      
         else{
           serviceName='Property Tax';
+          serviceId=dialog.get_message(messages.personalBills.servicePropertyID, context.user.locale);
           templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
         }
 
@@ -84,6 +87,7 @@ const bills = {
           let singleRecordMessage = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
           console.log('singleRecordMessage: '+ singleRecordMessage);
           singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
+          singleRecordMessage = singleRecordMessage.replace('{{serviceid}}',serviceId);
           singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
@@ -129,6 +133,7 @@ const bills = {
               // params.push(bill.dueDate);
               let multipleRecordsMessage = dialog.get_message(messages.personalBills.multipleRecords.billTemplate, context.user.locale);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{service}}',serviceName);
+              multipleRecordsMessage = multipleRecordsMessage.replace('{{serviceid}}',serviceId);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
@@ -165,6 +170,7 @@ const bills = {
               // params.push(bill.dueDate);
               let multipleRrdsSameServiceMsgs = dialog.get_message(messages.personalBills.multipleRecordsSameService.billTemplate, context.user.locale);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{service}}',serviceName);
+              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{serviceid}}',serviceId);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
@@ -762,11 +768,19 @@ let messages = {
     hi_IN: '\n👉 अपने पानी और सीवरेज बिल का भुगतान करने के लिए कृपया नीचे दिए गए लिंक पर क्लिक करें\n{{paymentLink}}'
   },
   personalBills: {
+    servicePropertyID: {
+      en_IN: 'Property ID',
+      hi_IN: 'प्रॉपर्टी आईडी'
+    },
+    serviceConnectionNo: {
+      en_IN: 'Connection No',
+      hi_IN: 'कनेक्शन संख्या'
+    },
     singleRecord: {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
         hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
@@ -774,7 +788,7 @@ let messages = {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
         hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
@@ -782,7 +796,7 @@ let messages = {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*Connection No*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
         hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     }
