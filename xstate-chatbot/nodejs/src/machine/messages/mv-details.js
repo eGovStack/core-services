@@ -67,15 +67,10 @@ const messages = {
   },
 
   mvMobileNumber: {
-    prompt: {
-      en_IN: 'Please Enter your Mobile Number for Validation',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਪ੍ਰਮਾਣਿਕਤਾ ਲਈ ਆਪਣਾ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ',
-      hi_IN: 'कृपया सत्यापन के लिए अपना मोबाइल नंबर दर्ज करें',
-    },
     error: {
-      en_IN: 'Your Entered Mobile Number is Invalid',
-      pa_IN: 'ਤੁਹਾਡਾ ਦਰਜ ਕੀਤਾ ਮੋਬਾਈਲ ਨੰਬਰ ਅਵੈਧ ਹੈ',
-      hi_IN: 'आपका दर्ज किया गया मोबाइल नंबर अमान्य है',
+      en_IN: 'You are Not A Registered MV officer . Please Register ',
+      pa_IN: 'ਤੁਸੀਂ ਰਜਿਸਟਰਡ ਐਮਵੀ ਅਧਿਕਾਰੀ ਨਹੀਂ ਹੋ। ਕਿਰਪਾ ਕਰਕੇ ਰਜਿਸਟਰ ਕਰੋ',
+      hi_IN: 'आप एक पंजीकृत एमवी अधिकारी नहीं हैं। कृपया पंजीकरण करें',
     },
   },
 

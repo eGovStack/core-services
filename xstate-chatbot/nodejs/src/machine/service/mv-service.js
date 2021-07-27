@@ -25,7 +25,7 @@ class MVService {
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       const data = await response.json();
-      if (data.response == 1) {
+      if (data.success == 1) {
         console.log('MV Fetch data through Mobile Number.');
       } else {
         console.error(`Error while fetching MV data through Mobile Number.\nStatus: ${data.success}; Response: ${JSON.stringify(data.message)}`);
