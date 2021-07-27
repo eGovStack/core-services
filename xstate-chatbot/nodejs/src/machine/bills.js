@@ -774,14 +774,14 @@ let messages = {
     },
     serviceConnectionNo: {
       en_IN: 'Connection No',
-      hi_IN: 'कनेक्शन संख्या'
+      hi_IN: 'कनेक्शन नंबर'
     },
     singleRecord: {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'निम्नलिखित बिल मिले:',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
     multipleRecords: {
@@ -789,7 +789,7 @@ let messages = {
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     },
     multipleRecordsSameService: {
@@ -797,7 +797,7 @@ let messages = {
       hi_IN: 'आपके मोबाइल नंबर के खिलाफ पाए गए बिल: ',
       billTemplate: {
         en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} बिल*\n\n*कनेक्शन नंबर*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
+        hi_IN: '👉  *{{service}} बिल*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*देय तिथि *\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}'
       }
     }
   },
