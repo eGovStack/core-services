@@ -353,8 +353,10 @@ public class UserRepository {
     }
 
     private void validateAndEnrichRoles(List<User> users) {
+
         if (users.isEmpty())
             return;
+
         Map<String, Role> roleCodeMap = fetchRolesFromMdms(users);
 
         for (User user : users) {
