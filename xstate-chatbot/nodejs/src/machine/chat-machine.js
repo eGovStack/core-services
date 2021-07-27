@@ -41,7 +41,7 @@ const chatStateMachine = Machine({
                target: '#gisFlow',
              },
              {
-              cond: (context) => context.message == 'Pbsbm',
+              cond: (context) => context.message == 'Pbsbmu',
                target: '#mvFlow',
              },
             {

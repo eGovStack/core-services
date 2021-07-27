@@ -10,11 +10,40 @@ const { mvService } = require('./service/service-loader');
 
 const mvFlow = {
   id: 'mvFlow',
-  initial: 'selectLanguagemv',
+  initial: 'mvMobileNumber',
   onEntry: assign((context, event) => {
     context.slots.mv = {};
   }),
   states: {
+    mvMobileNumber: {
+      id: 'mvMobileNumber',
+      initial: 'process',
+      states: {
+        process: {
+          invoke: {
+            src: (context, event) => mvService.getMVDetailsFromMobileNumber(context.user.mobileNumber),
+            onDone: [
+              {
+                cond: (context, event) => event.data.success == '1',
+                actions: assign((context, event) => {
+                  console.log(context.user.mobileNumber)
+                  context.slots.mv.user_id = event.data.response.user_id;
+                }),
+                target: '#selectLanguagemv',
+              },
+              {
+                target: 'error',
+              },
+            ],
+          },
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.mvMobileNumber.error), context.user.locale);
+          }),
+        },
+      },
+    },
     selectLanguagemv: {
       id: 'selectLanguagemv',
       initial: 'prompt',
@@ -44,7 +73,7 @@ const mvFlow = {
               actions: assign((context, event) => {
                 context.user.locale = context.intention;
               }),
-              target: '#mvMobileNumber',
+              target: '#mvMenu',
             },
           ],
         },
@@ -56,47 +85,6 @@ const mvFlow = {
         },
       },
     }, // selectLanguagemv
-    mvMobileNumber: {
-      id: 'mvMobileNumber',
-      initial: 'prompt',
-      states: {
-        prompt: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.mvMobileNumber.prompt, context.user.locale));
-          }),
-          on: {
-            USER_MESSAGE: 'process',
-          },
-        },
-        process: {
-          onEntry: assign((context, event) => {
-            context.message = dialog.get_input(event, false);
-          }),
-          invoke: {
-            src: (context, event) => mvService.getMVDetailsFromMobileNumber(context.message),
-            onDone: [
-              {
-                cond: (context, event) => event.data.success == '1',
-                actions: assign((context, event) => {
-                  context.slots.mv.user_id = event.data.response.user_id;
-
-                }),
-                target: '#mvMenu',
-              },
-              {
-                target: 'error',
-              },
-            ],
-          },
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.mvMobileNumber.error), false);
-          }),
-          always: 'prompt',
-        },
-      },
-    },
     mvMenu: {
       id: 'mvMenu',
       initial: 'prompt',
@@ -313,7 +301,7 @@ const mvFlow = {
         process: {
           onEntry: assign((context, event) => {
             const input = dialog.get_input(event);
-            if (input >= 0 && input <= 108) {
+            if (input >= 1) {
               context.isValid = true;
               context.slots.mv.noofHouseholds = input;
             } else {
@@ -396,7 +384,7 @@ const mvFlow = {
         process: {
           onEntry: assign((context, event) => {
             const input = dialog.get_input(event);
-            if (input >= 0 && input <= 108) {
+            if (input >= 1) {
               context.isValid = true;
               context.slots.mv.noOfParticipantsInTraining = input;
             } else {
