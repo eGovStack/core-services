@@ -25,6 +25,7 @@ public class CoreIndexMessageListener implements MessageListener<String, String>
 	public void onMessage(ConsumerRecord<String, String> data) {
 		log.info("Topic: " + data.topic());
 		try {
+		    log.info(data.value());
 			indexerService.esIndexer(data.topic(), data.value());
 		} catch (Exception e) {
 			log.error("error while indexing: ", e);
