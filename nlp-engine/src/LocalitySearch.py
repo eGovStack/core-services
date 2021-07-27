@@ -12,7 +12,10 @@ def findLocality(city, locality):
     
     payload = {"RequestInfo":{}}
     payload = json.dumps(payload)
-    url= EGOV_LOCATION_HOST + EGOV_LOCATION_SEARCH_URL + "?tenantId="+str(city.lower())
+    url= EGOV_LOCATION_HOST + EGOV_LOCATION_SEARCH_URL + "?tenantId="+str(city.lower()) 
+
+    if HIERARCHY_TYPE_CODE is not None:
+        url = url + "&hierarchyTypeCode=" + HIERARCHY_TYPE_CODE
 
     response=requests.request("POST",url, data=payload, headers={"Content-Type": "application/json"})
 
