@@ -41,6 +41,7 @@ public class PTCustomIndexMessageListener implements MessageListener<String, Str
 		ObjectMapper mapper = indexerUtils.getObjectMapper();
 		try {
 			PropertyRequest propertyRequest = mapper.readValue(data.value(), PropertyRequest.class);
+			log.info(mapper.writeValueAsString(propertyRequest));
 			if (data.topic().equals(ptUpdateTopic))
 				propertyRequest = ptCustomDecorator.dataTransformForPTUpdate(propertyRequest);
 			propertyRequest.setProperties(ptCustomDecorator.transformData(propertyRequest.getProperties()));
