@@ -188,10 +188,10 @@ class BillService {
     }
 
     if(searchParamOption === 'consumerNumber' || searchParamOption === 'propertyId' || searchParamOption === 'connectionNumber'){
-        if(service === 'PT'){
-          let regexp = new RegExp(state+'-PT-\\d{4}-\\d{2}-\\d{2}-\\d+$');
-          return regexp.test(paramInput);
-        }
+        // if(service === 'PT'){
+        //   let regexp = new RegExp(state+'-PT-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+        //   return regexp.test(paramInput);
+        // }
         if(service === 'WS'){
           //todo
           let regexp = new RegExp('^(WS|SW)/\\d{3}/\\d{4}-\\d{2}/\\d+$');

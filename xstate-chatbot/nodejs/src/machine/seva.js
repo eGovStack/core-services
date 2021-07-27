@@ -290,7 +290,7 @@ const sevaMachine = Machine({
                   message = message.replace('{{name}}', context.user.name);
                 else 
                   message = message.replace('{{name}}', 'Citizen');
-                dialog.sendMessage(context, message, true);
+                dialog.sendMessage(context, message, false);
               }),
               always: '#sevamenu'
         }
