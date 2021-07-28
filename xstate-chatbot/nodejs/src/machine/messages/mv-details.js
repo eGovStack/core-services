@@ -114,16 +114,16 @@ const messages = {
       hi_IN: 'प्रशिक्षण आयोजित (हां/नहीं)',
     },
     error: {
-      en_IN: 'Please Enter the Valid Input (Yes/No) ',
-      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ ਇਨਪੁਟ ਦਿਓ (ਹਾਂ / ਨਹੀਂ)',
-      hi_IN: 'कृपया मान्य इनपुट दर्ज करें (हां/नहीं)',
+      en_IN: 'Please Press 1 or 2 Only ',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਸਿਰਫ 1 ਜਾਂ 2 ਦਬਾਓ',
+      hi_IN: 'कृपया 1 या 2 ही दबाएं',
     }
   },
   noOfParticipantsInTraining: {
     prompt: {
-      en_IN: 'Please Total No Of Participants in Training',
-      pa_IN: 'ਕ੍ਰਿਪਾ ਕਰਕੇ ਸਿਖਲਾਈ ਵਿਚ ਹਿੱਸਾ ਲੈਣ ਵਾਲਿਆਂ ਦੀ ਕੁੱਲ ਗਿਣਤੀ',
-      hi_IN: 'कृपया प्रशिक्षण में प्रतिभागियों की कुल संख्या',
+      en_IN: 'Please Enter Total No Of Participants in Training',
+      pa_IN: 'ਕ੍ਰਿਪਾ ਕਰਕੇ ਸਿਖਲਾਈ ਵਿਚ ਹਿੱਸਾ ਲੈਣ ਵਾਲਿਆਂ ਦੀ ਕੁੱਲ ਗਿਣਤੀ ਦਿਓ',
+      hi_IN: 'कृपया प्रशिक्षण में प्रतिभागियों की कुल संख्या दर्ज करें',
     },
     error: {
       en_IN: 'Please Enter the Valid No of Participants  ',
@@ -156,6 +156,18 @@ const messages = {
       en_IN: 'please Any other work (Specify)',
       pa_IN: 'ਕ੍ਰਿਪਾ ਕਰਕੇ ਕੋਈ ਹੋਰ ਕੰਮ (ਨਿਰਧਾਰਤ ਕਰੋ)',
       hi_IN: 'कृपया कोई अन्य कार्य (निर्दिष्ट करें)',
+    }
+  },
+  ulbName: {
+    prompt: {
+      en_IN: 'Enter ULB Name',
+      pa_IN: 'ULB ਨਾਮ ਦਰਜ ਕਰੋ',
+      hi_IN: 'यूएलबी नाम दर्ज करें',
+    },
+    error: {
+      en_IN: 'please Enter ULB Name',
+      pa_IN: 'ਕ੍ਰਿਪਾ ਕਰਕੇ ULB ਨਾਮ ਦਰਜ ਕਰੋ',
+      hi_IN: 'कृपया नाम दर्ज करें',
     }
   },
   submitmvIntermediateReport: {
