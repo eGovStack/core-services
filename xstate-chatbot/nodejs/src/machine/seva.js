@@ -297,7 +297,7 @@ const sevaMachine = Machine({
                   else
                     message = message.replace(' {{name}}', 'Citizen');
                   dialog.sendMessage(context, message);
-                  await new Promise(resolve => setTimeout(resolve, 3000));
+                  await new Promise(resolve => setTimeout(resolve, 4000));
                 })();
               }),
               always: '#sevamenu'
