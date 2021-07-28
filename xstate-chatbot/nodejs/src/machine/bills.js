@@ -335,7 +335,6 @@ const bills = {
               let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
               message = message.replace(/{{searchOption}}/g,optionMessage);
               dialog.sendMessage(context, message, true);
-
             })();
 
           }),
@@ -400,13 +399,20 @@ const bills = {
       states: {
         question: {
           onEntry: assign((context, event) => {
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
-            let message = dialog.get_message(messages.paramInput.question, context.user.locale);
-            let optionMessage = dialog.get_message(option, context.user.locale);
-            let exampleMessage = dialog.get_message(example, context.user.locale);
-            message = message.replace('{{option}}', optionMessage);
-            message = message.replace('{{example}}', exampleMessage);
-            dialog.sendMessage(context, message, true);
+            (async() => { 
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+              context.slots.bills.searchParamOption = searchOptions[0];
+              let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+              let message = dialog.get_message(messages.paramInput.question, context.user.locale);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+              let exampleMessage = dialog.get_message(example, context.user.locale);
+              message = message.replace('{{option}}', optionMessage);
+              message = message.replace('{{example}}', exampleMessage);
+              dialog.sendMessage(context, message, true);
+
+            })();
+            
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -433,15 +439,11 @@ const bills = {
         },
         re_enter: {
           onEntry: assign((context, event) => {
-            (async() => { 
-              let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
-              let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
-              let optionMessage = dialog.get_message(option, context.user.locale);
-              message = message.replace('{{option}}', optionMessage);
-              dialog.sendMessage(context, message, true);
-              await new Promise(resolve => setTimeout(resolve, 2000));
-            })();
-            
+            let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
+            let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
+            let optionMessage = dialog.get_message(option, context.user.locale);
+            message = message.replace('{{option}}', optionMessage);
+            dialog.sendMessage(context, message, true);
           }),
           always:{
             target: 'question'
