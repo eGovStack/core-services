@@ -191,6 +191,8 @@ const bills = {
             }
           }
         }
+        let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
+        dialog.sendMessage(context, endStatement);
       }),
       always: '#searchBillInitiate'
     },
