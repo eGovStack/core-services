@@ -92,7 +92,8 @@ const sevaMachine = Machine({
                 (async() => {          
                   await new Promise(resolve => setTimeout(resolve, 4000)); 
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
-                  dialog.sendMessage(context, nameInformationMessage);   
+                  dialog.sendMessage(context, nameInformationMessage);  
+                  await new Promise(resolve => setTimeout(resolve, 2000));  
                   let message = dialog.get_message(messages.onboarding.onboardingName.question, context.user.locale);
                   dialog.sendMessage(context, message);
                 })();
@@ -128,7 +129,8 @@ const sevaMachine = Machine({
                 (async() => {  
                   await new Promise(resolve => setTimeout(resolve, 4000));
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
-                  dialog.sendMessage(context, nameInformationMessage, false);               
+                  dialog.sendMessage(context, nameInformationMessage); 
+                  await new Promise(resolve => setTimeout(resolve, 2000));              
                   let message = dialog.get_message(messages.onboarding.onBoardingUserProfileConfirmation.question, context.user.locale);
                   message = message.replace('{{name}}', context.user.name);
                   dialog.sendMessage(context, message);
@@ -261,8 +263,11 @@ const sevaMachine = Machine({
         onboardingThankYou: {
           id: 'onboardingThankYou',
           onEntry: assign((context, event) => {
-            let message = dialog.get_message(messages.onboarding.onboardingThankYou, context.user.locale);
-            dialog.sendMessage(context, message);
+            (async() => {
+              let message = dialog.get_message(messages.onboarding.onboardingThankYou, context.user.locale);
+              dialog.sendMessage(context, message);
+              await new Promise(resolve => setTimeout(resolve, 3000));
+            })();
           }),
           always: '#sevamenu'
         },
@@ -285,12 +290,15 @@ const sevaMachine = Machine({
         },
         invoke: {
               onEntry: assign((context, event) => {
-                var message = dialog.get_message(messages.welcome, context.user.locale);
-                if(context.user.name)
-                  message = message.replace('{{name}}', context.user.name);
-                else 
-                  message = message.replace(' {{name}}', 'Citizen');
-                dialog.sendMessage(context, message);
+                (async() => {  
+                  var message = dialog.get_message(messages.welcome, context.user.locale);
+                  if(context.user.name)
+                    message = message.replace('{{name}}', context.user.name);
+                  else
+                    message = message.replace(' {{name}}', 'Citizen');
+                  dialog.sendMessage(context, message);
+                  await new Promise(resolve => setTimeout(resolve, 3000));
+                })();
               }),
               always: '#sevamenu'
         }
