@@ -239,7 +239,7 @@ const pgr =  {
                             context.slots.pgr["complaint"]= context.intention;
                           })
                         },
-                        {
+                        { 
                           target: 'error'
                         }
                       ]
@@ -885,7 +885,7 @@ let messages = {
           },
           otherType: {
             en_IN: 'Others',
-            hi_IN: 'अन्य',
+            hi_IN: 'Others',
             pa_IN: 'ਹੋਰ'
           }
         }

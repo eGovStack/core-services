@@ -495,7 +495,8 @@ let messages = {
   locale : {
     question: {
       en_IN: "To select the language simply type and send the number of the preferred option  👇\n\n1.   English\n2.   हिन्दी\n3.   ਪੰਜਾਬੀ",
-      hi_IN: "कृपया अपनी पसंदीदा भाषा चुनें\n1. English\n2. हिंदी"
+      hi_IN: "कृपया अपनी पसंदीदा भाषा चुनें\n1. English\n2. हिंदी\n3. ਪੰਜਾਬੀ",
+      pa_IN: 'ਭਾਸ਼ਾ ਨੂੰ ਚੁਣਨ ਲਈ ਬਸ ਟਾਈਪ ਕਰੋ ਅਤੇ ਪਸੰਦੀਦਾ ਵਿਕਲਪ ਦੀ ਸੰਖਿਆ ਭੇਜੋ 👇\n\n1.   ਅੰਗਰੇਜ਼ੀ\n2.   ਹਿੰਦੀ\n3.   ਪੰਜਾਬੀ'
     }
   },
   welcome: {
@@ -523,7 +524,9 @@ let grammer = {
   locale: {
     question: [
       {intention: 'en_IN', recognize: ['1', 'english']},
-      {intention: 'hi_IN', recognize: ['2', 'hindi']}
+      {intention: 'hi_IN', recognize: ['2', 'hindi']},
+      {intention: 'pa_IN', recognize: ['3', 'punjabi']}
+
     ]
   },
   menu: {
@@ -533,7 +536,7 @@ let grammer = {
       {intention: 'ws_bills', recognize: ['3', 'wsbill']},
       {intention: 'pt_bills', recognize: ['4', 'ptbill']},
       {intention: 'receipts', recognize: ['5','receipt']},
-      {intention: 'locale', recognize: ['6','language', 'english', 'hindi']}
+      {intention: 'locale', recognize: ['6','language', 'english', 'hindi', 'punjabi']}
     ]
   },
   confirmation: {
