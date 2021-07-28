@@ -499,7 +499,7 @@ let messages = {
     }
   },
   welcome: {
-    en_IN: 'Dear {{name}},\n\nWelcome to mSeva 🙏.\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.\n',
+    en_IN: 'Dear {{name}},\n\nWelcome to mSeva Punjab 🙏.\n\nNow you can file/ track your complaints and pay your bills via WhatsApp.\n',
     hi_IN: 'नमस्ते {{name}},\n\nmSeva पंजाब में आपका स्वागत है 🙏।\n\nअब आप WhatsApp द्वारा कई सुविधाओं का लाभ ले सकते है जैसे शिकायत दर्ज करना, बिल का भुगतान करना।'
   },
   sevamenu: {
