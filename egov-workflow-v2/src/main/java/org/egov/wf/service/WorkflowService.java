@@ -190,6 +190,26 @@ public class WorkflowService {
         criteria.setStatus(actionableStatuses);*/
 
         util.enrichStatusesInSearchCriteria(requestInfo, criteria);
+
+        // The following code block ensures that the statuses belong to the existing workflow business service config
+        if(criteria.getIsStatusCountCall()){
+            BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
+            businessServiceSearchCriteria.setTenantId(criteria.getTenantId());
+            businessServiceSearchCriteria.setBusinessServices(Collections.singletonList(criteria.getBusinessService()));
+            List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
+            Set<String> allValidStatuses = new HashSet<>();
+            for(State state : businessServices.get(0).getStates()){
+                allValidStatuses.add(state.getUuid());
+            }
+            List<String> filteredStatuses = new ArrayList<>();
+            for(String status : criteria.getStatus()){
+                if(allValidStatuses.contains(status)){
+                    filteredStatuses.add(status);
+                }
+            }
+            criteria.setStatus(filteredStatuses);
+        }
+
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
 
 
