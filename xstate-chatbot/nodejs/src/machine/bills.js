@@ -421,8 +421,9 @@ const bills = {
         process: {
           onEntry: assign((context, event) => {
             let paramInput = event.message.input;
-            let slots = context.slots.bills;
-            context.isValid = billService.validateParamInput(context.service, slots.searchParamOption, paramInput);
+            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+            context.slots.bills.searchParamOption = searchOptions[0];
+            context.isValid = billService.validateParamInput(context.service, context.slots.bills.searchParamOption, paramInput);
             if(context.isValid) {
               context.slots.bills.paramInput = paramInput;
             }
@@ -439,6 +440,8 @@ const bills = {
         },
         re_enter: {
           onEntry: assign((context, event) => {
+            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+            context.slots.bills.searchParamOption = searchOptions[0];
             let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
             let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
             let optionMessage = dialog.get_message(option, context.user.locale);
