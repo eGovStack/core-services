@@ -886,7 +886,7 @@ let messages = {
           otherType: {
             en_IN: 'Others',
             hi_IN: 'Others',
-            pa_IN: 'ਹੋਰ'
+            pa_IN: 'Others'
           }
         }
       },

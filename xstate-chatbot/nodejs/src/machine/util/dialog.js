@@ -100,7 +100,7 @@ let global_messages = {
   },
   [INTENTION_GOBACK]: {
     en_IN : 'Go Back',
-    hi_IN : 'पीछे जाना'
+    hi_IN : 'Go Back'
   },
 }
 
