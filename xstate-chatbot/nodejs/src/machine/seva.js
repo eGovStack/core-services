@@ -289,15 +289,13 @@ const sevaMachine = Machine({
               ]
         },
         invoke: {
-              onEntry: assign((context, event) => {
-                (async() => {  
-                  var message = dialog.get_message(messages.welcome, context.user.locale);
-                  if(context.user.name)
-                    message = message.replace('{{name}}', context.user.name);
-                  else
-                    message = message.replace(' {{name}}', 'Citizen');
-                  dialog.sendMessage(context, message, true);
-                })();
+              onEntry: assign((context, event) => {  
+                var message = dialog.get_message(messages.welcome, context.user.locale);
+                if(context.user.name)
+                  message = message.replace('{{name}}', context.user.name);
+                else
+                  message = message.replace(' {{name}}', 'Citizen');
+                dialog.sendMessage(context, message, true);
               }),
               always: '#sevamenu'
         }
