@@ -204,7 +204,12 @@ const pgr =  {
                             let preamble = dialog.get_message(messages.fileComplaint.complaintType2Step.item.question.preamble, context.user.locale);
                             let localisationPrefix = 'CS_COMPLAINT_TYPE_';
                             let complaintType = localisationService.getMessageBundleForCode(localisationPrefix + context.slots.pgr.complaint.toUpperCase());
-                            preamble = preamble.replace('{{complaint}}',dialog.get_message(complaintType,context.user.locale));
+                            let complaint = dialog.get_message(context.slots.pgr.complaint,context.user.locale);
+                            if(complaint != undefined)
+                              preamble = preamble.replace('{{complaint}}', complaint);
+                            else
+                              preamble = preamble.replace('{{complaint}}', context.slots.pgr.complaint);
+                            
                             let {prompt, grammer} = dialog.constructListPromptAndGrammer(complaintItems, messageBundle, context.user.locale, false, true);
                             context.grammer = grammer; // save the grammer in context to be used in next step
                             dialog.sendMessage(context, `${preamble}${prompt}`);
