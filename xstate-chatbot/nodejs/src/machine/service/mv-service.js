@@ -119,6 +119,7 @@ class MVService {
     formdata.append("visit_to_school", mvreportdetail.visitSchoolOrReligiousInstitution);
     formdata.append("visit_to_mrf", mvreportdetail.visitMRFOrProcessingUnit);
     formdata.append("any_other_work", mvreportdetail.otherWork);
+    formdata.append("ulb_name", mvreportdetail.ulbName);
 
     var requestOptions = {
       method: 'POST',

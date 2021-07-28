@@ -483,13 +483,53 @@ const mvFlow = {
               target: 'error',
             },
             {
-              target: '#otherWork',
+              target: '#ulbName',
             },
           ],
         },
         error: {
           onEntry: assign((context, event) => {
             dialog.sendMessage(context, dialog.get_message(messages.trainingConducted.error), false);
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+    ulbName: {
+      id: 'ulbName',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.ulbName.prompt, context.user.locale));
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            const message = dialog.get_input(event, false);
+            if (event.message.type == 'text' && message.length < 100 && /^[ A-Za-z]+$/.test(message.trim())) {
+              context.slots.mv.ulbName = message;
+              context.validMessage = true;
+            } else {
+              context.validMessage = false;
+            }
+          }),
+          always: [
+            {
+              cond: (context) => context.validMessage,
+              target: '#otherWork',
+            },
+            {
+              target: 'error',
+            },
+          ],
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.ulbName.error), false);
           }),
           always: 'prompt',
         },
