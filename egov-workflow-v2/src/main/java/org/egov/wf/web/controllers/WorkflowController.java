@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.service.WorkflowService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.ProcessInstance;
@@ -38,14 +39,17 @@ public class WorkflowController {
 
     private final ResponseInfoFactory responseInfoFactory;
 
+    private final BusinessMasterService businessMasterService;
+
 
     @Autowired
     public WorkflowController(ObjectMapper objectMapper, HttpServletRequest request,
-                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory) {
+                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory, BusinessMasterService businessMasterService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.workflowService = workflowService;
         this.responseInfoFactory = responseInfoFactory;
+        this.businessMasterService = businessMasterService;
     }
 
 
@@ -103,6 +107,7 @@ public class WorkflowController {
         public ResponseEntity<List> StatusCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
             List  result = workflowService.statusCount(requestInfoWrapper.getRequestInfo(),criteria);
+            System.out.println(result.toString());
             return new ResponseEntity<>(result,HttpStatus.OK);
         }
 
