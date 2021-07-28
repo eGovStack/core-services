@@ -119,7 +119,7 @@ const bills = {
                   dialog.sendMessage(context, templateContent, false);
               }
             } else {
-              dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
+              dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), true);
               await new Promise(resolve => setTimeout(resolve, 1000));
 
               for(let i = 0; i < bills.length; i++) {
@@ -388,7 +388,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), true);
           }),
           always : 'question'
         }
@@ -406,7 +406,7 @@ const bills = {
             let exampleMessage = dialog.get_message(example, context.user.locale);
             message = message.replace('{{option}}', optionMessage);
             message = message.replace('{{example}}', exampleMessage);
-            dialog.sendMessage(context, message);
+            dialog.sendMessage(context, message, true);
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -439,7 +439,7 @@ const bills = {
               let optionMessage = dialog.get_message(option, context.user.locale);
               message = message.replace('{{option}}', optionMessage);
               dialog.sendMessage(context, message, true);
-              await new Promise(resolve => setTimeout(resolve, 1000));
+              await new Promise(resolve => setTimeout(resolve, 2000));
             })();
             
           }),
