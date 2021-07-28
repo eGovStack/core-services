@@ -212,25 +212,22 @@ const bills = {
     noBills: {
       id: 'noBills',
       onEntry: assign( (context, event) => {
-        (async() => { 
-          let message;
-          let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
-          let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
-  
-          if(context.totalBills === 0) {
-            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
-            context.slots.bills.searchParamOption = searchOptions[0];
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
-            let optionMessage = dialog.get_message(option, context.user.locale);
-            message = dialog.get_message(messages.noBills.notLinked, context.user.locale);
-            message = message.replace(/{{searchOption}}/g,optionMessage);
-            message = message.replace(/{{service}}/g,billServiceName.toLowerCase());
-          } else {
-            message = dialog.get_message(messages.noBills.noPending, context.user.locale);
-          }
-          dialog.sendMessage(context, message, true);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        })();
+        let message;
+        let { services, messageBundle } = billService.getSupportedServicesAndMessageBundle();
+        let billServiceName = dialog.get_message(messageBundle[context.service],context.user.locale);
+
+        if(context.totalBills === 0) {
+          let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+          context.slots.bills.searchParamOption = searchOptions[0];
+          let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+          let optionMessage = dialog.get_message(option, context.user.locale);
+          message = dialog.get_message(messages.noBills.notLinked, context.user.locale);
+          message = message.replace(/{{searchOption}}/g,optionMessage);
+          message = message.replace(/{{service}}/g,billServiceName.toLowerCase());
+        } else {
+          message = dialog.get_message(messages.noBills.noPending, context.user.locale);
+        }
+        dialog.sendMessage(context, message, true);
         
       }),
       always: 'billServices'
@@ -328,14 +325,18 @@ const bills = {
       states: {
         question: {
           onEntry: assign((context, event) => {
-            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
-            context.slots.bills.searchParamOption = searchOptions[0];
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
-            let optionMessage = dialog.get_message(option, context.user.locale);
+            (async() => { 
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+              context.slots.bills.searchParamOption = searchOptions[0];
+              let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+  
+              let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
+              message = message.replace(/{{searchOption}}/g,optionMessage);
+              dialog.sendMessage(context, message, true);
 
-            let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
-            message = message.replace(/{{searchOption}}/g,optionMessage);
-            dialog.sendMessage(context, message);
+            })();
 
           }),
           on: {
