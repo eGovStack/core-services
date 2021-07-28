@@ -296,8 +296,7 @@ const sevaMachine = Machine({
                     message = message.replace('{{name}}', context.user.name);
                   else
                     message = message.replace(' {{name}}', 'Citizen');
-                  dialog.sendMessage(context, message);
-                  await new Promise(resolve => setTimeout(resolve, 4000));
+                  dialog.sendMessage(context, message, true);
                 })();
               }),
               always: '#sevamenu'
@@ -369,7 +368,10 @@ const sevaMachine = Machine({
       states: {
         question: {
           onEntry: assign( (context, event) => {
+            (async() => {  
+            await new Promise(resolve => setTimeout(resolve, 2000));
             dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
+          })();
           }),
           on: {
             USER_MESSAGE: 'process'
