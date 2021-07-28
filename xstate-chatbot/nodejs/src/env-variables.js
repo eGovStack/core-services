@@ -110,7 +110,7 @@ const envVariables = {
     },
 
     pgrUseCase: {
-        pgrVersion: process.env.PGR_VERSION || 'v2',
+        pgrVersion: process.env.PGR_VERSION || 'v1',
         complaintSearchLimit: process.env.COMPLAINT_SEARCH_LIMIT || 3,
         informationImageFilestoreId: process.env.INFORMATION_IMAGE_FILESTORE_ID || '16dff22d-06dd-485d-a03d-6d11e8564dff',
         pgrUpdateTopic: process.env.PGR_UPDATE_TOPIC || 'update-pgr-request',

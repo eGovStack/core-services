@@ -81,7 +81,6 @@ const bills = {
         if(bills.length === 1) {
           let bill = bills[0];
           dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
-          dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
           let singleRecordMessage = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
           console.log('singleRecordMessage: '+ singleRecordMessage);
           singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
@@ -94,7 +93,9 @@ const bills = {
           
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
-          dialog.sendMessage(context, singleRecordMessage);
+          dialog.sendMessage(context, singleRecordMessage, false);
+          dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+
 
           // let params=[];
           // params.push(bill.id);
@@ -118,7 +119,6 @@ const bills = {
           let serviceSet = new Set(services);
           if(services.length === serviceSet.size) {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
-            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
 
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
@@ -149,13 +149,13 @@ const bills = {
               // };
 
               if(i==bills.length-1)
-                dialog.sendMessage(context, multipleRecordsMessage);
+                dialog.sendMessage(context, multipleRecordsMessage, false);
               else
                 dialog.sendMessage(context, multipleRecordsMessage, false);
             }
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
           } else {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
-            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
 
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
@@ -185,12 +185,15 @@ const bills = {
               // };
 
               if(i == bills.length-1)
-                dialog.sendMessage(context, multipleRrdsSameServiceMsgs);
+                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
               else
-                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);            
+                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
             }
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
           }
         }
+        let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
+        dialog.sendMessage(context, endStatement);
       }),
       always: '#searchBillInitiate'
     },
@@ -565,7 +568,6 @@ const bills = {
             if(bills.length === 1) {
               let bill = bills[0];
               dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), false);
-              dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
               let singleRecordMessage = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
               singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
               singleRecordMessage = singleRecordMessage.replace('{{serviceid}}',serviceId);
@@ -592,13 +594,14 @@ const bills = {
               // };
 
               dialog.sendMessage(context, singleRecordMessage, false);
+              dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+
             } else {
               let services = bills.map(element => element.service);
               let serviceSet = new Set(services);
               if(services.length === serviceSet.size) {
                 dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), false);
-                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
-
+                
                 for(let i = 0; i < bills.length; i++) {
                   let bill = bills[i];
 
@@ -631,6 +634,7 @@ const bills = {
 
                   dialog.sendMessage(context, multipleRecordsMessage, false);
                 }
+                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
               } else {
                 dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
                 for(let i = 0; i < bills.length; i++) {
@@ -664,6 +668,7 @@ const bills = {
 
                   dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
                 }
+                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
               }
             }
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
