@@ -556,15 +556,14 @@ const receipts = {
               else
                 context.extraInfo.templateId = templateList[0];
 
-              var templateContent = {
-                output: context.extraInfo.templateId,
-                type: "template",
-              };
-              dialog.sendMessage(context, templateContent, true);
+              // var templateContent = {
+              //   output: context.extraInfo.templateId,
+              //   type: "template",
+              // };
+              // dialog.sendMessage(context, templateContent, true);
 
-
-              //let message = dialog.get_message(messages.paramInputInitiate.question, context.user.locale);
-              //dialog.sendMessage(context, message , true);
+              let message = dialog.get_message(messages.paramInputInitiate.questionViewReceipts, context.user.locale);
+              dialog.sendMessage(context, message , true);
             }),
             on: {
               USER_MESSAGE: 'process'
@@ -573,8 +572,13 @@ const receipts = {
           process: {
             onEntry: assign((context, event) => {
               let messageText = event.message.input;
+              console.log('before');
+              console.log(messageText);
               messageText = messageText.toLowerCase();
-              let isValid = ((messageText === 'main menu' || messageText === 'view receipts') && dialog.validateInputType(event, 'button'));
+              console.log('After');
+              // let isValid = ((messageText === 'main menu' || messageText === 'view receipts') && dialog.validateInputType(event, 'button'));
+              let isValid = ((messageText === '1' || messageText === '2'));
+              console.log('isValid: ' + isValid);
               context.message = {
                 isValid: isValid,
                 messageContent: messageText
@@ -590,13 +594,13 @@ const receipts = {
               {
                 target: '#pdfReceiptList',
                 cond: (context, event) => {
-                  return (context.message.isValid && context.message.messageContent ==='view receipts');
+                  return (context.message.isValid && context.message.messageContent ==='1');
                 }
               },
               {
                 target: '#sevamenu',
                 cond: (context, event) => {
-                  return (context.message.isValid && context.message.messageContent ==='main menu');
+                  return (context.message.isValid && context.message.messageContent ==='2');
                 }
               }
             ]
@@ -1054,6 +1058,11 @@ let messages = {
     },
   },
   paramInputInitiate: {
+    questionViewReceipts: {
+      en_IN: 'Please type and send your option to continue\n\n*1*. View Receipts\n*2*. Main Menu',
+      hi_IN: 'कृपया टाइप करें और जारी रखने के लिए अपना विकल्प भेजे \n\n*1*. देखें रसीद\n*2*. मुख्य मेनू',
+      pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਜਾਰੀ ਕਰਨ ਲਈ ਆਪਣੀ ਚੋਣ ਟਾਈਪ ਕਰੋ ਅਤੇ ਭੇਜੋ \n\n*1*. ਰਸੀਦਾਂ ਵੇਖੋ \n*2*. ਮੁੱਖ ਮੇਨੂ'
+    },
     question: {
       en_IN: '👉 To view last payment receipt, type and send *1*\n\n👉 To go back to the main menu, type and send *mseva*.',
       hi_IN: '👉 अंतिम भुगतान रसीद देखने के लिए, टाइप करें और भेजें *1* \n\n👉 मुख्य मेनू पर वापस जाने के लिए, *mseva* टाइप करें और भेजें।'
