@@ -835,7 +835,7 @@ const pgr =  {
 
                   dialog.sendMessage(context, template, true);
                 }
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 var closingStatement = dialog.get_message(messages.trackComplaint.results.closingStatement, context.user.locale);
                 dialog.sendMessage(context, closingStatement, true);
               })();
