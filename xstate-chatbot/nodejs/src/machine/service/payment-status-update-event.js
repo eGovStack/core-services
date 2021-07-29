@@ -19,9 +19,10 @@ class PaymentStatusUpdateEventFormatter{
     let consumerGroup = new kafka.ConsumerGroup(consumerGroupOptions, topicList);
     let self = this;
     consumerGroup.on('message', function(message) {
+      console.log('PaymentStatusUpdateEventFormatter-->message received-->topic name: '+ message.topic);
         if(message.topic === config.billsAndReceiptsUseCase.paymentUpdateTopic) {
           let paymentRequest = JSON.parse(message.value);
-
+          console.log('PaymentStatusUpdateEventFormatter-->paymentUpdateTopic message received-->topic name: '+ message.topic);
           if(paymentRequest.Payment.additionalDetails && paymentRequest.Payment.additionalDetails.isWhatsapp){
 
             self.paymentStatusMessage(paymentRequest)
@@ -38,6 +39,7 @@ class PaymentStatusUpdateEventFormatter{
         }
 
         if(message.topic === config.billsAndReceiptsUseCase.pgUpdateTransaction){
+          console.log('PaymentStatusUpdateEventFormatter--> pgUpdateTransaction message received-->topic name: '+ message.topic);
           let transactionRequest = JSON.parse(message.value);
           let status = transactionRequest.Transaction.txnStatus;
 
