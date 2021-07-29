@@ -157,7 +157,7 @@ const bills = {
               else
                 dialog.sendMessage(context, multipleRecordsMessage, false);
             }
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 700));
             dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
           } else {
             dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), true);
