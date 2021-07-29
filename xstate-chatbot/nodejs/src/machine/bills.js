@@ -195,12 +195,12 @@ const bills = {
               else
                 dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
             }
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 700));
             dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
           }
         }
         let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 700));
         dialog.sendMessage(context, endStatement, true);
       })();
       }),
@@ -617,7 +617,7 @@ const bills = {
                 // };
 
                 dialog.sendMessage(context, singleRecordMessage, true);
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 700));
                 dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
 
                } else {
@@ -659,7 +659,7 @@ const bills = {
 
                     dialog.sendMessage(context, multipleRecordsMessage, true);
                   }
-                  await new Promise(resolve => setTimeout(resolve, 500));
+                  await new Promise(resolve => setTimeout(resolve, 700));
                   dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
                 } else {
                   dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
@@ -696,13 +696,13 @@ const bills = {
 
                     dialog.sendMessage(context, multipleRrdsSameServiceMsgs, true);
                   }
-                  await new Promise(resolve => setTimeout(resolve, 500));
+                  await new Promise(resolve => setTimeout(resolve, 700));
                   dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
                 }
               }
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
             await new Promise(resolve => setTimeout(resolve, 1500));
-            dialog.sendMessage(context, endStatement);
+            dialog.sendMessage(context, endStatement, true);
           })();
           }),
           always: '#haltState'
