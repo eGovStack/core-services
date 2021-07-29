@@ -47,7 +47,7 @@ const bills = {
           target: '#endstate',
           actions: assign((context, event) => {
             let message = dialog.get_message(dialog.global_messages.system_error, context.user.locale);
-            dialog.sendMessage(context, message, false);
+            dialog.sendMessage(context, message, true);
           })
         }
       }
@@ -55,6 +55,7 @@ const bills = {
     personalBills: {
       id: 'personalBills',
       onEntry: assign((context, event) => {
+      (async() => { 
         let templateList;
         let bills = context.bills.pendingBills;
         let localeList = config.supportedLocales.split(',');
@@ -80,7 +81,8 @@ const bills = {
 
         if(bills.length === 1) {
           let bill = bills[0];
-          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), false);
+          dialog.sendMessage(context, dialog.get_message(messages.personalBills.singleRecord, context.user.locale), true);
+          await new Promise(resolve => setTimeout(resolve, 1000));
           let singleRecordMessage = dialog.get_message(messages.personalBills.singleRecord.billTemplate, context.user.locale);
           console.log('singleRecordMessage: '+ singleRecordMessage);
           singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
@@ -93,8 +95,9 @@ const bills = {
           
           console.log('After singleRecordMessage: '+ singleRecordMessage);
 
-          dialog.sendMessage(context, singleRecordMessage, false);
-          dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+          dialog.sendMessage(context, singleRecordMessage, true);
+          await new Promise(resolve => setTimeout(resolve, 200));
+          dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
 
 
           // let params=[];
@@ -118,7 +121,8 @@ const bills = {
           let services = bills.map(element => element.service);
           let serviceSet = new Set(services);
           if(services.length === serviceSet.size) {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecords, context.user.locale), true);
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
@@ -149,13 +153,15 @@ const bills = {
               // };
 
               if(i==bills.length-1)
-                dialog.sendMessage(context, multipleRecordsMessage, false);
+                dialog.sendMessage(context, multipleRecordsMessage, true);
               else
                 dialog.sendMessage(context, multipleRecordsMessage, false);
             }
-            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
           } else {
-            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.personalBills.multipleRecordsSameService, context.user.locale), true);
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             for(let i = 0; i < bills.length; i++) {
               let bill = bills[i];
@@ -185,15 +191,18 @@ const bills = {
               // };
 
               if(i == bills.length-1)
-                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
+                dialog.sendMessage(context, multipleRrdsSameServiceMsgs, true);
               else
                 dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
             }
-            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
           }
         }
         let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
-        dialog.sendMessage(context, endStatement);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        dialog.sendMessage(context, endStatement, true);
+      })();
       }),
       always: '#searchBillInitiate'
     },
@@ -285,7 +294,7 @@ const bills = {
         } else {
           message = dialog.get_message(messages.noBills.noPending, context.user.locale);
         }
-        dialog.sendMessage(context, message, false);
+        dialog.sendMessage(context, message, true);
       }),
       always: 'billServices'
     },
@@ -382,15 +391,17 @@ const bills = {
       states: {
         question: {
           onEntry: assign((context, event) => {
-            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
-            context.slots.bills.searchParamOption = searchOptions[0];
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
-            let optionMessage = dialog.get_message(option, context.user.locale);
+            (async() => { 
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+              context.slots.bills.searchParamOption = searchOptions[0];
+              let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+              let optionMessage = dialog.get_message(option, context.user.locale);
 
-            let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
-            message = message.replace(/{{searchOption}}/g,optionMessage);
-            dialog.sendMessage(context, message);
-
+              let message = dialog.get_message(messages.billServices.question.preamble, context.user.locale);
+              message = message.replace(/{{searchOption}}/g,optionMessage);
+              dialog.sendMessage(context, message, true);
+            })();
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -441,7 +452,7 @@ const bills = {
         },
         error: {
           onEntry: assign( (context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale, true), false);
           }),
           always : 'question'
         }
@@ -453,13 +464,18 @@ const bills = {
       states: {
         question: {
           onEntry: assign((context, event) => {
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
-            let message = dialog.get_message(messages.paramInput.question, context.user.locale);
-            let optionMessage = dialog.get_message(option, context.user.locale);
-            let exampleMessage = dialog.get_message(example, context.user.locale);
-            message = message.replace('{{option}}', optionMessage);
-            message = message.replace('{{example}}', exampleMessage);
-            dialog.sendMessage(context, message);
+            (async() => { 
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+              context.slots.bills.searchParamOption = searchOptions[0];
+              let { option, example } = billService.getOptionAndExampleMessageBundle(context.service, context.slots.bills.searchParamOption);
+              let message = dialog.get_message(messages.paramInput.question, context.user.locale);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+              let exampleMessage = dialog.get_message(example, context.user.locale);
+              message = message.replace('{{option}}', optionMessage);
+              message = message.replace('{{example}}', exampleMessage);
+              dialog.sendMessage(context, message, true);
+            })();
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -468,8 +484,9 @@ const bills = {
         process: {
           onEntry: assign((context, event) => {
             let paramInput = event.message.input;
-            let slots = context.slots.bills;
-           context.isValid = billService.validateParamInput(context.service, slots.searchParamOption, paramInput);
+            let { searchOptions, messageBundle } = billService.getSearchOptionsAndMessageBundleForService(context.service);
+            context.slots.bills.searchParamOption = searchOptions[0];
+            context.isValid = billService.validateParamInput(context.service, context.slots.bills.searchParamOption, paramInput);
             if(context.isValid) {
               context.slots.bills.paramInput = paramInput;
             }
@@ -531,148 +548,162 @@ const bills = {
             message = message.replace('{{paramInput}}', context.slots.bills.paramInput);
             dialog.sendMessage(context, message, false);*/
 
-            let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
-            let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
-            let optionMessage = dialog.get_message(option, context.user.locale);
-            message = message.replace('{{option}}', optionMessage);
-            dialog.sendMessage(context, message, false);
+            (async() => { 
+              let { option, example } = billService.getOptionAndExampleMessageBundle(context.slots.bills.service, context.slots.bills.searchParamOption);
+              let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
+              let optionMessage = dialog.get_message(option, context.user.locale);
+              message = message.replace('{{option}}', optionMessage);
+              dialog.sendMessage(context, message, true);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            })();
+
           }),
           always: '#paramInput'
         },
         results: {
           onEntry: assign((context, event) => {
-            let templateList;
-            let bills = context.bills.searchResults;
-            let localeList = config.supportedLocales.split(',');
-            let localeIndex = localeList.indexOf(context.user.locale);
-            let serviceName = '';
-            let serviceId = '';
-    
-            if(context.service == 'WS' || context.service == 'SW'){
-              serviceName=dialog.get_message(messages.serviceWSName, context.user.locale);
-              serviceId=dialog.get_message(messages.serviceConnectionNo, context.user.locale);
-              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
-            }      
-            else{
-              serviceName=dialog.get_message(messages.servicePTName, context.user.locale);
-              serviceId=dialog.get_message(messages.servicePropertyID, context.user.locale);
-              templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
-            }
-
-            if(templateList[localeIndex])
-              context.extraInfo.templateId = templateList[localeIndex];
-            else
-              context.extraInfo.templateId = templateList[0];
-
-
-            if(bills.length === 1) {
-              let bill = bills[0];
-              dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), false);
-              let singleRecordMessage = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
-              singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
-              singleRecordMessage = singleRecordMessage.replace('{{serviceid}}',serviceId);
-              singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
-              singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
-              singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-              singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-              singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
-                  
-              // let params=[];
-              // params.push(bill.id);
-              // params.push(bill.payerName);
-              // params.push("₹ "+bill.dueAmount);
-              // params.push(bill.dueDate);
-
-              // let urlComponemt = bill.paymentLink.split('/');
-              // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-
-              // var templateContent = {
-              //   output: context.extraInfo.templateId,
-              //   type: "template",
-              //   params: params,
-              //   bttnUrlComponent: bttnUrlComponent
-              // };
-
-              dialog.sendMessage(context, singleRecordMessage, false);
-              dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
-
-            } else {
-              let services = bills.map(element => element.service);
-              let serviceSet = new Set(services);
-              if(services.length === serviceSet.size) {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), false);
-                
-                for(let i = 0; i < bills.length; i++) {
-                  let bill = bills[i];
-
-                  let multipleRecordsMessage = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{service}}',serviceName);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{serviceid}}',serviceId);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-                    multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
-                  
-
-
-                  // let params=[];
-                  // params.push(bill.id);
-                  // params.push(bill.payerName);
-                  // params.push("₹ "+bill.dueAmount);
-                  // params.push(bill.dueDate);
-
-                  // let urlComponemt = bill.paymentLink.split('/');
-                  // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-
-                  // var templateContent = {
-                  //   output: context.extraInfo.templateId,
-                  //   type: "template",
-                  //   params: params,
-                  //   bttnUrlComponent: bttnUrlComponent
-                  // };
-
-                  dialog.sendMessage(context, multipleRecordsMessage, false);
-                }
-                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
-              } else {
-                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
-                for(let i = 0; i < bills.length; i++) {
-                  let bill = bills[i];
-                  let multipleRrdsSameServiceMsgs = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{service}}',serviceName);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{serviceid}}',serviceId);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-                  multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
-    
-
-                  // let params=[];
-                  // params.push(bill.id);
-                  // params.push(bill.payerName);
-                  // params.push("₹ "+bill.dueAmount);
-                  // params.push(bill.dueDate);
-
-                  // let urlComponemt = bill.paymentLink.split('/');
-                  // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
-                  // context.extraInfo.bttnUrlComponent = bttnUrlComponent;
-
-                  // var templateContent = {
-                  //   output: context.extraInfo.templateId,
-                  //   type: "template",
-                  //   params: params,
-                  //   bttnUrlComponent: bttnUrlComponent
-                  // };
-
-                  dialog.sendMessage(context, multipleRrdsSameServiceMsgs, false);
-                }
-                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), false);
+            (async() => {  
+              let templateList;
+              let bills = context.bills.searchResults;
+              let localeList = config.supportedLocales.split(',');
+              let localeIndex = localeList.indexOf(context.user.locale);
+              let serviceName = '';
+              let serviceId = '';
+      
+              if(context.service == 'WS' || context.service == 'SW'){
+                serviceName=dialog.get_message(messages.serviceWSName, context.user.locale);
+                serviceId=dialog.get_message(messages.serviceConnectionNo, context.user.locale);
+                templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationWSBillTemplateid.split(',');
+              }      
+              else{
+                serviceName=dialog.get_message(messages.servicePTName, context.user.locale);
+                serviceId=dialog.get_message(messages.servicePropertyID, context.user.locale);
+                templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationPTBillTemplateid.split(',');
               }
-            }
+
+              if(templateList[localeIndex])
+                context.extraInfo.templateId = templateList[localeIndex];
+              else
+                context.extraInfo.templateId = templateList[0];
+
+
+              if(bills.length === 1) {
+                let bill = bills[0];
+                dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.singleRecord, context.user.locale), true);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let singleRecordMessage = dialog.get_message(messages.billSearchResults.singleRecord.billTemplate, context.user.locale);
+                singleRecordMessage = singleRecordMessage.replace('{{service}}',serviceName);
+                singleRecordMessage = singleRecordMessage.replace('{{serviceid}}',serviceId);
+                singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
+                singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
+                singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+                singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+                singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
+                    
+                // let params=[];
+                // params.push(bill.id);
+                // params.push(bill.payerName);
+                // params.push("₹ "+bill.dueAmount);
+                // params.push(bill.dueDate);
+
+                // let urlComponemt = bill.paymentLink.split('/');
+                // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+
+                // var templateContent = {
+                //   output: context.extraInfo.templateId,
+                //   type: "template",
+                //   params: params,
+                //   bttnUrlComponent: bttnUrlComponent
+                // };
+
+                dialog.sendMessage(context, singleRecordMessage, true);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
+
+               } else {
+                let services = bills.map(element => element.service);
+                let serviceSet = new Set(services);
+                if(services.length === serviceSet.size) {
+                  dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecords, context.user.locale), true);
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+
+                  for(let i = 0; i < bills.length; i++) {
+                    let bill = bills[i];
+
+                    let multipleRecordsMessage = dialog.get_message(messages.billSearchResults.multipleRecords.billTemplate, context.user.locale);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{service}}',serviceName);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{serviceid}}',serviceId);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+                      multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
+                    
+
+
+                    // let params=[];
+                    // params.push(bill.id);
+                    // params.push(bill.payerName);
+                    // params.push("₹ "+bill.dueAmount);
+                    // params.push(bill.dueDate);
+
+                    // let urlComponemt = bill.paymentLink.split('/');
+                    // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+
+                    // var templateContent = {
+                    //   output: context.extraInfo.templateId,
+                    //   type: "template",
+                    //   params: params,
+                    //   bttnUrlComponent: bttnUrlComponent
+                    // };
+
+                    dialog.sendMessage(context, multipleRecordsMessage, true);
+                  }
+                  await new Promise(resolve => setTimeout(resolve, 200));
+                  dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
+                } else {
+                  dialog.sendMessage(context, dialog.get_message(messages.billSearchResults.multipleRecordsSameService, context.user.locale), false);
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+
+                  for(let i = 0; i < bills.length; i++) {
+                    let bill = bills[i];
+                    let multipleRrdsSameServiceMsgs = dialog.get_message(messages.billSearchResults.multipleRecordsSameService.billTemplate, context.user.locale);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{service}}',serviceName);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{serviceid}}',serviceId);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
+      
+
+                    // let params=[];
+                    // params.push(bill.id);
+                    // params.push(bill.payerName);
+                    // params.push("₹ "+bill.dueAmount);
+                    // params.push(bill.dueDate);
+
+                    // let urlComponemt = bill.paymentLink.split('/');
+                    // let bttnUrlComponent = urlComponemt[urlComponemt.length -1];
+                    // context.extraInfo.bttnUrlComponent = bttnUrlComponent;
+
+                    // var templateContent = {
+                    //   output: context.extraInfo.templateId,
+                    //   type: "template",
+                    //   params: params,
+                    //   bttnUrlComponent: bttnUrlComponent
+                    // };
+
+                    dialog.sendMessage(context, multipleRrdsSameServiceMsgs, true);
+                  }
+                  await new Promise(resolve => setTimeout(resolve, 200));
+                  dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
+                }
+              }
             let endStatement = dialog.get_message(messages.endStatement, context.user.locale);
+            await new Promise(resolve => setTimeout(resolve, 1500));
             dialog.sendMessage(context, endStatement);
+          })();
           }),
           always: '#haltState'
         }

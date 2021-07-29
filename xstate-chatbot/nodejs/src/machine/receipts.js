@@ -19,14 +19,17 @@ const receipts = {
         states:{
           receiptQuestion:{
             onEntry: assign((context, event) => {
-              let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
-              let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
-              let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
-              context.grammer = grammer;
-              prompt = prompt.replace(/\n/g,"\n\n");
-              let message = `${preamble}${prompt}`+'\n\n';
-              message = message + dialog.get_message(messages.lastState, context.user.locale);
-              dialog.sendMessage(context, message, true);
+              (async() => {   
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
+                let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
+                let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
+                context.grammer = grammer;
+                prompt = prompt.replace(/\n/g,"\n\n");
+                let message = `${preamble}${prompt}`+'\n\n';
+                message = message + dialog.get_message(messages.lastState, context.user.locale);
+                dialog.sendMessage(context, message, true);
+              })();
             }),
             on: {
               USER_MESSAGE:'process'
@@ -53,7 +56,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.services.error,context.user.locale);
-              dialog.sendMessage(context, message,false);
+              dialog.sendMessage(context, message,true);
             }),
             always : [
               {
@@ -144,7 +147,7 @@ const receipts = {
                 actions: assign((context, event) => {
                   let message = messages.receiptSlip.error;
                   //context.chatInterface.toUser(context.user, message);
-                  dialog.sendMessage(context, message, false);
+                  dialog.sendMessage(context, message, true);
                 }),
                 always : [
                   {
@@ -209,7 +212,7 @@ const receipts = {
           message = message.replace('{{searchOption}}', optionMessage);
           message = message.replace('{{service}}', receiptServiceName.toLowerCase());
 
-          dialog.sendMessage(context, message, false);
+          dialog.sendMessage(context, message, true);
         }),
         always:'#paramReceiptInput'
       },
@@ -220,15 +223,17 @@ const receipts = {
         states: {
           question: {
             onEntry: assign((context, event) => {
-              let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
-              context.receipts.slots.searchParamOption = searchOptions[0];
-              let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
-              let optionMessage = dialog.get_message(option, context.user.locale);
-  
-              let message = dialog.get_message(messages.searchParams.question.confirmation, context.user.locale);
-              message = message.replace('{{searchOption}}', optionMessage);
-              dialog.sendMessage(context, message);
-  
+              (async() => { 
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+                context.receipts.slots.searchParamOption = searchOptions[0];
+                let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service, context.receipts.slots.searchParamOption);
+                let optionMessage = dialog.get_message(option, context.user.locale);
+
+                let message = dialog.get_message(messages.searchParams.question.confirmation, context.user.locale);
+                message = message.replace('{{searchOption}}', optionMessage);
+                dialog.sendMessage(context, message, true);
+              })();
             }),
             on: {
               USER_MESSAGE: 'process'
@@ -260,7 +265,7 @@ const receipts = {
           },
           error: {
             onEntry: assign( (context, event) => {
-              dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+              dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), true);
             }),
             always : 'question'
           }
@@ -274,8 +279,11 @@ const receipts = {
         states:{
           receiptQuestion:{
             onEntry: assign((context, event) => {
-              let message = dialog.get_message(messages.searchReceptInitiate.question, context.user.locale);
-              dialog.sendMessage(context, message, true);
+              (async() => {  
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let message = dialog.get_message(messages.searchReceptInitiate.question, context.user.locale);
+                dialog.sendMessage(context, message, true);
+              })();
             }),
             on: {
               USER_MESSAGE:'process'
@@ -310,7 +318,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message = dialog.get_message(messages.searchReceptInitiate.error,context.user.locale);
-              dialog.sendMessage(context, message, false);
+              dialog.sendMessage(context, message, true);
             }),
             always : [
               {
@@ -334,7 +342,7 @@ const receipts = {
           message = message.replace('{{searchOption}}', optionMessage);
           message = message.replace('{{service}}', receiptServiceName.toLowerCase());
 
-          dialog.sendMessage(context, message , false);
+          dialog.sendMessage(context, message , true);
         }),
         always:[
           {
@@ -348,11 +356,14 @@ const receipts = {
         states:{
           question:{
             onEntry:assign((context,event)=>{
-              let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
-              let preamble=dialog.get_message(messages.searchParams.question.preamble,context.user.locale);
-              let { prompt, grammer } = dialog.constructListPromptAndGrammer(searchOptions, messageBundle, context.user.locale);
-              context.grammer = grammer;
-              dialog.sendMessage(context, `${preamble}${prompt}` , true);
+              (async() => { 
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
+                let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+                let preamble=dialog.get_message(messages.searchParams.question.preamble,context.user.locale);
+                let { prompt, grammer } = dialog.constructListPromptAndGrammer(searchOptions, messageBundle, context.user.locale);
+                context.grammer = grammer;
+                dialog.sendMessage(context, `${preamble}${prompt}` , true);
+              })();
             }),
             on:{
               USER_MESSAGE:'process'
@@ -378,7 +389,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message = dialog.get_message(messages.searchParams.error,context.user.locale);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
             }),
             always : [
               {
@@ -394,15 +405,21 @@ const receipts = {
         states:{
           receiptQuestion: {
             onEntry: assign((context, event) => {
-              let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
-              let message = dialog.get_message(messages.paramInput.question, context.user.locale);
-              let optionMessage = dialog.get_message(option, context.user.locale);
-              let exampleMessage = dialog.get_message(example, context.user.locale);
+              (async() => { 
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
+                let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+                context.receipts.slots.searchParamOption = searchOptions[0];
+                let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
+                let message = dialog.get_message(messages.paramInput.question, context.user.locale);
+                let optionMessage = dialog.get_message(option, context.user.locale);
+                let exampleMessage = dialog.get_message(example, context.user.locale);
 
-              message = message.replace('{{option}}', optionMessage);
-              message = message.replace('{{example}}', exampleMessage);
+                message = message.replace('{{option}}', optionMessage);
+                message = message.replace('{{example}}', exampleMessage);
 
-              dialog.sendMessage(context, message , true);
+                dialog.sendMessage(context, message , true);
+              })();
+
             }),
             on: {
               USER_MESSAGE: 'process'
@@ -431,11 +448,13 @@ const receipts = {
           },
           re_enter:{
             onEntry: assign((context, event) => {
+              let { searchOptions, messageBundle } = receiptService.getSearchOptionsAndMessageBundleForService(context.receipts.slots.service);
+              context.receipts.slots.searchParamOption = searchOptions[0];
               let { option, example } = receiptService.getOptionAndExampleMessageBundle(context.receipts.slots.service,context.receipts.slots.searchParamOption);
               let message = dialog.get_message(messages.paramInput.re_enter, context.user.locale);
               let optionMessage = dialog.get_message(option, context.user.locale);
               message = message.replace('{{option}}', optionMessage);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
             }),
             always:{
               target: 'receiptQuestion'
@@ -474,7 +493,7 @@ const receipts = {
               onError: {
                 actions: assign((context, event) => {
                   let message = messages.receiptSearchResults.error;
-                  dialog.sendMessage(context, message , false);
+                  dialog.sendMessage(context, message , true);
                 }),
                 always : [
                   {
@@ -548,22 +567,22 @@ const receipts = {
         states: {
           receiptQuestion: {
             onEntry: assign((context, event) => {
-              let localeList = config.supportedLocales.split(',');
-              let localeIndex = localeList.indexOf(context.user.locale);
-              let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
-              if(templateList[localeIndex])
-                context.extraInfo.templateId = templateList[localeIndex];
-              else
-                context.extraInfo.templateId = templateList[0];
+              (async() => {   
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let localeList = config.supportedLocales.split(',');
+                let localeIndex = localeList.indexOf(context.user.locale);
+                let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+                if(templateList[localeIndex])
+                  context.extraInfo.templateId = templateList[localeIndex];
+                else
+                  context.extraInfo.templateId = templateList[0];
 
-              // var templateContent = {
-              //   output: context.extraInfo.templateId,
-              //   type: "template",
-              // };
-              // dialog.sendMessage(context, templateContent, true);
-
-              let message = dialog.get_message(messages.paramInputInitiate.questionViewReceipts, context.user.locale);
-              dialog.sendMessage(context, message , true);
+                var templateContent = {
+                  output: context.extraInfo.templateId,
+                  type: "template",
+                };
+                dialog.sendMessage(context, templateContent, true);
+              })();
             }),
             on: {
               USER_MESSAGE: 'process'
@@ -608,7 +627,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
             }),
             always : 'receiptQuestion'
           }
@@ -654,7 +673,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
-              dialog.sendMessage(context, message);
+              dialog.sendMessage(context, message, true);
             }),
             always : 'receiptQuestion'
           }
@@ -689,7 +708,7 @@ const receipts = {
               onError: {
                 actions: assign((context, event) => {
                   let message = messages.multipleRecordReceipt.error;
-                  dialog.sendMessage(context, message , false);
+                  dialog.sendMessage(context, message , true);
                 }),
                 always : [
                   {
@@ -723,7 +742,7 @@ const receipts = {
               }
                 //context.chatInterface.toUser(context.user,message);
               message = message + receiptMessage;
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
 
             }),
             always:[
@@ -745,14 +764,17 @@ const receipts = {
         states:{
           receiptQuestion:{
             onEntry: assign((context, event) => {
-              let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
-              let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
-              let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
-              context.grammer = grammer;
-              prompt = prompt.replace(/\n/g,"\n\n");
-              let message = `${preamble}${prompt}`+'\n\n';
-              message = message + dialog.get_message(messages.lastState, context.user.locale);
-              dialog.sendMessage(context, message, true);
+              (async() => {  
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
+                let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
+                let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
+                context.grammer = grammer;
+                prompt = prompt.replace(/\n/g,"\n\n");
+                let message = `${preamble}${prompt}`+'\n\n';
+                message = message + dialog.get_message(messages.lastState, context.user.locale);
+                dialog.sendMessage(context, message, true);
+              })();
             }),
             on: {
               USER_MESSAGE:'process'
@@ -779,7 +801,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.services.error,context.user.locale);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
             }),
             always : [
               {
@@ -795,26 +817,29 @@ const receipts = {
         states:{
           invoke:{
             onEntry: assign( (context, event) => {
-              let receiptList = [];
-              let message  = dialog.get_message(messages.pdfReceiptList,context.user.locale);
-              let receipts = context.receipts.slots.multipleRecordReceipt;
-              if(receipts.length == 1)
-                receiptList.push(receipts);
-              else
-                receiptList = receipts;
-              
-              for(let i = 0; i < receiptList.length; i++){
-                let receipt = receipts[i];
-                let receiptTemplate = dialog.get_message(messages.pdfReceiptList.receiptTemplate, context.user.locale);
-                receiptTemplate = receiptTemplate.replace('{{amount}}', receipt.amount);
-                receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
+              (async() => {   
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let receiptList = [];
+                let message  = dialog.get_message(messages.pdfReceiptList,context.user.locale);
+                let receipts = context.receipts.slots.multipleRecordReceipt;
+                if(receipts.length == 1)
+                  receiptList.push(receipts);
+                else
+                  receiptList = receipts;
 
-                message += '\n\n';
-                message += (i + 1) + '. ';
-                message += receiptTemplate;
-              }
+                for(let i = 0; i < receiptList.length; i++){
+                  let receipt = receipts[i];
+                  let receiptTemplate = dialog.get_message(messages.pdfReceiptList.receiptTemplate, context.user.locale);
+                  receiptTemplate = receiptTemplate.replace('{{amount}}', receipt.amount);
+                  receiptTemplate = receiptTemplate.replace('{{date}}', receipt.date);
 
-              dialog.sendMessage(context, message , true);
+                  message += '\n\n';
+                  message += (i + 1) + '. ';
+                  message += receiptTemplate;
+                }
+
+                dialog.sendMessage(context, message , true);
+              })();
             }),
             on: {
               USER_MESSAGE: 'process'
@@ -849,7 +874,7 @@ const receipts = {
           error: {
             onEntry: assign( (context, event) => {
               let message =dialog.get_message(messages.paramInputInitiate.error,context.user.locale);
-              dialog.sendMessage(context, message , false);
+              dialog.sendMessage(context, message , true);
             }),
             always : 'invoke'
           }

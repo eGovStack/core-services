@@ -90,7 +90,7 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 (async() => {          
-                  await new Promise(resolve => setTimeout(resolve, 4000)); 
+                  await new Promise(resolve => setTimeout(resolve, 3000)); 
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
                   dialog.sendMessage(context, nameInformationMessage, false);   
                   let message = dialog.get_message(messages.onboarding.onboardingName.question, context.user.locale);
@@ -126,7 +126,7 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 (async() => {  
-                  await new Promise(resolve => setTimeout(resolve, 4000));
+                  await new Promise(resolve => setTimeout(resolve, 3000));
                   let nameInformationMessage = dialog.get_message(messages.onboarding.nameInformation, context.user.locale);
                   dialog.sendMessage(context, nameInformationMessage, false);               
                   let message = dialog.get_message(messages.onboarding.onBoardingUserProfileConfirmation.question, context.user.locale);
@@ -193,9 +193,12 @@ const sevaMachine = Machine({
           states: {
             question: {
               onEntry: assign((context, event) => {
-                let message = dialog.get_message(messages.onboarding.onboardingNameConfirmation, context.user.locale);
-                message = message.replace('{{name}}', context.onboarding.name);
-                dialog.sendMessage(context, message);
+                (async() => {  
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                  let message = dialog.get_message(messages.onboarding.onboardingNameConfirmation, context.user.locale);
+                  message = message.replace('{{name}}', context.onboarding.name);
+                  dialog.sendMessage(context, message);
+                })();
               }),
               on: {
                 USER_MESSAGE: 'process'
@@ -228,7 +231,7 @@ const sevaMachine = Machine({
             error: {
               onEntry: assign((context, event) => {
                 let message = dialog.get_message(dialog.global_messages.error.retry, context.user.locale);
-                dialog.sendMessage(context, message, false);
+                dialog.sendMessage(context, message, true);
               }),
               always: 'question'
             }
@@ -262,7 +265,7 @@ const sevaMachine = Machine({
           id: 'onboardingThankYou',
           onEntry: assign((context, event) => {
             let message = dialog.get_message(messages.onboarding.onboardingThankYou, context.user.locale);
-            dialog.sendMessage(context, message, false);
+            dialog.sendMessage(context, message, true);
           }),
           always: '#sevamenu'
         },
@@ -290,7 +293,7 @@ const sevaMachine = Machine({
                   message = message.replace('{{name}}', context.user.name);
                 else 
                   message = message.replace('{{name}}', 'Citizen');
-                dialog.sendMessage(context, message, false);
+                dialog.sendMessage(context, message, true);
               }),
               always: '#sevamenu'
         }
@@ -305,7 +308,7 @@ const sevaMachine = Machine({
           message = message.replace('{{name}}', context.user.name);
         else 
           message = message.replace('{{name}}', '');
-        dialog.sendMessage(context, message, false);
+        dialog.sendMessage(context, message, true);
       }),
       always: '#sevamenu'
     },
@@ -361,7 +364,10 @@ const sevaMachine = Machine({
       states: {
         question: {
           onEntry: assign( (context, event) => {
+          (async() => {  
+            await new Promise(resolve => setTimeout(resolve, 1000));
             dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
+          })();
           }),
           on: {
             USER_MESSAGE: 'process'
@@ -406,7 +412,7 @@ const sevaMachine = Machine({
         }, // sevamenu.process
         error: {
           onEntry: assign( (context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.retry, context.user.locale), true);
           }),
           always : 'question'
         }, // sevamenu.error 
@@ -429,7 +435,7 @@ const sevaMachine = Machine({
         target: '#welcome',
         actions: assign((context, event) => {
           let message = dialog.get_message(dialog.global_messages.system_error, context.user.locale);
-          dialog.sendMessage(context, message, false);
+          dialog.sendMessage(context, message, true);
           context.chatInterface.system_error(event.data);
         })
       }
