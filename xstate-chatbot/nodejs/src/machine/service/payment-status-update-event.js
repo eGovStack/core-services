@@ -111,6 +111,7 @@ class PaymentStatusUpdateEventFormatter{
         Payments:[]
       };
       requestBody.Payments.push(payment);
+      console.log(requestBody);
 
       let options = {
         method: 'POST',
@@ -121,6 +122,7 @@ class PaymentStatusUpdateEventFormatter{
         body: JSON.stringify(requestBody)
       }
       let response = await fetch(pdfUrl, options);
+      console.log(response);
       if(response.status == 201){
         let responseBody = await response.json();
         let user = {
