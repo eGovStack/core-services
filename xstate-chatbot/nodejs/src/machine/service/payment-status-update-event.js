@@ -43,6 +43,7 @@ class PaymentStatusUpdateEventFormatter{
         if(message.topic === config.billsAndReceiptsUseCase.pgUpdateTransaction){
           console.log('PaymentStatusUpdateEventFormatter--> pgUpdateTransaction message received-->topic name: '+ message.topic);
           let transactionRequest = JSON.parse(message.value);
+          console.log(JSON.stringify(transactionRequest));
           let status = transactionRequest.Transaction.txnStatus;
 
           if(status === 'FAILURE' && transactionRequest.Transaction.additionalDetails.isWhatsapp){
