@@ -23,7 +23,9 @@ class PaymentStatusUpdateEventFormatter{
         if(message.topic === config.billsAndReceiptsUseCase.paymentUpdateTopic) {
           let paymentRequest = JSON.parse(message.value);
           console.log('PaymentStatusUpdateEventFormatter-->paymentUpdateTopic message received-->topic name: '+ message.topic);
+          console.log(JSON.stringify(paymentRequest));
           if(paymentRequest.Payment.additionalDetails && paymentRequest.Payment.additionalDetails.isWhatsapp){
+            console.log('isWhatsapp: true');
 
             self.paymentStatusMessage(paymentRequest)
             .then(() => {
@@ -59,6 +61,7 @@ class PaymentStatusUpdateEventFormatter{
 }
 
   async paymentStatusMessage(request){
+    console.log('In paymentStatusMessage');
     let payment = request.Payment;
     let locale = config.supportedLocales.split(',');
     locale = locale[0];
