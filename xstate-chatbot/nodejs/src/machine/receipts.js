@@ -569,20 +569,24 @@ const receipts = {
             onEntry: assign((context, event) => {
               (async() => {   
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                let localeList = config.supportedLocales.split(',');
-                let localeIndex = localeList.indexOf(context.user.locale);
-                let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
-                if(templateList[localeIndex])
-                  context.extraInfo.templateId = templateList[localeIndex];
-                else
-                  context.extraInfo.templateId = templateList[0];
+                // let localeList = config.supportedLocales.split(',');
+                // let localeIndex = localeList.indexOf(context.user.locale);
+                // let templateList =  config.valueFirstWhatsAppProvider.valuefirstNotificationViewReceptTemplateid.split(',');
+                // if(templateList[localeIndex])
+                //   context.extraInfo.templateId = templateList[localeIndex];
+                // else
+                //   context.extraInfo.templateId = templateList[0];
 
-                var templateContent = {
-                  output: context.extraInfo.templateId,
-                  type: "template",
-                };
-                dialog.sendMessage(context, templateContent, true);
+                // var templateContent = {
+                //   output: context.extraInfo.templateId,
+                //   type: "template",
+                // };
+                // dialog.sendMessage(context, templateContent, true);
+                //NOTE: Commented above code for View Receipts customization message for punjab
+                let message = dialog.get_message(messages.paramInputInitiate.questionViewReceipts, context.user.locale);
+                dialog.sendMessage(context, message , true);
               })();
+
             }),
             on: {
               USER_MESSAGE: 'process'
