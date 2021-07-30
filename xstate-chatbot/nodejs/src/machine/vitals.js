@@ -12,7 +12,7 @@ const vitalsFlow = {
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
     context.slots.person = {};
-    context.slots.details={};
+    context.slots.details = {};
   }),
   states: {
     rmoMobileNumber: {
@@ -285,7 +285,7 @@ const vitalsFlow = {
               {
                 cond: (context, event) => context.message === 'Hi',
                 actions: assign((context, event) => {
-                      context.persons = event.data;
+                  context.persons = event.data;
                 }),
                 target: '#selectLanguage',
               },
