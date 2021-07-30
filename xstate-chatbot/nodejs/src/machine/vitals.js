@@ -12,6 +12,7 @@ const vitalsFlow = {
   onEntry: assign((context, event) => {
     context.slots.vitals = {};
     context.slots.person = {};
+    context.slots.details = {};
   }),
   states: {
     rmoMobileNumber: {
@@ -282,9 +283,16 @@ const vitalsFlow = {
             src: (context, event) => vitalsService.getPatientDetailsFromMobileNumber(context.message),
             onDone: [
               {
-                cond: (context, event) => event.data.data === null,
+                cond: (context, event) => context.message === 'Hi',
                 actions: assign((context, event) => {
                   context.persons = event.data;
+                }),
+                target: '#selectLanguage',
+              },
+              {
+                cond: (context, event) => event.data.data === null,
+                actions: assign((context, event) => {
+                      context.persons = event.data;
                 }),
                 target: 'error',
               },
@@ -303,7 +311,7 @@ const vitalsFlow = {
         },
         error: {
           onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(messages.noUserFound, context.user.locale), false);
+            dialog.sendMessage(context, dialog.get_message(messages.noPatientFound, context.user.locale), false);
           }),
           always: 'prompt',
         },
@@ -335,30 +343,21 @@ const vitalsFlow = {
         },
         process: {
           onEntry: assign((context, event) => {
-            context.intention = dialog.get_intention(context.grammer, event, true);
+            context.slots.details = dialog.get_intention(context.grammer, event, true);
           }),
           always: [
             {
-              cond: (context) => context.intention == dialog.INTENTION_UNKOWN,
-              target: 'error',
-            },
-            {
               actions: assign((context, event) => {
-                context.slots.person.MASTER_ID = context.intention.MASTER_ID;
-                context.slots.person.com_status = context.intention.com_status;
-                context.slots.person.fateh_kit_delivered = context.intention.fateh_kit_delivered;
-                context.slots.person.data_source_type = context.intention.data_source_type;
+                context.slots.person.MASTER_ID = context.slots.details.MASTER_ID;
+                context.slots.person.com_status = context.slots.details.com_status;
+                context.slots.person.fateh_kit_delivered = context.slots.details.fateh_kit_delivered;
+                context.slots.person.data_source_type = context.slots.details.data_source_type;
+                context.slots.person.srfC_id=context.slots.details.srf_Id;
                 context.slots.person.rrt = 'YES';
               }),
               target: '#temperature',
             },
           ],
-        },
-        error: {
-          onEntry: assign((context, event) => {
-            dialog.sendMessage(context, dialog.get_message(dialog.global_messages.error.optionsRetry, context.user.locale), false);
-          }),
-          always: 'prompt',
         },
       },
     },
@@ -374,6 +373,7 @@ const vitalsFlow = {
               context.slots.person.com_status = '0';
               context.slots.person.fateh_kit_delivered = 'NO';
               context.slots.person.data_source_type = '';
+              context.slots.person.srfC_id ='';
               context.slots.person.rrt = 'NO';
             }),
             target: '#registerPatient',
