@@ -73,6 +73,7 @@ const envVariables = {
         egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://dev.digit.org/',
         externalHost: process.env.EXTERNAL_HOST || 'https://dev.digit.org/',
         searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
+        pdfServiceHost: process.env.EGOV_PDF_SERVICE_HOST || "http://pdf-service.egov:8080/",
 
         userServiceHost: process.env.USER_SERVICE_HOST || 'https://dev.digit.org/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',

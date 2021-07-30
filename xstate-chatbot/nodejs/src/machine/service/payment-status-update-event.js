@@ -96,7 +96,7 @@ class PaymentStatusUpdateEventFormatter{
         key = 'consolidatedreceipt';
    
 
-      let pdfUrl = config.egovServices.externalHost + 'pdf-service/v1/_create';
+      let pdfUrl = config.egovServices.pdfServiceHost + 'pdf-service/v1/_create';
       pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let msgId = request.RequestInfo.msgId.split('|');
