@@ -19,8 +19,8 @@ const receipts = {
         states:{
           receiptQuestion:{
             onEntry: assign((context, event) => {
-              (async() => {   
-                await new Promise(resolve => setTimeout(resolve, 1000));
+              // (async() => {
+                // await new Promise(resolve => setTimeout(resolve, 1000));
                 let { services, messageBundle } = receiptService.getSupportedServicesAndMessageBundle();
                 let preamble = dialog.get_message(messages.services.question.preamble, context.user.locale);
                 let { prompt, grammer } = dialog.constructListPromptAndGrammer(services, messageBundle, context.user.locale);
@@ -29,7 +29,7 @@ const receipts = {
                 let message = `${preamble}${prompt}`+'\n\n';
                 message = message + dialog.get_message(messages.lastState, context.user.locale);
                 dialog.sendMessage(context, message, true);
-              })();
+              // })();
             }),
             on: {
               USER_MESSAGE:'process'
