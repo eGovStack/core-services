@@ -96,7 +96,7 @@ class PaymentStatusUpdateEventFormatter{
         key = 'consolidatedreceipt';
    
 
-      let pdfUrl = config.egovServices.pdfServiceHost + 'pdf-service/v1/_create';
+      let pdfUrl = config.egovServices.egovServicesHost + 'pdf-service/v1/_create';
       pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let msgId = request.RequestInfo.msgId.split('|');
@@ -104,7 +104,7 @@ class PaymentStatusUpdateEventFormatter{
 
       let requestBody = {
         RequestInfo: {
-          authToken: request.RequestInfo.authToken,
+          authToken: user.authToken,
           msgId: msgId,
           userInfo: user.userInfo
         },
@@ -112,6 +112,8 @@ class PaymentStatusUpdateEventFormatter{
       };
       requestBody.Payments.push(payment);
       console.log(JSON.stringify(requestBody));
+      console.log("URL: "+ pdfUrl);
+      console.log("user token: "+ user.authToken);
 
       let options = {
         method: 'POST',
