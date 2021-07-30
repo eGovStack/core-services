@@ -617,7 +617,7 @@ const bills = {
                 // };
 
                 dialog.sendMessage(context, singleRecordMessage, true);
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 dialog.sendMessage(context, dialog.get_message(messages.paymentDisclaimer, context.user.locale), true);
 
                } else {
