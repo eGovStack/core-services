@@ -141,8 +141,8 @@ class PaymentStatusUpdateEventFormatter{
         // else
         //   chatState.context.bills.paidBy = 'OTHER'
 
-        let active = !chatState.done;
-        await chatStateRepository.updateState(user.userId, active, JSON.stringify(chatState));
+        // let active = !chatState.done;
+        // await chatStateRepository.updateState(user.userId, active, JSON.stringify(chatState));
 
 
         let waitMessage = [];
