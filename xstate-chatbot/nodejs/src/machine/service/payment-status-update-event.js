@@ -111,7 +111,7 @@ class PaymentStatusUpdateEventFormatter{
         Payments:[]
       };
       requestBody.Payments.push(payment);
-      console.log(requestBody);
+      console.log(JSON.stringify(requestBody));
 
       let options = {
         method: 'POST',
