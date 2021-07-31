@@ -239,9 +239,21 @@ class ValueFirstWhatsAppProvider {
 
   async sendMessage(requestBody) {
     const url = config.valueFirstWhatsAppProvider.valueFirstURL;
+    let token = await this.generateBearerToken();
+    console.log('token:' + token);
+
+    if(token){
+        token = 'Bearer ' + token;
+
+    }
+    else {
+        console.error('Error in sending message');
+        return undefined;
+    }
 
     const headers = {
       'Content-Type': 'application/json',
+      'Authorization': token
     };
 
     const request = {
@@ -280,6 +292,34 @@ class ValueFirstWhatsAppProvider {
     return reformattedMessage;
     // }
   }
+
+  async generateBearerToken(){
+    let url = config.valueFirstWhatsAppProvider.valueFirstTokenURL;
+
+    let myheaders = {
+        'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
+    }
+    var requestOptions = {
+        method: 'POST',
+        headers: myheaders,
+        origin: '*'
+    };
+    url = url + '?action=generate';
+
+    console.log('URL: ' + url + JSON.stringify(requestOptions));
+    let response = await fetch(url,requestOptions);
+    console.log(response);
+    if(response.status === 200){
+      console.log('Token generated successfully');
+        let messageBack = await response.json();
+        return messageBack.token;
+    }
+    else {
+        console.error('Error while generating token');
+        console.error(response);
+        return undefined;
+        }
+    }
 
   async sendMessageToUser(user, messages, extraInfo) {
     let requestBody = {};
