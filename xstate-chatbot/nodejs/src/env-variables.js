@@ -49,7 +49,7 @@ const envVariables = {
     valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
     valueFirstURL: process.env.VALUEFIRST_SEND_MESSAGE_URL || 'https://api.myvaluefirst.com/psms/servlet/psms.JsonEservice',
     valueFirstTokenURL: process.env.VALUEFIRST_TOKEN_URL || 'https://api.myvfirst.com/psms/api/messages/token',
-    valuefirstLoginAuthorizationHeader: process.env.VALUEFIRST_LOGIN_AUTHORIZATION_HEADER || 'Basic bXNldmF1cmJhbndhOjE+PkdpZ3pINCU=',
+    valuefirstLoginAuthorizationHeader: process.env.VALUEFIRST_LOGIN_AUTHORIZATION_HEADER || 'Basic cHVuamFibVdBOmhzZmFANzE4KA==',
     valueFirstWelcomeMessageTemplateId: process.env.VALUEFIRST_WELCOME_MESSAGE_TEMPLATE_ID || '3459715',
   },
 
