@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import org.egov.search.model.SearchRequest;
+import org.egov.search.repository.SearchRepository;
 import org.egov.search.service.SearchService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
+@Slf4j
 public class SearchController {
 		
 	@Autowired
@@ -34,6 +38,8 @@ public class SearchController {
 			searchRequest.setSearchCriteria(queryParams);
 		}
 		Object searchResult = searchService.searchData(searchRequest,moduleName,searchName);
+		
+		log.info("Result of search query " + searchResult);
 		try {
 		    Type type = new TypeToken<Map<String, Object>>() {}.getType();
 			Gson gson = new Gson();
