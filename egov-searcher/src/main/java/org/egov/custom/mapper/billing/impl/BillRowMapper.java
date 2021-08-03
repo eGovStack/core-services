@@ -65,7 +65,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				Connection connection=new Connection();
 				connection.setPropertyId(rs.getString("pid"));
 				connection.setOldConnectionNo(rs.getString("oldpid"));
-				connection.setAdditionalDetails((JsonNode)rs.getObject("conn_add"));
+				connection.setAdditionalDetails(rs.getObject("conn_add"));
 				bill = Bill.builder()
 					.id(billId)
 					.totalAmount(BigDecimal.ZERO)
