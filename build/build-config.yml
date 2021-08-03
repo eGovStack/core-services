@@ -118,7 +118,7 @@ config:
       - work-dir: "egov-pg-service/src/main/resources/db"
         image-name: "egov-pg-service-db"
 
-  - name: "core-services/egov-searcher"
+  - name: "builds/core-services/egov-searcher"
     build:
       - work-dir: "egov-searcher"
         image-name: "egov-searcher"
