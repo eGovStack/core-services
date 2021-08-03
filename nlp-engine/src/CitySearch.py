@@ -14,7 +14,7 @@ punct= string.punctuation
 
 configs = Properties()
 
-with open('../application.properties', 'rb') as config_file:
+with open('application.properties', 'rb') as config_file:
     configs.load(config_file)
 
 url = MDMS_HOST + MDMS_SEARCH_URL
