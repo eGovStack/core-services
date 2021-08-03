@@ -30,3 +30,4 @@ sniffio==1.1.0
 tqdm==4.48.2
 urllib3==1.25.10
 Werkzeug==1.0.1
+jproperties==2.1.1

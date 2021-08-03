@@ -2,6 +2,7 @@ from fuzzywuzzy import fuzz
 from googletrans import Translator
 from nltk.util import ngrams
 from Config import *
+from jproperties import Properties
 import string
 import nltk
 import requests
@@ -10,6 +11,11 @@ import json
 translator= Translator()
 
 punct= string.punctuation
+
+configs = Properties()
+
+with open('application.properties', 'rb') as config_file:
+    configs.load(config_file)
 
 url = MDMS_HOST + MDMS_SEARCH_URL
 data = {"RequestInfo":{},"MdmsCriteria":{"tenantId": "","moduleDetails":[{"moduleName":"", "masterDetails":[]}]}}
@@ -20,7 +26,7 @@ data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 masterDeatils = {"name":CITY_LOCALE_MASTER}
 data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 payload = json.dumps(data)
-print(DEFAULT_LOCALISATION_TENANT)
+print(configs.get("DEFAULT_LOCALISATION_TENANT").data)
 
 response = requests.post(url, data=payload, headers={"Content-Type": "application/json"})
 res = json.loads(response.text)
