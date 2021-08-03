@@ -29,7 +29,7 @@ public class SearchRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
-	@Value("${max.sql.execution.time.millisec:45000}")
+	@Value("${max.sql.execution.time.millisec:60000}")
 	private Long maxExecutionTime;
 	
 	@Autowired
