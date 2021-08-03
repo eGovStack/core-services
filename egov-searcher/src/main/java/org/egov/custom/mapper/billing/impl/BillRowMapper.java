@@ -60,7 +60,10 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				address.setPincode(rs.getString("ptadd_pincode"));
 				address.setLocality(rs.getString("ptadd_locality"));
 				User user = User.builder().id(rs.getString("ptown_userid")).build();
-								
+				Connection connection=new Connection();
+				connection.setProperty_id(rs.getString("pid"));
+				connection.setOldConnectionNo(rs.getString("oldpid"));
+				connection.setAdditionalDetails(rs.getObject("conn_add"));
 				bill = Bill.builder()
 					.id(billId)
 					.totalAmount(BigDecimal.ZERO)
@@ -81,6 +84,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.fileStoreId(rs.getString("b_filestoreid"))
 					.address(address)
 					.user(user)
+					.connection(connection)
 					.build();
 				
 				userIds.add(user.getId());
