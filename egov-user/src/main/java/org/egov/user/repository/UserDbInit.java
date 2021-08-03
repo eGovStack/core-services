@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -40,9 +41,6 @@ public class UserDbInit {
     @Value("${user.service.default.tenantid}")
     private String defaultTenantId;
 
-    @Value("${user.service.default.uuid}")
-    private String defaultUUID;
-
     @Value("${user.service.default.otpreference}")
     private String defaultOtpReference;
 
@@ -52,11 +50,14 @@ public class UserDbInit {
     @Value("${user.service.default.pincode}")
     private String defaultPinCode;
 
-    @Value("${user.service.default.address}")
-    private String defaultAddress;
-
     @Value("${user.service.default.role}")
     private String defaultRole;
+
+    @Value("${user.service.default.rolecode}")
+    private String defaultRoleCode;
+
+    @Value("${user.service.default.rolename}")
+    private String defaultRoleName;
 
     @Value("${user.service.default.active}")
     private boolean defaultActiveIndicator;
@@ -78,37 +79,21 @@ public class UserDbInit {
     @PostConstruct
     private void initSeedUser() {
         if (createDefaultUser) {
-            Role urole = Role.builder().code("PGR_LME")
-                    .name("PGR Last Mile Employee")
-                    .tenantId("pb.amritsar")
+            Role urole = Role.builder().code(defaultRoleCode)
+                    .name(defaultRoleName)
+                    .tenantId(defaultTenantId)
                     .build();
             Set<Role> roleSet = new HashSet<Role>();
             roleSet.add(urole);
             UserType type = UserType.EMPLOYEE;
-            AddressType adType = AddressType.PERMANENT;
-            AddressType cadType = AddressType.CORRESPONDENCE;
-            Address paddress = Address.builder()
-                    .city(defaultCity)
-                    .pinCode(defaultPinCode)
-                    .address(defaultAddress)
-                    .type(adType)
-                    .build();
-            Address caddress = Address.builder()
-                    .city(defaultCity)
-                    .pinCode(defaultPinCode)
-                    .address(defaultAddress)
-                    .type(cadType)
-                    .build();
             User user = User.builder()
                     .mobileNumber(defaultMobileNumber)
                     .tenantId(defaultTenantId)
-                    .uuid(defaultUUID)
+                    .uuid(UUID.randomUUID().toString())
                     .name(defaultName)
                     .otpReference(defaultOtpReference)
                     .active(defaultActiveIndicator)
                     .type(type)
-                    .permanentAddress(paddress)
-                    .correspondenceAddress(caddress)
                     .username(defaultUsername)
                     .password(defaultPassword)
                     .roles(roleSet)
