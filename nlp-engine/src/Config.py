@@ -11,4 +11,4 @@ EGOV_LOCATION_HOST = 'http://egov-location.egov:8080/'
 EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
 
-STATE_LEVEL_TENANTID = 'pb'
+STATE_LEVEL_TENANTID = 'pg'
