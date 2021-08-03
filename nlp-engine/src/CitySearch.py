@@ -20,6 +20,7 @@ data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 masterDeatils = {"name":CITY_LOCALE_MASTER}
 data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 payload = json.dumps(data)
+print(DEFAULT_LOCALISATION_TENANT)
 
 response = requests.post(url, data=payload, headers={"Content-Type": "application/json"})
 res = json.loads(response.text)
