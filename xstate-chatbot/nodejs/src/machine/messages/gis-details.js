@@ -361,7 +361,7 @@ const messages = {
       },
     },
   },
-  anyOtherParsalId: {
+  anyOtherParcelId: {
     prompt: {
       preamble:{
       en_IN: 'Do You Want To Continue? ',

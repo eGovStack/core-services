@@ -671,7 +671,7 @@ const gisFlow = {
             actions: assign((context, event) => {
               dialog.sendMessage(context, dialog.get_message(messages.propertyAdded.prompt, context.user.locale));
             }),
-            target: '#anyOtherParsal',
+            target: '#anyOtherParcel',
           },
           {
             target: '',
@@ -1347,19 +1347,19 @@ const gisFlow = {
               let message = dialog.get_message(messages.updateProperty.prompt, context.user.locale);
               dialog.sendMessage(context, message);
             }),
-            target: '#anyOtherParsal',
+            target: '#anyOtherParcel',
           }
         ],
       },
     },
-    anyOtherParsal: {
-      id: 'anyOtherParsal',
+    anyOtherParcel: {
+      id: 'anyOtherParcel',
       initial: 'prompt',
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-           let message = dialog.get_message(messages.anyOtherParsalId.prompt.preamble, context.user.locale);
-           const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.anyOtherParsalId.prompt.options.list, messages.anyOtherParsalId.prompt.options.messageBundle, context.user.locale);
+           let message = dialog.get_message(messages.anyOtherParcelId.prompt.preamble, context.user.locale);
+           const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.anyOtherParcelId.prompt.options.list, messages.anyOtherParcelId.prompt.options.messageBundle, context.user.locale);
            message += prompt;
            context.grammer = grammer;
            dialog.sendMessage(context, message);
