@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 @Component
 public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 	
@@ -61,9 +63,9 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				address.setLocality(rs.getString("ptadd_locality"));
 				User user = User.builder().id(rs.getString("ptown_userid")).build();
 				Connection connection=new Connection();
-				connection.setProperty_id(rs.getString("pid"));
+				connection.setPropertyId(rs.getString("pid"));
 				connection.setOldConnectionNo(rs.getString("oldpid"));
-				connection.setAdditionalDetails(rs.getObject("conn_add"));
+				connection.setAdditionalDetails((JsonNode)rs.getObject("conn_add"));
 				bill = Bill.builder()
 					.id(billId)
 					.totalAmount(BigDecimal.ZERO)

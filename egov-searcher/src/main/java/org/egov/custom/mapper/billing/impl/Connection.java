@@ -1,6 +1,6 @@
 package org.egov.custom.mapper.billing.impl;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,12 +17,12 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Connection {
 
-	private String property_id;
+	private String propertyId;
 	
 	
 	private String oldConnectionNo;
 	
 	
-	private Object additionalDetails;
+	private JsonNode additionalDetails;
 
 }
