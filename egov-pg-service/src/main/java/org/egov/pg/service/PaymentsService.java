@@ -113,6 +113,7 @@ public class PaymentsService {
 				.instrumentDate(System.currentTimeMillis())
 				.instrumentNumber("PROV_PAYMENT_VALIDATION")
 				.transactionNumber("PROV_PAYMENT_VALIDATION")
+				.payerName(request.getTransaction().getUser().getName())
 				.build();
 	}
 

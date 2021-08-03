@@ -30,12 +30,14 @@ public class EnrichmentService {
     private IdGenService idGenService;
     private BankAccountRepository bankAccountRepository;
     private ObjectMapper objectMapper;
+    private UserService userService;
 
     @Autowired
-    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper) {
+    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper, UserService userService) {
         this.idGenService = idGenService;
         this.bankAccountRepository = bankAccountRepository;
         this.objectMapper = objectMapper;
+        this.userService = userService;
     }
 
     void enrichCreateTransaction(TransactionRequest transactionRequest) {

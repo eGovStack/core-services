@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Scheduled to run frequent interval, configurable
@@ -17,7 +18,7 @@ public class EarlyReconciliationJobConfig {
     @Autowired
     private AppProperties appProperties;
 
-    @Bean
+    @Primary
     JobDetailFactoryBean earlyReconciliationJob() {
         JobDetailFactoryBean jobDetailFactory = new JobDetailFactoryBean();
         jobDetailFactory.setJobClass(EarlyReconciliationJob.class);
