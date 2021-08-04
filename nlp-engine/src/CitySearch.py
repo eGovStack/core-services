@@ -2,35 +2,26 @@ from fuzzywuzzy import fuzz
 from googletrans import Translator
 from nltk.util import ngrams
 from Config import *
-from jproperties import Properties
 import string
 import nltk
 import requests
 import json
 import os
 
-print(os.environ['HOME'])
 
 translator= Translator()
 
 punct= string.punctuation
 
-configs = Properties()
-
-with open('application.properties', 'rb') as config_file:
-    configs.load(config_file)
-
 url = MDMS_HOST + MDMS_SEARCH_URL
 data = {"RequestInfo":{},"MdmsCriteria":{"tenantId": "","moduleDetails":[{"moduleName":"", "masterDetails":[]}]}}
-data["MdmsCriteria"]["tenantId"] = STATE_LEVEL_TENANTID
+data["MdmsCriteria"]["tenantId"] = os.environ.get('DEFAULT_LOCALISATION_TENANT')
 data["MdmsCriteria"]["moduleDetails"][0]["moduleName"] = MDMS_MODULE_NAME
 masterDeatils = {"name":CITY_MASTER}
 data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 masterDeatils = {"name":CITY_LOCALE_MASTER}
 data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)
 payload = json.dumps(data)
-print(configs.get("DEFAULT_LOCALISATION_TENANT").data)
-print(os.environ.get('DEFAULT_LOCALISATION_TENANT'))
 
 response = requests.post(url, data=payload, headers={"Content-Type": "application/json"})
 res = json.loads(response.text)
