@@ -54,7 +54,7 @@ public class EnrichmentService {
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
         transaction.setTxnId(txnId);
-        transaction.setUser(new User(requestInfo.getUserInfo()));
+        transaction.setUser(userService.createOrSearchUser(transactionRequest));
         transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
 		if (Objects.isNull(transaction.getAdditionalDetails())) {
