@@ -1,5 +1,6 @@
 package org.egov.pg.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +82,12 @@ public class EnrichmentService {
                 .createdTime(System.currentTimeMillis())
                 .build();
         transaction.setAuditDetails(auditDetails);
+        try {
+			log.info(objectMapper.writeValueAsString(transaction));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     void enrichUpdateTransaction(TransactionRequest transactionRequest, Transaction newTxn) {
