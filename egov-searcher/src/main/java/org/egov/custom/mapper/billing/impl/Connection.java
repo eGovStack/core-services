@@ -23,6 +23,6 @@ public class Connection {
 	private String oldConnectionNo;
 	
 	
-	private JsonNode additionalDetails;
+	private Object additionalDetails;
 
 }
