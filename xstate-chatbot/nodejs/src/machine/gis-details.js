@@ -671,7 +671,7 @@ const gisFlow = {
             actions: assign((context, event) => {
               dialog.sendMessage(context, dialog.get_message(messages.propertyAdded.prompt, context.user.locale));
             }),
-            target: '#endstate',
+            target: '#anyOtherParcel',
           },
           {
             target: '',
@@ -1347,12 +1347,63 @@ const gisFlow = {
               let message = dialog.get_message(messages.updateProperty.prompt, context.user.locale);
               dialog.sendMessage(context, message);
             }),
-            target: '#endstate',
+            target: '#anyOtherParcel',
           }
         ],
       },
     },
-  },
+    anyOtherParcel: {
+      id: 'anyOtherParcel',
+      initial: 'prompt',
+      states: {
+        prompt: {
+          onEntry: assign((context, event) => {
+           let message = dialog.get_message(messages.anyOtherParcelId.prompt.preamble, context.user.locale);
+           const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.anyOtherParcelId.prompt.options.list, messages.anyOtherParcelId.prompt.options.messageBundle, context.user.locale);
+           message += prompt;
+           context.grammer = grammer;
+           dialog.sendMessage(context, message);
+          }),
+          on: {
+            USER_MESSAGE: 'process',
+          },
+        },
+        process: {
+          onEntry: assign((context, event) => {
+            context.intention = dialog.get_intention(context.grammer, event, true);
+            let user_id=context.slots.property.user_id;
+            context.slots.property = {};
+            context.slots.property.user_id=user_id;
+          }),
+          always: [
+            {
+              cond: (context, event) => context.intention == 'yesNextParsal',
+              target: '#gismenu',
+            },
+            {
+              cond: (context, event) => context.intention == 'noNextParsal',
+              actions: assign((context, event) => {
+                let message = dialog.get_message(messages.endProperty.prompt, context.user.locale);
+                dialog.sendMessage(context, message);
+              }),
+              target: '#endstate',
+            },
+            {
+              cond: (context, event) => context.intention == 'INTENTION_UKNOWN',
+              target: 'error',
+            },
+          ],
+
+        },
+        error: {
+          onEntry: assign((context, event) => {
+            dialog.sendMessage(context, dialog.get_message(messages.invalidOption, context.user.locale));
+          }),
+          always: 'prompt',
+        },
+      },
+    },
+ },
 
 };
 

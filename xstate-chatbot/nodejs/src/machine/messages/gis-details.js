@@ -10,12 +10,12 @@ const messages = {
         list: ['addNewProperty', 'validateExistingProperty'],
         messageBundle: {
           addNewProperty: {
-            en_IN: 'Add new property',
+            en_IN: 'Add New Property',
             pa_IN: 'ਨਵੀਂ ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕਰੋ',
             hi_IN: 'नई संपत्ति जोड़ें',
           },
           validateExistingProperty: {
-            en_IN: 'Validate existing property',
+            en_IN: 'Validate Existing Property',
             pa_IN: 'ਮੌਜੂਦਾ ਸੰਪਤੀ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰੋ',
             hi_IN: 'मौजूदा संपत्ति सत्यापित करें',
           },
@@ -166,21 +166,21 @@ const messages = {
   },
   temporaryParcelId: {
     prompt: {
-      en_IN: 'Add Temporary parcel id',
+      en_IN: 'Add Temporary Parcel Id',
       pa_IN: 'ਅਸਥਾਈ ਪਾਰਸਲ ਆਈਡੀ ਸ਼ਾਮਲ ਕਰੋ',
       hi_IN: 'एक अस्थायी पार्सल आईडी जोड़ें',
     },
   },
   addhouseNo: {
     prompt: {
-      en_IN: 'Please enter your house number',
+      en_IN: 'Please Enter Your House Number',
       pa_IN: 'ਆਪਣੇ ਘਰ ਦਾ ਨੰਬਰ ਦਰਜ ਕਰੋ ਜੀ',
       hi_IN: 'कृपया अपने घर का नंबर दर्ज करें',
     },
   },
   addblockNo: {
     prompt: {
-      en_IN: 'Please enter your block number',
+      en_IN: 'Please Enter Your Block Number',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਬਲਾਕ ਨੰਬਰ ਦਰਜ ਕਰੋ',
       hi_IN: 'कृपया अपना ब्लॉक नंबर दर्ज करें',
     },
@@ -194,7 +194,7 @@ const messages = {
   },
   addcontactNo: {
     prompt: {
-      en_IN: 'Please enter your Contact number',
+      en_IN: 'Please Enter your Contact number',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸੰਪਰਕ ਨੰਬਰ ਦਰਜ ਕਰੋ',
       hi_IN: 'कृपया अपना संपर्क नंबर दर्ज करें',
     },
@@ -206,35 +206,35 @@ const messages = {
   },
   addpropertyuse: {
     prompt: {
-      en_IN: 'Please enter your Property use',
+      en_IN: 'Please Enter Your Property use',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਾਇਦਾਦ ਦੀ ਵਰਤੋਂ ਦਾਖਲ ਕਰੋ',
       hi_IN: 'कृपया अपनी संपत्ति का उपयोग दर्ज करें',
     },
   },
   addnoOfFloor: {
     prompt: {
-      en_IN: 'Please enter Number of floors (eg. G1 with Basement ,G1+1 etc) ',
+      en_IN: 'Please Enter Number of floors (eg. G1 with Basement ,G1+1 etc) ',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਫ਼ਰਸ਼ਾਂ ਦੀ ਗਿਣਤੀ ਦਰਜ ਕਰੋ(eg. G1 with Basement ,G1+1 etc) ',
       hi_IN: 'कृपया मंजिलों की संख्या दर्ज करें(eg. G1 with Basement ,G1+1 etc) ',
     },
   },
   addwaterconnection: {
     prompt: {
-      en_IN: 'Please enter your Water connections number',
+      en_IN: 'Please Enter your Water connections number',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪਾਣੀ ਕੁਨੈਕਸ਼ਨ ਨੰਬਰ ਦਾਖਲ ਕਰੋ',
       hi_IN: 'कृपया अपना जल कनेक्शन नंबर दर्ज करें',
     },
   },
   addsewageconnection: {
     prompt: {
-      en_IN: 'Please enter your Sewage connection number',
+      en_IN: 'Please Enter your Sewage connection number',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸੀਵਜ ਕੁਨੈਕਸ਼ਨ ਨੰਬਰ ਦਾਖਲ ਕਰੋ',
       hi_IN: 'कृपया अपना सीवेज कनेक्शन नंबर दर्ज करें',
     },
   },
   addmohallaName: {
     prompt: {
-      en_IN: 'Please enter your Mohalla Name',
+      en_IN: 'Please Enter your Mohalla Name',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਮੁਹੱਲਾ ਨਾਮ ਦਾਖਲ ਕਰੋ',
       hi_IN: 'कृपया अपना मोहल्ला नाम दर्ज करें',
     },
@@ -248,14 +248,14 @@ const messages = {
   },
   addpropertyId: {
     prompt: {
-      en_IN: 'Please enter your Property id as per tax property',
+      en_IN: 'Please Enter Your Property id as per tax property',
       pa_IN: 'ਟੈਕਸ ਜਾਇਦਾਦ ਦੇ ਅਨੁਸਾਰ ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਾਇਦਾਦ ID ਦਾਖਲ ਕਰੋ',
       hi_IN: 'कृपया कर योग्य संपत्ति के अनुसार अपनी संपत्ति आईडी दर्ज करें',
     },
   },
   validateExistingProperty: {
     prompt: {
-      en_IN: 'Please Enter your parcel ID',
+      en_IN: 'Please Enter Your Parcel ID',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਪਾਰਸਲ ID ਦਿਓ',
       hi_IN: 'ब्कृपया अपना पार्सल आईडी दर्ज करें',
     },
@@ -340,22 +340,46 @@ const messages = {
   anyOtherUpdate: {
     prompt: {
       preamble:{
-      en_IN: 'Any Other :',
-      pa_IN: 'ਕੋਈ ਹੋਰ ਅਪਡੇਟ:',
-      hi_IN: 'कोई अन्य अपडेट:',
+      en_IN: 'Do You Want To Update Any Other Parameter',
+      pa_IN: 'ਕੀ ਤੁਸੀਂ ਕੋਈ ਹੋਰ ਪੈਰਾਮੀਟਰ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?:',
+      hi_IN: 'क्या आप किसी अन्य पैरामीटर को अपडेट करना चाहते हैं?',
     },
     options: {
       list: ['yestoupdate', 'notoupdate'],
       messageBundle: {
         yestoupdate: {
-          en_IN: 'Yes Wants to Update More',
-          pa_IN: 'ਹਾਂ ਹੋਰ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦਾ ਹੈ',
-          hi_IN: 'हाँ अधिक अपडेट करना चाहता है',
+          en_IN: 'if Yes Press 1',
+          pa_IN: 'ਜੇ ਹਾਂ ਤਾਂ 1 ਦਬਾਓ',
+          hi_IN: 'यदि हाँ तो 1 दबाएँ',
         },
         notoupdate: {
-          en_IN: 'Wants to save the changes and exit',
-          pa_IN: 'ਕੀਤੀਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਸਟੋਰ ਕਰੋ',
-          hi_IN: 'परिवर्तनों को सहेजें',
+          en_IN: 'Press 2 to Exit',
+          pa_IN: 'ਬਾਹਰ ਜਾਣ ਲਈ 2 ਦਬਾਓ',
+          hi_IN: 'बाहर निकलने के लिए 2 दबाएं',
+        },
+        },
+      },
+    },
+  },
+  anyOtherParcelId: {
+    prompt: {
+      preamble:{
+      en_IN: 'Do You Want To Continue? ',
+      pa_IN: 'ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
+      hi_IN: 'क्या आप जारी रखना चाहते हैं?',
+    },
+    options: {
+      list: ['yesNextParsal', 'noNextParsal'],
+      messageBundle: {
+        yesNextParsal: {
+          en_IN: 'if Yes Press 1',
+          pa_IN: 'ਜੇ ਹਾਂ ਤਾਂ 1 ਦਬਾਓ',
+          hi_IN: 'यदि हाँ तो 1 दबाएँ',
+        },
+        noNextParsal: {
+          en_IN: 'Press 2 to EXIT',
+          pa_IN: 'ਬਾਹਰ ਜਾਣ ਲਈ 2 ਦਬਾਓ',
+          hi_IN: 'बाहर निकलने के लिए 2 दबाएं',
         },
         },
       },
@@ -363,9 +387,16 @@ const messages = {
   },
  updateProperty: {
     prompt: {
-      en_IN: 'Your property have been updated successfully',
+      en_IN: 'Your Property have been Updated Successfully',
       pa_IN: 'ਤੁਹਾਡੀ ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕੀਤੀ ਗਈ ਹੈ ਧੰਨਵਾਦ!',
       hi_IN: 'आपकी संपत्ति जोड़ दी गई है। धन्यवाद!',
+    },
+  },
+  endProperty: {
+    prompt: {
+      en_IN: 'Thanks For Using GIS ChatBot',
+      pa_IN: 'ਜੀਆਈਐਸ ਚੈਟਬੋਟ ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ',
+      hi_IN: 'जीआईएस चैटबॉट का उपयोग करने के लिए धन्यवाद',
     },
   },
   propertyAdded: {
@@ -377,7 +408,7 @@ const messages = {
   },
   imageUpload: {
     prompt: {
-      en_IN: 'Please attach a picture of the Property."',
+      en_IN: 'Please attach a picture of the Property.',
       pa_IN: 'ਕਿਰਪਾ ਕਰਕੇ ਜਾਇਦਾਦ ਦੀ ਤਸਵੀਰ ਲਗਾਓ!',
       hi_IN: 'कृपया शिकायत की एक तस्वीर भेजें। '
     },
