@@ -6,7 +6,6 @@ import string
 import nltk
 import requests
 import json
-import os
 
 translator= Translator()
 
@@ -14,7 +13,7 @@ punct= string.punctuation
 
 url = MDMS_HOST + MDMS_SEARCH_URL
 data = {"RequestInfo":{},"MdmsCriteria":{"tenantId": "","moduleDetails":[{"moduleName":"", "masterDetails":[]}]}}
-data["MdmsCriteria"]["tenantId"] = os.environ.get('DEFAULT_LOCALISATION_TENANT')
+data["MdmsCriteria"]["tenantId"] = STATE_LEVEL_TENANTID
 data["MdmsCriteria"]["moduleDetails"][0]["moduleName"] = MDMS_MODULE_NAME
 masterDeatils = {"name":CITY_MASTER}
 data["MdmsCriteria"]["moduleDetails"][0]["masterDetails"].append(masterDeatils)

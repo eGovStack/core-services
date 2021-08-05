@@ -12,4 +12,3 @@ EGOV_LOCATION_SEARCH_URL = 'egov-location/location/v11/boundarys/_search'
 
 
 STATE_LEVEL_TENANTID = 'pb'
-DEFAULT_LOCALISATION_TENANT = 'pb'
