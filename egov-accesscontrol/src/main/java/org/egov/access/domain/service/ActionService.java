@@ -116,30 +116,11 @@ public class ActionService {
 		boolean isAuthorized = uris.contains(uriToBeAuthorized) || containsRegexUri(regexUris, uriToBeAuthorized);
 
 		/* If the user is not authorized to access a resource at the central instance level, the following
-		*  code block checks whether the user is authorized to access that resource at state level.
+		*  code block redirects to check whether the user is authorized to access that resource at state level
 		* */
 		if(!isAuthorized){
 
-			String centralInstanceLevelTenantId = authorizeRequest.getTenantIds().iterator().next();
-			String stateLevelTenantId = centralInstanceLevelTenantId.split(".", 2)[1];
-
-			roleActions = mdmsRepository.fetchRoleActionData(getStateLevelTenant
-					(stateLevelTenantId));
-
-			uriToBeAuthorized = authorizeRequest.getUri();
-			applicableRoles = getApplicableRoles(authorizeRequest);
-			uris = new HashSet<>();
-			regexUris = new ArrayList<>();
-
-			for(String roleCode : applicableRoles){
-				if(roleActions.containsKey(roleCode))
-					uris.addAll(roleActions.get(roleCode).getUris());
-
-				if(roleActions.containsKey(roleCode))
-					regexUris.addAll(roleActions.get(roleCode).getRegexUris());
-			}
-
-			isAuthorized = uris.contains(uriToBeAuthorized) || containsRegexUri(regexUris, uriToBeAuthorized);
+			isAuthorized = isAuthorizedOnStateLevel(authorizeRequest);
 
 		}
 
@@ -148,6 +129,34 @@ public class ActionService {
                 isAuthorized);
 
 		return isAuthorized;
+	}
+
+	/* If the user is not authorized to access a resource at the central instance level, the following
+	 *  code block checks whether the user is authorized to access that resource at state level.
+	 * */
+	private boolean isAuthorizedOnStateLevel(AuthorizationRequest authorizeRequest){
+		String centralInstanceLevelTenantId = authorizeRequest.getTenantIds().iterator().next();
+		String stateLevelTenantId = centralInstanceLevelTenantId.split(".", 2)[1];
+
+		Map<String, ActionContainer> roleActions = mdmsRepository.fetchRoleActionData(getStateLevelTenant
+				(stateLevelTenantId));
+
+		String uriToBeAuthorized = authorizeRequest.getUri();
+		Set<String> applicableRoles = getApplicableRoles(authorizeRequest);
+		Set<String> uris = new HashSet<>();
+		List<String> regexUris = new ArrayList<>();
+
+		for(String roleCode : applicableRoles){
+			if(roleActions.containsKey(roleCode))
+				uris.addAll(roleActions.get(roleCode).getUris());
+
+			if(roleActions.containsKey(roleCode))
+				regexUris.addAll(roleActions.get(roleCode).getRegexUris());
+		}
+
+		boolean isAuthorized = uris.contains(uriToBeAuthorized) || containsRegexUri(regexUris, uriToBeAuthorized);
+
+		return  isAuthorized;
 	}
 
 	private Set<String> getApplicableRoles(AuthorizationRequest authorizationRequest){
