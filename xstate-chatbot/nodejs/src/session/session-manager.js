@@ -41,7 +41,7 @@ class SessionManager {
     async toUser(user, outputMessages, extraInfo) {
         channelProvider.sendMessageToUser(user, outputMessages, extraInfo);
         for(let message of outputMessages) {
-            telemetry.log(user.userId, 'to_user', {message : {type: "text", output: message}});
+            telemetry.log(user.userId, 'to_user', {message : {type: "text", output: message, locale: user.locale}});
         }
     }
 
