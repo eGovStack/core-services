@@ -117,7 +117,7 @@ class GisService {
     const formdata = new FormData();
     formdata.append('UID', propertyDetails.UID);
     formdata.append('UserId', propertyDetails.user_id);
-    formdata.append('ParcelID', propertyDetails.user_id);
+    formdata.append('ParcelID', propertyDetails.UID);
     formdata.append('OldHouseNo', propertyDetails.OldHouseNo);
     formdata.append('BlockNo', propertyDetails.blockNo);
     formdata.append('ContactNo', propertyDetails.contactNo);
