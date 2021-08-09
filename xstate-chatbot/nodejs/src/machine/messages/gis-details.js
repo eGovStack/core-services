@@ -364,9 +364,9 @@ const messages = {
   anyOtherParcelId: {
     prompt: {
       preamble:{
-      en_IN: 'Do You Want To Continue? ',
-      pa_IN: 'ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
-      hi_IN: 'क्या आप जारी रखना चाहते हैं?',
+      en_IN: 'Do You Want To Update With Next Parcel Id ? ',
+      pa_IN: 'ਕੀ ਤੁਸੀਂ ਅਗਲੀ ਪਾਰਸਲ ਆਈਡੀ ਨਾਲ ਅਪਡੇਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?',
+      hi_IN: 'क्या आप अगली पार्सल आईडी के साथ अपडेट करना चाहते हैं?',
     },
     options: {
       list: ['yesNextParsal', 'noNextParsal'],
