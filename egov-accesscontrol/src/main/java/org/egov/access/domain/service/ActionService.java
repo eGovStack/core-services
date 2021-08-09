@@ -97,8 +97,39 @@ public class ActionService {
      */
 	public boolean isAuthorized(AuthorizationRequest authorizeRequest){
 
-		Map<String, ActionContainer>  roleActions = mdmsRepository.fetchRoleActionData(getStateLevelTenant
-                (authorizeRequest.getTenantIds().iterator().next()));
+		String inputTenantId = authorizeRequest.getTenantIds().iterator().next();
+
+		List<String> listOfMdmsTenantIdsToCheck = fetchListOfTenantIdsForAuthorizationCheck(inputTenantId);
+
+		boolean isAuthorized = false;
+
+		for(String tenantId : listOfMdmsTenantIdsToCheck) {
+			if(isAuthorizedOnGivenTenantLevel(authorizeRequest, tenantId)){
+				isAuthorized = true;
+				break;
+			}
+		}
+
+		return isAuthorized;
+	}
+
+	private List<String> fetchListOfTenantIdsForAuthorizationCheck(String tenantId){
+		List<String> listOfMdmsTenantIdsToCheck = new ArrayList<>();
+		// Adding city specific tenant Id
+		listOfMdmsTenantIdsToCheck.add(tenantId);
+		// Adding state specific tenant Id
+		listOfMdmsTenantIdsToCheck.add(tenantId.substring(0, tenantId.lastIndexOf(".")));
+		// Adding country central instance specific tenant Id
+		listOfMdmsTenantIdsToCheck.add(tenantId.split("\\.", 2)[0]);
+
+		log.info(listOfMdmsTenantIdsToCheck.toString());
+
+		return listOfMdmsTenantIdsToCheck;
+	}
+
+	private boolean isAuthorizedOnGivenTenantLevel(AuthorizationRequest authorizeRequest, String tenantId){
+
+		Map<String, ActionContainer>  roleActions = mdmsRepository.fetchRoleActionData(tenantId);
 
 		String uriToBeAuthorized = authorizeRequest.getUri();
 		Set<String> applicableRoles = getApplicableRoles(authorizeRequest);
@@ -117,7 +148,7 @@ public class ActionService {
 
 		log.info("Request tenant ids:  " + authorizeRequest.getTenantIds());
 		log.info("Role {} has access to requested URI {} : {}", applicableRoles, uriToBeAuthorized,
-                isAuthorized);
+				isAuthorized);
 
 		return isAuthorized;
 	}
