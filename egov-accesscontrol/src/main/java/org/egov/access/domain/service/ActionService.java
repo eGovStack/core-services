@@ -21,6 +21,7 @@ import org.egov.access.web.contract.action.Module;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -100,6 +101,13 @@ public class ActionService {
 		Map<String, ActionContainer>  roleActions = mdmsRepository.fetchRoleActionData(getStateLevelTenant
                 (authorizeRequest.getTenantIds().iterator().next()));
 
+		Set<String> allUrls = new HashSet<>();
+		Set<String> allRegexUrls = new HashSet<>();
+		for(ActionContainer container : roleActions.values()){
+			allUrls.addAll(container.getUris());
+			allRegexUrls.addAll(container.getRegexUris());
+		}
+
 		String uriToBeAuthorized = authorizeRequest.getUri();
 		Set<String> applicableRoles = getApplicableRoles(authorizeRequest);
 		Set<String> uris = new HashSet<>();
@@ -112,13 +120,13 @@ public class ActionService {
 			if(roleActions.containsKey(roleCode))
 				regexUris.addAll(roleActions.get(roleCode).getRegexUris());
 		}
-
 		boolean isAuthorized = uris.contains(uriToBeAuthorized) || containsRegexUri(regexUris, uriToBeAuthorized);
+		boolean isValidUrl = allUrls.contains(uriToBeAuthorized) || allRegexUrls.contains(uriToBeAuthorized);
 
 		/* If the user is not authorized to access a resource at the central instance level, the following
 		*  code block redirects to check whether the user is authorized to access that resource at state level
 		* */
-		if(!isAuthorized){
+		if(isValidUrl){
 
 			isAuthorized = isAuthorizedOnStateLevel(authorizeRequest);
 
@@ -136,10 +144,9 @@ public class ActionService {
 	 * */
 	private boolean isAuthorizedOnStateLevel(AuthorizationRequest authorizeRequest){
 		String centralInstanceLevelTenantId = authorizeRequest.getTenantIds().iterator().next();
-		String stateLevelTenantId = centralInstanceLevelTenantId.split(".", 2)[1];
+		String stateLevelTenantId = centralInstanceLevelTenantId.split("\\.", 3)[1];
 
-		Map<String, ActionContainer> roleActions = mdmsRepository.fetchRoleActionData(getStateLevelTenant
-				(stateLevelTenantId));
+		Map<String, ActionContainer> roleActions = mdmsRepository.fetchRoleActionData(stateLevelTenantId);
 
 		String uriToBeAuthorized = authorizeRequest.getUri();
 		Set<String> applicableRoles = getApplicableRoles(authorizeRequest);
