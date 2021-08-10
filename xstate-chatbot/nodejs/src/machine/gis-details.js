@@ -703,6 +703,7 @@ const gisFlow = {
               {
                 cond: (context, event) => event.data.success === 1,
                 actions: assign((context, event) => {
+                  console.log(event.data)
                   let message = dialog.get_message(messages.houseNo.prompt, context.user.locale);
                   message += `:: ${event.data.response.OldHouseNo} \n`;
                   context.slots.property.OldHouseNo = event.data.response.OldHouseNo;
