@@ -156,11 +156,13 @@ public class ActionService {
 	private Set<String> getApplicableRoles(AuthorizationRequest authorizationRequest){
 		Set<String> requestTenantIds = authorizationRequest.getTenantIds();
 		String stateLevelTenantId = getStateLevelTenant(requestTenantIds.iterator().next());
+		String tenantId = requestTenantIds.iterator().next();
+		String centralInstanceLevelTenantId = tenantId.substring(0, tenantId.lastIndexOf("."));
 		Set<Role> roles = authorizationRequest.getRoles();
 		Set<Role> applicableRoles = new HashSet<>();
 
 		for(Role role : roles){
-			if(requestTenantIds.contains(role.getTenantId()) || role.getTenantId().equalsIgnoreCase(stateLevelTenantId)){
+			if(requestTenantIds.contains(role.getTenantId()) || role.getTenantId().equalsIgnoreCase(stateLevelTenantId) || role.getTenantId().equalsIgnoreCase(centralInstanceLevelTenantId)){
 				applicableRoles.add(role);
 			}
 		}
