@@ -35,6 +35,7 @@ class GisService {
   }
 
   async getPropertyFromPropertyId(propertyId) {
+    console.log(propertyId)
 
     const url = config.covaApiConfigs.getPropertyByPropertId;
     const formdata = new FormData();
@@ -50,6 +51,7 @@ class GisService {
 
     if (response.status == 200) {
       const data = await response.json();
+      console.log(data)
 
       if (data.success == 1) {
         console.log(`Property Details fetched succesfully : ${data.message}`);
