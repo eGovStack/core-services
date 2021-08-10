@@ -704,40 +704,42 @@ const gisFlow = {
                 cond: (context, event) => event.data.success === 1,
                 actions: assign((context, event) => {
                   console.log(event.data)
-                  let message = dialog.get_message(messages.houseNo.prompt, context.user.locale);
-                  message += `:: ${event.data.response.OldHouseNo} \n`;
+                  let message1 = dialog.get_message(messages.houseNo.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.OldHouseNo} \n`;
                   context.slots.property.OldHouseNo = event.data.response.OldHouseNo;
-                  message += dialog.get_message(messages.blockNo.prompt, context.user.locale);
-                  message += `:: ${event.data.response.WardNumber} \n`;
+                  message1 += dialog.get_message(messages.blockNo.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.WardNumber} \n`;
                   context.slots.property.blockNo = event.data.response.WardNumber;
-                  message += dialog.get_message(messages.ownerName.prompt, context.user.locale);
-                  message += `:: ${event.data.response.OwnerName} \n`;
+                  message1 += dialog.get_message(messages.ownerName.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.OwnerName} \n`;
                   context.slots.property.ownerName = event.data.response.OwnerName;
-                  message += dialog.get_message(messages.contactNo.prompt, context.user.locale);
-                  message += `:: ${event.data.response.ContactNumber} \n`;
+                  message1 += dialog.get_message(messages.contactNo.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.ContactNumber} \n`;
                   context.slots.property.contactNo = event.data.response.ContactNumber;
-                  message += dialog.get_message(messages.propertyUse.prompt, context.user.locale);
-                  message += `:: ${event.data.response.LandUseDetail} \n`;
+                  message1 += dialog.get_message(messages.propertyUse.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.LandUseDetail} \n`;
                   context.slots.property.typeOfProperty = event.data.response.LandUseDetail;
-                  message += dialog.get_message(messages.noOfFloors.prompt, context.user.locale);
-                  message += `:: ${event.data.response.NoOfFloors} \n`;
+                  message1 += dialog.get_message(messages.noOfFloors.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.NoOfFloors} \n`;
                   context.slots.property.noOfFloors = event.data.response.NoOfFloors;
-                  message += dialog.get_message(messages.waterConnection.prompt, context.user.locale);
-                  message += `:: ${event.data.response.WaterConnection} \n`;
+                  message1 += dialog.get_message(messages.waterConnection.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.WaterConnection} \n`;
                   context.slots.property.waterConnection = event.data.response.WaterConnection;
-                  message += dialog.get_message(messages.sewerageConnection.prompt, context.user.locale);
-                  message += `:: ${event.data.response.SewageConnection} \n`;
+                  message1 += dialog.get_message(messages.sewerageConnection.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.SewageConnection} \n`;
                   context.slots.property.sewageConnection = event.data.response.SewageConnection;
-                  message += dialog.get_message(messages.proprtyId.prompt, context.user.locale);
-                  message += `:: ${event.data.response.PropertyTax} \n`;
+                  message1 += dialog.get_message(messages.proprtyId.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.PropertyTax} \n`;
                   context.slots.property.propertyTax = event.data.response.PropertyTax;
-                  message += dialog.get_message(messages.mohallaName.prompt, context.user.locale);
-                  message += `:: ${event.data.response.MohallaOrColony} \n`;
+                  message1 += dialog.get_message(messages.mohallaName.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.MohallaOrColony} \n`;
                   context.slots.property.mohallaName = event.data.response.MohallaOrColony;
-                  message += dialog.get_message(messages.constructionType.prompt, context.user.locale);
-                  message += `:: ${event.data.response.TypeOfConstruction} \n`;
+                  message1 += dialog.get_message(messages.constructionType.prompt, context.user.locale);
+                  message1 += `:: ${event.data.response.TypeOfConstruction} \n`;
                   context.slots.property.constructionType = event.data.response.TypeOfConstruction;
-                  dialog.sendMessage(context, message);
+                  context.slots.property.message=message1;
+                  console.log(message1)
+                  //dialog.sendMessage(context, message);
                 }),
                 target: '#updateExistingPropertyMemu',
               },
@@ -762,10 +764,14 @@ const gisFlow = {
       states: {
         prompt: {
           onEntry: assign((context, event) => {
-            let message = dialog.get_message(messages.updateExistingPropertyMemu.prompt.preamble, context.user.locale);
+            let message = context.slots.property.message;
+            message += `\n`;
+            message +=dialog.get_message(messages.updateExistingPropertyMemu.prompt.preamble, context.user.locale);
             const { grammer, prompt } = dialog.constructListPromptAndGrammer(messages.updateExistingPropertyMemu.prompt.options.list, messages.updateExistingPropertyMemu.prompt.options.messageBundle, context.user.locale);
             message += prompt;
             context.grammer = grammer;
+            console.log(message)
+            context.slots.property.message='';
             dialog.sendMessage(context, message);
           }),
           on: {
