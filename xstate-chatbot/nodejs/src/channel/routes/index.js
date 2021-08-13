@@ -8,6 +8,7 @@ const express = require('express'),
 
 router.post('/message', async (req, res) =>  {
     try {
+        console.log(req.originalUrl);
         let reformattedMessage = await channelProvider.processMessageFromUser(req);
         if(reformattedMessage != null)
             sessionManager.fromUser(reformattedMessage);        
