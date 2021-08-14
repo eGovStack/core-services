@@ -39,9 +39,15 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 context.onboarding = {};
-                let message = messages.onboarding.onboardingLocale.question;
+                // let message = messages.onboarding.onboardingLocale.question;
                 context.grammer = grammer.locale.question;
-                dialog.sendMessage(context, message, true);
+
+                 var templateContent = {
+                  output: "3797433",
+                  type: "template"
+                };
+                dialog.sendMessage(context, templateContent, true);
+                // dialog.sendMessage(context, message, true);
               }),
               on: {
                 USER_MESSAGE: 'process'
