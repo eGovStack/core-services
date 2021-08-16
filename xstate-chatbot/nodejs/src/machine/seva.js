@@ -308,7 +308,7 @@ const sevaMachine = Machine({
                 params.push(name);
 
                 var templateContent = {
-                  output: "3797117",
+                  output: "3797437",
                   type: "template",
                   params: params
                 };
@@ -389,7 +389,7 @@ const sevaMachine = Machine({
             await new Promise(resolve => setTimeout(resolve, 1000));
             // dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
             var templateContent = {
-              output: "3797119",
+              output: "3797439",
               type: "template"
             };
 
