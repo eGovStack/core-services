@@ -110,7 +110,7 @@ config:
         image-name: "egov-persister"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-pg-service"
+  - name: "builds/digit-impel-builds/core-services/egov-pg-service"
     build:
       - work-dir: "egov-pg-service"
         image-name: "egov-pg-service"
