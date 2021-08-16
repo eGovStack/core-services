@@ -295,11 +295,26 @@ const sevaMachine = Machine({
         invoke: {
               onEntry: assign((context, event) => {
                 var message = dialog.get_message(messages.welcome, context.user.locale);
-                if(context.user.name)
+                let name = 'Citizen';
+                if(context.user.name){
                   message = message.replace('{{name}}', context.user.name);
-                else 
+                  name=context.user.name;
+                }
+                else {
                   message = message.replace('{{name}}', 'Citizen');
-                dialog.sendMessage(context, message, true);
+                  name='Citizen';
+                }
+                let params=[];
+                params.push(name);
+
+                var templateContent = {
+                  output: "3797117",
+                  type: "template",
+                  params: params
+                };
+
+                dialog.sendMessage(context, templateContent, true);
+                // dialog.sendMessage(context, message, true);
               }),
               always: '#sevamenu'
         }
@@ -372,7 +387,13 @@ const sevaMachine = Machine({
           onEntry: assign( (context, event) => {
           (async() => {  
             await new Promise(resolve => setTimeout(resolve, 1000));
-            dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
+            // dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
+            var templateContent = {
+              output: "3797119",
+              type: "template"
+            };
+
+            dialog.sendMessage(context, templateContent, true);
           })();
           }),
           on: {
