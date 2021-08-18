@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.2.5 - 2021-07-26
+- Added OTHERS as one of the gender option values
+- Allowed names with apostrophe symbol
+
+## 1.2.4 - 2021-05-11
+- added permanentCity in oAuth response
+- added html validations on input fields
+- replaced OTHER with TRANSGENDER in gender enum
+- corrections to error handling
+- updated LOCALSETUP.md
+
+
+
+## 1.2.3 - 2021-02-26
+- Updated domain name in application.properties
+- Added size validations
+
 ## 1.2.2 - 2020-01-12
 - Added field relationShip with guardian and refactoration of code.
 

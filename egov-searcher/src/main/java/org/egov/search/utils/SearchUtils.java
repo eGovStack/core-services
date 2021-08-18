@@ -115,6 +115,7 @@ public class SearchUtils {
 						continue;
 
 				} catch (Exception e) {
+					log.error("Error while building where clause: " + e.getMessage());
 					continue;
 				}
 				
@@ -154,12 +155,14 @@ public class SearchUtils {
 						operator = "!=";
 					} else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
 
-						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+						paramValue=	 "%" + paramValue + "%";
 					} else if (operator.equals("TOUPPERCASE")) {
-
+						
+						operator =  "=";
 						paramValue = ((String) paramValue).toUpperCase();
 					} else if (operator.equals("TOLOWERCASE")) {
 
+						operator =  "=";
 						paramValue = ((String) paramValue).toLowerCase();
 					}
 					
@@ -256,6 +259,7 @@ public class SearchUtils {
 					try{
 						result.add(obj.getValue());
 					}catch(Exception e){
+						log.error("Errow while adding object value to result: " + e.getMessage());
 						throw e;
 					}
 				}

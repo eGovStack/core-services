@@ -84,8 +84,26 @@ public class WorkflowController {
             return new ResponseEntity<>(count,HttpStatus.OK);
         }
 
+    @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
+    public ResponseEntity<ProcessInstanceResponse> searchEscalatedApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                          @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+        List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
+        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances)
+                .build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
-
-
+    /**
+     * Returns the count of each status of records matching the given criteria
+     * @param requestInfoWrapper
+     * @param criteria
+     * @return
+     */
+    @RequestMapping(value="/process/_statuscount", method = RequestMethod.POST)
+        public ResponseEntity<List> StatusCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+            List  result = workflowService.statusCount(requestInfoWrapper.getRequestInfo(),criteria);
+            return new ResponseEntity<>(result,HttpStatus.OK);
+        }
 
 }

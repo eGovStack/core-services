@@ -53,12 +53,13 @@ public class UserServiceConstants {
     public static final String IP_HEADER_NAME = "x-real-ip";
 
 
-    public static final String PATTERN_NAME = "^[^\\\\$\\\"'<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
+    public static final String PATTERN_NAME = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
 
 
     public static final String PATTERN_GENDER = "^[a-zA-Z ]*$";
     public static final String PATTERN_MOBILE = "(^$|[0-9]{10})";
     public static final String PATTERN_CITY = "^[a-zA-Z. ]*$";
     public static final String PATTERN_TENANT = "^[a-zA-Z. ]*$";
+    public static final String PATTERN_PINCODE = "^[1-9][0-9]{5}$";
 }
 

@@ -98,6 +98,7 @@ public class ReportService {
                     sc.setShowColumn(cd.getShowColumn());
                     sc.setDefaultValue(cd.getPattern());
                     sc.setIsMandatory(cd.getIsMandatory());
+                    sc.setIsLocalisationRequired(cd.getLocalisationRequired());
 
                     sc.setColumnTotal(cd.getColumnTotal());
                     sc.setRowTotal(cd.getRowTotal());
@@ -236,7 +237,7 @@ public class ReportService {
                 auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
                         reportRequest.getRequestInfo().getUserInfo());
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IO exception while decrypting report: " + e.getMessage());
                 throw new CustomException("REPORT_DECRYPTION_ERROR", "Error while decrypting report data");
             }
         }
