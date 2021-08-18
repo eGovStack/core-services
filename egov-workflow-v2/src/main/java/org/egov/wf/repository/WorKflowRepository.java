@@ -74,7 +74,7 @@ public class WorKflowRepository {
             return new LinkedList<>();
 
         String query = queryBuilder.getProcessInstanceSearchQueryById(ids, preparedStmtList);
-        log.debug("query for status search: "+query+" params: "+preparedStmtList);
+        log.info("query for status search: "+query+" params: "+preparedStmtList.toArray());
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
@@ -87,6 +87,9 @@ public class WorKflowRepository {
     public Integer getInboxCount(ProcessInstanceSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getInboxCount(criteria, preparedStmtList);
+
+        log.info("getInboxCount Query: "+ query );
+        log.info("getInboxCount preparedStmtList.toArray(): "+ preparedStmtList.toArray() );
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
