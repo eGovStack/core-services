@@ -53,7 +53,7 @@ public class BusinessServiceRepository {
             query = queryBuilder.getBusinessServices(criteria, preparedStmtList);
         }
         log.info("getBusinessServices Query: "+ query );
-        log.info("getBusinessServices preparedStmtList.toArray(): "+ preparedStmtList.toArray() );
+        log.info("getBusinessServices preparedStmtList.toArray(): "+ preparedStmtList.toString() );
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
