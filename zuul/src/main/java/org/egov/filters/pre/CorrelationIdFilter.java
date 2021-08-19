@@ -88,7 +88,8 @@ public class CorrelationIdFilter extends ZuulFilter {
 
 		RequestContext ctx = RequestContext.getCurrentContext();
 		HttpServletRequest request = ctx.getRequest();
-		Map<String, List<String>> queryParams = ctx.getRequestQueryParams();
+		Map<String, String[]> queryParams = request.getParameterMap();
+		
 
 		Set<String> tenantIds = new HashSet<>();
 
@@ -120,8 +121,8 @@ public class CorrelationIdFilter extends ZuulFilter {
 					});
 				else {
 					if (!isNull(queryParams) && queryParams.containsKey(REQUEST_TENANT_ID_KEY)
-							&& !queryParams.get(REQUEST_TENANT_ID_KEY).isEmpty()) {
-						String tenantId = queryParams.get(REQUEST_TENANT_ID_KEY).get(0);
+							&& queryParams.get(REQUEST_TENANT_ID_KEY).length > 0) {
+						String tenantId = queryParams.get(REQUEST_TENANT_ID_KEY)[0];
 						if (tenantId.contains(",")) {
 							tenantIds.addAll(Arrays.asList(tenantId.split(",")));
 						} else
@@ -134,10 +135,6 @@ public class CorrelationIdFilter extends ZuulFilter {
 				throw new RuntimeException(new CustomException("REQUEST_PARSE_FAILED", HttpStatus.UNAUTHORIZED.value(),
 						"Failed to parse request at" + " API gateway"));
 			}
-		}
-
-		if (tenantIds.isEmpty()) {
-			tenantIds.add(((User) ctx.get(USER_INFO_KEY)).getTenantId());
 		}
 
 		return tenantIds;
