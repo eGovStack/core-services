@@ -236,8 +236,6 @@ class PaymentStatusUpdateEventFormatter{
       locale = chatState.context.user.locale;
 
     let transactionNumber = request.Transaction.txnId;
-
-    let transactionNumber = request.Transaction.txnId;
     let consumerCode = request.Transaction.consumerCode;
     let businessService = request.Transaction.module;
     /*
