@@ -307,7 +307,7 @@ public class WorkflowQueryBuilder {
 //            preparedStmtList.add(criteria.getAssignee());
 //            preparedStmtList.add(criteria.getTenantId());
 //        }
-        String query = getProcessInstanceIds(criteria,preparedStmtList);
+        String query = getInboxIdQuery(criteria,preparedStmtList);
 
 
         String countQuery = addCountWrapperId(query);
