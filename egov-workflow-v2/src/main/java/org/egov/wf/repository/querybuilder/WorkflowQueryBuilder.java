@@ -219,7 +219,7 @@ public class WorkflowQueryBuilder {
 
 
 
-    public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getInboxIdQuery(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, boolean isCount){
 
         String with_query = WITH_CLAUSE + " pi_outer.lastmodifiedTime = (" +
                 "SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
@@ -248,6 +248,7 @@ public class WorkflowQueryBuilder {
 
         with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
+        if(!isCount)
         addPagination(with_query_builder,preparedStmtList,criteria);
 
         StringBuilder builder = new StringBuilder(with_query_builder);
@@ -307,7 +308,7 @@ public class WorkflowQueryBuilder {
 //            preparedStmtList.add(criteria.getAssignee());
 //            preparedStmtList.add(criteria.getTenantId());
 //        }
-        String query = getInboxIdQuery(criteria,preparedStmtList);
+        String query = getInboxIdQuery(criteria,preparedStmtList, Boolean.TRUE);
 
 
         String countQuery = addCountWrapperId(query);
