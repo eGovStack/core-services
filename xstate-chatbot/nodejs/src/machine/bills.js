@@ -90,7 +90,11 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-          singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+          if(context.service == "PT") {
+          singleRecordMessage = singleRecordMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+          } else {
+            singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+          }
           singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
           
           console.log('After singleRecordMessage: '+ singleRecordMessage);
@@ -138,7 +142,11 @@ const bills = {
               multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-              multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+              if(context.service == "PT") {
+                multipleRecordsMessage = multipleRecordsMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+              } else {
+                multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+              }
               multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
              
 
@@ -177,7 +185,11 @@ const bills = {
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-              multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+              if(context.service == "PT") {
+                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+              } else {
+                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+              }
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
 
               // let urlComponemt = bill.paymentLink.split('/');
@@ -597,7 +609,11 @@ const bills = {
                 singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
                 singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
                 singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+                if(context.service == "PT") {
+                  singleRecordMessage = singleRecordMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+                } else {
+                  singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
+                }
                 singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
                     
                 // let params=[];
@@ -636,7 +652,11 @@ const bills = {
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                      multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+                      if(context.service == "PT") {
+                        multipleRecordsMessage = multipleRecordsMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+                      } else {
+                        multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
+                      }
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
                     
 
@@ -673,7 +693,11 @@ const bills = {
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                    multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+                    if(context.service == "PT") {
+                      multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
+                    } else {
+                      multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
+                    }
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
       
 
