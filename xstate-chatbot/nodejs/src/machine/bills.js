@@ -90,11 +90,7 @@ const bills = {
           singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
           singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
           singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-          if(context.service == "PT") {
-          singleRecordMessage = singleRecordMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-          } else {
-            singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-          }
+          // singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
           singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
           
           console.log('After singleRecordMessage: '+ singleRecordMessage);
@@ -142,11 +138,7 @@ const bills = {
               multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-              if(context.service == "PT") {
-                multipleRecordsMessage = multipleRecordsMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-              } else {
-                multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-              }
+              // multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
               multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
              
 
@@ -185,11 +177,7 @@ const bills = {
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-              if(context.service == "PT") {
-                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-              } else {
-                multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-              }
+              // multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
               multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
 
               // let urlComponemt = bill.paymentLink.split('/');
@@ -609,11 +597,7 @@ const bills = {
                 singleRecordMessage = singleRecordMessage.replace('{{id}}',bill.id);
                 singleRecordMessage = singleRecordMessage.replace('{{payerName}}',bill.payerName);
                 singleRecordMessage = singleRecordMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                if(context.service == "PT") {
-                  singleRecordMessage = singleRecordMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-                } else {
-                  singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
-                }
+                // singleRecordMessage = singleRecordMessage.replace('{{dueDate}}',bill.dueDate);
                 singleRecordMessage = singleRecordMessage.replace('{{paymentLink}}',bill.paymentLink);
                     
                 // let params=[];
@@ -652,11 +636,7 @@ const bills = {
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{id}}',bill.id);
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{payerName}}',bill.payerName);
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                      if(context.service == "PT") {
-                        multipleRecordsMessage = multipleRecordsMessage.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-                      } else {
-                        multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
-                      }
+                      // multipleRecordsMessage = multipleRecordsMessage.replace('{{dueDate}}',bill.dueDate);
                       multipleRecordsMessage = multipleRecordsMessage.replace('{{paymentLink}}',bill.paymentLink);
                     
 
@@ -693,11 +673,7 @@ const bills = {
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{id}}',bill.id);
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{payerName}}',bill.payerName);
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueAmount}}',"₹ "+bill.dueAmount);
-                    if(context.service == "PT") {
-                      multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('*Due Date*\n{{dueDate}}\n\n', ' ');
-                    } else {
-                      multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
-                    }
+                    // multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{dueDate}}',bill.dueDate);
                     multipleRrdsSameServiceMsgs = multipleRrdsSameServiceMsgs.replace('{{paymentLink}}',bill.paymentLink);
       
 
@@ -886,27 +862,27 @@ let messages = {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'इस मोबाइल नंबर से जुड़े अवैतनिक बिल निम्नलिखित हैं:',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     },
     multipleRecords: {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'इस मोबाइल नंबर से जुड़े अवैतनिक बिल निम्नलिखित हैं: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     },
     multipleRecordsSameService: {
       en_IN: 'Following are the unpaid bills linked to this mobile number 👇',
       hi_IN: 'इस मोबाइल नंबर से जुड़े अवैतनिक बिल निम्नलिखित हैं: ',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     }
   },
@@ -981,9 +957,9 @@ let messages = {
       hi_IN: 'निम्नलिखित अवैतनिक बिल पाए जाते हैं',
       pa_IN: 'ਹੇਠ ਦਿੱਤੇ ਬਿਨਾਂ ਭੁਗਤਾਨ ਕੀਤੇ ਬਿਲ ਮਿਲਦੇ ਹਨ 👇',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     },
     multipleRecords: {
@@ -991,9 +967,9 @@ let messages = {
       hi_IN: 'निम्नलिखित अवैतनिक बिल पाए जाते हैं',
       pa_IN: 'ਹੇਠ ਦਿੱਤੇ ਬਿਨਾਂ ਭੁਗਤਾਨ ਕੀਤੇ ਬਿਲ ਮਿਲਦੇ ਹਨ 👇',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     },
     multipleRecordsSameService: {
@@ -1001,9 +977,9 @@ let messages = {
       hi_IN: 'निम्नलिखित अवैतनिक बिल पाए जाते हैं',
       pa_IN: 'ਹੇਠ ਦਿੱਤੇ ਬਿਨਾਂ ਭੁਗਤਾਨ ਕੀਤੇ ਬਿਲ ਮਿਲਦੇ ਹਨ 👇',
       billTemplate: {
-        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Due Date*\n{{dueDate}}\n\n*Payment Link :*\n{{paymentLink}}',
-        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*नियत तारीख*\n{{dueDate}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
-        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਅਦਾਇਗੀ ਤਾਰੀਖ *\n{{dueDate}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
+        en_IN: '👉  *{{service}} Bill*\n\n*{{serviceid}}*\n{{id}}\n\n*Owner Name*\n{{payerName}}\n\n*Amount Due*\nRs {{dueAmount}}\n\n*Payment Link :*\n{{paymentLink}}',
+        hi_IN: '👉  *{{service}} विधेयक*\n\n*{{serviceid}}*\n{{id}}\n\n*स्वामी का नाम*\n{{payerName}}\n\n*देय राशि*\nरु {{dueAmount}}\n\n*भुगतान लिंक :*\n{{paymentLink}}',
+        pa_IN: '👉  *{{service}} ਬਿੱਲ*\n\n*{{serviceid}}*\n{{id}}\n\n*ਮਾਲਕ ਦਾ ਨਾਮ*\n{{payerName}}\n\n*ਬਕਾਯਾ ਰਕਮ*\nरु {{dueAmount}}\n\n*ਭੁਗਤਾਨ ਲਿੰਕ :*\n{{paymentLink}}'
       }
     }
   },
