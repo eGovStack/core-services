@@ -22,7 +22,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 	
 	@Autowired
@@ -63,9 +66,14 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				address.setLocality(rs.getString("ptadd_locality"));
 				User user = User.builder().id(rs.getString("ptown_userid")).build();
 				Connection connection=new Connection();
-				connection.setPropertyId(rs.getString("pid"));
-				connection.setOldConnectionNo(rs.getString("oldpid"));
-				connection.setAdditionalDetails(rs.getObject("conn_add"));
+				try {
+					connection.setPropertyId(rs.getString("pid"));
+					connection.setOldConnectionNo(rs.getString("oldpid"));
+					connection.setAdditionalDetails(rs.getObject("conn_add"));
+				} catch (Exception ex) {
+					log.info("exception in bill rowmapper",ex);
+					log.error(ex.getMessage());
+				}
 				bill = Bill.builder()
 					.id(billId)
 					.totalAmount(BigDecimal.ZERO)
