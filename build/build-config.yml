@@ -8,7 +8,7 @@
 # -
 # -
 config:
-  - name: "builds/core-services/egov-accesscontrol"
+  - name: "builds/digit-impel-builds/core-services/egov-accesscontrol"
     build:
       - work-dir: "egov-accesscontrol"
         image-name: "egov-accesscontrol"
@@ -46,7 +46,7 @@ config:
       - work-dir: "egov-filestore/src/main/resources/db"
         image-name: "egov-filestore-db"
 
-  - name: "builds/core-services/egov-idgen"
+  - name: "builds/digit-impel-builds/core-services/egov-idgen"
     build:
       - work-dir: "egov-idgen"
         image-name: "egov-idgen"
@@ -54,7 +54,7 @@ config:
       - work-dir: "egov-idgen/src/main/resources/db"
         image-name: "egov-idgen-db"
 
-  - name: "builds/core-services/egov-indexer"
+  - name: "builds/digit-impel-builds/core-services/egov-indexer"
     build:
       - work-dir: "egov-indexer"
         image-name: "egov-indexer"
@@ -130,7 +130,7 @@ config:
         image-name: "egov-telemetry"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/egov-user"
+  - name: "builds/digit-impel-builds/core-services/egov-user"
     build:
       - work-dir: "egov-user"
         image-name: "egov-user"
@@ -248,7 +248,7 @@ config:
       - work-dir: "http-to-kafka-connector"
         image-name: "whatsapp-webhook"
 
-  - name: "builds/core-services/egov-user-chatbot"
+  - name: "builds/digit-impel-builds/core-services/egov-user-chatbot"
     build:
       - work-dir: "egov-user"
         image-name: "egov-user-chatbot"
