@@ -179,6 +179,7 @@ public class UserService {
         user.validateNewUser();
         conditionallyValidateOtp(user);
         validateUserUniqueness(user);
+	     System.out.println("Current Password------------------------"+user.getPassword());
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
         }else {
