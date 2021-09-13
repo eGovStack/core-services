@@ -196,6 +196,17 @@ class PaymentStatusUpdateEventFormatter{
 
   }
 
+convertEpochToDate = dateEpoch => {
+    const dateFromApi = new Date(dateEpoch);
+    let month = dateFromApi.getMonth() + 1;
+    let day = dateFromApi.getDate();
+    let year = dateFromApi.getFullYear();
+    month = (month > 9 ? "" : "0") + month;
+    day = (day > 9 ? "" : "0") + day;
+    return `${day}/${month}/${year}`;
+  };
+
+
   ptreceipt(payloadReceiptDetails)
 {
   let assessmentYear="",assessmentYearForReceipt="";
@@ -207,8 +218,8 @@ class PaymentStatusUpdateEventFormatter{
 
           if(element.amount >0 || element.amountPaid>0)
           { count=count+1;
-            let toDate=convertEpochToDate(element.toPeriod).split("/")[2];
-            let fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
+            let toDate=this.convertEpochToDate(element.toPeriod).split("/")[2];
+            let fromDate=this.convertEpochToDate(element.fromPeriod).split("/")[2];
             assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
          assessmentYearForReceipt=fromDate+"-"+toDate;
     element.billAccountDetails.map(ele => {
@@ -256,8 +267,8 @@ class PaymentStatusUpdateEventFormatter{
           });
         if(count==0){  total=0;
           let index=payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails.length;
-          let toDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
-          let fromDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+          let toDate=this.convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+          let fromDate=this.convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
           assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate;
           assessmentYearForReceipt=fromDate+"-"+toDate;
           payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
