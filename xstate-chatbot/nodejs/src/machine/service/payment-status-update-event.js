@@ -196,7 +196,7 @@ class PaymentStatusUpdateEventFormatter{
 
   }
 
-convertEpochToDate = dateEpoch => {
+convertEpochToDate (dateEpoch ) {
     const dateFromApi = new Date(dateEpoch);
     let month = dateFromApi.getMonth() + 1;
     let day = dateFromApi.getDate();
