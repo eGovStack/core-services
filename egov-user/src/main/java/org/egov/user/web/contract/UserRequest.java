@@ -3,6 +3,7 @@ package org.egov.user.web.contract;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.config.*;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
@@ -125,6 +126,7 @@ public class UserRequest {
         this.roles = convertDomainRoleToContract(user.getRoles());
         this.fatherOrHusbandName = user.getGuardian();
         this.uuid = user.getUuid();
+        this.relationship=user.getGuardianRelation();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
@@ -192,6 +194,7 @@ public class UserRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
+                .guardianRelation(relationship)
                 .build();
     }
 
