@@ -295,7 +295,7 @@ public class UserControllerTest {
                 .password("password")
                 .salutation("salutation")
                 .guardian("name of relative")
-                .guardianRelation(GuardianRelation.Father)
+                .guardianrelation(GuardianRelation.Father)
                 .name("name")
                 .gender(Gender.FEMALE)
                 .mobileNumber("mobileNumber1")
