@@ -45,7 +45,7 @@ public class UserRowMapper implements RowMapper<User> {
         }
         for (GuardianRelation guardianRelation : GuardianRelation.values()) {
             if (guardianRelation.toString().equals(rs.getString("guardianrelation"))) {
-                user.setGuardianRelation(guardianRelation);
+                user.setGuardianrelation(guardianRelation);
             }
         }
         return user;
