@@ -47,7 +47,7 @@ public class User {
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     private String guardian;
 
-    private GuardianRelation guardianRelation;
+    private GuardianRelation guardianrelation;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     @Size(max = 50)
