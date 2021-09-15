@@ -126,7 +126,7 @@ public class UserRequest {
         this.roles = convertDomainRoleToContract(user.getRoles());
         this.fatherOrHusbandName = user.getGuardian();
         this.uuid = user.getUuid();
-        this.relationship=user.getGuardianRelation();
+        this.guardianrelation=user.getGuardianrelation();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
@@ -194,7 +194,7 @@ public class UserRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
-                .guardianrelation(relationship)
+                .guardianrelation(guardianrelation)
                 .build();
     }
 
