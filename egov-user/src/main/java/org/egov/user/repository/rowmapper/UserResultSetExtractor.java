@@ -76,7 +76,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                 }
                 for (GuardianRelation guardianRelation : GuardianRelation.values()) {
                     if (guardianRelation.toString().equals(rs.getString("guardianrelation"))) {
-                        user.setGuardianRelation(guardianRelation);
+                        user.setGuardianrelation(guardianRelation);
                     }
                 }
 
