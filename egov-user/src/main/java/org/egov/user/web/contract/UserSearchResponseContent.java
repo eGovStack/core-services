@@ -10,6 +10,7 @@ import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.UserType;
+import org.egov.user.domain.model.enums.GuardianRelation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ public class UserSearchResponseContent {
     private String tenantId;
     private Set<RoleRequest> roles;
     private String uuid;
+    private GuardianRelation guardianrelation;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date createdDate;
@@ -97,6 +99,7 @@ public class UserSearchResponseContent {
         this.fatherOrHusbandName = user.getGuardian();
         this.uuid = user.getUuid();
         this.addresses = user.getAddresses();
+        this.guardianrelation=user.getGuardianrelation();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
