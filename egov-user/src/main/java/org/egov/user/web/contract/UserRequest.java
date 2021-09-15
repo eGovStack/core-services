@@ -194,7 +194,7 @@ public class UserRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
-                .guardianRelation(relationship)
+                .guardianrelation(relationship)
                 .build();
     }
 
