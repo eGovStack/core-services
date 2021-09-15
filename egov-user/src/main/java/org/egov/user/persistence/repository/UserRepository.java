@@ -258,20 +258,20 @@ public class UserRepository {
         }
         updateuserInputs.put("Guardian", user.getGuardian());
 
-        if (user.getGuardianRelation() != null) {
-            if (GuardianRelation.Father.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Mother.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Husband.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            } else if (GuardianRelation.Other.toString().equals(user.getGuardianRelation().toString())) {
-                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+        if (user.getGuardianrelation() != null) {
+            if (GuardianRelation.Father.toString().equals(user.getGuardianrelation().toString())) {
+                updateuserInputs.put("Guardianrelation", user.getGuardianrelation().toString());
+            } else if (GuardianRelation.Mother.toString().equals(user.getGuardianrelation().toString())) {
+                updateuserInputs.put("Guardianrelation", user.getGuardianrelation().toString());
+            } else if (GuardianRelation.Husband.toString().equals(user.getGuardianrelation().toString())) {
+                updateuserInputs.put("Guardianrelation", user.getGuardianrelation().toString());
+            } else if (GuardianRelation.Other.toString().equals(user.getGuardianrelation().toString())) {
+                updateuserInputs.put("Guardianrelation", user.getGuardianrelation().toString());
             } else {
-                updateuserInputs.put("GuardianRelation", "");
+                updateuserInputs.put("Guardianrelation", "");
             }
         } else {
-            updateuserInputs.put("GuardianRelation", "");
+            updateuserInputs.put("Guardianrelation", "");
         }
         updateuserInputs.put("IdentificationMark", user.getIdentificationMark());
         updateuserInputs.put("Locale", user.getLocale());
@@ -523,14 +523,14 @@ public class UserRepository {
         }
 
         userInputs.put("guardian", entityUser.getGuardian());
-        if (GuardianRelation.Father.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Mother.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Husband.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
-        } else if (GuardianRelation.Other.equals(entityUser.getGuardianRelation())) {
-            userInputs.put("guardianrelation", entityUser.getGuardianRelation().toString());
+        if (GuardianRelation.Father.equals(entityUser.getGuardianrelation())) {
+            userInputs.put("guardianrelation", entityUser.getGuardianrelation().toString());
+        } else if (GuardianRelation.Mother.equals(entityUser.getGuardianrelation())) {
+            userInputs.put("guardianrelation", entityUser.getGuardianrelation().toString());
+        } else if (GuardianRelation.Husband.equals(entityUser.getGuardianrelation())) {
+            userInputs.put("guardianrelation", entityUser.getGuardianrelation().toString());
+        } else if (GuardianRelation.Other.equals(entityUser.getGuardianrelation())) {
+            userInputs.put("guardianrelation", entityUser.getGuardianrelation().toString());
         } else {
             userInputs.put("guardianrelation", "");
         }
