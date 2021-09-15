@@ -8,6 +8,7 @@ import org.egov.user.domain.model.enums.BloodGroup;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.web.contract.RoleRequest;
+import org.egov.user.domain.model.enums.GuardianRelation;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ public class UpdateRequest {
     private Boolean accountLocked;
     private Long accountLockedDate;
     private String fatherOrHusbandName;
+    private GuardianRelation guardianrelation;
     private String signature;
     private String bloodGroup;
     private String photo;
@@ -97,6 +99,7 @@ public class UpdateRequest {
         this.tenantId = user.getTenantId();
         this.roles = convertDomainRoleToContract(user.getRoles());
         this.fatherOrHusbandName = user.getGuardian();
+        this.guardianrelation=user.getGuardianrelation();
         this.uuid = user.getUuid();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
@@ -165,6 +168,7 @@ public class UpdateRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
+                .guardianrelation(guardianrelation)
                 .build();
     }
 
