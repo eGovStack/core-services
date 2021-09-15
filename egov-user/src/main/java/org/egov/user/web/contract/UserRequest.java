@@ -79,7 +79,7 @@ public class UserRequest {
     @Pattern(regexp = UserServiceConstants.PATTERN_TENANT)
     @Size(max = 50)
     private String tenantId;
-    private GuardianRelation relationship;
+    private GuardianRelation guardianrelation;
 
     private Set<RoleRequest> roles;
 
