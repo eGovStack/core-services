@@ -60,7 +60,22 @@ var fontDescriptors = {
     bold: "src/fonts/Roboto-Bold.ttf",
     normal: "src/fonts/Roboto-Regular.ttf",
   },
+  BalooBhaina: {
+    normal: "src/fonts/BalooBhaina2-Regular.ttf",
+    bold: "src/fonts/BalooBhaina2-Bold.ttf"
+  },
+  BalooPaaji:{
+    normal: "src/fonts/BalooPaaji2-Regular.ttf",
+    bold: "src/fonts/BalooPaaji2-Bold.ttf"
+  }
 };
+
+var defaultFontMapping = {
+  en_IN: 'default',
+  hi_IN: 'default',
+  pn_IN: 'BalooPaaji',
+  od_IN: 'BalooBhaina'
+}
 
 const printer = new pdfMakePrinter(fontDescriptors);
 const uuidv4 = require("uuid/v4");
@@ -874,6 +889,14 @@ const prepareBulk = async (
         i + 1 == len
       ) {
         let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+        
+        let locale = requestInfo.msgId.split('|')[1];
+        if(!locale)
+          locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+
+        if(defaultFontMapping[locale] != 'default')
+         formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];

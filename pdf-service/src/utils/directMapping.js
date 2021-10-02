@@ -134,6 +134,7 @@ export const directMapping = async (
               fieldValue = await findAndUpdateLocalisation(
                 requestInfo,
                 localisationMap,
+              fieldValue = await getLocalisationkey(
                 loc.prefix,
                 fieldValue,
                 loc.module,
@@ -210,6 +211,7 @@ export const directMapping = async (
               fieldValue = await findAndUpdateLocalisation(
                 requestInfo,
                 localisationMap,
+              fieldValue = await getLocalisationkey(
                 loc.prefix,
                 fieldValue,
                 loc.module,
@@ -305,4 +307,69 @@ export const directMapping = async (
       }
     }
   }
+};
+
+  let localisationMap = [];
+  try{
+    let resposnseMap = await findLocalisation(
+      requestInfo,
+      localisationModules,
+      localisationCodes
+    );
+  
+    resposnseMap.messages.map((item) => {
+      localisationMap[item.code + "_" + item.module] = item.message;
+    });
+  }
+  catch (error) {
+    logger.error(error.stack || error);
+    throw{
+      message: `Error in localisation service call: ${error.Errors[0].message}`
+    }; 
+  }
+
+  
+  
+
+  Object.keys(variableTovalueMap).forEach(function(key) {
+    if(variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string'){
+      var code = variableTovalueMap[key];
+      var module = variableToModuleMap[key];
+      if(localisationMap[code+"_"+module]){
+        variableTovalueMap[key] = localisationMap[code+"_"+module];
+        if(unregisteredLocalisationCodes.includes(code)){
+          var index = unregisteredLocalisationCodes.indexOf(code);
+          unregisteredLocalisationCodes.splice(index, 1);
+        }
+      }
+      else{
+        if(!unregisteredLocalisationCodes.includes(code))
+          unregisteredLocalisationCodes.push(code);
+      }
+    }
+
+    if(typeof variableTovalueMap[key] =='object'){
+      Object.keys(variableTovalueMap[key]).forEach(function(objectKey){
+        Object.keys(variableTovalueMap[key][objectKey]).forEach(function(objectItemkey) {
+          if(variableToModuleMap[objectItemkey]){
+            var module = variableToModuleMap[objectItemkey];
+            var code = variableTovalueMap[key][objectKey][objectItemkey];
+            if(localisationMap[code+"_"+module]){
+              variableTovalueMap[key][objectKey][objectItemkey] = localisationMap[code+"_"+module];
+              if(unregisteredLocalisationCodes.includes(code)){
+                var index = unregisteredLocalisationCodes.indexOf(code);
+                unregisteredLocalisationCodes.splice(index, 1);
+              }
+            }
+            else{
+              if(!unregisteredLocalisationCodes.includes(code))
+                unregisteredLocalisationCodes.push(code);
+            }
+          }
+        });
+      });    
+    }
+
+  });
+  
 };
