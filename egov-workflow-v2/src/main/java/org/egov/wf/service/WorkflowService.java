@@ -7,6 +7,7 @@ import org.egov.wf.repository.WorKflowRepository;
 import org.egov.wf.util.WorkflowUtil;
 import org.egov.wf.validator.WorkflowValidator;
 import org.egov.wf.web.models.*;
+import org.egov.wf.util.WorkflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -75,7 +76,7 @@ public class WorkflowService {
     public List<ProcessInstance> search(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
         List<ProcessInstance> processInstances;
         if(criteria.isNull())
-            processInstances = getUserBasedProcessInstances(requestInfo,criteria);
+            processInstances = getUserBasedProcessInstances(requestInfo, criteria);
         else processInstances = workflowRepository.getProcessInstances(criteria);
         if(CollectionUtils.isEmpty(processInstances))
             return processInstances;
@@ -140,6 +141,29 @@ public class WorkflowService {
 
         return new LinkedList<>(businessIdToProcessInstanceMap.values());
     }
+    
+    public List statusCount(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        List result;
+        if(criteria.isNull()&& !criteria.getBusinessService().equalsIgnoreCase(WorkflowConstants.FSM_MODULE)){
+        	enrichSearchCriteriaFromUser(requestInfo, criteria);
+            result = workflowRepository.getInboxStatusCount(criteria);
+        }
+        else {
+//        	List<String> origCriteriaStatuses = criteria.getStatus();
+        	// enrichSearchCriteriaFromUser(requestInfo, criteria);
+//        	String tenantId = (criteria.getTenantId() == null ? (requestInfo.getUserInfo().getTenantId()) :(criteria.getTenantId()));
+//        	List<String> finalCriteriaStatuses = new ArrayList<String>();
+//        	if(origCriteriaStatuses != null && !origCriteriaStatuses.isEmpty()) {
+//        		origCriteriaStatuses.forEach((status) ->{
+//        			finalCriteriaStatuses.add(tenantId+":"+status);
+//        		});
+//        		criteria.setStatus(finalCriteriaStatuses);
+//        	}
+        	result = workflowRepository.getProcessInstancesStatusCount(criteria);
+        }
+
+        return result;
+    }
 
     /**
      * Enriches processInstance search criteria based on requestInfo
@@ -148,30 +172,29 @@ public class WorkflowService {
      */
     private void enrichSearchCriteriaFromUser(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
 
-        BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
+        /*BusinessServiceSearchCriteria businessServiceSearchCriteria = new BusinessServiceSearchCriteria();
 
-        /*
+        *//*
          * If tenantId is sent in query param processInstances only for that tenantId is returned
          * else all tenantIds for which the user has roles are returned
-         * */
+         * *//*
         if(criteria.getTenantId()!=null)
             businessServiceSearchCriteria.setTenantIds(Collections.singletonList(criteria.getTenantId()));
         else
             businessServiceSearchCriteria.setTenantIds(util.getTenantIds(requestInfo.getUserInfo()));
 
-        List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(businessServiceSearchCriteria);
+        Map<String, Boolean> stateLevelMapping = stat
+
+        List<BusinessService> businessServices = businessServiceRepository.getAllBusinessService();
         List<String> actionableStatuses = util.getActionableStatusesForRole(requestInfo,businessServices,criteria);
         criteria.setAssignee(requestInfo.getUserInfo().getUuid());
-        criteria.setStatus(actionableStatuses);
+        criteria.setStatus(actionableStatuses);*/
+
+        util.enrichStatusesInSearchCriteria(requestInfo, criteria);
+        criteria.setAssignee(requestInfo.getUserInfo().getUuid());
+
 
     }
-
-
-
-
-
-
-
 
 
 }

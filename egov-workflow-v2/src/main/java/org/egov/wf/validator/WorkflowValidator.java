@@ -126,7 +126,7 @@ public class WorkflowValidator {
             if(!ObjectUtils.isEmpty(processStateAndAction.getProcessInstanceFromRequest()))
                 rating = processStateAndAction.getProcessInstanceFromRequest().getRating();
 
-            if(rating != null && !action.equals(RATE_ACTION)){
+            if(rating != null && !action.getAction().equalsIgnoreCase(RATE_ACTION)){
                 throw new CustomException("INVALID_ACTION", "Rating can be given only upon taking RATE action.");
             }
 
@@ -220,9 +220,17 @@ public class WorkflowValidator {
 
                 if(processInstanceFromDb!=null){
                     if(!CollectionUtils.isEmpty(processInstanceFromDb.getAssignes())){
-                        List<String> assignes = processInstanceFromDb.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
 
-                        if(!assignes.contains(userUUID))
+                        List<String> assignes = new LinkedList<>();
+
+                        for(User assignee : processInstanceFromDb.getAssignes()){
+
+                            if(assignee.getType().equalsIgnoreCase(CITIZEN_TYPE))
+                                assignes.add(assignee.getUuid());
+
+                        }
+
+                        if(!CollectionUtils.isEmpty(assignes) && !assignes.contains(userUUID))
                             errorMap.put("INVALID_USER","Citizen not authorized to perform action on application: "+processInstanceFromDb.getBusinessId());
                     }
                 }
