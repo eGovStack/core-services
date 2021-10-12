@@ -107,6 +107,12 @@ let borderLayout = {
  * @param {*} errorCallback - callback when error
  * @param {*} tenantId - tenantID
  */
+ let locale = requestInfo.msgId.split('|')[1];
+ if(!locale)
+   locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+
+ if(defaultFontMapping[locale] != 'default')
+   formatconfig.defaultStyle.font = defaultFontMapping[locale];
 const createPdfBinary = async (
   key,
   listDocDefinition,
