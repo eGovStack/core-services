@@ -48,7 +48,7 @@ let formatConfigMap = {};
 let topicKeyMap = {};
 var topic = [];
 var datafileLength = dataConfigUrls.split(",").length;
-
+//fonts to support odia language
 var fontDescriptors = {
   Cambay: {
     normal: "src/fonts/Cambay-Regular.ttf",
@@ -107,6 +107,12 @@ let borderLayout = {
  * @param {*} errorCallback - callback when error
  * @param {*} tenantId - tenantID
  */
+ let locale = requestInfo.msgId.split('|')[1];
+ if(!locale)
+   locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+
+ if(defaultFontMapping[locale] != 'default')
+   formatconfig.defaultStyle.font = defaultFontMapping[locale];
 const createPdfBinary = async (
   key,
   listDocDefinition,

@@ -181,7 +181,7 @@ config:
         image-name: "egov-user-event-db"
         dockerfile: "build/maven/Dockerfile"       
 
-  - name: "builds/core-services/pdf-service"
+  - name: "builds/digit-impel-builds/core-services/pdf-service"
     build:
       - work-dir: "pdf-service"
         image-name: "pdf-service"
