@@ -48,7 +48,7 @@ let formatConfigMap = {};
 let topicKeyMap = {};
 var topic = [];
 var datafileLength = dataConfigUrls.split(",").length;
-
+//fonts to support odia language
 var fontDescriptors = {
   Cambay: {
     normal: "src/fonts/Cambay-Regular.ttf",
