@@ -1,5 +1,6 @@
 package org.egov.pg.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -66,7 +67,7 @@ public class EnrichmentService {
 			Map<String, Object> additionDetailsMap = objectMapper.convertValue(transaction.getAdditionalDetails(),
 					Map.class);
 			additionDetailsMap.put("taxAndPayments", (Object) transaction.getTaxAndPayments());
-			transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap, Object.class));
+			transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap, JsonNode.class));
 		}
         
         String uri = UriComponentsBuilder
