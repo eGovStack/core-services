@@ -871,8 +871,10 @@ const prepareBulk = async (
   );
   if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
     totalobjectcount = moduleObjectsArray.length;
+    logger.info("No of input objects" + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
+      logger.info("Preparing pdf data for input data with id" + moduleObject.id)
       let entityKey = getValue(
         jp.query(moduleObject, entityIdPath),
         [null],
