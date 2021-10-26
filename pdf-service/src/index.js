@@ -257,7 +257,7 @@ const uploadFiles = async (
     doc.on("end", function () {
       // console.log("enddddd "+cr++);
       var data = Buffer.concat(chunks);
-     logger.info("Chunk pdf data " + data)
+     //logger.info("Chunk pdf data " + data)
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
           listOfFilestoreIds.push(result);
