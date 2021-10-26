@@ -257,7 +257,7 @@ const uploadFiles = async (
     doc.on("end", function () {
       // console.log("enddddd "+cr++);
       var data = Buffer.concat(chunks);
-      logger.info("Chunk pdf data " + chunks.length)
+     logger.info("Chunk pdf data " + data)
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
           listOfFilestoreIds.push(result);
@@ -872,10 +872,10 @@ const prepareBulk = async (
   );
   if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
     totalobjectcount = moduleObjectsArray.length;
-    logger.info("No of input objects" + totalobjectcount);
+    logger.info("No of input objects: " + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
-      logger.info("Preparing pdf data for input data with id" + moduleObject.id)
+      logger.info("Preparing pdf data for input data with id: " + moduleObject.id)
       let entityKey = getValue(
         jp.query(moduleObject, entityIdPath),
         [null],
