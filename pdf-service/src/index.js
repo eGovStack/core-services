@@ -266,6 +266,7 @@ const uploadFiles = async (
           logger.info("listOfFilestoreIds size :" + listOfFilestoreIds.length)
 
           if (!isconsolidated) {
+            logger.info("Not consolidated")
             dbInsertSingleRecords.push({
               jobid,
               id: uuidv4(),
@@ -288,6 +289,7 @@ const uploadFiles = async (
             isconsolidated &&
             listOfFilestoreIds.length == noOfDefinitions
           ) {
+            logger.info("consolidated")
             // insertStoreIds("",);
             // logger.info("PDF uploaded to filestore");
             dbInsertBulkRecords.push({
@@ -311,6 +313,8 @@ const uploadFiles = async (
             dbInsertSingleRecords.length == totalobjectcount &&
             dbInsertBulkRecords.length == 1
           ) {
+            logger.info("Records to  kafka")
+            logger.info("Final listOfFilestoreIds : " + listOfFilestoreIds)
             insertStoreIds(
               dbInsertSingleRecords.concat(dbInsertBulkRecords),
               jobid,
