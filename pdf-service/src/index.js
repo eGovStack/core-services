@@ -135,7 +135,7 @@ const createPdfBinary = async (
 ) => {
   try {
     let noOfDefinitions = listDocDefinition.length;
-    console.log("total files" , noOfDefinitions);
+    logger.info("total files: " + noOfDefinitions);
     var jobid = `${key}${new Date().getTime()}`;
     if (noOfDefinitions == 0) {
       logger.error("no file generated for pdf");
