@@ -232,6 +232,7 @@ const uploadFiles = async (
     convertedListDocDefinition = [...listDocDefinition];
   }
 
+  logger.info("count :"+convertedListDocDefinition.length);
   convertedListDocDefinition.forEach(function (docDefinition, i) {
     // making copy because createPdfKitDocument function modifies passed object and this object is used
     // in multiple places
@@ -260,7 +261,10 @@ const uploadFiles = async (
      //logger.info("Chunk pdf data " + data)
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
+          
           listOfFilestoreIds.push(result);
+          logger.info("listOfFilestoreIds size :" + listOfFilestoreIds.length)
+
           if (!isconsolidated) {
             dbInsertSingleRecords.push({
               jobid,
@@ -881,6 +885,7 @@ const prepareBulk = async (
         [null],
         entityIdPath
       );
+     
       entityIds.push(entityKey[0]);
 
       let formatObject = JSON.parse(JSON.stringify(formatconfig));
@@ -892,7 +897,6 @@ const prepareBulk = async (
       ) {
         formatObject["content"][0]["pageBreak"] = "before";
       }
-
       /////////////////////////////
       formatObject = await handlelogic(
         key,
