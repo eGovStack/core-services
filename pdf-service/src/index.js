@@ -135,7 +135,7 @@ const createPdfBinary = async (
 ) => {
   try {
     let noOfDefinitions = listDocDefinition.length;
-    logger.info("total output files: " + noOfDefinitions);
+    //logger.info("total output files: " + noOfDefinitions);
     var jobid = `${key}${new Date().getTime()}`;
     if (noOfDefinitions == 0) {
       logger.error("no file generated for pdf");
@@ -258,7 +258,6 @@ const uploadFiles = async (
     doc.on("end", function () {
       // console.log("enddddd "+cr++);
       var data = Buffer.concat(chunks);
-     //logger.info("Chunk pdf data " + data)
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
           
@@ -289,7 +288,6 @@ const uploadFiles = async (
             isconsolidated &&
             listOfFilestoreIds.length == noOfDefinitions
           ) {
-            logger.info("consolidated")
             // insertStoreIds("",);
             // logger.info("PDF uploaded to filestore");
             dbInsertBulkRecords.push({
@@ -313,8 +311,6 @@ const uploadFiles = async (
             dbInsertSingleRecords.length == totalobjectcount &&
             dbInsertBulkRecords.length == 1
           ) {
-            logger.info("Records to  kafka")
-            logger.info("Final listOfFilestoreIds : " + listOfFilestoreIds)
             insertStoreIds(
               dbInsertSingleRecords.concat(dbInsertBulkRecords),
               jobid,
@@ -883,7 +879,7 @@ const prepareBulk = async (
     logger.info("No of input objects: " + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
-      logger.info("Preparing pdf data for input data with id: " + moduleObject.id)
+      //logger.info("Preparing pdf data for input data with id: " + moduleObject.id)
       let entityKey = getValue(
         jp.query(moduleObject, entityIdPath),
         [null],
