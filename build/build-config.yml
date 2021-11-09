@@ -62,7 +62,7 @@ config:
       - work-dir: "egov-indexer/src/main/resources/db"
         image-name: "egov-indexer-db"
 
-  - name: "builds/core-services/egov-localization"
+  - name: "builds/digit-impel-builds/core-services/egov-localization"
     build:
       - work-dir: "egov-localization"
         image-name: "egov-localization"
