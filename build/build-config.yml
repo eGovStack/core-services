@@ -104,7 +104,7 @@ config:
       - work-dir: "egov-otp/src/main/resources/db"
         image-name: "egov-otp-db"
 
-  - name: "builds/core-services/egov-persister"
+  - name: "builds/digit-impel-builds/core-services/egov-persister"
     build:
       - work-dir: "egov-persister"
         image-name: "egov-persister"
