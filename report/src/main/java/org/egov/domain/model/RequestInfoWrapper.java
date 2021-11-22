@@ -1,6 +1,6 @@
 package org.egov.domain.model;
 
-import org.egov.swagger.model.RequestInfo;
+import org.egov.common.contract.request.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

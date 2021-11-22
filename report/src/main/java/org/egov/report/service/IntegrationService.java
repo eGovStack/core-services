@@ -12,6 +12,7 @@ import org.egov.swagger.model.ColumnDetail;
 import org.egov.swagger.model.ColumnDetail.TypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.egov.swagger.model.UserInfo;
 import org.egov.swagger.model.MetadataResponse;
 import org.egov.swagger.model.ReportDefinition;
 import org.egov.swagger.model.SearchColumn;
@@ -124,16 +125,17 @@ public class IntegrationService {
     }
 
     private RequestInfoWrapper generateRequestInfoWrapper(RequestInfo requestInfo) {
-        RequestInfoWrapper riw = new RequestInfoWrapper();
-        org.egov.swagger.model.RequestInfo ri = new org.egov.swagger.model.RequestInfo();
+         RequestInfoWrapper riw = new RequestInfoWrapper();
+        RequestInfo ri = new RequestInfo();
         ri.setAction(requestInfo.getAction());
         ri.setAuthToken(requestInfo.getAuthToken());
-        ri.apiId(requestInfo.getApiId());
+        ri.setApiId(requestInfo.getApiId());
         ri.setVer(requestInfo.getVer());
         ri.setTs(1L);
         ri.setDid(requestInfo.getDid());
         ri.setKey(requestInfo.getKey());
         ri.setMsgId(requestInfo.getMsgId());
+        ri.setUserInfo(requestInfo.getUserInfo());
 //        ri.setRequesterId(requestInfo.getRequesterId());
         riw.setRequestInfo(ri);
         return riw;
