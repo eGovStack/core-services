@@ -12,7 +12,7 @@ import org.egov.swagger.model.ColumnDetail;
 import org.egov.swagger.model.ColumnDetail.TypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.common.contract.request.User;
+import org.egov.swagger.model.UserInfo;
 import org.egov.swagger.model.MetadataResponse;
 import org.egov.swagger.model.ReportDefinition;
 import org.egov.swagger.model.SearchColumn;
