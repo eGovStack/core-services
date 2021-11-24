@@ -91,10 +91,10 @@ public class BusinessServiceController {
         String business=businessServiceRequest.getBusinessServices().get(0).getBusinessService();
     	List<BusinessService> businessServices;
     	if(business.equals("FSM")|| business.equals("FSM_VEHICLE_TRIP")) {
-        businessServices = businessMasterServiceV2.create(businessServiceRequest);
+        businessServices = businessMasterServiceV2.update(businessServiceRequest);
     	}
     	else {
-    		businessServices = businessMasterService.create(businessServiceRequest);
+    		businessServices = businessMasterService.update(businessServiceRequest);
     	}
         BusinessServiceResponse response = BusinessServiceResponse.builder().businessServices(businessServices)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(businessServiceRequest.getRequestInfo(),true))
