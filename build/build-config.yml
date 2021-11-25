@@ -146,7 +146,7 @@ config:
       - work-dir: "egov-workflow-v2/src/main/resources/db"
         image-name: "egov-workflow-v2-db"
 
-  - name: "builds/core-services/report"
+  - name: "builds/digit-impel-builds/core-services/report"
     build:
       - work-dir: "report"
         image-name: "report"
