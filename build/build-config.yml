@@ -166,7 +166,7 @@ config:
         image-name: "user-otp"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/core-services/zuul"
+  - name: "builds/digit-impel-builds/core-services/zuul"
     build:
       - work-dir: "zuul"
         image-name: "zuul"
