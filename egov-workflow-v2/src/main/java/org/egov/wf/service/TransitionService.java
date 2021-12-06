@@ -1,19 +1,30 @@
 package org.egov.wf.service;
 
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.repository.BusinessServiceRepository;
 import org.egov.wf.repository.WorKflowRepository;
 import org.egov.wf.util.WorkflowUtil;
-import org.egov.wf.web.models.*;
+import org.egov.wf.web.models.Action;
+import org.egov.wf.web.models.BusinessService;
+import org.egov.wf.web.models.BusinessServiceSearchCriteria;
+import org.egov.wf.web.models.ProcessInstance;
+import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
+import org.egov.wf.web.models.ProcessStateAndAction;
+import org.egov.wf.web.models.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -89,11 +100,12 @@ public class TransitionService {
                         processStateAndAction.setAction(action);
                         break;
                     }
-                }
+                } 
             }
 
 
             if(isTransitionCall){
+            	
                 if(processStateAndAction.getAction()==null)
                     throw new CustomException("INVALID ACTION","Action "+processStateAndAction.getProcessInstanceFromRequest().getAction()
                             + " not found in config for the businessId: "
