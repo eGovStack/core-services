@@ -23,10 +23,13 @@ public class WorkflowConstants {
     public static final String JSONPATH_BUSINESSSERVICE_STATELEVEL = "$.MdmsRes.Workflow.BusinessServiceMasterConfig";
 
     public static final String JSONPATH_TEANANTIDS = "$.MdmsRes.tenant.tenants.*.code";
+    public static final String JSONPATH_TEANANTIDS_FORESCALATION = "$.MdmsRes.tenant.escalationconfig.*.code";
+
 
     public static final String MDMS_MODULE_TENANT= "tenant";
 
     public static final String MDMS_TENANTS= "tenants";
+    public static final String MDMS_ESCALATIONCONFIG= "escalationconfig";
 
     public static final String MDMS_ALLOWED_ROLES_ALL_SERVICES = "$..roles";
 

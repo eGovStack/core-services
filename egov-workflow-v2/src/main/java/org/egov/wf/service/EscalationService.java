@@ -55,7 +55,7 @@ public class EscalationService {
 
         Object mdmsData = mdmsService.mDMSCall(requestInfo);
         List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
-        List<String> tenantIds = escalationUtil.getTenantIds(mdmsData);
+        List<String> tenantIds = escalationUtil.getTenantIdsForEscalation(mdmsData);
 
         for(Escalation escalation : escalations){
 

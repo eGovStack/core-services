@@ -93,6 +93,7 @@ public class MDMSService {
     private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId){
         ModuleDetail escalationDetail = getAutoEscalationConfig();
         ModuleDetail tenantDetail = getTenants();
+        //ModuleDetail tenantDetailForEscalation = getTenantsForEscalation();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>(Arrays.asList(escalationDetail,tenantDetail));
 
@@ -169,6 +170,8 @@ public class MDMSService {
         List<MasterDetail> masterDetails = new ArrayList<>();
 
         masterDetails.add(MasterDetail.builder().name(MDMS_TENANTS).build());
+        masterDetails.add(MasterDetail.builder().name(MDMS_ESCALATIONCONFIG).build());
+
 
         ModuleDetail wfModuleDtls = ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(MDMS_MODULE_TENANT).build();
@@ -178,6 +181,18 @@ public class MDMSService {
 
 
 
+    private ModuleDetail getTenantsForEscalation() {
+
+        // master details for WF module
+        List<MasterDetail> masterDetails = new ArrayList<>();
+
+        masterDetails.add(MasterDetail.builder().name(MDMS_ESCALATIONCONFIG).build());
+
+        ModuleDetail wfModuleDtls = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(MDMS_MODULE_TENANT).build();
+
+        return wfModuleDtls;
+    }
 
 
     /**

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.egov.wf.util.WorkflowConstants.JSONPATH_TEANANTIDS_FORESCALATION;
 import static org.egov.wf.util.WorkflowConstants.JSONPATH_AUTOESCALTION;
 import static org.egov.wf.util.WorkflowConstants.JSONPATH_TEANANTIDS;
 
@@ -159,6 +160,20 @@ public class EscalationUtil {
     public List<String> getTenantIds(Object mdmsData){
 
         List<String> tenantIds = JsonPath.read(mdmsData, JSONPATH_TEANANTIDS);
+        return tenantIds;
+
+    }
+    
+    
+    
+    /**
+     * Get's the list of tenantIds from tenant master data
+     * @param mdmsData
+     * @return
+     */
+    public List<String> getTenantIdsForEscalation(Object mdmsData){
+
+        List<String> tenantIds = JsonPath.read(mdmsData, JSONPATH_TEANANTIDS_FORESCALATION);
         return tenantIds;
 
     }
