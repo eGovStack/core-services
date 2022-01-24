@@ -89,6 +89,8 @@ public class WorkflowConfig {
     @Value("${egov.wf.escalation.batch.size}")
     private Integer escalationBatchSize;
 
+    @Value("${egov.wf.statelevel}")
+    private Boolean isStateLevel;
 
 
 

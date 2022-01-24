@@ -48,7 +48,7 @@ public List<BusinessService> getBusinessServices(BusinessServiceSearchCriteria c
         String query;
         if(config.getIsStateLevel()){
             BusinessServiceSearchCriteria stateLevelCriteria = new BusinessServiceSearchCriteria(criteria);
-            stateLevelCriteria.setTenantIds(Collections.singletonList(criteria.getTenantIds().get(0).split("\\.")[0]));
+            stateLevelCriteria.setTenantId(criteria.getTenantId().split("\\.")[0]);
             query = queryBuilder.getBusinessServices(stateLevelCriteria, preparedStmtList);
         }
         else{
