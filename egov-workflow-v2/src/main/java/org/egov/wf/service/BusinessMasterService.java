@@ -70,7 +70,7 @@ public class BusinessMasterService {
      */
     @Cacheable(value = "businessService")
      public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
-        String tenantId = criteria.getTenantIds().get(0);
+        String tenantId = criteria.getTenantId();
         List<BusinessService> businessServices = repository.getBusinessServices(criteria);
         if(config.getIsStateLevel()){
             enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
