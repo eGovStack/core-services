@@ -30,7 +30,7 @@ public class UserRequest {
     private String salutation;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
-    @Size(max = 50)
+    @Size(max = 100)
     private String name;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_GENDER)
@@ -61,7 +61,7 @@ public class UserRequest {
     private Long accountLockedDate;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
-    @Size(max = 50)
+    @Size(max = 100)
     private String fatherOrHusbandName;
     private GuardianRelation relationship;
     private String signature;
