@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Updates all transactions in pending state and created in the last 15 minutes
  */
@@ -26,11 +28,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class EarlyReconciliationJob implements Job {
 
-    private static final RequestInfo requestInfo;
+	private static RequestInfo requestInfo;
 
-    static {
+	@PostConstruct
+    public void init() {
         User userInfo = User.builder()
-                .uuid("EARLY_RECONC_JOB")
+                .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();
 
