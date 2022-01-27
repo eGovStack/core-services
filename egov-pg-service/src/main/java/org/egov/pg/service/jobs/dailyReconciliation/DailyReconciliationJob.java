@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Daily Reconciliation of pending transactions
  */
@@ -25,11 +27,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DailyReconciliationJob implements Job {
 
-    private static final RequestInfo requestInfo;
+	private static RequestInfo requestInfo;
 
-    static {
+    @PostConstruct
+    public void init() {
         User userInfo = User.builder()
-                .uuid("DAILY_RECONC_JOB")
+                .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();
 
