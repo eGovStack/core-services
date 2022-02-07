@@ -1,5 +1,6 @@
 package org.egov.pg.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,11 @@ import java.util.Map;
 @Builder
 @ToString
 public class Transaction {
+	
+	@JsonProperty("businessService")
+	@NotNull
+	@Size(min = 1)
+	private String businessService;
 
     @JsonProperty("tenantId")
     @NotNull
@@ -161,7 +167,7 @@ public class Transaction {
     private AuditDetails auditDetails;
 
     @JsonProperty("additionalDetails")
-    private Object additionalDetails;
+    private JsonNode additionalDetails;
 
     /**
      * Entire RAW payment gateway response

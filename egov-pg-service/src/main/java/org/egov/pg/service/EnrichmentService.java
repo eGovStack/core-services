@@ -1,5 +1,7 @@
 package org.egov.pg.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.singletonMap;
@@ -43,8 +46,12 @@ public class EnrichmentService {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
 
-        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId());
-        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, bankAccount.getAccountNumber()));
+        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId(), transaction.getBusinessService());
+        String accountWithSeprator = bankAccount.getAccountNumber();
+        String accountNumber=accountWithSeprator;
+        if(accountWithSeprator.contains("/"))
+        accountNumber = accountWithSeprator.substring(accountWithSeprator.lastIndexOf("/")+1);
+        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, accountNumber));
 
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
@@ -52,13 +59,17 @@ public class EnrichmentService {
         transaction.setUser(userService.createOrSearchUser(transactionRequest));
         transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
-
-        if(Objects.isNull(transaction.getAdditionalDetails()))
-            transaction.setAdditionalDetails(objectMapper.createObjectNode());
-
-        ((ObjectNode) transaction.getAdditionalDetails()).set("taxAndPayments",
-                objectMapper.valueToTree(transaction.getTaxAndPayments()));
-
+		if (Objects.isNull(transaction.getAdditionalDetails())) {
+			transaction.setAdditionalDetails(objectMapper.createObjectNode());
+			((ObjectNode) transaction.getAdditionalDetails()).set("taxAndPayments",
+					objectMapper.valueToTree(transaction.getTaxAndPayments()));
+		} else {
+			Map<String, Object> additionDetailsMap = objectMapper.convertValue(transaction.getAdditionalDetails(),
+					Map.class);
+			additionDetailsMap.put("taxAndPayments", (Object) transaction.getTaxAndPayments());
+			transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap, JsonNode.class));
+		}
+        
         String uri = UriComponentsBuilder
                 .fromHttpUrl(transaction.getCallbackUrl())
                 .queryParams(new LinkedMultiValueMap<>(singletonMap(PgConstants.PG_TXN_IN_LABEL,
@@ -72,6 +83,12 @@ public class EnrichmentService {
                 .createdTime(System.currentTimeMillis())
                 .build();
         transaction.setAuditDetails(auditDetails);
+        try {
+			log.info(objectMapper.writeValueAsString(transaction));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     void enrichUpdateTransaction(TransactionRequest transactionRequest, Transaction newTxn) {
@@ -96,6 +113,7 @@ public class EnrichmentService {
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
+        newTxn.setBusinessService(currentTxnStatus.getBusinessService());
 
     }
 

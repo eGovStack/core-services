@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @ToString
@@ -45,6 +46,39 @@ public class AppProperties {
     private final String bankAccountHost;
 
     private final String bankAccountPath;
+    
+    private final String userServiceHost;
+
+    private final String userServiceCreatePath;
+
+    private final String userServiceSearchPath;
+
+    private final Boolean isUserCreationEnable;
+
+    private final Boolean isSMSEnable;
+
+    private final Boolean isLocalizationStateLevel;
+
+    private final String localizationHost;
+
+    private final String localizationContextPath;
+
+    private final String localizationSearchEndpoint;
+
+    private final String smsNotifTopic;
+
+    private final String applicationPayLink;
+
+    private final String urlShortnerHost;
+
+    private final String urlShortnerEndpoint;
+
+    private final String billingServiceHost;
+
+    private final String billingServiceSearchEndpoint;
+
+    private final String notificationHost;
+
 
     private final String userServiceHost;
 
