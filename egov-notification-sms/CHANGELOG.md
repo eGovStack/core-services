@@ -1,3 +1,9 @@
+
+
+## 1.1.3 - 2022-02-10
+
+- v2.5 Log4j vulnerability fixes patch
+
 ## 1.1.2 - 11-05-2021
 
 - added size validations
