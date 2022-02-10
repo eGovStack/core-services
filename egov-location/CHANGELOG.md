@@ -3,6 +3,10 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.4- 2022-02-10
+- v2.5 Log4j vulnerability fixes patch
+
+
 ## 1.1.3 - 2021-05-11
 
 - Updated error handling

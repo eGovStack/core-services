@@ -3,6 +3,9 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.2 - 2022-02-10
+-  v2.5 Log4j vulnerability fixes patch
+
 ## 1.1.1 - 2021-02-26
 
 - Updated domain name in application.properties

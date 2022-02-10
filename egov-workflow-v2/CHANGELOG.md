@@ -3,6 +3,10 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.2.1- 2022-02-10
+- v2.5 Log4j vulnerability fixes patch
+
+
 ## 1.2.0 2021-06-23
 - Added autoescalation feature
 - Added statelevel fallback feature at businessService level

@@ -3,6 +3,9 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.2.3 - 2022-02-10
+- v2.5 Log4j vulnerability fixes patch
+
 ## 1.2.2 - 2021-05-11
 - Added html validations on input
 - Cleaned the code for any instance of printing stack trace

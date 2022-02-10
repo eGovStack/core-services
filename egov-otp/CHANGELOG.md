@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.2.2- 2022-02-10
+- v2.5 Log4j vulnerability fixes patch
+
+
 ## 1.2.1 - 2021-05-11
 
 - Added size validation.
