@@ -165,7 +165,7 @@ public class IndexerUtils {
 		StringBuilder serviceCallUri = new StringBuilder();
 		System.out.println("uriMapping sop:: "+uriMapping.getTenantId());
 		log.info("uriMapping :: "+uriMapping.toString());
-		System.out.println("kafkaJson sop :: "+kafkaJson);
+		System.out.println("kafkaJson sop:: "+kafkaJson);
 		log.info("kafkaJson :: "+kafkaJson.toString());
 		String uriWithPathParam = null;
 		if (!StringUtils.isEmpty(uriMapping.getPath())) {
