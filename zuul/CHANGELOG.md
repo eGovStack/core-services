@@ -1,6 +1,10 @@
 
 All notable changes to this module will be documented in this file.
 
+## 1.3.1- 2022-02-10
+- v2.5 Log4j vulnerability fixes patch
+
+
 ## 1.3.0 - 2021-05-17
 - Changes to error handling
 - Removed stack trace printing
