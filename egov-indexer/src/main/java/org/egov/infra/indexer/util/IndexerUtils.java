@@ -174,9 +174,11 @@ public class IndexerUtils {
 				uriWithPathParam = uriWithPathParam.replace("$",
 						JsonPath.read(kafkaJson, uriMapping.getPathParam()).toString());
 			}
+			System.out.println("******************Sop  1 :: uriWithPathParam "+uriWithPathParam);
 			serviceCallUri.append(uriWithPathParam);
 			if (!StringUtils.isEmpty(uriMapping.getQueryParam())) {
 				String[] queryParamsArray = uriMapping.getQueryParam().split(",");
+				System.out.println("******************Sop  2 String[] queryParamsArray :: queryParamsArray "+ queryParamsArray);
 				for (int i = 0; i < queryParamsArray.length; i++) {
 					String[] queryParamExpression = queryParamsArray[i].trim().split("=");
 					Object queryParam = null;
@@ -190,6 +192,8 @@ public class IndexerUtils {
 						continue;
 					}
 					StringBuilder resolvedParam = new StringBuilder();
+					System.out.println("******************Sop  3:: queryParam"+ queryParam.toString());
+					
 					if (queryParam instanceof List) {
 						StringBuilder values = new StringBuilder();
 						for (Object param : (List) queryParam) {
@@ -199,6 +203,7 @@ public class IndexerUtils {
 								values.append(",").append(param.toString());
 							}
 						}
+						System.out.println("******************Sop  4:: values.toString()"+ values.toString());
 						queryParam = values.toString();
 					}
 					if(null == queryParam) {
@@ -219,7 +224,9 @@ public class IndexerUtils {
 			}
 		} else {
 			serviceCallUri.append(uriMapping.getPath());
+			System.out.println("**********serviceCallUri.toString() :: else "+serviceCallUri.toString());
 		}
+		System.out.println("************serviceCallUri.toString(); :: "+serviceCallUri.toString());
 		return serviceCallUri.toString();
 	}
 
