@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 1.1.5 - 10-02-2022
+
+-  v2.5 Log4j vulnerability fixes patch
+
 ## 1.1.4 - 23-07-2021
 
 - Fixed the like operator issue
