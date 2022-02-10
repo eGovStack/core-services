@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.3 - 2022-02-10
+
+- v2.5 Log4j vulnerability fixes patch
+
 ##1.2.2 - 2021-05-11
 
 - Added validation on content type
