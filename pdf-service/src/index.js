@@ -4,7 +4,9 @@ import request from "request";
 import express from "express";
 import logger from "./config/logger";
 import path from "path";
-import fs, { exists } from "fs";
+import fs, {
+  exists
+} from "fs";
 import axios from "axios";
 import cors from "cors";
 import morgan from "morgan";
@@ -14,17 +16,36 @@ import * as pdfmake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import get from "lodash/get";
 import set from "lodash/set";
-import { strict } from "assert";
-import { Recoverable } from "repl";
-import { fileStoreAPICall } from "./utils/fileStoreAPICall";
-import { directMapping } from "./utils/directMapping";
-import { externalAPIMapping } from "./utils/externalAPIMapping";
+import {
+  strict
+} from "assert";
+import {
+  Recoverable
+} from "repl";
+import {
+  fileStoreAPICall
+} from "./utils/fileStoreAPICall";
+import {
+  directMapping
+} from "./utils/directMapping";
+import {
+  externalAPIMapping
+} from "./utils/externalAPIMapping";
 import envVariables from "./EnvironmentVariables";
 import QRCode from "qrcode";
-import { getValue } from "./utils/commons";
-import { getFileStoreIds, insertStoreIds } from "./queries";
-import { listenConsumer } from "./kafka/consumer";
-import { convertFooterStringtoFunctionIfExist } from "./utils/commons";
+import {
+  getValue
+} from "./utils/commons";
+import {
+  getFileStoreIds,
+  insertStoreIds
+} from "./queries";
+import {
+  listenConsumer
+} from "./kafka/consumer";
+import {
+  convertFooterStringtoFunctionIfExist
+} from "./utils/commons";
 
 var jp = require("jsonpath");
 //create binary
@@ -33,8 +54,14 @@ var pdfMakePrinter = require("pdfmake/src/printer");
 
 let app = express();
 app.use(express.static(path.join(__dirname, "public")));
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(bodyParser.json({
+  limit: "10mb",
+  extended: true
+}));
+app.use(bodyParser.urlencoded({
+  limit: "10mb",
+  extended: true
+}));
 
 let maxPagesAllowed = envVariables.MAX_NUMBER_PAGES;
 let serverport = envVariables.SERVER_PORT;
@@ -108,54 +135,58 @@ const createPdfBinary = async (
 ) => {
   try {
     let noOfDefinitions = listDocDefinition.length;
-
+    //logger.info("total output files: " + noOfDefinitions);
     var jobid = `${key}${new Date().getTime()}`;
     if (noOfDefinitions == 0) {
       logger.error("no file generated for pdf");
-      errorCallback({ message: " error: no file generated for pdf" });
+      errorCallback({
+        message: " error: no file generated for pdf"
+      });
     } else {
       var dbInsertSingleRecords = [];
       var dbInsertBulkRecords = [];
-      await Promise.all([
+      // instead of awaiting the promise, use process.nextTick to asynchronously upload the receipt
+      //
+      process.nextTick(function () {
         uploadFiles(
-          dbInsertSingleRecords,
-          dbInsertBulkRecords,
-          formatconfig,
-          listDocDefinition,
-          key,
-          false,
-          jobid,
-          noOfDefinitions,
-          entityIds,
-          starttime,
-          successCallback,
-          errorCallback,
-          tenantId,
-          totalobjectcount,
-          userid,
-          documentType,
-          moduleName
-        ),
-        uploadFiles(
-          dbInsertSingleRecords,
-          dbInsertBulkRecords,
-          formatconfig,
-          listDocDefinition,
-          key,
-          true,
-          jobid,
-          noOfDefinitions,
-          entityIds,
-          starttime,
-          successCallback,
-          errorCallback,
-          tenantId,
-          totalobjectcount,
-          userid,
-          documentType,
-          moduleName
-        ),
-      ]);
+            dbInsertSingleRecords,
+            dbInsertBulkRecords,
+            formatconfig,
+            listDocDefinition,
+            key,
+            false,
+            jobid,
+            noOfDefinitions,
+            entityIds,
+            starttime,
+            successCallback,
+            errorCallback,
+            tenantId,
+            totalobjectcount,
+            userid,
+            documentType,
+            moduleName
+          ),
+          uploadFiles(
+            dbInsertSingleRecords,
+            dbInsertBulkRecords,
+            formatconfig,
+            listDocDefinition,
+            key,
+            true,
+            jobid,
+            noOfDefinitions,
+            entityIds,
+            starttime,
+            successCallback,
+            errorCallback,
+            tenantId,
+            totalobjectcount,
+            userid,
+            documentType,
+            moduleName
+          )
+      });
     }
   } catch (err) {
     logger.error(err.stack || err);
@@ -201,6 +232,7 @@ const uploadFiles = async (
     convertedListDocDefinition = [...listDocDefinition];
   }
 
+  logger.info("count :"+convertedListDocDefinition.length);
   convertedListDocDefinition.forEach(function (docDefinition, i) {
     // making copy because createPdfKitDocument function modifies passed object and this object is used
     // in multiple places
@@ -228,8 +260,12 @@ const uploadFiles = async (
       var data = Buffer.concat(chunks);
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
+          
           listOfFilestoreIds.push(result);
+          logger.info("listOfFilestoreIds size :" + listOfFilestoreIds.length)
+
           if (!isconsolidated) {
+            logger.info("Not consolidated")
             dbInsertSingleRecords.push({
               jobid,
               id: uuidv4(),
@@ -293,10 +329,9 @@ const uploadFiles = async (
         .catch((err) => {
           logger.error(err.stack || err);
           errorCallback({
-            message:
-              "error occurred while uploading pdf: " + (typeof err === "string")
-                ? err
-                : err.message,
+            message: "error occurred while uploading pdf: " + (typeof err === "string") ?
+              err :
+              err.message,
           });
         });
     });
@@ -452,7 +487,10 @@ app.post(
             // doc successfully created
             res.status(responseBody.status);
             delete responseBody.status;
-            res.json({ ResponseInfo: requestInfo, ...responseBody });
+            res.json({
+              ResponseInfo: requestInfo,
+              ...responseBody
+            });
           }
         );
       }
@@ -619,10 +657,9 @@ export const createAndSave = async (
     ).catch((err) => {
       logger.error(err.stack || err);
       errorCallback({
-        message:
-          "error occurred in createPdfBinary call: " + (typeof err === "string")
-            ? err
-            : err.message,
+        message: "error occurred in createPdfBinary call: " + (typeof err === "string") ?
+          err :
+          err.message,
       });
     });
   }
@@ -753,7 +790,9 @@ const prepareBegin = async (
   var entityIdPath = get(dataconfig, "DataConfigs.entityIdPath");
   if (baseKeyPath == null) {
     logger.error("baseKeyPath is absent in config");
-    throw { message: `baseKeyPath is absent in config` };
+    throw {
+      message: `baseKeyPath is absent in config`
+    };
   }
   return await prepareBulk(
     key,
@@ -837,13 +876,16 @@ const prepareBulk = async (
   );
   if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
     totalobjectcount = moduleObjectsArray.length;
+    logger.info("No of input objects: " + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
+      //logger.info("Preparing pdf data for input data with id: " + moduleObject.id)
       let entityKey = getValue(
         jp.query(moduleObject, entityIdPath),
         [null],
         entityIdPath
       );
+     
       entityIds.push(entityKey[0]);
 
       let formatObject = JSON.parse(JSON.stringify(formatconfig));
@@ -855,7 +897,6 @@ const prepareBulk = async (
       ) {
         formatObject["content"][0]["pageBreak"] = "before";
       }
-
       /////////////////////////////
       formatObject = await handlelogic(
         key,

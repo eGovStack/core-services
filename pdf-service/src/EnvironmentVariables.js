@@ -19,7 +19,7 @@ const envVariables = {
   DB_PORT: process.env.DB_PORT || 5432,
   EGOV_EXTERNAL_HOST: process.env.EGOV_EXTERNAL_HOST || "https://egov-micro-dev.egovernments.org/" ,
   DEFAULT_LOCALISATION_LOCALE:
-    process.env.DEFAULT_LOCALISATION_LOCALE || "en_IN",
+    "en_IN",
     DEFAULT_LOCALISATION_TENANT:
     process.env.DEFAULT_LOCALISATION_TENANT || "pb",
     DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
