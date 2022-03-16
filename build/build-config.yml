@@ -46,7 +46,7 @@ config:
       - work-dir: "egov-filestore/src/main/resources/db"
         image-name: "egov-filestore-db"
 
-  - name: "builds/digit-impel-builds/core-services/egov-idgen"
+  - name: "builds/core-services/egov-idgen"
     build:
       - work-dir: "egov-idgen"
         image-name: "egov-idgen"
