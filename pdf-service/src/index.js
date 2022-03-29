@@ -87,7 +87,17 @@ var fontDescriptors = {
     bold: "src/fonts/Roboto-Bold.ttf",
     normal: "src/fonts/Roboto-Regular.ttf",
   },
+  BalooPaaji:{
+    normal: "src/fonts/BalooPaaji2-Regular.ttf",
+    bold: "src/fonts/BalooPaaji2-Bold.ttf"
+  }
 };
+
+var defaultFontMapping = {
+  en_IN: 'default',
+  hi_IN: 'default',
+  pn_IN: 'BalooPaaji'
+}
 
 const printer = new pdfMakePrinter(fontDescriptors);
 const uuidv4 = require("uuid/v4");
@@ -616,12 +626,13 @@ export const createAndSave = async (
   }
   //let key = get(req.query || req, "key");
   let tenantId = get(req.query || req, "tenantId");
-  var formatconfig = formatConfigMap[key];
+  var formatconfigNew = formatConfigMap[key];
   var dataconfig = dataConfigMap[key];
   var userid = get(req.body || req, "RequestInfo.userInfo.id");
   var requestInfo = get(req.body || req, "RequestInfo");
   var documentType = get(dataconfig, "documentType", "");
   var moduleName = get(dataconfig, "DataConfigs.moduleName", "");
+  var formatconfig =JSON.parse(JSON.stringify(formatconfigNew))
 
   var valid = validateRequest(req, res, key, tenantId, requestInfo);
   if (valid) {
@@ -641,6 +652,15 @@ export const createAndSave = async (
     // var util = require('util');
     // fs.writeFileSync('./data.txt', util.inspect(JSON.stringify(formatconfig)) , 'utf-8');
     //function to download pdf automatically
+    let locale = requestInfo.msgId.split('|')[1];
+    if(!locale)
+      locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+
+    if(defaultFontMapping[locale] != 'default'){
+      formatconfig.defaultStyle.font = defaultFontMapping[locale];
+    }
+    console.log(" Font type selected :::: " + formatconfig.defaultStyle.font);
+    console.log("Locale passed:::::::"+locale);
     createPdfBinary(
       key,
       formatConfigByFile,
@@ -915,6 +935,12 @@ const prepareBulk = async (
         i + 1 == len
       ) {
         let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+        let locale = requestInfo.msgId.split('|')[1];
+        if(!locale)
+          locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+        if(defaultFontMapping[locale] != 'default'){
+          formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+        }
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];
