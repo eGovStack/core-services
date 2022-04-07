@@ -33,6 +33,8 @@ public class TransactionRepository {
         List<Object> params = new ArrayList<>();
         String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, startTime, endTime, params);
         log.debug(query);
+        log.info("Query for Daily Reconsilation is {}", query);
+        log.info("params for Daily Reconsilation is {}", params.toArray().toString());
         return jdbcTemplate.query(query, params.toArray(), rowMapper);
     }
 
