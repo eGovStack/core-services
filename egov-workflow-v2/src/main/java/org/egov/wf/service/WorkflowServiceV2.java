@@ -4,14 +4,15 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.repository.BusinessServiceRepositoryV2;
 import org.egov.wf.repository.WorKflowRepositoryV2;
-
+import org.egov.wf.util.WorkflowConstantsV2;
 import org.egov.wf.util.WorkflowUtilV2;
 import org.egov.wf.validator.WorkflowValidatorV2;
 import org.egov.wf.web.models.*;
-import org.egov.wf.util.WorkflowConstantsV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import static java.util.Objects.isNull;
 
 import java.util.*;
 
@@ -122,7 +123,11 @@ public class WorkflowServiceV2 {
         return processInstances;
 
     }
-
+    public Integer getUserBasedProcessInstancesCount(RequestInfo requestInfo,ProcessInstanceSearchCriteriaV2 criteria){
+        Integer count;
+        count = workflowRepositoryV2.getProcessInstancesForUserInboxCount(criteria);
+        return count;
+    }
 
     /**
      * Removes duplicate businessId which got created due to simultaneous request
@@ -145,7 +150,7 @@ public class WorkflowServiceV2 {
     
     public List statusCount(RequestInfo requestInfo,ProcessInstanceSearchCriteriaV2 criteria){
         List result;
-        if(criteria.isNull()&& !criteria.getBusinessService().equalsIgnoreCase(WorkflowConstantsV2.FSM_MODULE)){
+        if(criteria.isNull() && !isNull(criteria.getBusinessService()) && !criteria.getBusinessService().equalsIgnoreCase(WorkflowConstantsV2.FSM_MODULE)){
         	enrichSearchCriteriaFromUser(requestInfo, criteria);
             result = workflowRepository.getInboxStatusCount(criteria);
         }
@@ -196,6 +201,5 @@ public class WorkflowServiceV2 {
 
 
     }
-
 
 }

@@ -29,21 +29,22 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class ProcessInstanceResponse {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("ProcessInstances")
-        @Valid
-        private List<ProcessInstance> processInstances = null;
+    @JsonProperty("ProcessInstances")
+    @Valid
+    private List<ProcessInstance> processInstances = null;
+    @JsonProperty("totalCount")
+    @Valid
+    private Integer totalCount = null;
 
-
-        public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
-            if (this.processInstances == null) {
-            this.processInstances = new ArrayList<>();
-            }
-        this.processInstances.add(proceInstanceItem);
-        return this;
+    public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
+        if (this.processInstances == null) {
+        this.processInstances = new ArrayList<>();
         }
-
+    this.processInstances.add(proceInstanceItem);
+    return this;
+    }
 }
 

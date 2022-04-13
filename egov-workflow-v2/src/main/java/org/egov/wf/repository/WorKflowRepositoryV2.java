@@ -2,6 +2,7 @@ package org.egov.wf.repository;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.wf.repository.querybuilder.WorkflowQueryBuilderV2;
 import org.egov.wf.repository.rowmapper.WorkflowRowMapper;
 import org.egov.wf.web.models.ProcessInstance;
@@ -78,6 +79,13 @@ public class WorKflowRepositoryV2 {
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
+    public Integer getProcessInstancesForUserInboxCount(ProcessInstanceSearchCriteriaV2 criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        criteria.setIsAssignedToMeCount(true);
+        String query = queryBuilder.getInboxIdCount(criteria, (ArrayList<Object>) preparedStmtList);
+        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+        return count;
+    }
 
     /**
      * Returns the count based on the search criteria
@@ -119,6 +127,7 @@ public class WorKflowRepositoryV2 {
 
     private List<String> getInboxSearchIds(ProcessInstanceSearchCriteriaV2 criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
+        criteria.setIsAssignedToMeCount(false);
         String query = queryBuilder.getInboxIdQuery(criteria,preparedStmtList,true);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
     }
@@ -132,5 +141,4 @@ public class WorKflowRepositoryV2 {
     }
 
 
- 
 }

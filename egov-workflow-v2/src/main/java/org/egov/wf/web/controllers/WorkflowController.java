@@ -15,6 +15,7 @@ import org.egov.wf.web.models.ProcessInstanceResponse;
 import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
 import org.egov.wf.web.models.ProcessInstanceSearchCriteriaV2;
 import org.egov.wf.web.models.RequestInfoWrapper;
+import org.egov.wf.web.models.StatusCountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,12 +77,13 @@ public class WorkflowController {
 
         @RequestMapping(value="/process/_search", method = RequestMethod.POST)
         public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteriaV2 criteria) {
         	
-                List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
+                List<ProcessInstance> processInstances = workflowServiceV2.search(requestInfoWrapper.getRequestInfo(),criteria);
                 
-                ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances)
-                        .build();
+                Integer count = workflowServiceV2.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
+                
+                ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
 
@@ -105,14 +107,18 @@ public class WorkflowController {
      * @return
      */
     @RequestMapping(value="/process/_statuscount", method = RequestMethod.POST)
-        public ResponseEntity<List> StatusCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteriaV2 criteria) {
-            List  result = workflowServiceV2.statusCount(requestInfoWrapper.getRequestInfo(),criteria);
-            return new ResponseEntity<>(result,HttpStatus.OK);
+        public ResponseEntity<List> StatusCount(@Valid @RequestBody StatusCountRequest statusCountRequest,
+        @Valid @ModelAttribute ProcessInstanceSearchCriteriaV2 criteria) {
+          
+            ProcessInstanceSearchCriteriaV2 statusCriteria = statusCountRequest.getProcessInstanceSearchCriteria();
+            if (statusCriteria == null) {
+                statusCriteria = criteria;
+            }
+            List result = workflowServiceV2.statusCount(statusCountRequest.getRequestInfo(), statusCriteria);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
 
 
-
-
+  
 }
