@@ -70,7 +70,7 @@ public class BusinessServiceController {
         BusinessServiceSearchCriteria searchCriteria = mapper.convertValue(criteria,BusinessServiceSearchCriteria.class);
         BusinessServiceResponse response;
         
-        if(searchCriteria!=null && searchCriteria.getBusinessServices() !=null && (searchCriteria.getBusinessServices().equals("FSM")|| searchCriteria.getBusinessServices().equals("FSM_VEHICLE_TRIP"))) {
+        if(searchCriteria!=null && searchCriteria.getBusinessServices() !=null && (searchCriteria.getBusinessServices().contains("FSM")|| searchCriteria.getBusinessServices().contains("FSM_VEHICLE_TRIP")||searchCriteria.getBusinessServices().contains("FSM_POST_PAY_SERVICE"))) {
         	BusinessServiceSearchCriteriaV2 searchCriteriaV2 = mapper.convertValue(criteria,BusinessServiceSearchCriteriaV2.class);
         	List<BusinessService> businessServices = businessMasterServiceV2.search(searchCriteriaV2);
            response = BusinessServiceResponse.builder().businessServices(businessServices)
