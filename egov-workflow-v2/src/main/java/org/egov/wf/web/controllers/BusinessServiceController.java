@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -69,9 +72,11 @@ public class BusinessServiceController {
     	System.out.println(criteria);
         BusinessServiceSearchCriteria searchCriteria = mapper.convertValue(criteria,BusinessServiceSearchCriteria.class);
         BusinessServiceResponse response;
-        
-        if(searchCriteria!=null && searchCriteria.getBusinessServices() !=null && (searchCriteria.getBusinessServices().equals("FSM")|| searchCriteria.getBusinessServices().equals("FSM_VEHICLE_TRIP"))) {
+        String businessServicesParms=searchCriteria.getBusinessServices().get(0);
+        List<String> business=new ArrayList<String>(Arrays.asList(businessServicesParms.split(",")));
+        if(searchCriteria!=null && searchCriteria.getBusinessServices() !=null && (business.contains("FSM")|| business.contains("FSM_VEHICLE_TRIP")||business.contains("FSM_POST_PAY_SERVICE"))) {
         	BusinessServiceSearchCriteriaV2 searchCriteriaV2 = mapper.convertValue(criteria,BusinessServiceSearchCriteriaV2.class);
+        	searchCriteriaV2.setBusinessServices(business);
         	List<BusinessService> businessServices = businessMasterServiceV2.search(searchCriteriaV2);
            response = BusinessServiceResponse.builder().businessServices(businessServices)
                     .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),true))
