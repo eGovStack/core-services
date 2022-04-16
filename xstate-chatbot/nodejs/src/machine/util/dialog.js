@@ -39,7 +39,12 @@ function constructListPromptAndGrammer(keys, message_bundle, locale, more = fals
     if (value === undefined) {
       value = element;
     }
-    prompt+= `\n${index+1}. ` + value;
+    var numberAsString = (index+1).toString();
+    if(numberAsString.length ===1)
+      prompt+= `\n*${index+1}.*  ` + value;
+    else
+      prompt+= `\n*${index+1}.* ` + value;
+
     grammer.push({intention: element, recognize: [(index+1).toString()]});
   });
   return {prompt, grammer};
@@ -76,8 +81,9 @@ function sendMessage(context, message, immediate = true) {
 let global_messages = {
   error: {
     retry: {
-      en_IN: 'I am sorry, I didn\'t understand. Let\'s try again.',
-      hi_IN: 'मुझे क्षमा करें, मुझे समझ नहीं आया। फिर से कोशिश करें।'
+      en_IN: 'Selected option seems to be invalid 😐\n\nPlease select the valid option to proceed further.',
+      hi_IN: 'चयनित विकल्प अमान्य प्रतीत होता है 😐\n\nकृपया आगे बढ़ने के लिए वैध विकल्प का चयन करें।',
+      pa_IN: 'ਚੁਣੀ ਹੋਈ ਚੋਣ ਅਵੈਧ ਜਾਪਦੀ ਹੈ 😐\n\nਕਿਰਪਾ ਕਰਕੇ ਅੱਗੇ ਵਧਣ ਲਈ ਜਾਇਜ਼ ਵਿਕਲਪ ਦੀ ਚੋਣ ਕਰੋ.'
     },
     proceeding: {
       en_IN: 'I am sorry, I didn\'t understand. But proceeding nonetheless',
@@ -93,8 +99,8 @@ let global_messages = {
     hi_IN : "और देखें ..."
   },
   [INTENTION_GOBACK]: {
-    en_IN : 'To go back ...',
-    hi_IN : 'पीछे जाना ...'
+    en_IN : 'Go Back',
+    hi_IN : 'Go Back'
   },
 }
 

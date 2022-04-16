@@ -3,6 +3,8 @@ const fetch = require("node-fetch");
 const moment = require("moment-timezone");
 const localisationService = require('../util/localisation-service');
 const dialog = require('../util/dialog');
+const pdfService = require('../util/pdf-service');
+const paymentStatusConsumer = require('./payment-status-update-event');
 
 let supportedServiceForLocality = "{\"TL\" : \"tl-services\",\"FIRENOC\" : \"fireNoc\",\"WS\" : \"ws-services\",\"SW\" : \"sw-services\",\"PT\" : \"PT\",\"BPA\" : \"bpa-services\"}";
 
@@ -78,20 +80,17 @@ class ReceiptService {
         }
         let searchOptions = [];
         if(service === 'WS') {
-          searchOptions = [ 'mobile', 'connectionNumber', 'consumerNumber' ];
+          searchOptions = [ 'connectionNumber'];
+        } else if(service === 'PT') {
+          searchOptions = [ 'propertyId'];
+        } else if(service === 'TL') {
+          searchOptions = [ 'tlApplicationNumber' ];
+        } else if(service === 'FIRENOC') {
+          searchOptions = [ 'nocApplicationNumber' ];
+        } else if(service === 'BPA') {
+          searchOptions = [ 'bpaApplicationNumber' ];
         }
-        else if(service === 'PT') {
-          searchOptions = [ 'mobile', 'propertyId', 'consumerNumber' ];
-        } 
-        else if(service === 'TL') {
-          searchOptions = [ 'mobile', 'tlApplicationNumber' ];
-        } 
-        else if(service === 'FIRENOC') {
-          searchOptions = [ 'mobile', 'nocApplicationNumber' ];
-        } 
-        else if(service === 'BPA') {
-          searchOptions = [ 'mobile', 'bpaApplicationNumber' ];
-        }
+        
         return { searchOptions, messageBundle };
     }
     getOptionAndExampleMessageBundle(service, searchParamOption) {
@@ -125,8 +124,8 @@ class ReceiptService {
           hi_IN: 'कनेक्शन नंबर'
         };
         example = {
-         en_IN: ' ',
-         hi_IN: ' '
+          en_IN: '(Connection No must be in format\nWS/XXX/XX-XX/XXXXX)',
+          hi_IN: '(कनेक्शन नंबर WS/XXX/XX-XX/XXXXX प्रारूप में होना चाहिए)'
         }
       }
   
@@ -136,8 +135,9 @@ class ReceiptService {
           hi_IN: 'संपत्ति आईडी'
         };
         example = {
-         en_IN: ' ',
-         hi_IN: ' '
+          en_IN: '(Property ID must be in format\nPT-xxxx-xxxxxx)',
+          hi_IN: '(संपत्ति आईडी\nPT-xxxx-xxxxxx प्रारूप में होनी चाहिए)',
+          pa_IN: '(ਪ੍ਰਾਪਰਟੀ ID ਫਾਰਮੈਟ\nPT-xxxx-xxxxxx ਵਿੱਚ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ)'
         }
       }
   
@@ -246,11 +246,12 @@ class ReceiptService {
             id: consumerCode,
             locality: undefined, //to do
             city: tenantId, //to do
-            amount: result.totalDue,
+            amount: result.totalAmountPaid,
             date: transactionDate,
             businessService: businessService,
             transactionNumber: result.transactionNumber,
-            receiptDocumentLink: await this.receiptDownloadLink(consumerCode,tenantId,receiptNumber,businessService,mobileNumber,locale)
+            fileStoreId: result.fileStoreId,
+            tenantId: tenantId
           }
           Payments['Payments'].push(data);
           lookup.push(consumerCode);
@@ -396,7 +397,7 @@ class ReceiptService {
           return await this.findreceiptsList(user,service,user.locale);
     }
 
-    async multipleRecordReceipt(user,service,consumerCodes){ 
+    async multipleRecordReceipt(user,service,consumerCodes,transactionNumber, tenantId, forPdf){ 
       
       let requestBody = {
         RequestInfo: {
@@ -409,7 +410,24 @@ class ReceiptService {
       let paymentUrl = config.egovServices.egovServicesHost + searchEndpoint;
       paymentUrl =  paymentUrl + '?tenantId=' + config.rootTenantId;
       paymentUrl+='&';
-      paymentUrl +='consumerCodes='+consumerCodes;
+      if(forPdf){
+        paymentUrl +='transactionNumber='+transactionNumber;
+        paymentUrl+='&mobileNumber='+user.mobileNumber;
+      }
+
+      else {
+        paymentUrl +='consumerCodes='+consumerCodes;
+        let isOwner = false;
+        if(service === 'PT')
+          isOwner = await paymentStatusConsumer.getPTOwnerDetails(consumerCodes, tenantId, user.mobileNumber, user.authToken);
+
+        if(service === 'WS' || service === 'SW')
+          isOwner = await paymentStatusConsumer.getWnsOwnerDeatils(consumerCodes, tenantId, service, user.mobileNumber, user.authToken);
+
+
+        if(!isOwner)
+        paymentUrl+='&mobileNumber='+user.mobileNumber;
+      }
 
       let options = {
         method: 'POST',
@@ -424,8 +442,12 @@ class ReceiptService {
       let results;
       if(response.status === 200) {
         let responseBody = await response.json();
-        if(responseBody.Payments.length>0)
+        if(responseBody.Payments.length>0){
+          if(forPdf){
+            return responseBody.Payments[0];
+          }
           results=await this.preparePaymentResult(responseBody, user.authToken, user.locale,true);
+        }
       } else {
         console.error('Error in fetching the payment data');
         return undefined;
@@ -595,5 +617,8 @@ class ReceiptService {
       return messageBundle;  
     }
 
+    async getPdfFilestoreId(businessService, payment, user){
+      await pdfService.generatePdf(businessService, payment, user.locale, user.authToken, user.userInfo, user.mobileNumber);
+    }
   }
 module.exports = new ReceiptService();
