@@ -2,6 +2,8 @@ const envVariables = {
   MAX_NUMBER_PAGES: process.env.MAX_NUMBER_PAGES || 80,
   EGOV_LOCALISATION_HOST:
     process.env.EGOV_LOCALISATION_HOST || "http://egov-localization:8080",
+  EGOV_LOCALISATION_SEARCH:
+    process.env.EGOV_LOCALISATION_SEARCH || "/localization/messages/v2/_search",
   EGOV_FILESTORE_SERVICE_HOST:
     process.env.EGOV_FILESTORE_SERVICE_HOST || "http://egov-filestore:8080",
   SERVER_PORT: process.env.SERVER_PORT || 8080,
@@ -17,7 +19,7 @@ const envVariables = {
   DB_HOST: process.env.DB_HOST || "localhost",
   DB_NAME: process.env.DB_NAME || "PdfGen",
   DB_PORT: process.env.DB_PORT || 5432,
-  EGOV_EXTERNAL_HOST: process.env.EGOV_EXTERNAL_HOST || "https://egov-micro-dev.egovernments.org/" ,
+  EGOV_EXTERNAL_HOST: process.env.EGOV_EXTERNAL_HOST || "https://dev.digit.org/" ,
   DEFAULT_LOCALISATION_LOCALE:
     "en_IN",
     DEFAULT_LOCALISATION_TENANT:

@@ -115,6 +115,7 @@ public class SearchUtils {
 						continue;
 
 				} catch (Exception e) {
+					log.error("Error while building where clause: " + e.getMessage());
 					continue;
 				}
 				
@@ -127,10 +128,11 @@ public class SearchUtils {
 				
 				/**
 				 * Array operators
-				 */
+				 */  
+				String operator=null;
 				if (paramValue instanceof net.minidev.json.JSONArray) {
 					String[] validListOperators = {"NOT IN", "IN"};
-					String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
+					operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
 					if(!Arrays.asList(validListOperators).contains(operator))
 						operator = " IN "; 
 					whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
@@ -140,7 +142,7 @@ public class SearchUtils {
 				 */
 				else {
 					List<String> validOperators = operators;
-					String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
+					operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
 
 					if (!validOperators.contains(operator)) {
 						operator = "=";
@@ -156,16 +158,18 @@ public class SearchUtils {
 
 						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
 					} else if (operator.equals("TOUPPERCASE")) {
-
+						
+						operator =  "=";
 						paramValue = ((String) paramValue).toUpperCase();
 					} else if (operator.equals("TOLOWERCASE")) {
 
+						operator =  "=";
 						paramValue = ((String) paramValue).toLowerCase();
 					}
-					
 					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
-				}
 
+				}
+				if(!operator.equals("LIKE"))
 				preparedStatementValues.put(param.getName(), paramValue);
 			}
 		} catch (Exception e) {
@@ -256,6 +260,7 @@ public class SearchUtils {
 					try{
 						result.add(obj.getValue());
 					}catch(Exception e){
+						log.error("Errow while adding object value to result: " + e.getMessage());
 						throw e;
 					}
 				}
