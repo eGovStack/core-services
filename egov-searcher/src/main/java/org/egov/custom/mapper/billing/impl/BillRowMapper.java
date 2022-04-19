@@ -69,6 +69,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				try {
 					connection.setPropertyId(rs.getString("pid"));
 					connection.setOldConnectionNo(rs.getString("oldpid"));
+					connection.setStatus(rs.getString("conn_status"));
 					connection.setAdditionalDetails(rs.getObject("conn_add"));
 				} catch (Exception ex) {
 					log.info("exception in bill rowmapper",ex);
