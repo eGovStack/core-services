@@ -22,7 +22,8 @@ public class Connection {
 	
 	private String oldConnectionNo;
 	
-	
+	private String status;
+
 	private Object additionalDetails;
 
 }
