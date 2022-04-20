@@ -34,7 +34,7 @@ public class UserRequest {
     private String name;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_GENDER)
-    @Size(max = 10)
+    @Size(max = 15)
     private String gender;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_MOBILE)
