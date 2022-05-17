@@ -60,8 +60,8 @@ public class WorkflowConfig {
 
     @Value("${persister.update.businessservice.wf.topic}")
     private String updateBusinessServiceTopic;
-
-
+    @Value("${v2BusinessServicesCodes}")
+    private String v2BusinessServicesCodes;
 
     //MDMS
     @Value("${egov.mdms.host}")
