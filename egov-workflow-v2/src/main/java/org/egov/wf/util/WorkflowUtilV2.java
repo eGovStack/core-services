@@ -50,10 +50,10 @@ public class WorkflowUtilV2 {
     public boolean isV2Service(String businessServices)
     {
     	List<String> businessServiceParams = businessServices !=null ? Arrays.asList(businessServices.split(",")): new ArrayList();
-    	List<String> v2BusinessSrvs = Arrays.asList(config.getV2BusinessServicesCodes());
+    	List<String> v2BusinessSrvs = Arrays.asList(config.getV2BusinessServicesCodes().split(","));
     	
     	for (String  businessService : businessServiceParams) {
-			if(v2BusinessSrvs.contains(businessServices))
+			if(v2BusinessSrvs.contains(businessService))
 				return true;
 		}
     	return false;
