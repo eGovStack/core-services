@@ -62,6 +62,9 @@ public class WorkflowConfig {
     private String updateBusinessServiceTopic;
     @Value("${v2BusinessServicesCodes}")
     private String v2BusinessServicesCodes;
+    
+    @Value("${v2BusinessServicesCodes}")
+    private String v2BusinessServicesCodes;
 
     //MDMS
     @Value("${egov.mdms.host}")
