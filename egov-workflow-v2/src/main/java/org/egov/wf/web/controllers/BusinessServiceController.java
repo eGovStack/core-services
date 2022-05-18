@@ -6,10 +6,12 @@ import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.service.BusinessMasterServiceV2;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.*;
+import org.egov.wf.util.WorkflowUtilV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.validation.Valid;
 
@@ -28,14 +30,16 @@ public class BusinessServiceController {
     private final ResponseInfoFactory responseInfoFactory;
 
     private ObjectMapper mapper;
+    private WorkflowUtilV2 workflowUtilV2;
 
     @Autowired
     public BusinessServiceController(BusinessMasterService businessMasterService,BusinessMasterServiceV2 businessMasterServiceV2, ResponseInfoFactory responseInfoFactory,
-                                     ObjectMapper mapper) {
+                                     ObjectMapper mapper, WorkflowUtilV2 workflowUtilV2) {
         this.businessMasterService = businessMasterService;
         this.businessMasterServiceV2 = businessMasterServiceV2;
         this.responseInfoFactory = responseInfoFactory;
         this.mapper = mapper;
+        this.workflowUtilV2=workflowUtilV2;
     }
    
     /**
@@ -47,7 +51,7 @@ public class BusinessServiceController {
     public ResponseEntity<BusinessServiceResponse> create(@Valid @RequestBody BusinessServiceRequest businessServiceRequest) {
     	String business=businessServiceRequest.getBusinessServices().get(0).getBusinessService();
     	List<BusinessService> businessServices;
-    	if(business.equals("FSM")|| business.equals("FSM_VEHICLE_TRIP")) {
+    	if (workflowUtilV2.isV2Service(business)) {
         businessServices = businessMasterServiceV2.create(businessServiceRequest);
     	}
     	else {
@@ -72,10 +76,13 @@ public class BusinessServiceController {
     	System.out.println(criteria);
         BusinessServiceSearchCriteria searchCriteria = mapper.convertValue(criteria,BusinessServiceSearchCriteria.class);
         BusinessServiceResponse response;
-        String businessServicesParms=searchCriteria.getBusinessServices().get(0);
-        List<String> business=new ArrayList<String>(Arrays.asList(businessServicesParms.split(",")));
-        if(searchCriteria!=null && searchCriteria.getBusinessServices() !=null && (business.contains("FSM")|| business.contains("FSM_VEHICLE_TRIP")||business.contains("FSM_POST_PAY_SERVICE"))) {
-        	BusinessServiceSearchCriteriaV2 searchCriteriaV2 = mapper.convertValue(criteria,BusinessServiceSearchCriteriaV2.class);
+		String businessServicesParms = "";
+		
+		
+		if( searchCriteria !=null &&  !searchCriteria.getBusinessServices().isEmpty() && workflowUtilV2.isV2Service(searchCriteria.getBusinessServices().get(0)) ){
+			businessServicesParms = searchCriteria.getBusinessServices().get(0);
+			List<String> business = new ArrayList<String>(Arrays.asList(businessServicesParms.split(",")));    
+                	BusinessServiceSearchCriteriaV2 searchCriteriaV2 = mapper.convertValue(criteria,BusinessServiceSearchCriteriaV2.class);
         	searchCriteriaV2.setBusinessServices(business);
         	List<BusinessService> businessServices = businessMasterServiceV2.search(searchCriteriaV2);
            response = BusinessServiceResponse.builder().businessServices(businessServices)
@@ -93,9 +100,11 @@ public class BusinessServiceController {
     @RequestMapping(value="/businessservice/_update", method = RequestMethod.POST)
     public ResponseEntity<BusinessServiceResponse> update(@Valid @RequestBody BusinessServiceRequest businessServiceRequest) {
        
-        String business=businessServiceRequest.getBusinessServices().get(0).getBusinessService();
-    	List<BusinessService> businessServices;
-    	if(business.equals("FSM")|| business.equals("FSM_VEHICLE_TRIP")) {
+        String business ="";
+		if(!businessServiceRequest.getBusinessServices().isEmpty())
+		business=businessServiceRequest.getBusinessServices().get(0).getBusinessService();
+		List<BusinessService> businessServices;
+		if (workflowUtilV2.isV2Service(business)) {
         businessServices = businessMasterServiceV2.update(businessServiceRequest);
     	}
     	else {

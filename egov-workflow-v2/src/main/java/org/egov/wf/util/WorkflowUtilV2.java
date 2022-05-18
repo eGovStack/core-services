@@ -47,7 +47,18 @@ public class WorkflowUtilV2 {
         else
             return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
     }
+    public boolean isV2Service(String businessServices)
+    {
+    	List<String> businessServiceParams = businessServices !=null ? Arrays.asList(businessServices.split(",")): new ArrayList();
+    	List<String> v2BusinessSrvs = Arrays.asList(config.getV2BusinessServicesCodes().split(","));
 
+    	for (String  businessService : businessServiceParams) {
+			if(v2BusinessSrvs.contains(businessService))
+				return true;
+		}
+    	return false;
+
+    }
 
     /**
      * Checks if the user has role allowed for the action

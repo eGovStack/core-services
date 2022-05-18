@@ -88,6 +88,9 @@ public class WorkflowConfig {
     @Value("${egov.statelevel.tenantid}")
     private String stateLevelTenantId;
 
+    @Value("${v2BusinessServicesCodes}")
+    private String v2BusinessServicesCodes;
+
 
 
 }
