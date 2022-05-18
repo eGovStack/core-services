@@ -6,11 +6,12 @@ import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.service.BusinessMasterServiceV2;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.*;
+import org.egov.wf.util.WorkflowUtilV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.egov.wf.util.WorkflowUtilV2;
+
 
 import javax.validation.Valid;
 
@@ -33,7 +34,7 @@ public class BusinessServiceController {
 
     @Autowired
     public BusinessServiceController(BusinessMasterService businessMasterService,BusinessMasterServiceV2 businessMasterServiceV2, ResponseInfoFactory responseInfoFactory,
-                                     ObjectMapper mapper) {
+                                     ObjectMapper mapper, WorkflowUtilV2 workflowUtilV2) {
         this.businessMasterService = businessMasterService;
         this.businessMasterServiceV2 = businessMasterServiceV2;
         this.responseInfoFactory = responseInfoFactory;
