@@ -68,7 +68,7 @@
     <dependency>
       <groupId>io.opentracing.contrib</groupId>
       <artifactId>opentracing-spring-web-starter</artifactId>
-      <version>0.3.3</version>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentracing.contrib</groupId>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
-      <version>5.2</version>
+      <version>7.1</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
