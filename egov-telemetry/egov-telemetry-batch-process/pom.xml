@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch-spark-20_2.11</artifactId>
-      <version>6.5.1</version>
+      <version>6.8.23</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
