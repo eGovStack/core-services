@@ -83,7 +83,7 @@
     <dependency>
       <groupId>io.jaegertracing</groupId>
       <artifactId>jaeger-client</artifactId>
-      <version>0.31.0</version>
+      <version>0.35.5</version>
     </dependency>
     <dependency>
       <groupId>net.logstash.logback</groupId>
