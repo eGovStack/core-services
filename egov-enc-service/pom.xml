@@ -34,7 +34,7 @@
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-core</artifactId>
-      <version>1.5.18</version>
+      <version>1.6.6</version>
     </dependency>
     <dependency>
       <groupId>org.egov.services</groupId>
@@ -71,13 +71,13 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.60</version>
+      <version>1.69</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-kms -->
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-kms</artifactId>
-      <version>1.11.762</version>
+      <version>1.12.260</version>
     </dependency>
   </dependencies>
   <repositories>
