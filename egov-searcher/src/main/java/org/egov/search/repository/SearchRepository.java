@@ -63,5 +63,20 @@ public class SearchRepository {
 			throw e;
 		}
 	}
+	public Integer  getUniqueCitizenCount() {
+	     
+		try {
+			
+			  String query = "select count(*) from eg_user where type=:CITIZEN";
+		        log.info("Final Query: " + query);
+		        String CITIZEN ="CITIZEN";
+				//log.debug("preparedStatementValues: " + preparedStatementValues);
+		        Map<String, String> params = Collections.singletonMap("CITIZEN", CITIZEN);
+		        int count = namedParameterJdbcTemplate.queryForObject(query, params, Integer.class);
+				return count;
+		} catch (CustomException e) {
+			throw e;
+		}
+	}
 
 }
