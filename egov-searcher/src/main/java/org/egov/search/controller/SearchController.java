@@ -55,6 +55,14 @@ public class SearchController {
 		//return new ResponseEntity<>(searchResult, HttpStatus.OK);
 
 	}
-
+@GetMapping("/getUniqueCitizenCount")
+	@ResponseBody
+	public ResponseEntity<?> getUniqueCitizenCount() {
+		try {
+			return new ResponseEntity<>(searchService.getUniqueCitezen(), HttpStatus.OK);
+		} catch (Exception e) {
+			throw new CustomException("SEARCH_ERROR", "Error occurred while getting the citizen count : " + e.getMessage());
+		}
+	}
 		
 }
