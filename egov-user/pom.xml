@@ -190,6 +190,9 @@
             <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+	<headers>
+        <frame-options policy="SAMEORIGIN"/>
+    </headers>
     <build>
         <plugins>
             <plugin>
