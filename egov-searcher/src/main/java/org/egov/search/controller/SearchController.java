@@ -56,7 +56,7 @@ public class SearchController {
 		//return new ResponseEntity<>(searchResult, HttpStatus.OK);
 
 	}
-@GetMapping("/getUniqueCitizenCount")
+@GetMapping("/unique-citizen-count")
 	@ResponseBody
 	public ResponseEntity<?> getUniqueCitizenCount() {
 		try {
