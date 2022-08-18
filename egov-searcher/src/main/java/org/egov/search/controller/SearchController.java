@@ -60,7 +60,7 @@ public class SearchController {
 	@ResponseBody
 	public ResponseEntity<?> getUniqueCitizenCount(@RequestParam(value="date") String  date) {
 		try {
-			return new ResponseEntity<>(searchService.getUniqueCitezen(), HttpStatus.OK);
+			return new ResponseEntity<>(searchService.getUniqueCitezen(date), HttpStatus.OK);
 		} catch (Exception e) {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while getting the citizen count : " + e.getMessage());
 		}
