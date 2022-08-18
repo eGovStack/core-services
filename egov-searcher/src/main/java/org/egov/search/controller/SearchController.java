@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -58,7 +58,7 @@ public class SearchController {
 	}
 @GetMapping("/unique-citizen-count")
 	@ResponseBody
-	public ResponseEntity<?> getUniqueCitizenCount() {
+	public ResponseEntity<?> getUniqueCitizenCount(@RequestParam(value="date") String  date) {
 		try {
 			return new ResponseEntity<>(searchService.getUniqueCitezen(), HttpStatus.OK);
 		} catch (Exception e) {
