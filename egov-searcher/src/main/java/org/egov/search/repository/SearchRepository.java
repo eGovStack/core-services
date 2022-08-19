@@ -83,7 +83,7 @@ public class SearchRepository {
 	    
 		try {
 			 Timestamp timestamp = Timestamp.valueOf(date);
-			  String query = "select count(*) from eg_user where type=:CITIZEN and active = true and createddate >="+timestamp;
+			  String query = "select count(*) from eg_user where type=:CITIZEN and active = true and createddate >='"+timestamp+"'";
 		        log.info("Final Query: " + query);
 		        String CITIZEN ="CITIZEN";
 		   		        Map<String, String> params = Collections.singletonMap("CITIZEN", CITIZEN);
