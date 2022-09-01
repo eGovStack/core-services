@@ -10,6 +10,7 @@ import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.model.enums.BloodGroup;
 import org.egov.user.domain.model.enums.Gender;
+import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
 import org.hibernate.validator.constraints.Email;
 
@@ -66,6 +67,8 @@ public class UserRequest {
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     @Size(max = 100)
     private String fatherOrHusbandName;
+    private GuardianRelation guardianRelation;
+
     private String signature;
     private String bloodGroup;
     private String photo;
@@ -123,6 +126,7 @@ public class UserRequest {
         this.tenantId = user.getTenantId();
         this.roles = convertDomainRoleToContract(user.getRoles());
         this.fatherOrHusbandName = user.getGuardian();
+        this.guardianRelation=user.getGuardianRelation();
         this.uuid = user.getUuid();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
@@ -191,6 +195,7 @@ public class UserRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
+                .guardianRelation(guardianRelation)
                 .build();
     }
 
