@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
+import org.egov.user.domain.model.enums.GuardianRelation;
+
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.UserType;
 
@@ -46,6 +48,8 @@ public class UserSearchResponseContent {
     private Boolean accountLocked;
     private Long accountLockedDate;
     private String fatherOrHusbandName;
+    private GuardianRelation guardianRelation;
+
     private String signature;
     private String bloodGroup;
     private String photo;
@@ -95,6 +99,7 @@ public class UserSearchResponseContent {
         this.tenantId = user.getTenantId();
         this.roles = convertDomainRolesToContract(user.getRoles());
         this.fatherOrHusbandName = user.getGuardian();
+        this.guardianRelation = user.getGuardianRelation();
         this.uuid = user.getUuid();
         this.addresses = user.getAddresses();
         mapPermanentAddress(user);
