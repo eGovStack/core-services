@@ -103,14 +103,12 @@ public class LegacyIndexService {
      */
     public LegacyIndexResponse createLegacyindexJob(LegacyIndexRequest legacyindexRequest) {
         Map<String, Mapping> mappingsMap = runner.getMappingMaps();
-        log.info("mappingsMap URL---->"+mappingsMap);
+        System.out.println("mappingsMap URL---->"+mappingsMap);
         LegacyIndexResponse legacyindexResponse = null;
         StringBuilder url = new StringBuilder();
         Index index = mappingsMap.get(legacyindexRequest.getLegacyIndexTopic()).getIndexes().get(0);
         url.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/_search");
-        log.info("index---->"+index.getName() +"<--------");
-        log.info("mappingsMap URL---->"+url);
-        log.info("mapping  Type---->"+index.getType());
+        System.out.println("index---->"+index.getName() +"<---mappingsMap URL---->"+url+"mapping  Type---->"+index.getType());
         legacyindexResponse = LegacyIndexResponse.builder()
                 .message("Please hit the 'url' after the legacy index job is complete.").url(url.toString())
                 .responseInfo(factory.createResponseInfoFromRequestInfo(legacyindexRequest.getRequestInfo(), true))

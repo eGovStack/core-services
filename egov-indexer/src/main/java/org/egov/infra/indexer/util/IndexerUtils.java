@@ -611,6 +611,7 @@ public class IndexerUtils {
 	 */
 	public String buildPagedUriForLegacyIndex(APIDetails apiDetails, Integer offset, Integer size) {
 		StringBuilder url = new StringBuilder();
+		System.out.println("--apiDetails from Date "+ apiDetails.getFromDate() +"apiDetails --->"+apiDetails.getToDate());
 		if (apiDetails.getUri().contains("http://") || apiDetails.getUri().contains("https://"))
 			url.append(apiDetails.getUri());
 		else
@@ -646,7 +647,7 @@ public class IndexerUtils {
 			url.append("& toDate=").append(apiDetails.getToDate());
 		}
 
-		log.info("url --->"+url.toString());
+		System.out.println("url --->"+url.toString());
 		
 		return url.toString();
 	}
