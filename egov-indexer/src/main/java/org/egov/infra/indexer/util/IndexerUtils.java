@@ -633,7 +633,21 @@ public class IndexerUtils {
 		if(!StringUtils.isEmpty(apiDetails.getCustomQueryParam())) {
 			url.append("&").append(apiDetails.getCustomQueryParam());
 		}
+		
+		if(!StringUtils.isEmpty(apiDetails.getBusinessservice())) {
+			url.append("& businessservice=").append(apiDetails.getBusinessservice());
+		}
+		
+		if(apiDetails.getFromDate()!=null && apiDetails.getFromDate()>0 ) {
+			url.append("& fromDate=").append(apiDetails.getFromDate());
+		}
+		
+		if(apiDetails.getToDate()!=null && apiDetails.getToDate()>0 ) {
+			url.append("& toDate=").append(apiDetails.getToDate());
+		}
 
+		log.info("url --->"+url.toString());
+		
 		return url.toString();
 	}
 

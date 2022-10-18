@@ -35,5 +35,15 @@ public class APIDetails {
 	@NotNull
 	@JsonProperty("responseJsonPath")
 	public String responseJsonPath;
+	
+	@JsonProperty("businessservice")
+	public String businessservice;
+	
+	@JsonProperty("fromDate")
+	private Long fromDate;
+	
+	@JsonProperty("toDate")
+	private Long toDate ;
+	
 
 }
