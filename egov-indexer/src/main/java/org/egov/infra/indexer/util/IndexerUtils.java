@@ -636,15 +636,15 @@ public class IndexerUtils {
 		}
 		
 		if(!StringUtils.isEmpty(apiDetails.getBusinessservice())) {
-			url.append("& businessservice=").append(apiDetails.getBusinessservice());
+			url.append("&businessservice=").append(apiDetails.getBusinessservice());
 		}
 		
 		if(apiDetails.getFromDate()!=null && apiDetails.getFromDate()>0 ) {
-			url.append("& fromDate=").append(apiDetails.getFromDate());
+			url.append("&fromDate=").append(apiDetails.getFromDate());
 		}
 		
 		if(apiDetails.getToDate()!=null && apiDetails.getToDate()>0 ) {
-			url.append("& toDate=").append(apiDetails.getToDate());
+			url.append("&toDate=").append(apiDetails.getToDate());
 		}
 
 		System.out.println("url --->"+url.toString());
