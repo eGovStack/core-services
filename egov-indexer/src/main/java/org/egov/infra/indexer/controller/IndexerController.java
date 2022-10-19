@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/index-operations")
+@Slf4j
 public class IndexerController {
 
 	public static final Logger logger = LoggerFactory.getLogger(IndexerController.class);
@@ -68,7 +69,8 @@ public class IndexerController {
     @PostMapping("/_legacyindex")
     @ResponseBody
     public ResponseEntity<?> legacyIndexData(@Valid @RequestBody LegacyIndexRequest legacyIndexRequest){
-    	validator.validaterLegacyindexRequest(legacyIndexRequest);
+	log.info("controller fromdate: "+legacyIndexRequest.getApiDetails().getFromDate()+" toDate: "+legacyIndexRequest.getApiDetails().getToDate());
+       	validator.validaterLegacyindexRequest(legacyIndexRequest);
     	LegacyIndexResponse response = legacyIndexService.createLegacyindexJob(legacyIndexRequest);
 		return new ResponseEntity<>(response ,HttpStatus.OK);
 
