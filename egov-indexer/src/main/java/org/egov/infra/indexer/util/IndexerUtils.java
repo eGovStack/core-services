@@ -192,7 +192,7 @@ public class IndexerUtils {
 						continue;
 					}
 					StringBuilder resolvedParam = new StringBuilder();
-					System.out.println("******************Sop  3:: queryParam"+ queryParam.toString());
+//					System.out.println("******************Sop  3:: queryParam"+ queryParam.toString());
 					
 					if (queryParam instanceof List) {
 						StringBuilder values = new StringBuilder();
