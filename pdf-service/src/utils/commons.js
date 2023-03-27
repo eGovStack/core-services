@@ -1,11 +1,14 @@
-import { httpRequest } from "../api/api";
-import logger from "../config/logger";
+import axios from "axios";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
+const NodeCache = require("node-cache");
 var moment = require("moment-timezone");
+
+const cache = new NodeCache({ stdTTL: 300 });
 
 let datetimezone = envVariables.DATE_TIMEZONE;
 let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
+let egovLocSearchCall = envVariables.EGOV_LOCALISATION_SEARCH;
 let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 let defaultTenant = envVariables.DEFAULT_LOCALISATION_TENANT;
 export const getTransformedLocale = (label) => {
@@ -25,21 +28,13 @@ export const getTransformedLocale = (label) => {
  * @param {*} isMainTypeRequired  - ex:- "GOODS_RETAIL_TST-1" = get localisation for "RETAIL"
  * @param {*} isSubTypeRequired  - - ex:- "GOODS_RETAIL_TST-1" = get localisation for "GOODS_RETAIL_TST-1"
  */
-export const findAndUpdateLocalisation = async (
+ export const findLocalisation = async (
   requestInfo,
-  localisationMap,
-  prefix,
-  key,
-  moduleName,
-  localisationModuleList,
-  isCategoryRequired,
-  isMainTypeRequired,
-  isSubTypeRequired,
-  delimiter = " / "
+  moduleList,
+  codeList,
+  pdfKey
 ) => {
-  let keyArray = [];
-  let localisedLabels = [];
-  let isArray = false;
+  let cacheData = null;
   let locale = requestInfo.msgId;
   if (null != locale) {
     locale = locale.split("|");
@@ -47,11 +42,83 @@ export const findAndUpdateLocalisation = async (
   } else {
     locale = defaultLocale;
   }
-  let statetenantid = get(
-    requestInfo,
-    "userInfo.tenantId",
-    defaultTenant
-  ).split(".")[0];
+
+  if(pdfKey!=null){
+    let cacheKey = pdfKey + '-' + locale;
+    cacheData = await verifyCache(cacheKey);
+  }
+    
+  if(cacheData!= null && Object.keys(cacheData).length>=1){
+    return cacheData;
+  }
+  else{
+    let statetenantid = get(
+      requestInfo,
+      "userInfo.tenantId",
+      defaultTenant
+    ).split(".")[0];
+  
+  
+    let url = egovLocHost + egovLocSearchCall;
+  
+    let request = {
+      RequestInfo: requestInfo,
+      messageSearchCriteria:{
+        tenantId: statetenantid,
+        locale: locale,
+        codes: []
+      }
+    };
+  
+    request.messageSearchCriteria.module = moduleList.toString();
+    request.messageSearchCriteria.codes = codeList.toString().split(",");
+  
+    let headers = {
+      headers:{
+        "content-type": "application/json;charset=UTF-8",
+        accept: "application/json, text/plain, */*"
+      }
+    };
+  
+    let responseBody = await axios.post(url,request,headers)
+    .then(function (response) {
+      return response;
+    })
+    .catch((error) => {
+      throw error
+     });
+  
+    if(pdfKey!=null)
+      cache.set(pdfKey, responseBody.data);
+  
+  
+    return responseBody.data;
+  }
+}
+
+export const verifyCache = async (pdfKey) => {
+  let cacheData = null;
+  if (cache.has(pdfKey)) {
+    cacheData = cache.get(pdfKey);
+
+    return Promise.resolve(cacheData);
+  }
+  else
+    return cacheData;
+}
+
+export const getLocalisationkey = async (
+  prefix,
+  key,
+  isCategoryRequired,
+  isMainTypeRequired,
+  isSubTypeRequired,
+  delimiter = " / "
+) => {
+
+  let keyArray = [];
+  let localisedLabels = [];
+  let isArray = false;
 
   if (key == null) {
     return key;
@@ -62,52 +129,39 @@ export const findAndUpdateLocalisation = async (
     isArray = true;
   }
 
-  if (!localisationModuleList.includes(moduleName)) {
-    var res = await httpRequest(
-      `${egovLocHost}/localization/messages/v1/_search?locale=${locale}&tenantId=${statetenantid}&module=${moduleName}`,
-      { RequestInfo: requestInfo }
-    );
-    res.messages.map((item) => {
-      localisationMap[item.code] = item.message;
-    });
-    localisationModuleList.push(moduleName);
-  }
   keyArray.map((item) => {
-    let labelFromKey = "";
+    let codeFromKey = "";
 
     // append main category in the beginning
     if (isCategoryRequired) {
-      labelFromKey = getLocalisationLabel(
+        codeFromKey = getLocalisationLabel(
         item.split(".")[0],
-        localisationMap,
         prefix
       );
     }
 
     if (isMainTypeRequired) {
-      if (isCategoryRequired) labelFromKey = `${labelFromKey}${delimiter}`;
-      labelFromKey = getLocalisationLabel(
+     if (isCategoryRequired) codeFromKey = `${codeFromKey}${delimiter}`;
+        codeFromKey = getLocalisationLabel(
         item.split(".")[1],
-        localisationMap,
         prefix
       );
     }
 
     if (isSubTypeRequired) {
       if (isMainTypeRequired || isCategoryRequired)
-        labelFromKey = `${labelFromKey}${delimiter}`;
-      labelFromKey = `${labelFromKey}${getLocalisationLabel(
+        codeFromKey = `${codeFromKey}${delimiter}`;
+        codeFromKey = `${codeFromKey}${getLocalisationLabel(
         item,
-        localisationMap,
         prefix
       )}`;
     }
 
     if (!isCategoryRequired && !isMainTypeRequired && !isSubTypeRequired) {
-      labelFromKey = getLocalisationLabel(item, localisationMap, prefix);
+      codeFromKey = getLocalisationLabel(item, prefix);
     }
 
-    localisedLabels.push(labelFromKey === "" ? item : labelFromKey);
+    localisedLabels.push(codeFromKey === "" ? item : codeFromKey);
   });
   if (isArray) {
     return localisedLabels;
@@ -115,18 +169,12 @@ export const findAndUpdateLocalisation = async (
   return localisedLabels[0];
 };
 
-const getLocalisationLabel = (key, localisationMap, prefix) => {
+const getLocalisationLabel = (key, prefix) => {
   if (prefix != undefined && prefix != "") {
     key = `${prefix}_${key}`;
   }
   key = getTransformedLocale(key);
-
-  if (localisationMap[key]) {
-    return localisationMap[key];
-  } else {
-    logger.error(`no localisation value found for key ${key}`);
-    return key;
-  }
+  return key;
 };
 
 export const getDateInRequiredFormat = (et, dateformat = "DD/MM/YYYY") => {
@@ -155,7 +203,7 @@ export const getValue = (value, defaultValue, path) => {
 
 export const convertFooterStringtoFunctionIfExist = (footer) => {
   if (footer != undefined) {
-    footer = eval(footer);
+    footer = Function(`'use strict'; return (${footer})`)();
   }
   return footer;
 };

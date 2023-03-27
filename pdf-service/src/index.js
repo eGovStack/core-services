@@ -38,14 +38,29 @@ import {
 } from "./utils/commons";
 import {
   getFileStoreIds,
-  insertStoreIds
+  insertStoreIds,
+  insertRecords,
+  mergePdf,
+  getBulkPdfRecordsDetails,
+  cancelBulkPdfProcess
 } from "./queries";
 import {
   listenConsumer
 } from "./kafka/consumer";
 import {
-  convertFooterStringtoFunctionIfExist
+  convertFooterStringtoFunctionIfExist,
+  findLocalisation,
+  getDateInRequiredFormat
 } from "./utils/commons";
+
+
+let v8 = require("v8");
+let totalHeapSizeInGB = (((v8.getHeapStatistics().total_available_size) / 1024 / 1024 / 1024).toFixed(2));
+console.log(`*******************************************`);
+console.log(`Total Heap Size ~ ${totalHeapSizeInGB} GB`);
+console.log(`*******************************************`);
+
+
 
 var jp = require("jsonpath");
 //create binary
@@ -55,12 +70,13 @@ var pdfMakePrinter = require("pdfmake/src/printer");
 let app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({
-  limit: "10mb",
+  limit: "200mb",
   extended: true
 }));
 app.use(bodyParser.urlencoded({
-  limit: "10mb",
-  extended: true
+  limit: "200mb",
+  extended: true,
+  parameterLimit:50000
 }));
 
 let maxPagesAllowed = envVariables.MAX_NUMBER_PAGES;
@@ -75,6 +91,7 @@ let formatConfigMap = {};
 let topicKeyMap = {};
 var topic = [];
 var datafileLength = dataConfigUrls.split(",").length;
+let unregisteredLocalisationCodes = [];
 
 var fontDescriptors = {
   Cambay: {
@@ -86,6 +103,10 @@ var fontDescriptors = {
   Roboto: {
     bold: "src/fonts/Roboto-Bold.ttf",
     normal: "src/fonts/Roboto-Regular.ttf",
+  },
+  BalooBhaina: {
+    normal: "src/fonts/BalooBhaina2-Regular.ttf",
+    bold: "src/fonts/BalooBhaina2-Bold.ttf"
   },
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
@@ -376,7 +397,7 @@ app.post(
           });
         },
         (error) => {
-          res.status(500);
+          res.status(400);
           // doc creation error
           res.json({
             ResponseInfo: requestInfo,
@@ -387,7 +408,7 @@ app.post(
       //
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "some unknown error while creating: " + error.message,
@@ -452,7 +473,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         message: "some unknown error while creating: " + error.message,
       });
@@ -506,13 +527,199 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(500);
+      res.status(400);
       res.json({
         ResponseInfo: requestInfo,
         message: "some unknown error while searching: " + error.message,
       });
     }
   })
+);
+
+app.post(
+  "/pdf-service/v1/_getUnrigesteredCodes",
+  asyncHandler(async (req, res) => {
+    let requestInfo;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      res.status(200);
+      res.json({
+          ResponseInfo: requestInfo,
+          unregisteredLocalisationCodes: unregisteredLocalisationCodes,
+        });
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the codes",
+      });
+    }
+  })
+
+);
+
+app.post(
+  "/pdf-service/v1/_clearUnrigesteredCodes",
+  asyncHandler(async (req, res) => {
+    let requestInfo;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      let resposnseMap = await findLocalisation(
+        requestInfo,
+        [],
+        unregisteredLocalisationCodes,
+        null
+      );
+
+      resposnseMap.messages.map((item) => {
+        if(unregisteredLocalisationCodes.includes(item.code)){
+          var index = unregisteredLocalisationCodes.indexOf(item.code);
+          unregisteredLocalisationCodes.splice(index, 1);
+        }
+      });
+      res.status(200);
+      res.json({
+          ResponseInfo: requestInfo,
+          unregisteredLocalisationCodes: unregisteredLocalisationCodes,
+        });
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the codes",
+      });
+    }
+  })
+
+);
+
+app.post(
+  "/pdf-service/v1/_getBulkPdfRecordsDetails",
+  asyncHandler(async (req, res) => {
+    let requestInfo, uuid, offset, limit, jobId;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      uuid = requestInfo.userInfo.uuid;
+      offset = get(req.query, "offset");
+      limit = get(req.query, "limit");
+      jobId = get(req.query, "jobId");
+
+      let data = await getBulkPdfRecordsDetails(uuid, offset, limit, jobId);
+      if(data.length<=0){
+        res.status(500);
+        res.json({
+            ResponseInfo: requestInfo,
+            message: `Group bill pdf records details are not present for the employee ${requestInfo.userInfo.name}`,
+          });
+      }
+      else{
+        res.status(200);
+        res.json({
+            ResponseInfo: requestInfo,
+            groupBillrecords: data,
+          });
+      }
+
+      
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the details",
+      });
+    }
+  })
+
+);
+
+app.post(
+  "/pdf-service/v1/_deleteBulkPdfRecordsDetails",
+  asyncHandler(async (req, res) => {
+    let requestInfo = get(req.body, "RequestInfo");
+    try {
+      let pdfDirectory = envVariables.SAVE_PDF_DIR;
+      let folderNames = fs.readdirSync(pdfDirectory);
+
+      for(let folder of folderNames){
+        if(folder == 'lost+found')
+          continue;
+        let baseFolder = pdfDirectory + folder + '/';
+        if( fs.existsSync(baseFolder) ) {
+          fs.readdirSync(baseFolder).forEach(function(file,index){
+            var curPath = baseFolder + file;
+            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+              deleteFolderRecursive(curPath);
+            } else { // delete file
+              fs.unlinkSync(curPath);
+            }
+          });
+          fs.rmdirSync(baseFolder);
+        }
+      }
+      
+      res.status(200);
+      res.json({
+            ResponseInfo: requestInfo,
+            Message: "Bulk PDF records details are clear",
+      });
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while clearing the Bulk PDF records details",
+      });
+    }
+  })
+
+);
+
+app.post(
+  "/pdf-service/v1/_cancelProcess",
+  asyncHandler(async (req, res) => {
+    let requestInfo = get(req.body, "RequestInfo");
+    let jobId = get(req.query, "jobId");
+    let uuid = requestInfo.userInfo.uuid;
+    try {
+
+      if( !jobId || !uuid){
+        res.status(400);
+        res.json({
+          ResponseInfo: requestInfo,
+          message: "jobid or userid can not be empty",
+        });
+      }
+      else{
+        let errorMap = await cancelBulkPdfProcess(requestInfo, jobId, uuid);
+        if(errorMap != undefined && errorMap.length>=1){
+          res.status(400);
+          res.json({
+              ResponseInfo: requestInfo,
+              errorMessage: errorMap,
+        });
+        }
+        else{
+          res.status(200);
+          res.json({
+                ResponseInfo: requestInfo,
+                Message: `Bulk PDF process with job id: ${jobId} is cancel`,
+          });
+        }
+        
+      }
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while clearing the Bulk PDF records details",
+      });
+    }
+  })
+
 );
 
 var i = 0;
@@ -531,14 +738,15 @@ dataConfigUrls &&
           } else {
             data = JSON.parse(data);
             dataConfigMap[data.key] = data;
-            if (data.fromTopic != null) {
+            /*if (data.fromTopic != null) {
               topicKeyMap[data.fromTopic] = data.key;
               topic.push(data.fromTopic);
-            }
+            }*/
             i++;
-            if (i == datafileLength) {
-              listenConsumer(topic);
-            }
+            // if (i == datafileLength) {
+            //   topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
+            //   listenConsumer(topic);
+            // }
             logger.info("loaded dataconfig: file:///" + item);
           }
         } catch (error) {
@@ -600,6 +808,9 @@ app.listen(serverport, () => {
   logger.info(`Server running at http:${serverport}/`);
 });
 
+topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
+listenConsumer(topic);
+
 /**
  *
  * @param {*} formatconfig - format config read from formatconfig file
@@ -617,22 +828,21 @@ export const createAndSave = async (
 ) => {
   var starttime = new Date().getTime();
 
-  let topic = get(req, "topic");
+  let topic = get(req, "pdfKey");
   let key;
-  if (topic != null && topicKeyMap[topic] != null) {
-    key = topicKeyMap[topic];
+  if (topic != null) {
+    key = topic;
   } else {
     key = get(req.query || req, "key");
   }
   //let key = get(req.query || req, "key");
   let tenantId = get(req.query || req, "tenantId");
-  var formatconfigNew = formatConfigMap[key];
+  var formatconfig = formatConfigMap[key];
   var dataconfig = dataConfigMap[key];
   var userid = get(req.body || req, "RequestInfo.userInfo.id");
   var requestInfo = get(req.body || req, "RequestInfo");
   var documentType = get(dataconfig, "documentType", "");
   var moduleName = get(dataconfig, "DataConfigs.moduleName", "");
-  var formatconfig =JSON.parse(JSON.stringify(formatconfigNew))
 
   var valid = validateRequest(req, res, key, tenantId, requestInfo);
   if (valid) {
@@ -652,20 +862,21 @@ export const createAndSave = async (
     // var util = require('util');
     // fs.writeFileSync('./data.txt', util.inspect(JSON.stringify(formatconfig)) , 'utf-8');
     //function to download pdf automatically
+    
+    let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+
     let locale = requestInfo.msgId.split('|')[1];
     if(!locale)
       locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 
-    if(defaultFontMapping[locale] != 'default'){
-      formatconfig.defaultStyle.font = defaultFontMapping[locale];
-    }
-    console.log(" Font type selected :::: " + formatconfig.defaultStyle.font);
-    console.log("Locale passed:::::::"+locale);
+    if(defaultFontMapping[locale] != 'default')
+      formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+
     createPdfBinary(
       key,
       formatConfigByFile,
       entityIds,
-      formatconfig,
+      formatconfigCopy,
       successCallback,
       errorCallback,
       tenantId,
@@ -684,6 +895,103 @@ export const createAndSave = async (
     });
   }
 };
+
+export const createNoSave = async (
+  req,
+  res,
+  successCallback,
+  errorCallback
+) => {
+  try {
+    var starttime = new Date().getTime();
+    var topic = get(req, "pdfKey");
+    var key;
+    if (topic != null) {
+      key = topic;
+    } else {
+      key = get(req.query || req, "key");
+    }
+
+    var tenantId = get(req.query || req, "tenantId");
+    var formatconfig = formatConfigMap[key];
+    var dataconfig = dataConfigMap[key];
+    var totalPdfRecords = get(req, "totalPdfRecords");
+    var currentPdfRecords = get(req, "currentPdfRecords");
+    var bulkPdfJobId = get(req, "pdfJobId");
+    var numberOfFiles = get(req, "numberOfFiles");
+    var requestInfo = get(req.body || req, "RequestInfo");
+    var userid = get(req.body || req, "RequestInfo.userInfo.uuid");
+    var mobileNumber = get(req, "RequestInfo.userInfo.mobileNumber");
+    var billd = get(req, "Bill");
+    var locality = get(req, "locality");
+    var bussinessService = get(req, "service");
+    var isConsolidated = get(req, "isConsolidated");
+    var consumerCode = get(req, "consumerCode");
+    
+
+    logger.info("received createnosave request on key: " + key + " for job id:" + bulkPdfJobId +" totalPdfRecords: "+totalPdfRecords+" currentPdfRecords: "+currentPdfRecords + " size: "+billd.length);
+
+    var valid = validateRequest(req, res, key, tenantId, requestInfo);
+
+    if (valid) {
+      let [
+        formatConfigByFile,
+        totalobjectcount,
+        entityIds,
+      ] = await prepareBegin(
+        key,
+        req,
+        requestInfo,
+        true,
+        formatconfig,
+        dataconfig
+      );
+      // restoring footer function
+      formatConfigByFile[0].footer = convertFooterStringtoFunctionIfExist(formatconfig.footer);
+      const doc = printer.createPdfKitDocument(formatConfigByFile[0]);
+      let fileNameAppend = "-" + new Date().getTime();
+      let directory = envVariables.SAVE_PDF_DIR + bulkPdfJobId
+      //let directory = bulkPdfJobId;
+
+      if(!fs.existsSync(directory))
+        fs.mkdirSync(directory, { recursive: true });
+
+      let filename = directory + "/"  + key + "" + fileNameAppend + ".pdf";
+
+      var chunks = [];
+      doc.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      doc.on("end", function () {
+        var data = Buffer.concat(chunks);
+         //fs.createWriteStream(filename).write(data);
+         var tempFile = fs.createWriteStream(filename);
+         tempFile.on('error', function(e) { console.error(e); });
+         tempFile.on('open', function(fd) {
+           tempFile.write(data);
+           tempFile.end();
+         });
+        logger.info(
+          `createnosave success for pdf creation with job id: ${bulkPdfJobId} with key: ${key}, entityId ${entityIds}`
+        );
+        (async () => {
+          await insertRecords(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality, bussinessService, consumerCode, isConsolidated);
+          await mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber);
+        })();
+      });
+      doc.end();
+
+    }
+  } catch (error) {
+    logger.error(error.stack || error);
+    // res.json({
+    //   message: "some unknown error while creating: " + error.message,
+    // });
+  }
+
+};
+
+
 const updateBorderlayout = (formatconfig) => {
   formatconfig.content = formatconfig.content.map((item) => {
     if (
@@ -758,6 +1066,7 @@ const handleDerivedMapping = (dataconfig, variableTovalueMap) => {
   );
 
   for (var i = 0, len = derivedMappings.length; i < len; i++) {
+
     let mapping = derivedMappings[i];
     let expression = mustache
       .render(
@@ -765,7 +1074,19 @@ const handleDerivedMapping = (dataconfig, variableTovalueMap) => {
         variableTovalueMap
       )
       .replace(/NA/g, "0");
-    variableTovalueMap[mapping.variable] = eval(expression);
+    let type = mapping.type;
+    let format = mapping.format;
+    let variableValue = Function(`'use strict'; return (${expression})`)();
+    if(type == "date"){
+      let myDate = new Date(variableValue);
+      if (isNaN(myDate) || variableValue === 0) {
+        variableValue = "NA";
+      } else {
+        let replaceValue = getDateInRequiredFormat(variableValue,format);
+        variableValue = replaceValue;
+      }
+    }
+    variableTovalueMap[mapping.variable] = variableValue;
   }
 };
 
@@ -835,17 +1156,15 @@ const handlelogic = async (
   requestInfo
 ) => {
   let variableTovalueMap = {};
-  let localisationMap = {};
-  let localisationModuleList = [];
   //direct mapping service
   await Promise.all([
     directMapping(
       moduleObject,
       dataconfig,
       variableTovalueMap,
-      localisationMap,
       requestInfo,
-      localisationModuleList
+      unregisteredLocalisationCodes,
+      key
     ),
     //external API mapping
     externalAPIMapping(
@@ -853,9 +1172,8 @@ const handlelogic = async (
       moduleObject,
       dataconfig,
       variableTovalueMap,
-      localisationMap,
       requestInfo,
-      localisationModuleList
+      unregisteredLocalisationCodes
     ),
   ]);
   await generateQRCodes(moduleObject, dataconfig, variableTovalueMap);
@@ -896,16 +1214,13 @@ const prepareBulk = async (
   );
   if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
     totalobjectcount = moduleObjectsArray.length;
-    logger.info("No of input objects: " + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
-      //logger.info("Preparing pdf data for input data with id: " + moduleObject.id)
       let entityKey = getValue(
         jp.query(moduleObject, entityIdPath),
         [null],
         entityIdPath
       );
-     
       entityIds.push(entityKey[0]);
 
       let formatObject = JSON.parse(JSON.stringify(formatconfig));
@@ -917,6 +1232,7 @@ const prepareBulk = async (
       ) {
         formatObject["content"][0]["pageBreak"] = "before";
       }
+
       /////////////////////////////
       formatObject = await handlelogic(
         key,
@@ -935,12 +1251,14 @@ const prepareBulk = async (
         i + 1 == len
       ) {
         let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+        
         let locale = requestInfo.msgId.split('|')[1];
         if(!locale)
           locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
-        if(defaultFontMapping[locale] != 'default'){
-          formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
-        }
+
+        if(defaultFontMapping[locale] != 'default')
+         formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];
